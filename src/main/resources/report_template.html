@@ -35,7 +35,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
 {{SVG_PAN_ZOOM_JS}}
 </script>
 <style>
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; background-color: #f4f4f4; color: #333; display: flex; height: 100vh; overflow: hidden; }
+body { font-family: sans-serif; margin: 0; background-color: #f4f4f4; color: #333; display: flex; height: 100vh; overflow: hidden; }
 
 /* Sidebar */
 .sidebar { width: 250px; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; height: 100%; box-shadow: 2px 0 5px rgba(0,0,0,0.05); flex-shrink: 0; }
@@ -69,7 +69,7 @@ h2 { color: #555; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; margin-
 .issue-title { font-size: 1.15em; font-weight: 600; color: #333; }
 .hint { background: #f1f3f5; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; border-left: 4px solid #17a2b8; }
 pre.blocks { background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 4px; overflow-x: auto; margin: 0; }
-code.scratchblocks { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: bold; padding: 2px 4px; border-radius: 4px; }
+code.scratchblocks { font-family: sans-serif; font-weight: bold; padding: 2px 4px; border-radius: 4px; }
 .severity { font-size: 0.65em; padding: 2px 6px; border-radius: 12px; color: #fff; font-weight: bold; text-transform: uppercase; }
 .severity-HIGH { background-color: #dc3545; }
 .severity-MEDIUM { background-color: #ffc107; color: #000; }
@@ -180,7 +180,7 @@ code.scratchblocks { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif
   <a id="top"></a>
   {{HEADER_CONTENT}}
   {{PROJECTS_CONTENT}}
-  
+
   <footer style="margin-top: 3rem; border-top: 1px solid #ddd; padding-top: 1rem; color: #777; font-size: 0.85em;">
     <p>This report includes third-party software:</p>
     <ul>
@@ -199,10 +199,10 @@ function showProject(projectId) {
   document.querySelectorAll('.project-content').forEach(el => el.classList.remove('active'));
   // Show selected content
   document.getElementById(projectId).classList.add('active');
-  
+
   // Update Nav
   document.querySelectorAll('.project-nav-item').forEach(el => el.classList.remove('active'));
-  
+
   // Highlight the clicked nav item using strict ID matching
   const navItem = document.getElementById('nav-item-' + projectId);
   if (navItem) {
@@ -217,7 +217,7 @@ function showProject(projectId) {
           activeTab.click();
       }
   }
-  
+
   // Reset scroll position to top
   const mainContent = document.querySelector('.main-content');
   if (mainContent) {
@@ -249,12 +249,12 @@ function filterSection(category, projectId) {
 
   const finderSelect = document.getElementById('finder-select-' + category + '-' + projectId);
   const spriteSelect = document.getElementById('sprite-select-' + category + '-' + projectId);
-  
+
   const selectedFinder = finderSelect ? finderSelect.value : 'all';
   const selectedSprite = spriteSelect ? spriteSelect.value : 'all';
 
   const issues = section.querySelectorAll('.issue');
-  
+
   issues.forEach(issue => {
     const finder = issue.getAttribute('data-finder');
     const sprite = issue.getAttribute('data-sprite');
@@ -305,13 +305,13 @@ function showGraph(type, projectId) {
   tabs.forEach(el => el.classList.remove('active'));
   var activeTab = document.getElementById(`graph-tab-${type}-${projectId}`);
   if(activeTab) activeTab.classList.add('active');
-  
+
   // Update Views
   var views = document.querySelectorAll(`#section-graphs-${projectId} .graph-view`);
   views.forEach(el => el.classList.remove('active'));
   var activeView = document.getElementById(`graph-view-${type}-${projectId}`);
   if(activeView) activeView.classList.add('active');
-  
+
   // Render Graph
   renderGraph(type, projectId);
 }
@@ -320,23 +320,23 @@ function renderGraph(type, projectId) {
   // Access data safely
   if (!window.graphData[projectId] || !window.graphData[projectId][type]) return;
   var data = window.graphData[projectId][type];
-  
+
   var containerId = `graphviz-${type}-${projectId}`;
   var container = document.getElementById(containerId);
   if (!container) return;
-  
-  try {
-     var svg = Viz(data, 'svg');
-     container.innerHTML = svg;
+
+  Viz.instance().then(viz => {
+     var svg = viz.renderSVGElement(data);
+     container.appendChild(svg);
      var svgElement = container.getElementsByTagName('svg')[0];
-     
+
      // Scratchblocks rendering in graph
      if (svgElement && typeof scratchblocks !== 'undefined') {
         var graphNodes = svgElement.querySelectorAll('.node');
         graphNodes.forEach(function(gNode) {
             var textNodes = gNode.querySelectorAll('text');
             if (textNodes.length === 0) return;
-            
+
             var contentLines = [];
             var totalX = 0;
             var totalY = 0;
@@ -355,7 +355,7 @@ function renderGraph(type, projectId) {
                     count++;
                 }
             });
-            
+
             var content = contentLines.join('\n').trim();
             if (!content || content === 'Entry' || content === 'Exit') return;
 
@@ -368,20 +368,20 @@ function renderGraph(type, projectId) {
                     scale: 0.6
                 });
                 var renderedBlock = view.render();
-                
+
                 var centerX = count > 0 ? totalX / count : 0;
                 var centerY = count > 0 ? totalY / count : 0;
-                
+
                 var width = parseFloat(renderedBlock.getAttribute('width'));
                 var height = parseFloat(renderedBlock.getAttribute('height'));
-                
+
                 if (!isNaN(width) && !isNaN(height)) {
                     var x = centerX - (width / 2);
                     var y = centerY - (height / 2);
                     renderedBlock.setAttribute('x', x);
                     renderedBlock.setAttribute('y', y);
                 }
-                
+
                 gNode.appendChild(renderedBlock);
                 textNodes.forEach(function(t) { t.style.display = 'none'; });
             } catch (err) {
@@ -389,7 +389,7 @@ function renderGraph(type, projectId) {
             }
         });
      }
-     
+
      if (svgElement && typeof svgPanZoom !== 'undefined') {
        svgElement.style.width = '100%';
        svgElement.style.height = '100%';
@@ -404,10 +404,10 @@ function renderGraph(type, projectId) {
          svgElement.style.width = '100%';
          svgElement.style.height = 'auto';
      }
-  } catch (e) {
+  }).catch((e) => {
      console.error(e);
      container.innerHTML = '<div style="color:red; padding:20px;">Error rendering graph: ' + e + '</div>';
-  }
+  });
 }
 
 </script>

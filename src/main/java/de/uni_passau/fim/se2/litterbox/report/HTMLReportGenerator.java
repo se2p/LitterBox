@@ -76,7 +76,7 @@ public class HTMLReportGenerator implements ReportGenerator {
 
     private static final String PATH_SCRATCHBLOCKS_JS = "/js/scratchblocks.min.js";
     private static final String PATH_TRANSLATIONS_JS = "/js/translations-all.js";
-    private static final String PATH_VIZ_JS = "/js/viz.js";
+    private static final String PATH_VIZ_JS = "/js/viz-global.js";
     private static final String PATH_SVG_PAN_ZOOM_JS = "/js/svg-pan-zoom.min.js";
 
     public HTMLReportGenerator(IssueTranslator translator, Path reportFile) throws IOException {
