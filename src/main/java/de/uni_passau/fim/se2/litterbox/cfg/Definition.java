@@ -18,11 +18,13 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import java.util.Objects;
+
 public class Definition implements DataflowFact {
 
-    private CFGNode source;
+    private final CFGNode source;
 
-    private Defineable defineable;
+    private final Defineable defineable;
 
     public Definition(CFGNode source, Defineable defineable) {
         this.source = source;
@@ -40,5 +42,29 @@ public class Definition implements DataflowFact {
 
     public Defineable getDefinable() {
         return defineable;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Definition that = (Definition) o;
+        if (!Objects.equals(source, that.source)) {
+            return false;
+        }
+
+        return Objects.equals(defineable, that.defineable);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = source != null ? source.hashCode() : 0;
+        result = 31 * result + (defineable != null ? defineable.hashCode() : 0);
+        return result;
     }
 }
