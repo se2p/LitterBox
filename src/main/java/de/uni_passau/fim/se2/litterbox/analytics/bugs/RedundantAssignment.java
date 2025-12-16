@@ -35,6 +35,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -43,14 +44,22 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPosXY;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
@@ -60,26 +69,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.cfg.Attribute;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.Defineable;
 import de.uni_passau.fim.se2.litterbox.cfg.Definition;
 import de.uni_passau.fim.se2.litterbox.cfg.Use;
-import de.uni_passau.fim.se2.litterbox.cfg.Attribute;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysis;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysisBuilder;
 import de.uni_passau.fim.se2.litterbox.dataflow.ForwardFlowDirection;
 import de.uni_passau.fim.se2.litterbox.dataflow.TransferFunction;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Arrays;
@@ -138,7 +138,12 @@ public class RedundantAssignment extends AbstractIssueFinder {
         return analysis;
     }
 
-    private Set<Issue> findRedundantAssignments(ControlFlowGraph cfg, DataflowAnalysis<Defineable> livenessAnalysis, DataflowAnalysis<ReachingDefinitionState> reachingAnalysis, Program program) {
+    private Set<Issue> findRedundantAssignments(
+            ControlFlowGraph cfg,
+            DataflowAnalysis<Defineable> livenessAnalysis,
+            DataflowAnalysis<ReachingDefinitionState> reachingAnalysis,
+            Program program
+    ) {
         Set<Issue> issues = new LinkedHashSet<>();
         Set<Definition> alwaysRedundantDefs = new HashSet<>();
 
@@ -280,13 +285,12 @@ public class RedundantAssignment extends AbstractIssueFinder {
 
     /**
      * Checks if the assignment involves a dynamic value (non-constant).
-     * <p>
-     * This method enumerates all AST nodes that result in a variable or attribute definition
+     *
+     * <p>This method enumerates all AST nodes that result in a variable or attribute definition
      * but do not inherently "read" the value (unlike "Change Variable By").
      * We check these blocks to see if the assigned value is dynamic (e.g., depends on a sensor
      * or user input). If it is dynamic, we conservatively assume the assignment is necessary
      * (e.g., updating state in a loop) and suppress redundancy warnings.
-     * </p>
      *
      * @param statement The AST node performing definitions.
      * @return true if the assignment is dynamic/interactive and should be ignored; false otherwise.
@@ -375,10 +379,11 @@ public class RedundantAssignment extends AbstractIssueFinder {
 
     /**
      * Custom Transfer Function for Liveness Analysis.
-     * Treats all variables/attributes defined in this script as "Live" at exit nodes,
-     * ensuring that an assignment is only redundant if it is overwritten before any use *and* before the end of the script.
-     * <p>
-     * Note: We track {@code Defineable} (variables) instead of {@code Use} objects.
+     *
+     * <p>Treats all variables/attributes defined in this script as "Live" at exit nodes, ensuring that an assignment
+     * is only redundant if it is overwritten before any use *and* before the end of the script.
+     *
+     * <p>Note: We track {@code Defineable} (variables) instead of {@code Use} objects.
      * Since we only care *if* a variable is used, not *where*, tracking the variable itself reduces
      * the size of the dataflow sets (O(|Variables|) vs O(|Uses|)), improving performance and convergence time.
      */
