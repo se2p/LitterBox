@@ -75,11 +75,18 @@ public class JSONStringCreationTest implements JsonTest {
         final var program = getAST("src/test/fixtures/refactoring/NPE.json");
         // This should not throw NPE
         String json = JSONStringCreator.createProgramJSONString(program);
-        
+
         // Check if the json results in the same program
         Scratch3Parser parser = new Scratch3Parser();
         Program parsedProgram = parser.parseString("NPE", json);
-        
+
         Assertions.assertTrue(StructuralEquality.areStructurallyEqual(program, parsedProgram));
+    }
+
+    @Test
+    void testEscapeQuotesInString() throws ParsingException, IOException {
+        final var program = getAST("src/test/fixtures/escape-special-chars.json");
+        final String json = JSONStringCreator.createProgramJSONString(program);
+        assertThat(json).contains("\\\"the quotes should have been escaped\\\"");
     }
 }

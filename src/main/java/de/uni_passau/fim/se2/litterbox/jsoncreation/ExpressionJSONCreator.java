@@ -135,7 +135,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     @Override
     public void visit(StringLiteral node) {
         finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, TEXT_PRIMITIVE,
-                node.getText()));
+                node.getText().replace("\"", "\\\"")));
     }
 
     @Override
