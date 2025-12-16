@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2025 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Map;
 import java.util.Optional;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2025 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,16 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Iterator;
 
 /**
  * Util class for parsing the JSON files.
@@ -48,13 +46,11 @@ public class JsonParser {
         return script;
     }
 
-    private static JsonNode buildScriptFromJSONString(String json) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
+    private static JsonNode buildScriptFromJSONString(String json) {
+        JsonMapper mapper = JsonMapper.shared();
         JsonNode script = null;
         JsonNode rootNode = mapper.readTree(json);
-        Iterator<JsonNode> elements = rootNode.get("targets").elements();
-        while (elements.hasNext()) {
-            JsonNode node = elements.next();
+        for (JsonNode node : rootNode.get("targets")) {
             if (node.has("isStage") && !node.get("isStage").asBoolean() && node.has("blocks")) {
                 script = node.get("blocks");
                 break;
@@ -64,7 +60,7 @@ public class JsonParser {
     }
 
     public static JsonNode getTargetsNodeFromJSONString(String json) {
-        ObjectMapper mapper = new ObjectMapper();
+        JsonMapper mapper = JsonMapper.shared();
         try {
             return mapper.readTree(json);
         } catch (Exception e) {

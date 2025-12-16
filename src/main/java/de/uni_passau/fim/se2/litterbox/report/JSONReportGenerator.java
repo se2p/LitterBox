@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2025 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.report;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramMetricAnalyzer;
@@ -32,6 +29,9 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
+import tools.jackson.core.JsonEncoding;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -52,7 +52,7 @@ public class JSONReportGenerator implements ReportGenerator {
 
     private final boolean closeStream;
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final JsonMapper mapper = JsonMapper.shared();
 
     private final JsonGenerator jsonGenerator;
 
@@ -68,17 +68,16 @@ public class JSONReportGenerator implements ReportGenerator {
         this(translator, Files.newOutputStream(fileName), true);
     }
 
-    public JSONReportGenerator(final IssueTranslator translator, OutputStream stream) throws IOException {
+    public JSONReportGenerator(final IssueTranslator translator, OutputStream stream) {
         this(translator, stream, false);
     }
 
     private JSONReportGenerator(
             final IssueTranslator translator, final OutputStream stream, final boolean closeStream
-    ) throws IOException {
+    ) {
         this.translator = translator;
         this.outputStream = stream;
-        jsonGenerator = mapper.createGenerator(outputStream, JsonEncoding.UTF8);
-        jsonGenerator.useDefaultPrettyPrinter();
+        jsonGenerator = mapper.writerWithDefaultPrettyPrinter().createGenerator(outputStream, JsonEncoding.UTF8);
         this.closeStream = closeStream;
     }
 

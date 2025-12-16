@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2025 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,14 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ValueNode;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.node.ValueNode;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,51 +32,54 @@ final class RawMutationDeserializer {
         throw new IllegalCallerException("utility class");
     }
 
-    static final class ArgumentIdsParser extends JsonDeserializer<List<RawBlockId>> {
+    static final class ArgumentIdsParser extends ValueDeserializer<List<RawBlockId>> {
 
         @Override
-        public List<RawBlockId> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-            final ObjectMapper mapper = (ObjectMapper) p.getCodec();
-            final ValueNode root = p.getCodec().readTree(p);
+        public List<RawBlockId> deserialize(JsonParser p, DeserializationContext ctxt) {
+            final ValueNode root = p.readValueAsTree();
 
             if (root.isNull()) {
                 return Collections.emptyList();
             } else {
-                return mapper.readValue(root.textValue(), new TypeReference<>() {});
+                try (final var parser = ctxt.createParser(root.asString())) {
+                    return parser.readValueAs(new TypeReference<>() {});
+                }
             }
         }
     }
 
-    static final class ArgumentNamesParser extends JsonDeserializer<List<String>> {
+    static final class ArgumentNamesParser extends ValueDeserializer<List<String>> {
 
         @Override
-        public List<String> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-            final ObjectMapper mapper = (ObjectMapper) p.getCodec();
-            final ValueNode root = p.getCodec().readTree(p);
+        public List<String> deserialize(JsonParser p, DeserializationContext ctxt) {
+            final ValueNode root = p.readValueAsTree();
 
             if (root.isNull()) {
                 return Collections.emptyList();
             } else {
-                return mapper.readValue(root.textValue(), new TypeReference<>() {});
+                try (final var parser = ctxt.createParser(root.asString())) {
+                    return parser.readValueAs(new TypeReference<>() {});
+                }
             }
         }
     }
 
     static final class ArgumentDefaultValuesParser
-            extends JsonDeserializer<List<? extends RawMutation.ArgumentDefault<?>>> {
+            extends ValueDeserializer<List<? extends RawMutation.ArgumentDefault<?>>> {
 
         @Override
         public List<? extends RawMutation.ArgumentDefault<?>> deserialize(
                 JsonParser p, DeserializationContext ctxt
-        ) throws IOException {
-            final ObjectMapper mapper = (ObjectMapper) p.getCodec();
-            final ValueNode root = p.getCodec().readTree(p);
+        ) {
+            final ValueNode root = p.readValueAsTree();
 
             if (root.isNull()) {
                 return Collections.emptyList();
             } else {
-                final List<Object> values = mapper.readValue(root.textValue(), new TypeReference<>() {});
-                return values.stream().map(ArgumentDefaultValuesParser::getDefaultValue).toList();
+                try (final var parser = ctxt.createParser(root.asString())) {
+                    final List<Object> values = parser.readValueAs(new TypeReference<>() {});
+                    return values.stream().map(ArgumentDefaultValuesParser::getDefaultValue).toList();
+                }
             }
         }
 

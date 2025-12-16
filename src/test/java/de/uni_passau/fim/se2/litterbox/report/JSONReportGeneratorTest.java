@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2025 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.report;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.*;
@@ -36,6 +33,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -50,10 +49,11 @@ import static com.google.common.truth.Truth.assertThat;
 @Isolated
 public class JSONReportGeneratorTest implements JsonTest {
 
+    private final JsonMapper mapper = JsonMapper.shared();
+
     private final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
 
-    private void assertValidJsonIssue(String issueText, int numIssues) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
+    private void assertValidJsonIssue(String issueText, int numIssues) {
         JsonNode rootNode = mapper.readTree(issueText);
         assertThat(rootNode.has("metrics")).isTrue();
         assertThat(rootNode.has("issues")).isTrue();
@@ -125,7 +125,6 @@ public class JSONReportGeneratorTest implements JsonTest {
         generator.generateReport(program, issues);
         os.close();
         String jsonText = os.toString();
-        ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(jsonText);
         String code = rootNode.get("issues").get(0).get("code").asText();
         assertThat(code).isEqualTo("[scratchblocks]" + System.lineSeparator() +
@@ -191,7 +190,6 @@ public class JSONReportGeneratorTest implements JsonTest {
         String issueText = os.toString();
         assertValidJsonIssue(issueText, 3);
 
-        ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(issueText);
         JsonNode issueNode = rootNode.get("issues");
 
@@ -236,7 +234,6 @@ public class JSONReportGeneratorTest implements JsonTest {
         String issueText = os.toString();
         assertValidJsonIssue(issueText, 3);
 
-        ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(issueText);
         JsonNode issueNode = rootNode.get("issues");
 
@@ -272,7 +269,6 @@ public class JSONReportGeneratorTest implements JsonTest {
         String issueText = os.toString();
         assertValidJsonIssue(issueText, 2);
 
-        ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(issueText);
         JsonNode issueNode = rootNode.get("issues");
         JsonNode issue0 = issueNode.get(0);
@@ -281,7 +277,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         JsonNode subsumption0 = issue0.get("subsumed-by");
         JsonNode subsumption1 = issue1.get("subsumed-by");
 
-        if (!issue0.get("finder").asText().equals(finder.getName())) {
+        if (!issue0.get("finder").asString().equals(finder.getName())) {
             assertThat(subsumption0.size()).isEqualTo(0);
             assertThat(subsumption1.get(0).asInt()).isEqualTo(issue0.get("id").asInt());
         } else {
@@ -306,7 +302,6 @@ public class JSONReportGeneratorTest implements JsonTest {
         String issueText = os.toString();
         assertValidJsonIssue(issueText, 2);
 
-        ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(issueText);
         JsonNode issueNode = rootNode.get("issues");
         JsonNode issue0 = issueNode.get(0);
@@ -315,7 +310,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         JsonNode coupling0 = issue0.get("coupled-to");
         JsonNode coupling1 = issue1.get("coupled-to");
 
-        if (issue0.get("finder").asText().equals(unnecessaryIfAfterUntil.getName())) {
+        if (issue0.get("finder").asString().equals(unnecessaryIfAfterUntil.getName())) {
             assertThat(coupling0.size()).isEqualTo(1);
             assertThat(coupling1.get(0).asInt()).isEqualTo(issue0.get("id").asInt());
         } else {
@@ -338,7 +333,6 @@ public class JSONReportGeneratorTest implements JsonTest {
         String issueText = os.toString();
         assertValidJsonIssue(issueText, 3);
 
-        ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(issueText);
         JsonNode issueNode = rootNode.get("issues");
 
@@ -383,7 +377,6 @@ public class JSONReportGeneratorTest implements JsonTest {
         String issueText = os.toString();
         assertValidJsonIssue(issueText, 2);
 
-        ObjectMapper mapper = new ObjectMapper();
         JsonNode rootNode = mapper.readTree(issueText);
         JsonNode issueNode = rootNode.get("issues");
 

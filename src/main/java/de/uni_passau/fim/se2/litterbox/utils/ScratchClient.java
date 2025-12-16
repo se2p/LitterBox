@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2025 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,11 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.utils;
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.common.util.concurrent.RateLimiter;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectWriter;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -57,7 +56,7 @@ public class ScratchClient {
 
     private static final Pattern PROJECT_TOKEN_PATTERN = Pattern.compile("\"project_token\":\"([^\"]+)\"");
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final JsonMapper mapper = JsonMapper.shared();
 
     // 10 requests per second according to https://github.com/scratchfoundation/scratch-rest-api/wiki#rate-limits
     private static final RateLimiter DEFAULT_RATE_LIMITER = RateLimiter.create(10.0);
@@ -201,22 +200,22 @@ public class ScratchClient {
         if (projectJsonRoot.hasNonNull("costumes")) {
             for (JsonNode costume : projectJsonRoot.get("costumes")) {
                 if (costume.hasNonNull("baseLayerMD5")) {
-                    assets.add(costume.get("baseLayerMD5").asText());
+                    assets.add(costume.get("baseLayerMD5").asString());
                 }
                 if (costume.hasNonNull("textLayerMD5")) {
-                    assets.add(costume.get("textLayerMD5").asText());
+                    assets.add(costume.get("textLayerMD5").asString());
                 }
             }
         }
         if (projectJsonRoot.hasNonNull("sounds")) {
             for (JsonNode sound : projectJsonRoot.get("sounds")) {
                 if (sound.hasNonNull("md5")) {
-                    assets.add(sound.get("md5").asText());
+                    assets.add(sound.get("md5").asString());
                 }
             }
         }
         if (projectJsonRoot.hasNonNull("penLayerMD5")) {
-            assets.add(projectJsonRoot.get("penLayerMD5").asText());
+            assets.add(projectJsonRoot.get("penLayerMD5").asString());
         }
 
         if (projectJsonRoot.hasNonNull("children")) {
@@ -236,14 +235,14 @@ public class ScratchClient {
             if (target.hasNonNull("costumes")) {
                 for (JsonNode costume : target.get("costumes")) {
                     if (costume.hasNonNull("md5ext")) {
-                        assets.add(costume.get("md5ext").asText());
+                        assets.add(costume.get("md5ext").asString());
                     }
                 }
             }
             if (target.hasNonNull("sounds")) {
                 for (JsonNode sound : target.get("sounds")) {
                     if (sound.hasNonNull("md5ext")) {
-                        assets.add(sound.get("md5ext").asText());
+                        assets.add(sound.get("md5ext").asString());
                     }
                 }
             }
@@ -313,7 +312,7 @@ public class ScratchClient {
         if (root.isArray()) {
             for (JsonNode node : root) {
                 if (node.hasNonNull("id")) {
-                    ids.add(node.get("id").asText());
+                    ids.add(node.get("id").asString());
                 }
             }
         }
@@ -388,7 +387,7 @@ public class ScratchClient {
     private void saveJson(Path outputDir, String filename, String json) throws IOException {
         Files.createDirectories(outputDir);
         JsonNode jsonNode = mapper.readTree(json);
-        ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
+        ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
         Path path = outputDir.resolve(filename);
         writer.writeValue(path.toFile(), jsonNode);
     }
