@@ -34,20 +34,21 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import gg.jte.ContentType;
+import gg.jte.TemplateEngine;
+import gg.jte.TemplateOutput;
+import gg.jte.output.PrintWriterOutput;
+import gg.jte.resolve.ResourceCodeResolver;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -55,24 +56,19 @@ import java.util.stream.Collectors;
  */
 public class HTMLReportGenerator implements ReportGenerator {
 
+    private static final TemplateEngine templateEngine = TemplateEngine.create(
+            new ResourceCodeResolver(""), ContentType.Html
+    );
+    // the one above only for local development, if the template does not change much, we should switch to the one
+    // below to have the precompiled template as part of the JAR (otherwise a JDK would be required when running
+    // LitterBox)
+    // private static final TemplateEngine templateEngine = TemplateEngine.createPrecompiled(ContentType.Html);
+
     private final IssueTranslator translator;
     private final OutputStream outputStream;
 
-    private static final String TEMPLATE_PATH = "/report_template.html";
     private static final String LOGO_PATH = "/litterbox.svg";
     private static final String FAVICON_PATH = "/favicon.ico";
-    private static final String PLACEHOLDER_LANG = "{{LANG}}";
-    private static final String PLACEHOLDER_FAVICON = "{{FAVICON}}";
-    private static final String PLACEHOLDER_LOGO = "{{LOGO}}";
-    private static final String PLACEHOLDER_BODY_CLASS = "{{BODY_CLASS}}";
-    private static final String PLACEHOLDER_HEADER = "{{HEADER_CONTENT}}";
-    private static final String PLACEHOLDER_NAV = "{{PROJECTS_NAV}}";
-    private static final String PLACEHOLDER_CONTENT = "{{PROJECTS_CONTENT}}";
-    private static final String PLACEHOLDER_SCRATCH_LANG = "{{SCRATCH_LANG}}";
-    private static final String PLACEHOLDER_SCRATCHBLOCKS_JS = "{{SCRATCHBLOCKS_JS}}";
-    private static final String PLACEHOLDER_TRANSLATIONS_JS = "{{TRANSLATIONS_JS}}";
-    private static final String PLACEHOLDER_VIZ_JS = "{{VIZ_JS}}";
-    private static final String PLACEHOLDER_SVG_PAN_ZOOM_JS = "{{SVG_PAN_ZOOM_JS}}";
 
     private static final String PATH_SCRATCHBLOCKS_JS = "/js/scratchblocks.min.js";
     private static final String PATH_TRANSLATIONS_JS = "/js/translations-all.js";
@@ -94,52 +90,61 @@ public class HTMLReportGenerator implements ReportGenerator {
     }
 
     public void generateReport(Collection<ProjectAnalysisResult> projects) throws IOException {
-        String template = loadResource(TEMPLATE_PATH);
-        String logo = loadResource(LOGO_PATH);
-        String faviconBase64 = loadFaviconBase64();
-        String scratchblocksJs = loadResource(PATH_SCRATCHBLOCKS_JS);
-        String translationsJs = loadResource(PATH_TRANSLATIONS_JS);
-        String vizJs = loadResource(PATH_VIZ_JS);
-        String svgPanZoomJs = loadResource(PATH_SVG_PAN_ZOOM_JS);
-        String lang = translator.getLocale().getLanguage();
-        boolean singleProject = projects.size() == 1;
-        List<ProjectAnalysisResult> sortedProjects = sortProjects(projects);
+        final String logo = loadResource(LOGO_PATH);
+        final String faviconBase64 = loadFaviconBase64();
+        final Scripts scripts = buildScripts();
+        final List<ProjectAnalysisResult> sortedProjects = sortProjects(projects);
+        final List<ProjectModel> projectModels = buildProjectModels(sortedProjects);
 
-        StringBuilder projectsNav = new StringBuilder();
-        StringBuilder projectsContent = new StringBuilder();
+        try (var pw = new PrintWriter(outputStream)) {
+            final TemplateOutput output = new PrintWriterOutput(pw);
+            final TemplateModel model = new TemplateModel(
+                    translator.getLocale().getLanguage(),
+                    faviconBase64,
+                    logo,
+                    scripts,
+                    translator,
+                    projectModels
+            );
+            templateEngine.render("report_template.jte", model, output);
+        }
+    }
 
-        boolean first = true;
-        for (ProjectAnalysisResult project : sortedProjects) {
-            String projectId = generateProjectId(project.projectName());
-            boolean active = first;
+    private Scripts buildScripts() throws IOException {
+        final String scratchblocksJs = loadResource(PATH_SCRATCHBLOCKS_JS);
+        final String translationsJs = loadResource(PATH_TRANSLATIONS_JS);
+        final String vizJs = loadResource(PATH_VIZ_JS);
+        final String svgPanZoomJs = loadResource(PATH_SVG_PAN_ZOOM_JS);
 
-            if (!singleProject) {
-                appendProjectNavItem(projectsNav, project.projectName(), projectId, active);
-            }
-            appendProjectContent(projectsContent, project, projectId, active, singleProject);
+        return new Scripts(
+                scratchblocksJs,
+                translationsJs,
+                vizJs,
+                svgPanZoomJs
+        );
+    }
 
-            first = false;
+    private List<ProjectModel> buildProjectModels(final List<ProjectAnalysisResult> projects) {
+        final List<ProjectModel> projectModels = new ArrayList<>();
+
+        for (ProjectAnalysisResult project : projects) {
+            final String projectId = generateProjectId(project.projectName());
+            final List<IssueGroup> issues = buildIssues(project.issues());
+            final List<Graph> graphs = buildGraphs(project.program());
+            final List<Stat> stats = buildStats(project.program(), project.issues());
+            final List<Metric> metrics = buildMetrics(project.program());
+
+            projectModels.add(new ProjectModel(
+                    projectId,
+                    project.projectName(),
+                    issues,
+                    graphs,
+                    stats,
+                    metrics
+            ));
         }
 
-        String bodyClass = singleProject ? "single-project" : "";
-        String headerContent = singleProject ? generateSingleProjectHeader(sortedProjects.get(0).projectName()) : "";
-
-        String report = template
-                .replace(PLACEHOLDER_LANG, lang)
-                .replace(PLACEHOLDER_BODY_CLASS, bodyClass)
-                .replace(PLACEHOLDER_HEADER, headerContent)
-                .replace(PLACEHOLDER_LOGO, logo)
-                .replace(PLACEHOLDER_FAVICON, faviconBase64)
-                .replace(PLACEHOLDER_NAV, projectsNav.toString())
-                .replace(PLACEHOLDER_CONTENT, projectsContent.toString())
-                .replace(PLACEHOLDER_SCRATCH_LANG, lang)
-                .replace(PLACEHOLDER_SCRATCHBLOCKS_JS, scratchblocksJs)
-                .replace(PLACEHOLDER_TRANSLATIONS_JS, translationsJs)
-                .replace(PLACEHOLDER_VIZ_JS, vizJs)
-                .replace(PLACEHOLDER_SVG_PAN_ZOOM_JS, svgPanZoomJs);
-
-        outputStream.write(report.getBytes(StandardCharsets.UTF_8));
-        outputStream.close();
+        return projectModels;
     }
 
     private List<ProjectAnalysisResult> sortProjects(Collection<ProjectAnalysisResult> projects) {
@@ -152,222 +157,99 @@ public class HTMLReportGenerator implements ReportGenerator {
         return "project-" + projectName.replaceAll("[^a-zA-Z0-9]", "-");
     }
 
-    private void appendProjectNavItem(StringBuilder sb, String name, String id, boolean active) {
-        String activeClass = active ? " active" : "";
-        sb.append("<li id=\"nav-item-").append(id).append("\" class=\"project-nav-item").append(activeClass)
-                .append("\" onclick=\"showProject('").append(id).append("')\">")
-                .append(StringEscapeUtils.escapeHtml4(name))
-                .append("</li>\n");
+    private List<Stat> buildStats(final Program program, final Collection<Issue> issues) {
+        final List<Stat> result = new ArrayList<>();
+
+        final int spriteCount = (int) new SpriteCount<>().calculateMetric(program);
+        final int scriptCount = (int) new ScriptCount<>().calculateMetric(program);
+        final int blockCount = (int) new BlockCount<>().calculateMetric(program);
+
+        final long bugCount = issues.stream().filter(i -> i.getIssueType() == IssueType.BUG).count();
+        final long smellCount = issues.stream().filter(i -> i.getIssueType() == IssueType.SMELL).count();
+        final long perfumeCount = issues.stream().filter(i -> i.getIssueType() == IssueType.PERFUME).count();
+
+        final double ctScore = new ComputationalThinkingScore().calculateMetric(program);
+
+        result.add(new Stat(translator.getInfo("stats_sprites"), Integer.toString(spriteCount)));
+        result.add(new Stat(translator.getInfo("stats_scripts"), Integer.toString(scriptCount)));
+        result.add(new Stat(translator.getInfo("stats_blocks"), Integer.toString(blockCount)));
+        result.add(new Stat(translator.getInfo("label_bugs"), Long.toString(bugCount)));
+        result.add(new Stat(translator.getInfo("label_smells"), Long.toString(smellCount)));
+        result.add(new Stat(translator.getInfo("label_perfumes"), Long.toString(perfumeCount)));
+        result.add(new Stat(translator.getInfo("stats_ct_score"), String.format("%.1f", ctScore)));
+
+        return result;
     }
 
-    private void appendProjectContent(StringBuilder sb, ProjectAnalysisResult project, String id, boolean active, boolean singleProject) {
-        String activeClass = active ? " active" : "";
-        sb.append("<div id=\"").append(id).append("\" class=\"project-content").append(activeClass).append("\">\n");
+    private List<IssueGroup> buildIssues(final Collection<Issue> issues) {
+        final List<IssueGroup> issueGroups = new ArrayList<>();
 
-        if (!singleProject) {
-            sb.append("<h2 class=\"project-title\">").append(StringEscapeUtils.escapeHtml4(project.projectName())).append("</h2>\n");
+        final Set<IssueType> relevantIssueTypes = Set.of(IssueType.PERFUME, IssueType.BUG, IssueType.SMELL);
+        final Map<String, List<Issue>> issuesByCategory = issues.stream()
+                .filter(issue -> relevantIssueTypes.contains(issue.getIssueType()))
+                .collect(Collectors.groupingBy(this::getCategory));
+
+        for (final var entry : issuesByCategory.entrySet()) {
+            final Map<String, List<RenderedIssue>> renderedIssuesByFinder = new HashMap<>();
+            final Map<String, List<Issue>> issuesByFinder = entry.getValue()
+                    .stream()
+                    .collect(Collectors.groupingBy(Issue::getFinderName));
+
+            for (final var byFinderEntry : issuesByFinder.entrySet()) {
+                final List<RenderedIssue> issuesForFinder = byFinderEntry.getValue()
+                        .stream()
+                        .map(this::convertIssue)
+                        .toList();
+                renderedIssuesByFinder.put(byFinderEntry.getKey(), issuesForFinder);
+            }
+
+            final Map<String, String> finders = entry.getValue().stream().collect(Collectors.toMap(
+                    Issue::getFinderName,
+                    i -> i.getTranslatedFinderName(translator),
+                    (a, b) -> a
+            ));
+            final List<String> sprites = entry.getValue().stream()
+                    .map(i -> i.getActorName() != null ? i.getActorName() : "Stage")
+                    .distinct()
+                    .sorted()
+                    .toList();
+
+            issueGroups.add(new IssueGroup(entry.getKey(), renderedIssuesByFinder, finders, sprites));
         }
 
-        sb.append(generateStats(project.program(), project.issues()));
-        sb.append(generateIssuesContent(project.program(), project.issues(), id));
-        sb.append(generateGraphsContent(project.program(), id));
-        sb.append(generateMetricsContent(project.program(), id));
-        sb.append("</div>\n");
+        return issueGroups;
     }
 
-    private String generateSingleProjectHeader(String projectName) {
-        return "<header class=\"report-header\">"
-                + PLACEHOLDER_LOGO
-                + "<h1>Code Report for "
-                + StringEscapeUtils.escapeHtml4(projectName) + "</h1></header>";
-    }
-
-    private String generateStats(Program program, Collection<Issue> issues) {
-        long bugCount = issues.stream().filter(i -> i.getIssueType() == IssueType.BUG).count();
-        long smellCount = issues.stream().filter(i -> i.getIssueType() == IssueType.SMELL).count();
-        long perfumeCount = issues.stream().filter(i -> i.getIssueType() == IssueType.PERFUME).count();
-
-        int spriteCount = (int) new SpriteCount<>().calculateMetric(program);
-        int scriptCount = (int) new ScriptCount<>().calculateMetric(program);
-        int blockCount = (int) new BlockCount<>().calculateMetric(program);
-        double ctScore = new ComputationalThinkingScore().calculateMetric(program);
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("<div class=\"stats-container\">\n");
-        appendStatBox(sb, String.valueOf(spriteCount), "stats_sprites");
-        appendStatBox(sb, String.valueOf(scriptCount), "stats_scripts");
-        appendStatBox(sb, String.valueOf(blockCount), "stats_blocks");
-        appendStatBox(sb, String.valueOf(bugCount), "label_bugs");
-        appendStatBox(sb, String.valueOf(smellCount), "label_smells");
-        appendStatBox(sb, String.valueOf(perfumeCount), "label_perfumes");
-        appendStatBox(sb, String.format("%.1f", ctScore), "stats_ct_score");
-        sb.append("</div>\n");
-        return sb.toString();
-    }
-
-    private void appendStatBox(StringBuilder sb, String value, String labelKey) {
-        sb.append("<div class=\"stat-box\"><span class=\"stat-value\">").append(value)
-                .append("</span><span class=\"stat-label\">").append(translator.getInfo(labelKey))
-                .append("</span></div>\n");
-    }
-
-    private String generateIssuesContent(Program program, Collection<Issue> issues, String projectId) {
-        if (issues.isEmpty()) {
-            return "<p style=\"text-align: center; color: #28a745;\">" + translator.getInfo("no_issues_found") + "</p>\n";
+    private RenderedIssue convertIssue(final Issue issue) {
+        String sb = getIssueScratchBlocks(issue);
+        if (sb != null) {
+            sb = sb.replace("[scratchblocks]", "").replace("[/scratchblocks]", "").trim();
         }
 
-        StringBuilder sb = new StringBuilder();
-        var issuesByCategory = issues.stream().collect(Collectors.groupingBy(this::getCategory));
-        List<String> categories = List.of(FinderGroup.BUGS.group(), FinderGroup.SMELLS.group(), FinderGroup.PERFUMES.group());
-
-        // Navigation
-        sb.append("<nav class=\"report-nav\"><ul>\n");
-        categories.forEach(cat -> appendNavLink(sb, cat + "-" + projectId, translator.getInfo(cat)));
-        appendNavLink(sb, "graphs-" + projectId, getTranslatedLabel("label_graphs", "Graphs"));
-        appendNavLink(sb, "metrics-" + projectId, getTranslatedLabel("label_metrics", "Metrics"));
-        sb.append("</ul></nav>\n");
-
-        for (String category : categories) {
-            String content = generateCategoryContent(projectId, category, issuesByCategory.get(category));
-            sb.append(createCollapsibleSection(category + "-" + projectId, translator.getInfo(category), content));
+        String refactoredScript = getScratchBlocksCode(issue, issue.getRefactoredScriptOrProcedureDefinition());
+        if (refactoredScript != null) {
+            refactoredScript = refactoredScript.replace("[scratchblocks]", "").replace("[/scratchblocks]", "").trim();
         }
 
-        return sb.toString();
+        return new RenderedIssue(
+                issue.getId(),
+                getCategory(issue),
+                issue.getFinderName(),
+                issue.getTranslatedFinderName(translator),
+                issue.getActorName(),
+                formatHint(issue.getHintText(translator)),
+                sb,
+                refactoredScript,
+                getSeverityClass(issue),
+                issue.getSeverity().name(),
+                getSeverityIcon(issue)
+        );
     }
 
-    private void appendNavLink(StringBuilder sb, String idSuffix, String label) {
-        sb.append("<li id=\"nav-").append(idSuffix).append("\"><a href=\"#").append(idSuffix).append("\">")
-                .append(StringEscapeUtils.escapeHtml4(label)).append("</a></li>\n");
-    }
-
-    private String generateCategoryContent(String projectId, String category, List<Issue> issues) {
-        StringBuilder sb = new StringBuilder();
-
-        String description = getTranslatedInfo("description_" + category);
-        if (description != null) {
-            sb.append("<p class=\"category-description\">").append(StringEscapeUtils.escapeHtml4(description)).append("</p>\n");
-        }
-
-        if (issues != null && !issues.isEmpty()) {
-            sb.append(generateSectionFilter(projectId, category, issues));
-            Map<String, List<Issue>> issuesByFinder = issues.stream().collect(Collectors.groupingBy(Issue::getFinderName));
-            issuesByFinder.values().forEach(list -> list.forEach(issue -> renderIssue(sb, issue)));
-        } else {
-            sb.append("<p>").append(translator.getInfo("no_issues_found")).append("</p>\n");
-        }
-
-        sb.append(createBackToTop());
-        return sb.toString();
-    }
-
-    private String createCollapsibleSection(String idSuffix, String title, String content) {
-        return "<div id=\"section-" + idSuffix + "\" class=\"issue-section collapsible\">\n"
-                + "<h2 id=\"" + idSuffix + "\" class=\"collapsible-header\" onclick=\"toggleSection('" + idSuffix + "')\">"
-                + "<span class=\"toggle-icon\">▼</span> " + StringEscapeUtils.escapeHtml4(title) + "</h2>\n"
-                + "<div id=\"content-" + idSuffix + "\" class=\"collapsible-content\">\n"
-                + content
-                + "</div>\n"
-                + "</div>\n";
-    }
-
-    private String createBackToTop() {
-        return "<div class=\"back-to-top\"><a href=\"#top\">↑ " + translator.getInfo("back_to_top") + "</a></div>\n";
-    }
-
-    private String generateSectionFilter(String projectId, String category, List<Issue> issues) {
-        StringBuilder sb = new StringBuilder();
-        String idSuffix = category + "-" + projectId;
-
-        sb.append("<div class=\"filter-container\" id=\"filter-ui-").append(idSuffix).append("\">\n");
-        sb.append("<div class=\"filter-row\">\n");
-
-        // Finder Dropdown
-        Map<String, String> finderMap = issues.stream().collect(Collectors.toMap(
-                Issue::getFinderName,
-                i -> i.getTranslatedFinderName(translator),
-                (a, b) -> a
-        ));
-        appendFilterGroup(sb, "finder", projectId, category, "filter_by_finder", "filter_all_finders", finderMap);
-
-        // Sprite Dropdown
-        Map<String, String> spriteMap = issues.stream()
-                .map(i -> i.getActorName() != null ? i.getActorName() : "Stage")
-                .distinct()
-                .collect(Collectors.toMap(s -> s, s -> s));
-        appendFilterGroup(sb, "sprite", projectId, category, "filter_by_sprite", "filter_all_sprites", spriteMap);
-
-        sb.append("</div>\n</div>\n");
-        return sb.toString();
-    }
-
-    // Corrected filter gen
-    private void appendFilterGroup(StringBuilder sb, String type, String projectId, String category, String labelKey, String allKey, Map<String, String> options) {
-        String selectId = type + "-select-" + category + "-" + projectId;
-        sb.append("<div class=\"filter-group\">\n");
-        sb.append("<label for=\"").append(selectId).append("\">").append(translator.getInfo(labelKey)).append("</label>\n");
-        sb.append("<select id=\"").append(selectId).append("\" onchange=\"filterSection('")
-                .append(category).append("', '").append(projectId).append("')\" class=\"").append(type).append("-select\">\n");
-        sb.append("<option value=\"all\">").append(translator.getInfo(allKey)).append("</option>\n");
-        options.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(e -> {
-            sb.append("<option value=\"").append(StringEscapeUtils.escapeHtml4(e.getKey())).append("\">")
-                    .append(StringEscapeUtils.escapeHtml4(e.getValue())).append("</option>\n");
-        });
-        sb.append("</select>\n</div>\n");
-    }
-
-    private void renderIssue(StringBuilder sb, Issue issue) {
-        String category = getCategory(issue);
-        String finderVal = StringEscapeUtils.escapeHtml4(issue.getFinderName());
-        String spriteName = issue.getActorName() != null && !issue.getActorName().isEmpty()
-                ? StringEscapeUtils.escapeHtml4(issue.getActorName()) : "Stage";
-
-        sb.append("<div class=\"issue\" data-type=\"").append(category)
-                .append("\" data-finder=\"").append(finderVal)
-                .append("\" data-sprite=\"").append(spriteName).append("\">\n");
-
-        // Header
-        sb.append("<div class=\"issue-header\">\n");
-        String title = StringEscapeUtils.escapeHtml4(issue.getTranslatedFinderName(translator));
-        String severityClass = "severity-" + issue.getSeverity().name();
-        if (issue.getIssueType() == IssueType.PERFUME) {
-            severityClass = "severity-perfume-" + issue.getSeverity().name();
-        }
-
-        sb.append("<span class=\"issue-title\">").append(title).append("</span>");
-        sb.append("<span class=\"severity ").append(severityClass).append("\">")
-                .append("<span class=\"severity-icon\">").append(getSeverityIcon(issue)).append("</span> ").append(translator.getInfo("severity_" + issue.getSeverity().name())).append("</span> ");
-        sb.append("</div>\n");
-
-        // Hint
-        sb.append("<div class=\"hint\">\n").append(formatHint(issue.getHintText(translator))).append("</div>\n");
-
-        // Blocks
-        String scratchCode = (issue instanceof MultiBlockIssue multi)
+    private String getIssueScratchBlocks(final Issue issue) {
+        return (issue instanceof MultiBlockIssue multi)
                 ? getScratchBlocksCode(issue, multi.getScriptEntities())
                 : getScratchBlocksCode(issue, issue.getScriptOrProcedureDefinition());
-
-        if (scratchCode != null && !scratchCode.isEmpty()) {
-            sb.append("<pre class=\"blocks\">")
-                    .append(StringEscapeUtils.escapeHtml4(scratchCode.replace("[scratchblocks]", "").replace("[/scratchblocks]", "").trim()))
-                    .append("</pre>\n");
-        }
-
-        // Refactoring
-        if (issue.getRefactoredScriptOrProcedureDefinition() != null) {
-            String refactoringCode = getScratchBlocksCode(issue, issue.getRefactoredScriptOrProcedureDefinition());
-            if (refactoringCode != null && !refactoringCode.isEmpty()) {
-                String refId = "refactoring-" + issue.getId();
-                sb.append("<button class=\"refactoring-toggle\" onclick=\"toggleRefactoring('").append(issue.getId()).append("')\">")
-                        .append(translator.getInfo("show_fix")).append("</button>\n");
-                sb.append("<div id=\"").append(refId).append("\" class=\"refactoring-content\">\n");
-                sb.append("<pre class=\"blocks\">")
-                        .append(StringEscapeUtils.escapeHtml4(refactoringCode.replace("[scratchblocks]", "").replace("[/scratchblocks]", "").trim()))
-                        .append("</pre>\n");
-                sb.append("</div>\n");
-            }
-        }
-
-        sb.append("</div>\n");
     }
 
     private String formatHint(String hint) {
@@ -388,9 +270,9 @@ public class HTMLReportGenerator implements ReportGenerator {
         escaped = replaceToken(escaped, "[IF]", "if");
         escaped = replaceToken(escaped, "[ELSE]", "else");
 
-        escaped = escaped.replaceAll("\\[sbi\\](.*?)\\[/sbi\\]", "<code class=\"scratchblocks\">$1</code>");
-        escaped = escaped.replaceAll("\\[var\\](.*?)\\[/var\\]", "<code class=\"scratchblocks\">($1)</code>");
-        escaped = escaped.replaceAll("\\[list\\](.*?)\\[/list\\]", "<code class=\"scratchblocks\">($1 :: list)</code>");
+        escaped = escaped.replaceAll("\\[sbi](.*?)\\[/sbi]", "<code class=\"scratchblocks\">$1</code>");
+        escaped = escaped.replaceAll("\\[var](.*?)\\[/var]", "<code class=\"scratchblocks\">($1)</code>");
+        escaped = escaped.replaceAll("\\[list](.*?)\\[/list]", "<code class=\"scratchblocks\">($1 :: list)</code>");
 
         return escaped;
     }
@@ -431,90 +313,33 @@ public class HTMLReportGenerator implements ReportGenerator {
         return sb.toString();
     }
 
-    private String generateGraphsContent(Program program, String projectId) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<div class=\"graphs-container\">\n");
+    private List<Graph> buildGraphs(final Program program) {
+        final List<GraphType> types = List.of(
+                GraphType.CFG, GraphType.CDG, GraphType.DDG, GraphType.PDG, GraphType.TDG
+        );
+        final List<Graph> graphs = new ArrayList<>();
 
-        List<GraphType> types = List.of(GraphType.CFG, GraphType.CDG, GraphType.DDG, GraphType.PDG, GraphType.TDG);
-
-        // Tabs
-        sb.append("<div class=\"graph-tabs\">\n");
-        boolean first = true;
-        for (GraphType type : types) {
-            String typeName = type.name();
-            String label = getTranslatedLabel("graph_" + typeName, typeName);
-            String activeClass = first ? " active" : "";
-            String tabId = "graph-tab-" + typeName + "-" + projectId;
-            sb.append("<div id=\"").append(tabId).append("\" class=\"graph-tab").append(activeClass)
-                    .append("\" onclick=\"showGraph('").append(typeName).append("', '").append(projectId).append("')\">")
-                    .append(label).append("</div>\n");
-            first = false;
-        }
-        sb.append("</div>\n");
-
-        // Views
-        first = true;
-        for (GraphType type : types) {
-            String typeName = type.name();
-            String activeClass = first ? " active" : "";
-            sb.append("<div id=\"graph-view-").append(typeName).append("-").append(projectId)
-                    .append("\" class=\"graph-view").append(activeClass)
-                    .append("\"><div id=\"graphviz-").append(typeName).append("-").append(projectId)
-                    .append("\" class=\"graphviz-container\"></div></div>\n");
-            first = false;
-        }
-        sb.append("</div>\n");
-
-        // Data Generation (Just data, no functions)
-        StringBuilder jsData = new StringBuilder();
-        jsData.append("window.graphData = window.graphData || {};\n");
-        jsData.append("window.graphData['").append(projectId).append("'] = {};\n");
-
-        for (GraphType type : types) {
-            DotGraphAnalyzer analyzer = new DotGraphAnalyzer(type);
-            String dot = styleDot(analyzer.analyze(program));
-            String escapedDot = StringEscapeUtils.escapeEcmaScript(dot);
-            jsData.append("window.graphData['").append(projectId).append("']['").append(type.name()).append("'] = \"")
-                    .append(escapedDot).append("\";\n");
+        for (final GraphType type : types) {
+            final DotGraphAnalyzer analyzer = new DotGraphAnalyzer(type);
+            final String dot = styleDot(analyzer.analyze(program));
+            graphs.add(new Graph(type.toString(), dot));
         }
 
-        // Initial render trigger
-        jsData.append("window.addEventListener('load', function() {\n");
-        jsData.append("   showGraph('CFG', '").append(projectId).append("');\n");
-        jsData.append("});\n");
-
-        sb.append("<script>\n").append(jsData).append("</script>\n");
-
-        String content = sb.toString();
-        String title = getTranslatedLabel("label_graphs", "Graphs");
-        return createCollapsibleSection("graphs-" + projectId, title, content);
+        return graphs;
     }
 
-    private String generateMetricsContent(Program program, String projectId) {
-        StringBuilder sb = new StringBuilder();
-        String desc = getTranslatedInfo("description_metrics");
-        if (desc == null) {
-            desc = "Various metrics calculated for the project.";
-        }
-
-        sb.append("<p class=\"category-description\">").append(StringEscapeUtils.escapeHtml4(desc)).append("</p>\n");
-        sb.append("<div class=\"metrics-container\">\n");
+    private List<Metric> buildMetrics(final Program program) {
+        final List<Metric> result = new ArrayList<>();
 
         ProgramMetricAnalyzer analyzer = new ProgramMetricAnalyzer();
-        List<MetricResult> results = analyzer.analyze(program);
-        results.sort(Comparator.comparing(MetricResult::name));
+        List<MetricResult> metrics = analyzer.analyze(program);
+        metrics.sort(Comparator.comparing(MetricResult::name));
 
-        for (MetricResult result : results) {
-            String displayName = getTranslatedLabel("metric_" + result.name(), result.name());
-            sb.append("<div class=\"metric-item\">\n");
-            sb.append("<span class=\"metric-name\">").append(StringEscapeUtils.escapeHtml4(displayName)).append("</span>");
-            sb.append("<span class=\"metric-value\">").append(String.format("%.2f", result.value())).append("</span>");
-            sb.append("</div>\n");
+        for (MetricResult metric : metrics) {
+            result.add(new Metric(translator.getInfo("metric_" + metric.name()), metric.value()));
         }
-        sb.append("</div>\n").append(createBackToTop());
 
-        String title = getTranslatedLabel("label_metrics", "Metrics");
-        return createCollapsibleSection("metrics-" + projectId, title, sb.toString());
+        return result;
     }
 
     private String styleDot(String dot) {
@@ -542,7 +367,8 @@ public class HTMLReportGenerator implements ReportGenerator {
     private String loadResource(String path) throws IOException {
         try (var is = getClass().getResourceAsStream(path)) {
             if (is == null) {
-                // For optional resources like logo, we handled them differently but for critical JS/Template this is fatal for now
+                // For optional resources like logo, we handled them differently,
+                // but for critical JS/Template this is fatal for now
                 if (path.equals(LOGO_PATH)) {
                     return "";
                 }
@@ -561,17 +387,15 @@ public class HTMLReportGenerator implements ReportGenerator {
         return "";
     }
 
-    private String getTranslatedLabel(String key, String fallback) {
-        String val = translator.getInfo(key);
-        return (val != null && !val.startsWith("Missing key")) ? val : fallback;
+    private String getSeverityClass(final Issue issue) {
+        if (issue.getIssueType() == IssueType.PERFUME) {
+            return "severity-perfume-" + issue.getSeverity().name();
+        } else {
+            return  "severity-" + issue.getSeverity().name();
+        }
     }
 
-    private String getTranslatedInfo(String key) {
-        String val = translator.getInfo(key);
-        return (val != null && !val.startsWith("Missing key")) ? val : null;
-    }
-
-    private String getSeverityIcon(Issue issue) {
+    private String getSeverityIcon(final Issue issue) {
         if (issue.getIssueType() == IssueType.PERFUME) {
             return switch (issue.getSeverity()) {
                 case HIGH -> "&#127942;"; // Trophy
@@ -585,4 +409,56 @@ public class HTMLReportGenerator implements ReportGenerator {
             case LOW -> "&#8505;"; // Information Source
         };
     }
+
+    public record TemplateModel(
+            String language,
+            String favicon,
+            String logo,
+            Scripts scripts,
+            IssueTranslator translator,
+            List<ProjectModel> projects
+    ) {}
+
+    public record Scripts(
+            String scratchBlocks,
+            String scratchBlocksTranslations,
+            String graphviz,
+            String svgPanZoom
+    ) {}
+
+    public record ProjectModel(
+            String id,
+            String name,
+            List<IssueGroup> issues,
+            List<Graph> graphs,
+            List<Stat> stats,
+            List<Metric> metrics
+    ) {}
+
+    public record Graph(String type, String dotGraph) {}
+
+    public record Stat(String label, String value) {}
+
+    public record Metric(String name, double value) {}
+
+    public record IssueGroup(
+            String category,
+            Map<String, List<RenderedIssue>> issues,
+            Map<String, String> finders,
+            List<String> sprites
+    ) {}
+
+    public record RenderedIssue(
+            int id,
+            String category,
+            String finder,
+            String translatedFinderName,
+            String sprite,
+            String hintText,
+            @Nullable String scratchBlocks,
+            @Nullable String refactoredScript,
+            String severityClass,
+            String severity,
+            String severityIcon
+    ) {}
 }
