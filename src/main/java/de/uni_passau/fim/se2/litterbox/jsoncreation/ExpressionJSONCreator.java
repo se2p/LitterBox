@@ -44,6 +44,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMeta
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationBroadcastStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
@@ -135,7 +136,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     @Override
     public void visit(StringLiteral node) {
         finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, TEXT_PRIMITIVE,
-                node.getText().replace("\"", "\\\"")));
+                escape(node.getText())));
     }
 
     @Override
