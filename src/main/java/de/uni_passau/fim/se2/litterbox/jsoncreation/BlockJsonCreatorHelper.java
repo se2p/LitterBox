@@ -104,7 +104,7 @@ public abstract class BlockJsonCreatorHelper {
         StringBuilder jsonString = new StringBuilder();
         jsonString.append("{");
         createField(jsonString, fieldName).append("[");
-        jsonString.append("\"").append(fieldValue).append("\",");
+        jsonString.append("\"").append(escape(fieldValue)).append("\",");
         if (fieldReference == null) {
             //No " needed because it should represent the value null
             jsonString.append((String) null);

@@ -89,4 +89,12 @@ public class JSONStringCreationTest implements JsonTest {
         final String json = JSONStringCreator.createProgramJSONString(program);
         assertThat(json).contains("\\\"the quotes should have been escaped\\\"");
     }
+
+    @Test
+    void testEscapeQuotesInBroadcastMessage() throws ParsingException, IOException {
+        final var program = getAST("src/test/fixtures/escape-special-chars-broadcast-message.json");
+        final String json = JSONStringCreator.createProgramJSONString(program);
+        assertThat(json).contains("the \\\"quotes\\\" should have been escaped");
+        assertThat(json).doesNotContain("the \"quotes\" should have been escaped");
+    }
 }
