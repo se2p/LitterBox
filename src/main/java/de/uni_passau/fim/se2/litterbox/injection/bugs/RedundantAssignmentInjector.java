@@ -70,23 +70,21 @@ public class RedundantAssignmentInjector extends AbstractBugInjector {
     }
 
     /**
+     * Set of statement types that can be duplicated to create redundant assignments.
+     */
+    private static final java.util.Set<Class<? extends Stmt>> DUPLICATABLE_TYPES = java.util.Set.of(
+            SetVariableTo.class, SetXTo.class, SetYTo.class,
+            GoToPosXY.class, PointInDirection.class, SetSizeTo.class,
+            SetGraphicEffectTo.class, SetSoundEffectTo.class, SetVolumeTo.class,
+            SwitchCostumeTo.class, SwitchBackdrop.class, SwitchBackdropAndWait.class,
+            GoToPos.class, PointTowards.class
+    );
+
+    /**
      * Checks if a statement is one of the types we can duplicate.
      */
     private boolean isDuplicatable(Stmt stmt) {
-        return stmt instanceof SetVariableTo
-                || stmt instanceof SetXTo
-                || stmt instanceof SetYTo
-                || stmt instanceof GoToPosXY
-                || stmt instanceof PointInDirection
-                || stmt instanceof SetSizeTo
-                || stmt instanceof SetGraphicEffectTo
-                || stmt instanceof SetSoundEffectTo
-                || stmt instanceof SetVolumeTo
-                || stmt instanceof SwitchCostumeTo
-                || stmt instanceof SwitchBackdrop
-                || stmt instanceof SwitchBackdropAndWait
-                || stmt instanceof GoToPos
-                || stmt instanceof PointTowards;
+        return DUPLICATABLE_TYPES.contains(stmt.getClass());
     }
 
     /**

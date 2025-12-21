@@ -35,11 +35,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
@@ -230,17 +228,7 @@ public class FloatingPointComparisonInjector extends AbstractBugInjector {
         }
     }
 
-    private boolean isInConditionContext(ASTNode node) {
-        ASTNode parent = node.getParentNode();
-        while (parent != null) {
-            if (parent instanceof IfThenStmt || parent instanceof IfElseStmt
-                    || parent instanceof UntilStmt || parent instanceof WaitUntil) {
-                return true;
-            }
-            parent = parent.getParentNode();
-        }
-        return false;
-    }
+
 
     private boolean isSafeOperand(ComparableExpr operand) {
         if (operand instanceof MouseX || operand instanceof MouseY || operand instanceof DistanceTo

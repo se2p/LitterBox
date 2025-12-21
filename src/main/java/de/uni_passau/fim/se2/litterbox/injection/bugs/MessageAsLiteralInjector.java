@@ -103,7 +103,7 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
         StringLiteral targetLiteral = candidates.getFirst();
 
         // Clone with transformation
-        TransformingCloneVisitor visitor = new TransformingCloneVisitor(
+        LiteralReplacementVisitor visitor = new LiteralReplacementVisitor(
                 broadcast.stmt, targetLiteral, broadcast.message);
         Program mutated = (Program) program.accept(visitor);
 
@@ -247,12 +247,12 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
     /**
      * Clone visitor that removes the broadcast and replaces the target literal's text.
      */
-    private static class TransformingCloneVisitor extends CloneVisitor {
+    private static class LiteralReplacementVisitor extends CloneVisitor {
         private final Stmt broadcastToRemove;
         private final StringLiteral literalToReplace;
         private final String newText;
 
-        TransformingCloneVisitor(Stmt broadcastToRemove, StringLiteral literalToReplace, String newText) {
+        LiteralReplacementVisitor(Stmt broadcastToRemove, StringLiteral literalToReplace, String newText) {
             this.broadcastToRemove = broadcastToRemove;
             this.literalToReplace = literalToReplace;
             this.newText = newText;

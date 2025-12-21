@@ -28,6 +28,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
@@ -233,31 +238,6 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     }
 
     /**
-     * Attempts to find the mutated script's ScratchBlocks text in a transformed program.
-     * Uses the TransformingCloneVisitor's replacement to locate the mutated node.
-     */
-    private String findMutatedScriptScratchBlocks(
-            Program mutatedProgram,
-            ScriptEntity originalScript,
-            ASTNode originalNode,
-            TransformingCloneVisitor visitor) {
-        // Get the replacement node that was created by the transformer
-        ASTNode replacementNode = visitor.getReplacement(originalNode);
-        if (replacementNode != null) {
-            ScriptEntity mutatedScript = findContainingScript(replacementNode);
-            if (mutatedScript != null) {
-                return ScratchBlocksVisitor.of(mutatedScript);
-            }
-        }
-
-        // Fallback: if we can't find the specific mutated script, use original
-        if (originalScript != null) {
-            return ScratchBlocksVisitor.of(originalScript);
-        }
-        return "";
-    }
-
-    /**
      * Custom CloneVisitor that records the mapping between original and cloned nodes.
      */
     private static class MappingCloneVisitor extends CloneVisitor {
@@ -323,6 +303,51 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
             List<Stmt> stmts = stmtList.getStmts();
             int index = stmts.indexOf(stmt);
             return index >= 0 && index < stmts.size() - 1;
+        }
+        return false;
+    }
+
+    // ==================== AST Context Helpers ====================
+
+    /**
+     * Checks if the node is within a conditional context (if, until, wait until).
+     */
+    protected boolean isInConditionContext(ASTNode node) {
+        ASTNode parent = node.getParentNode();
+        while (parent != null) {
+            if (parent instanceof IfThenStmt || parent instanceof IfElseStmt
+                    || parent instanceof UntilStmt || parent instanceof WaitUntil) {
+                return true;
+            }
+            parent = parent.getParentNode();
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the node is within a loop context.
+     */
+    protected boolean isInsideLoop(ASTNode node) {
+        ASTNode parent = node.getParentNode();
+        while (parent != null) {
+            if (parent instanceof LoopStmt) {
+                return true;
+            }
+            parent = parent.getParentNode();
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the node is within a Script or ProcedureDefinition (not variable initialization).
+     */
+    protected boolean isInScriptContext(ASTNode node) {
+        ASTNode parent = node.getParentNode();
+        while (parent != null) {
+            if (parent instanceof Script || parent instanceof ProcedureDefinition) {
+                return true;
+            }
+            parent = parent.getParentNode();
         }
         return false;
     }

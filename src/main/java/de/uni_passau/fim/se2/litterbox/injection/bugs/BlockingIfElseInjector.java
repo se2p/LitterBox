@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
@@ -102,16 +101,7 @@ public class BlockingIfElseInjector extends AbstractBugInjector {
                 || stmt instanceof RepeatForeverStmt;
     }
 
-    private boolean isInsideLoop(ASTNode node) {
-        ASTNode parent = node.getParentNode();
-        while (parent != null) {
-            if (parent instanceof LoopStmt) {
-                return true;
-            }
-            parent = parent.getParentNode();
-        }
-        return false;
-    }
+
 
     private boolean isNotLastStatement(ASTNode node) {
         ASTNode parent = node.getParentNode();

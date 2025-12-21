@@ -27,6 +27,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
+import static de.uni_passau.fim.se2.litterbox.injection.util.InjectionConstants.INVALID_COSTUME_NAME;
+import static de.uni_passau.fim.se2.litterbox.injection.util.InjectionConstants.INVALID_SOUND_NAME;
+
 /**
  * Injects MissingResource bug by replacing valid costume/sound names with invalid ones.
  * <p>
@@ -34,9 +37,6 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
  * actor's metadata. This injector replaces valid names with invalid ones to trigger detection.
  */
 public class MissingResourceInjector extends AbstractBugInjector {
-
-    private static final String INVALID_COSTUME_NAME = "invalid_costume_xyz";
-    private static final String INVALID_SOUND_NAME = "invalid_sound_xyz";
 
     @Override
     public IssueFinder getIssueFinder() {

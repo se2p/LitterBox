@@ -32,6 +32,8 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
+import static de.uni_passau.fim.se2.litterbox.injection.util.InjectionConstants.MIN_PARAMS_REQUIRED;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,8 +44,6 @@ import java.util.List;
  * while introducing logical ambiguity.
  */
 public class AmbiguousParameterNameUsedInjector extends AbstractBugInjector {
-
-    private static final int MIN_PARAMS_REQUIRED = 2;
 
     @Override
     public IssueFinder getIssueFinder() {

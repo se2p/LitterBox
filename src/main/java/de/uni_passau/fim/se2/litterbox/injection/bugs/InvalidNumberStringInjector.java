@@ -20,15 +20,12 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.InvalidNumberString;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
@@ -224,20 +221,7 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
         super.visit(node);
     }
 
-    /**
-     * Checks if the node is within a Script or ProcedureDefinition context.
-     * This prevents injecting bugs in variable initialization (SetStmtList).
-     */
-    private boolean isInScriptContext(ASTNode node) {
-        ASTNode parent = node.getParentNode();
-        while (parent != null) {
-            if (parent instanceof Script || parent instanceof ProcedureDefinition) {
-                return true;
-            }
-            parent = parent.getParentNode();
-        }
-        return false;
-    }
+
 
     /**
      * Creates an invalid number string by inserting extra decimal points.
