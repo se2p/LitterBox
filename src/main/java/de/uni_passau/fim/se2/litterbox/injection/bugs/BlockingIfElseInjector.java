@@ -23,13 +23,22 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugs.BlockingIfElse;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
+import java.util.List;
+
 /**
  * Injects the BlockingIfElse bug by appending StopThisScript to both branches.
+ * <p>
+ * Skips branches that already end with blocking statements (stop, delete clone, forever loop)
+ * since appending a stop block would have no effect.
  */
 public class BlockingIfElseInjector extends AbstractBugInjector {
 
@@ -45,17 +54,52 @@ public class BlockingIfElseInjector extends AbstractBugInjector {
         boolean isInsideLoop = isInsideLoop(node);
 
         if (isNotLastStatement || isInsideLoop) {
-            addMutation(node, clonedIfElse -> {
-                StopThisScript stopThen = new StopThisScript(NonDataBlockMetadata.emptyNonBlockMetadata());
-                clonedIfElse.getThenStmts().getStmts().add(stopThen);
-                stopThen.setParentNode(clonedIfElse.getThenStmts());
+            // Check if both branches are suitable for appending stop
+            boolean thenSuitable = isSuitableForStopAppend(node.getThenStmts());
+            boolean elseSuitable = isSuitableForStopAppend(node.getElseStmts());
 
-                StopThisScript stopElse = new StopThisScript(NonDataBlockMetadata.emptyNonBlockMetadata());
-                clonedIfElse.getElseStmts().getStmts().add(stopElse);
-                stopElse.setParentNode(clonedIfElse.getElseStmts());
-            });
+            // Only inject if at least one branch can be modified
+            if (thenSuitable || elseSuitable) {
+                addMutation(node, clonedIfElse -> {
+                    if (thenSuitable) {
+                        StopThisScript stopThen = new StopThisScript(NonDataBlockMetadata.emptyNonBlockMetadata());
+                        clonedIfElse.getThenStmts().getStmts().add(stopThen);
+                        stopThen.setParentNode(clonedIfElse.getThenStmts());
+                    }
+
+                    if (elseSuitable) {
+                        StopThisScript stopElse = new StopThisScript(NonDataBlockMetadata.emptyNonBlockMetadata());
+                        clonedIfElse.getElseStmts().getStmts().add(stopElse);
+                        stopElse.setParentNode(clonedIfElse.getElseStmts());
+                    }
+                });
+            }
         }
         super.visit(node);
+    }
+
+    /**
+     * Checks if a branch is suitable for appending a stop statement.
+     * Returns false if the branch already ends with a blocking statement.
+     */
+    private boolean isSuitableForStopAppend(StmtList stmtList) {
+        List<Stmt> stmts = stmtList.getStmts();
+        if (stmts.isEmpty()) {
+            return true; // Empty branch can receive a stop
+        }
+        Stmt lastStmt = stmts.getLast();
+        return !endsWithBlockingStatement(lastStmt);
+    }
+
+    /**
+     * Checks if the statement is a blocking statement (stop, delete clone, or forever loop).
+     * Appending a stop block after these would have no effect.
+     */
+    private boolean endsWithBlockingStatement(Stmt stmt) {
+        return stmt instanceof StopAll
+                || stmt instanceof StopThisScript
+                || stmt instanceof DeleteClone
+                || stmt instanceof RepeatForeverStmt;
     }
 
     private boolean isInsideLoop(ASTNode node) {
@@ -78,3 +122,4 @@ public class BlockingIfElseInjector extends AbstractBugInjector {
         return false;
     }
 }
+
