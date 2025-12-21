@@ -59,6 +59,11 @@ public class TerminatedLoopInjector extends AbstractBugInjector {
     }
 
     private void inject(StmtList originalList) {
+        // Skip empty loop bodies - adding a stop block makes no sense
+        if (originalList.getStmts().isEmpty()) {
+            return;
+        }
+
         // Skip if already ends with a terminating statement
         if (endsWithTerminatingStatement(originalList)) {
             return;
