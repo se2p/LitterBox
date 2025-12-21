@@ -27,17 +27,6 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     private Program originalProgram;
     protected final ScratchNodeFactory nodeFactory = new ScratchNodeFactory();
 
-    /**
-     * Generates a random identifier with the given prefix.
-     * Useful for breaking message/procedure name references.
-     *
-     * @param prefix The prefix for the generated name (e.g., "invalid_message", "invalid_call")
-     * @return A randomized identifier string
-     */
-    protected String generateRandomIdentifier(String prefix) {
-        return prefix + "_" + UUID.randomUUID().toString().substring(0, 8);
-    }
-
     @Override
     public List<Program> inject(Program program) {
         this.originalProgram = program;
@@ -198,45 +187,6 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
                 newStmt.setParentNode(stmtList);
             }
         }
-    }
-
-    /**
-     * Checks if the AST rooted at the given node contains any instance of the specified type.
-     *
-     * @param root The root node to search from
-     * @param type The class type to search for
-     * @param <T>  The type of node to find
-     * @return true if at least one instance is found
-     */
-    protected <T extends ASTNode> boolean containsNodeType(ASTNode root, Class<T> type) {
-        if (type.isInstance(root)) {
-            return true;
-        }
-        for (ASTNode child : root.getChildren()) {
-            if (containsNodeType(child, type)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Checks if the given node is inside a script with a Never event (dead code).
-     * Scripts with Never events are detached/orphaned and will never execute.
-     * Injecting bugs in such code is useless since the bugs won't manifest.
-     *
-     * @param node The node to check
-     * @return true if the node is inside a script with a Never event
-     */
-    protected boolean isInDeadCode(ASTNode node) {
-        ASTNode current = node;
-        while (current != null) {
-            if (current instanceof Script script) {
-                return script.getEvent() instanceof Never;
-            }
-            current = current.getParentNode();
-        }
-        return false;
     }
 
     /**
