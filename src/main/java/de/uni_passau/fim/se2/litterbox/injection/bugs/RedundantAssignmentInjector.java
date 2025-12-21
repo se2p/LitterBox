@@ -1,0 +1,94 @@
+package de.uni_passau.fim.se2.litterbox.injection.bugs;
+
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.RedundantAssignment;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+
+/**
+ * Injects the {@link RedundantAssignment} bug.
+ * <p>
+ * This injector inserts a duplicate assignment/set statement immediately after
+ * an existing one. This makes the original assignment redundant since it's
+ * immediately overwritten.
+ * <p>
+ * Supports: SetVariableTo, SetXTo, SetYTo, GoToPosXY, PointInDirection,
+ * SetSizeTo, SetGraphicEffectTo, SetSoundEffectTo, SetVolumeTo, SwitchCostumeTo,
+ * SwitchBackdrop, SwitchBackdropAndWait, GoToPos, PointTowards.
+ * <p>
+ * Transformation:
+ * <pre>
+ * Before: [set x to (100)]
+ * After:  [set x to (100), set x to (100)]  &lt;-- first is now redundant!
+ * </pre>
+ */
+public class RedundantAssignmentInjector extends AbstractBugInjector {
+
+    @Override
+    public IssueFinder getIssueFinder() {
+        return new RedundantAssignment();
+    }
+
+    @Override
+    public void visit(StmtList stmtList) {
+        for (int i = 0; i < stmtList.getStmts().size(); i++) {
+            Stmt stmt = stmtList.getStmts().get(i);
+            if (isDuplicatable(stmt)) {
+                addDuplicateStatementMutation(stmtList, i);
+            }
+        }
+        super.visit(stmtList);
+    }
+
+    /**
+     * Checks if a statement is one of the types we can duplicate.
+     */
+    private boolean isDuplicatable(Stmt stmt) {
+        return stmt instanceof SetVariableTo
+                || stmt instanceof SetXTo
+                || stmt instanceof SetYTo
+                || stmt instanceof GoToPosXY
+                || stmt instanceof PointInDirection
+                || stmt instanceof SetSizeTo
+                || stmt instanceof SetGraphicEffectTo
+                || stmt instanceof SetSoundEffectTo
+                || stmt instanceof SetVolumeTo
+                || stmt instanceof SwitchCostumeTo
+                || stmt instanceof SwitchBackdrop
+                || stmt instanceof SwitchBackdropAndWait
+                || stmt instanceof GoToPos
+                || stmt instanceof PointTowards;
+    }
+
+    /**
+     * Inserts a duplicate of the statement immediately after it.
+     *
+     * @param stmtList the statement list containing the statement
+     * @param index    the index of the statement to duplicate
+     */
+    private void addDuplicateStatementMutation(StmtList stmtList, int index) {
+        addMutation(stmtList, clonedList -> {
+            if (index < clonedList.getStmts().size()) {
+                Stmt original = clonedList.getStmts().get(index);
+
+                // Clone the statement to create a duplicate
+                Stmt duplicate = (Stmt) original.accept(new CloneVisitor());
+                duplicate.setParentNode(clonedList);
+
+                // Insert the duplicate immediately after the original
+                clonedList.getStmts().add(index + 1, duplicate);
+            }
+        });
+    }
+}

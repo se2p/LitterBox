@@ -19,6 +19,8 @@
 package de.uni_passau.fim.se2.litterbox;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.injection.InjectorAnalyzer;
+import de.uni_passau.fim.se2.litterbox.injection.InjectorTool;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
@@ -40,6 +42,7 @@ import java.util.concurrent.Callable;
         subcommands = {
                 // general commands
                 Main.CheckProgramsSubcommand.class,
+                Main.InjectSubcommand.class,
                 LlmSubcommand.class,
                 Main.DetectorsSubcommand.class,
                 Main.FeatureSubcommand.class,
@@ -150,8 +153,6 @@ public class Main implements Callable<Integer> {
 
         protected abstract FileAnalyzer<?> getAnalyzer() throws Exception;
 
-
-
         /**
          * Override to implement custom parameter validation before the analyzer is run.
          *
@@ -163,7 +164,6 @@ public class Main implements Callable<Integer> {
 
         @Override
         public final Integer call() throws Exception {
-
 
             validateParams();
 
@@ -218,7 +218,7 @@ public class Main implements Callable<Integer> {
         @CommandLine.Option(
                 names = {"-d", "--detectors"},
                 description = "All detectors or detector groups you want to run, separated by commas. "
-                    + "Prefix group names or names of individual detectors with '-' to exclude them.",
+                        + "Prefix group names or names of individual detectors with '-' to exclude them.",
                 split = ",",
                 defaultValue = "default",
                 paramLabel = "<detector>"
@@ -284,6 +284,34 @@ public class Main implements Callable<Integer> {
             }
 
             return analyzer;
+        }
+    }
+
+    @CommandLine.Command(
+            name = "inject",
+            description = "Inject bugs into Scratch projects."
+    )
+    static class InjectSubcommand extends LitterBoxSubcommand {
+        @CommandLine.Option(
+                names = {"-i", "--injectors"},
+                description = "Comma-separated list of injectors to run (or 'all').",
+                defaultValue = "all"
+        )
+        String injectors;
+
+        @Override
+        protected void validateParams() throws CommandLine.ParameterException {
+            requireProjectPath();
+            requireOutputPath();
+        }
+
+        @Override
+        protected InjectorAnalyzer getAnalyzer() {
+            return new InjectorAnalyzer(
+                    commonOptions.outputPath,
+                    commonOptions.deleteProject,
+                    InjectorTool.getInjectors(injectors)
+            );
         }
     }
 
@@ -386,8 +414,6 @@ public class Main implements Callable<Integer> {
             description = "Refactor specified Scratch projects."
     )
     static class RefactoringSubcommand extends LitterBoxSubcommand {
-
-
 
         @Override
         protected void validateParams() throws CommandLine.ParameterException {

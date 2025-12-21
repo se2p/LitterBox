@@ -1,0 +1,91 @@
+package de.uni_passau.fim.se2.litterbox.injection.bugs;
+
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideLoop;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
+public class ForeverInsideLoopInjectorTest implements JsonTest {
+
+    @Test
+    public void testForeverInsideLoopInjector() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                repeat (10)
+                  move (10) steps
+                end
+                say [hello]""";
+
+        Program program = parseScratchBlocks(script);
+        ForeverInsideLoopInjector injector = new ForeverInsideLoopInjector();
+        List<Program> injected = injector.inject(program);
+
+        Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
+
+        ForeverInsideLoop detector = new ForeverInsideLoop();
+        for (Program mutated : injected) {
+            Set<Issue> issues = detector.check(mutated);
+            Assertions.assertFalse(issues.isEmpty(), "ForeverInsideLoop detector should find the injected bug in all injected programs");
+        }
+    }
+
+    @Test
+    public void testRepeatForeverInsertedInLoop() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                repeat (10)
+                  move (10) steps
+                end
+                say [done]""";
+
+        Program program = parseScratchBlocks(script);
+        ForeverInsideLoopInjector injector = new ForeverInsideLoopInjector();
+        List<Program> injected = injector.inject(program);
+
+        Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
+        Program mutated = injected.getFirst();
+
+        // Verify: forever loop should be inserted inside the repeat loop
+        String result = de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor.of(mutated);
+        Assertions.assertTrue(result.contains("repeat (10)" + System.lineSeparator() + "forever"),
+                "Forever loop should be inserted inside repeat loop. Got:\n" + result);
+    }
+
+    @Test
+    public void testNoLoopNoInjection() throws IOException, ParsingException {
+        // Script without any loop - should not inject
+        String script = """
+                when green flag clicked
+                move (10) steps
+                say [hello]""";
+
+        Program program = parseScratchBlocks(script);
+        ForeverInsideLoopInjector injector = new ForeverInsideLoopInjector();
+        List<Program> injected = injector.inject(program);
+
+        Assertions.assertTrue(injected.isEmpty(), "Should not inject without a loop");
+    }
+
+    @Test
+    public void testNoSuccessorNoInjection() throws IOException, ParsingException {
+        // Loop is the last statement - injection should not happen (bug would have no effect)
+        String script = """
+                when green flag clicked
+                repeat (10)
+                  move (10) steps
+                end""";
+
+        Program program = parseScratchBlocks(script);
+        ForeverInsideLoopInjector injector = new ForeverInsideLoopInjector();
+        List<Program> injected = injector.inject(program);
+
+        Assertions.assertTrue(injected.isEmpty(), "Should not inject when loop is the last statement (no successor)");
+    }
+}

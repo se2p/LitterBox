@@ -1,0 +1,238 @@
+/*
+ * Copyright (C) 2019-2024 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
+package de.uni_passau.fim.se2.litterbox.ast.visitor;
+
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Add;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Div;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Minus;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mod;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mult;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PickRandom;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Round;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
+
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.function.Function;
+
+/**
+ * A CloneVisitor that can apply transformations to specific nodes during cloning.
+ * <p>
+ * Unlike using setter methods (which break immutability), this visitor creates
+ * new node instances with transformed children, maintaining the immutability
+ * of the original AST.
+ * <p>
+ * Usage:
+ * <pre>
+ * TransformingCloneVisitor visitor = new TransformingCloneVisitor();
+ * visitor.register(originalMoveSteps, node -> 
+ *     new MoveSteps(newStepsExpr, node.getMetadata()));
+ * Program mutated = visitor.apply(originalProgram);
+ * </pre>
+ */
+public class TransformingCloneVisitor extends CloneVisitor {
+
+    private final Map<ASTNode, Function<ASTNode, ASTNode>> transformations = new IdentityHashMap<>();
+
+    /**
+     * Registers a transformation for a specific node.
+     * When this node is visited during cloning, the transformation function
+     * will be applied instead of the standard cloning.
+     *
+     * @param target The original node to transform
+     * @param transformation Function that takes the original node and returns the replacement
+     * @param <T> Type of the node
+     */
+    public <T extends ASTNode> void register(T target, Function<T, ASTNode> transformation) {
+        @SuppressWarnings("unchecked")
+        Function<ASTNode, ASTNode> cast = node -> transformation.apply((T) node);
+        transformations.put(target, cast);
+    }
+
+    /**
+     * Checks if a node has a registered transformation.
+     */
+    protected boolean hasTransformation(ASTNode node) {
+        return transformations.containsKey(node);
+    }
+
+    /**
+     * Applies the registered transformation to a node.
+     */
+    @SuppressWarnings("unchecked")
+    protected <T extends ASTNode> T applyTransformation(T node) {
+        return (T) transformations.get(node).apply(node);
+    }
+
+    // --- Motion Blocks ---
+
+    @Override
+    public ASTNode visit(MoveSteps node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(SetXTo node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(SetYTo node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(PointInDirection node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+
+    // --- Timing and Variable Blocks ---
+
+    @Override
+    public ASTNode visit(WaitSeconds node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(SetVariableTo node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(ChangeVariableBy node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+
+    // --- Comparison Expressions ---
+
+    @Override
+    public ASTNode visit(Equals node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(LessThan node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(BiggerThan node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+
+    // --- Arithmetic Expressions ---
+
+    @Override
+    public ASTNode visit(Add node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(Minus node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(Mult node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(Div node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(Mod node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(PickRandom node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(Round node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+}
+

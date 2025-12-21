@@ -1,0 +1,113 @@
+package de.uni_passau.fim.se2.litterbox.injection.bugs;
+
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.AmbiguousParameterNameUsed;
+import de.uni_passau.fim.se2.litterbox.ast.builder.ProcedureBuilder;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Injects ambiguous parameter naming by renaming the second used parameter
+ * to match the first used parameter's name in a procedure definition.
+ * All references in the body are updated to maintain syntactic validity
+ * while introducing logical ambiguity.
+ */
+public class AmbiguousParameterNameUsedInjector extends AbstractBugInjector {
+
+    private static final int MIN_PARAMS_REQUIRED = 2;
+
+    @Override
+    public IssueFinder getIssueFinder() {
+        return new AmbiguousParameterNameUsed();
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        List<ParameterDefinition> params = node.getParameterDefinitionList().getParameterDefinitions();
+
+        if (params.size() >= MIN_PARAMS_REQUIRED) {
+            List<ParameterDefinition> usedParams = findUsedParameters(node, params);
+
+            if (usedParams.size() >= MIN_PARAMS_REQUIRED) {
+                String nameToKeep = usedParams.get(0).getIdent().getName();
+                String nameToReplace = usedParams.get(1).getIdent().getName();
+                int indexToModify = params.indexOf(usedParams.get(1));
+
+                addMutation(node, clonedDef -> applyParameterRename(clonedDef, indexToModify, nameToReplace, nameToKeep));
+            }
+        }
+        super.visit(node);
+    }
+
+    private List<ParameterDefinition> findUsedParameters(ProcedureDefinition node, List<ParameterDefinition> params) {
+        List<ParameterDefinition> used = new ArrayList<>();
+        for (ParameterDefinition param : params) {
+            if (isParameterUsed(node, param.getIdent().getName())) {
+                used.add(param);
+            }
+        }
+        return used;
+    }
+
+    private boolean isParameterUsed(ProcedureDefinition node, String paramName) {
+        boolean[] found = {false};
+        node.accept(new ScratchVisitor() {
+            @Override
+            public void visit(Parameter param) {
+                if (param.getName().getName().equals(paramName)) {
+                    found[0] = true;
+                }
+            }
+        });
+        return found[0];
+    }
+
+    private void applyParameterRename(ProcedureDefinition def, int paramIndex, String oldName, String newName) {
+        // Update parameter definition
+        List<ParameterDefinition> params = def.getParameterDefinitionList().getParameterDefinitions();
+        ParameterDefinition oldParam = params.get(paramIndex);
+        ParameterDefinition renamedParam = new ParameterDefinition(
+                new StrId(newName), oldParam.getType(), oldParam.getMetadata());
+        renamedParam.setParentNode(def.getParameterDefinitionList());
+        params.set(paramIndex, renamedParam);
+
+        // Rename all references in the body
+        StmtList newBody = new ParameterRenamer(oldName, newName).apply(def.getStmtList());
+
+        // Create and replace the procedure using builder
+        ProcedureDefinition newDef = new ProcedureBuilder().from(def).withBody(newBody).build();
+
+        if (def.getParentNode() instanceof ProcedureDefinitionList parentList) {
+            ProcedureBuilder.replaceIn(parentList, def, newDef);
+        }
+    }
+
+    private static class ParameterRenamer extends CloneVisitor {
+        private final String oldName;
+        private final String newName;
+
+        ParameterRenamer(String oldName, String newName) {
+            this.oldName = oldName;
+            this.newName = newName;
+        }
+
+        @Override
+        public ASTNode visit(Parameter node) {
+            if (node.getName().getName().equals(oldName)) {
+                return new Parameter(new StrId(newName), node.getType(), node.getMetadata());
+            }
+            return super.visit(node);
+        }
+    }
+}

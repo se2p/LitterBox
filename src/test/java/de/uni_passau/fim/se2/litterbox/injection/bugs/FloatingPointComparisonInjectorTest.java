@@ -1,0 +1,154 @@
+package de.uni_passau.fim.se2.litterbox.injection.bugs;
+
+import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.FloatingPointComparison;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class FloatingPointComparisonInjectorTest implements JsonTest {
+
+    @Test
+    public void testEqualsWithSafeOperandsReplacedByUnsafe() throws IOException, ParsingException {
+        // Script with unsafe operands (timer, mouse x) that can be collected,
+        // and a safe Equals comparison that should be mutated
+        String script = """
+                when green flag clicked
+                set [myvar v] to (timer)
+                set [myvar v] to (mouse x)
+                if <(1) = (1)> then
+                    move (10) steps
+                end
+                """;
+
+        Program program = parseScratchBlocks(script);
+
+        // Verify original has no issue
+        FloatingPointComparison detector = new FloatingPointComparison();
+        assertTrue(detector.check(program).isEmpty(), "Original should have no FloatingPointComparison bug");
+
+        // Inject bug
+        FloatingPointComparisonInjector injector = new FloatingPointComparisonInjector();
+        List<Program> injected = injector.inject(program);
+
+        assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
+        Program mutated = injected.getFirst();
+
+        // Verify: comparison should now use unsafe operands (timer and mouse x)
+        String result = ScratchBlocksVisitor.of(mutated);
+        assertTrue(result.contains("<(timer) = (mouse x)>"),
+                "Comparison should use unsafe operands from the program. Got:\n" + result);
+
+        // Verify detection
+        Set<Issue> issues = detector.check(mutated);
+        assertFalse(issues.isEmpty(), "Detector should find FloatingPointComparison bug");
+    }
+
+    @Test
+    public void testLessThanWithUnsafeOperandsConvertedToEquals() throws IOException, ParsingException {
+        // Script with LessThan comparison using two unsafe operands
+        String script = """
+                when green flag clicked
+                if <(timer) < (mouse x)> then
+                    move (10) steps
+                end
+                """;
+
+        Program program = parseScratchBlocks(script);
+
+        // Original has no FloatingPointComparison bug (LessThan is safe)
+        FloatingPointComparison detector = new FloatingPointComparison();
+        assertTrue(detector.check(program).isEmpty(), "Original should have no bug");
+
+        // Inject bug
+        FloatingPointComparisonInjector injector = new FloatingPointComparisonInjector();
+        List<Program> injected = injector.inject(program);
+
+        assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
+        Program mutated = injected.getFirst();
+
+        // Verify: LessThan should be converted to Equals
+        String result = ScratchBlocksVisitor.of(mutated);
+        assertTrue(result.contains("<(timer) = (mouse x)>"),
+                "LessThan should be converted to Equals. Got:\n" + result);
+
+        // Verify detection
+        assertFalse(detector.check(mutated).isEmpty(), "Detector should find bug");
+    }
+
+    @Test
+    public void testBiggerThanWithUnsafeOperandsConvertedToEquals() throws IOException, ParsingException {
+        // Script with BiggerThan comparison using two unsafe operands
+        String script = """
+                when green flag clicked
+                if <(x position) > (y position)> then
+                    move (10) steps
+                end
+                """;
+
+        Program program = parseScratchBlocks(script);
+
+        // Original has no FloatingPointComparison bug (BiggerThan is safe)
+        FloatingPointComparison detector = new FloatingPointComparison();
+        assertTrue(detector.check(program).isEmpty(), "Original should have no bug");
+
+        // Inject bug
+        FloatingPointComparisonInjector injector = new FloatingPointComparisonInjector();
+        List<Program> injected = injector.inject(program);
+
+        assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
+        Program mutated = injected.getFirst();
+
+        // Verify: BiggerThan should be converted to Equals
+        String result = ScratchBlocksVisitor.of(mutated);
+        assertTrue(result.contains("<(x position) = (y position)>"),
+                "BiggerThan should be converted to Equals. Got:\n" + result);
+
+        // Verify detection
+        assertFalse(detector.check(mutated).isEmpty(), "Detector should find bug");
+    }
+
+    @Test
+    public void testNoInjectionWithoutUnsafeOperands() throws IOException, ParsingException {
+        // Script with only safe operands - cannot inject
+        String script = """
+                when green flag clicked
+                if <(1) = (2)> then
+                    move (10) steps
+                end
+                """;
+
+        Program program = parseScratchBlocks(script);
+        FloatingPointComparisonInjector injector = new FloatingPointComparisonInjector();
+        List<Program> injected = injector.inject(program);
+
+        assertTrue(injected.isEmpty(), "Should not inject without unsafe operands in program");
+    }
+
+    @Test
+    public void testNoInjectionForSafeLessThan() throws IOException, ParsingException {
+        // LessThan with one safe operand - should not convert to Equals
+        String script = """
+                when green flag clicked
+                if <(1) < (timer)> then
+                    move (10) steps
+                end
+                """;
+
+        Program program = parseScratchBlocks(script);
+        FloatingPointComparisonInjector injector = new FloatingPointComparisonInjector();
+        List<Program> injected = injector.inject(program);
+
+        // Should not inject because one operand is safe (literal 1)
+        assertTrue(injected.isEmpty(),
+                "Should not convert LessThan to Equals when one operand is safe");
+    }
+}
