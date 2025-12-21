@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -45,11 +46,11 @@ public class IllegalParameterRefactorInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         IllegalParameterRefactorInjector injector = new IllegalParameterRefactorInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertFalse(injected.isEmpty(), "Should inject bug");
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify mutation via string output
         // Note: We can't use the detector on the mutated program because the detector

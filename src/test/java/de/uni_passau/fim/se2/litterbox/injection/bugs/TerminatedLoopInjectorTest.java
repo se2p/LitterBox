@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.TerminatedLoop;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -43,10 +44,10 @@ public class TerminatedLoopInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         TerminatedLoopInjector injector = new TerminatedLoopInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         String result = ScratchBlocksVisitor.of(mutated);
 
@@ -70,10 +71,10 @@ public class TerminatedLoopInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         TerminatedLoopInjector injector = new TerminatedLoopInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject for repeat loop");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         String result = ScratchBlocksVisitor.of(mutated);
 
@@ -92,7 +93,7 @@ public class TerminatedLoopInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         TerminatedLoopInjector injector = new TerminatedLoopInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertTrue(injected.isEmpty(), "Should not inject without a loop");
     }
@@ -109,7 +110,7 @@ public class TerminatedLoopInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         TerminatedLoopInjector injector = new TerminatedLoopInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertTrue(injected.isEmpty(),
                 "Should not inject when loop already ends with stop block");

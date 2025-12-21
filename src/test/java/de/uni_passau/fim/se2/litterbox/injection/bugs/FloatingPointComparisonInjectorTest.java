@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.FloatingPointComparison;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Test;
 
@@ -55,10 +56,10 @@ public class FloatingPointComparisonInjectorTest implements JsonTest {
 
         // Inject bug
         FloatingPointComparisonInjector injector = new FloatingPointComparisonInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify: comparison should now use unsafe operands (timer and mouse x)
         String result = ScratchBlocksVisitor.of(mutated);
@@ -88,10 +89,10 @@ public class FloatingPointComparisonInjectorTest implements JsonTest {
 
         // Inject bug
         FloatingPointComparisonInjector injector = new FloatingPointComparisonInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify: LessThan should be converted to Equals
         String result = ScratchBlocksVisitor.of(mutated);
@@ -120,10 +121,10 @@ public class FloatingPointComparisonInjectorTest implements JsonTest {
 
         // Inject bug
         FloatingPointComparisonInjector injector = new FloatingPointComparisonInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify: BiggerThan should be converted to Equals
         String result = ScratchBlocksVisitor.of(mutated);
@@ -146,7 +147,7 @@ public class FloatingPointComparisonInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         FloatingPointComparisonInjector injector = new FloatingPointComparisonInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertTrue(injected.isEmpty(), "Should not inject without unsafe operands in program");
     }
@@ -163,7 +164,7 @@ public class FloatingPointComparisonInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         FloatingPointComparisonInjector injector = new FloatingPointComparisonInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         // Should not inject because one operand is safe (literal 1)
         assertTrue(injected.isEmpty(),

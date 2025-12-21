@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForever
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,10 +67,10 @@ public class KeySetPositionInjector extends AbstractBugInjector {
     }
 
     @Override
-    public List<Program> inject(Program program) {
+    public List<InjectionResult> inject(Program program) {
         ExtractingCloneVisitor visitor = new ExtractingCloneVisitor();
         Program cloned = (Program) program.accept(visitor);
-        return Collections.singletonList(cloned);
+        return Collections.singletonList(new InjectionResult(cloned, "", ""));
     }
 
     /**

@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,10 +48,10 @@ public class IllegalParameterRefactorInjector extends AbstractBugInjector {
     }
 
     @Override
-    public List<Program> inject(Program program) {
+    public List<InjectionResult> inject(Program program) {
         CustomCloneVisitor visitor = new CustomCloneVisitor();
         Program cloned = (Program) program.accept(visitor);
-        return Collections.singletonList(cloned);
+        return Collections.singletonList(new InjectionResult(cloned, "", ""));
     }
 
     private static class CustomCloneVisitor extends CloneVisitor {

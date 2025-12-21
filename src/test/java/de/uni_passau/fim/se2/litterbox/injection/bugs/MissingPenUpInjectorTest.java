@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -45,10 +46,10 @@ public class MissingPenUpInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingPenUpInjector injector = new MissingPenUpInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify via scratchblocks output
         String result = ScratchBlocksVisitor.of(mutated);
@@ -77,11 +78,11 @@ public class MissingPenUpInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingPenUpInjector injector = new MissingPenUpInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         // Should create one mutation that removes ALL pen up statements
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify via scratchblocks output - ALL pen up removed, pen down remains
         String result = ScratchBlocksVisitor.of(mutated);
@@ -113,7 +114,7 @@ public class MissingPenUpInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingPenUpInjector injector = new MissingPenUpInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertTrue(injected.isEmpty(), "Should not inject without pen down");
     }

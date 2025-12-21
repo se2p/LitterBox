@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingResource;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -43,13 +44,13 @@ public class MissingResourceInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingResourceInjector injector = new MissingResourceInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         // Verification: Check detector finds the issue
         MissingResource detector = new MissingResource();
-        for (Program mutated : injected) {
+        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "Detector should find MissingResource issue");
         }
@@ -66,13 +67,13 @@ public class MissingResourceInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingResourceInjector injector = new MissingResourceInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         // Verification: Check detector finds the issue
         MissingResource detector = new MissingResource();
-        for (Program mutated : injected) {
+        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "Detector should find MissingResource issue for sound");
         }

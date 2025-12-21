@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageNeverSent;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -47,13 +48,13 @@ public class MessageNeverSentInjectorTest implements JsonTest {
 
         // Inject
         MessageNeverSentInjector injector = new MessageNeverSentInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
         Assertions.assertFalse(injected.isEmpty(), "Should have injected at least one bug");
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         MessageNeverSent detector = new MessageNeverSent();
-        for (Program programToCheck : injected) {
-            Set<Issue> issues = detector.check(programToCheck);
+        for (InjectionResult result : injected) {
+            Set<Issue> issues = detector.check(result.mutatedProgram());
             Assertions.assertFalse(issues.isEmpty(), "MessageNeverSent detector should find the injected bug in all injected programs");
         }
     }
@@ -76,14 +77,14 @@ public class MessageNeverSentInjectorTest implements JsonTest {
 
         // Inject
         MessageNeverSentInjector injector = new MessageNeverSentInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
         Assertions.assertFalse(injected.isEmpty(), "Should have injected at least one bug");
         // Should still be 1 mutation (one per unique message)
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program (all broadcasts for same message changed together)");
 
         // Check that the bug finder detects the injected bug
         MessageNeverSent detector = new MessageNeverSent();
-        for (Program mutated : injected) {
+        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(),
                     "MessageNeverSent detector should find the injected bug when ALL broadcast blocks are changed");

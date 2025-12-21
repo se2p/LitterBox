@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.RecursiveCloning;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -44,10 +45,10 @@ public class RecursiveCloningInjectorTest implements JsonTest {
 
         // Inject
         RecursiveCloningInjector injector = new RecursiveCloningInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify mutation using scratchblocks output
         String result = ScratchBlocksVisitor.of(mutated);

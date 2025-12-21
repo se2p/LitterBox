@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class ImmediateDeleteCloneAfterBroadcastInjector extends AbstractBugInjec
     }
 
     @Override
-    public List<Program> inject(Program program) {
+    public List<InjectionResult> inject(Program program) {
         // Check prerequisites
         hasCreateClone = false;
         hasStartedAsClone = false;

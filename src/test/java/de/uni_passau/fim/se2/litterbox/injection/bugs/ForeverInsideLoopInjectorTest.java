@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideLoop;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -43,12 +44,12 @@ public class ForeverInsideLoopInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         ForeverInsideLoopInjector injector = new ForeverInsideLoopInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         ForeverInsideLoop detector = new ForeverInsideLoop();
-        for (Program mutated : injected) {
+        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "ForeverInsideLoop detector should find the injected bug in all injected programs");
         }
@@ -65,10 +66,10 @@ public class ForeverInsideLoopInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         ForeverInsideLoopInjector injector = new ForeverInsideLoopInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify: forever loop should be inserted inside the repeat loop
         String result = de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor.of(mutated);
@@ -86,7 +87,7 @@ public class ForeverInsideLoopInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         ForeverInsideLoopInjector injector = new ForeverInsideLoopInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertTrue(injected.isEmpty(), "Should not inject without a loop");
     }
@@ -102,7 +103,7 @@ public class ForeverInsideLoopInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         ForeverInsideLoopInjector injector = new ForeverInsideLoopInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertTrue(injected.isEmpty(), "Should not inject when loop is the last statement (no successor)");
     }

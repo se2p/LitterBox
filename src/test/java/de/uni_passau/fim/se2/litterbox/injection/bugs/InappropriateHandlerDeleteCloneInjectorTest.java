@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.InappropriateHandlerDeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Test;
 
@@ -54,10 +55,10 @@ public class InappropriateHandlerDeleteCloneInjectorTest implements JsonTest {
 
         // Inject
         InappropriateHandlerDeleteCloneInjector injector = new InappropriateHandlerDeleteCloneInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify: DeleteClone should be added at the end of GreenFlag script
         String result = ScratchBlocksVisitor.of(mutated);
@@ -82,7 +83,7 @@ public class InappropriateHandlerDeleteCloneInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         InappropriateHandlerDeleteCloneInjector injector = new InappropriateHandlerDeleteCloneInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertTrue(injected.isEmpty(), "Should not inject without CreateClone");
     }
@@ -98,7 +99,7 @@ public class InappropriateHandlerDeleteCloneInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         InappropriateHandlerDeleteCloneInjector injector = new InappropriateHandlerDeleteCloneInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertTrue(injected.isEmpty(), "Should not inject without StartedAsClone");
     }
@@ -113,7 +114,7 @@ public class InappropriateHandlerDeleteCloneInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         InappropriateHandlerDeleteCloneInjector injector = new InappropriateHandlerDeleteCloneInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertTrue(injected.isEmpty(), "Should not inject without both prerequisites");
     }

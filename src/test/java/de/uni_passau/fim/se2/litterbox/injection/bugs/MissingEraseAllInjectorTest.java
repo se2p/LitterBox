@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingEraseAll;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenClearStmt;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -47,10 +48,10 @@ public class MissingEraseAllInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingEraseAllInjector injector = new MissingEraseAllInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verification: Check detector
         MissingEraseAll detector = new MissingEraseAll();
@@ -70,7 +71,7 @@ public class MissingEraseAllInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingEraseAllInjector injector = new MissingEraseAllInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         // Even though PenDown exists, no EraseAll to remove
         Assertions.assertTrue(injected.isEmpty(), "Should not inject when there is no erase all to remove");
@@ -88,7 +89,7 @@ public class MissingEraseAllInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingEraseAllInjector injector = new MissingEraseAllInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         // Without PenDown, the bug isn't meaningful
         Assertions.assertTrue(injected.isEmpty(), "Should not inject without pen down (precondition not met)");
@@ -111,11 +112,11 @@ public class MissingEraseAllInjectorTest implements JsonTest {
         Assertions.assertTrue(hasPenClear(program), "Original should have erase all");
 
         MissingEraseAllInjector injector = new MissingEraseAllInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         // Should inject exactly 1 bug program (removing BOTH erase all blocks)
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify ALL erase all blocks are removed
         Assertions.assertFalse(hasPenClear(mutated), "All erase all blocks should be removed");

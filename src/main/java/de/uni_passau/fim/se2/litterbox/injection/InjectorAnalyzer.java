@@ -19,48 +19,93 @@
 package de.uni_passau.fim.se2.litterbox.injection;
 
 import de.uni_passau.fim.se2.litterbox.analytics.FileAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
+import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
  * Analyzer that runs BugInjectors on Scratch programs and saves the mutated versions.
  */
-public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Program>>> {
+public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<InjectionResult>>> {
 
     private static final Logger log = Logger.getLogger(InjectorAnalyzer.class.getName());
 
+    private static final List<String> CSV_HEADERS = List.of(
+            "original_project",
+            "bug_finder",
+            "mutated_project",
+            "original_bug_count",
+            "mutated_bug_count",
+            "original_script",
+            "mutated_script"
+    );
+
+    private final Path csvPath;
+    private CSVPrinter csvPrinter;
+
     public InjectorAnalyzer(Path output, boolean delete, List<BugInjector> injectors) {
+        this(output, delete, injectors, null);
+    }
+
+    public InjectorAnalyzer(Path output, boolean delete, List<BugInjector> injectors, Path csvPath) {
         super(new InjectorProgramAnalyzer(injectors), output, delete);
+        this.csvPath = csvPath;
     }
 
     @Override
-    protected void writeResultToFile(Path projectFile, Program program, Map<BugInjector, List<Program>> result) throws IOException {
+    protected void beginAnalysis() throws IOException {
+        super.beginAnalysis();
+        if (csvPath != null) {
+            csvPrinter = CSVPrinterFactory.getNewPrinter(csvPath, CSV_HEADERS);
+        }
+    }
+
+    @Override
+    protected void endAnalysis() throws IOException {
+        if (csvPrinter != null) {
+            csvPrinter.close();
+        }
+        super.endAnalysis();
+    }
+
+    @Override
+    protected void writeResultToFile(Path projectFile, Program program, Map<BugInjector, List<InjectionResult>> result) throws IOException {
         String originalExt = FilenameUtils.getExtension(projectFile.toString());
+        String originalProjectName = program.getIdent().getName();
 
         int totalInjected = 0;
-        for (Map.Entry<BugInjector, List<Program>> entry : result.entrySet()) {
+        for (Map.Entry<BugInjector, List<InjectionResult>> entry : result.entrySet()) {
             BugInjector injector = entry.getKey();
-            List<Program> mutatedPrograms = entry.getValue();
+            List<InjectionResult> injectionResults = entry.getValue();
 
             int index = 0;
-            for (Program mutated : mutatedPrograms) {
+            for (InjectionResult injectionResult : injectionResults) {
+                Program mutated = injectionResult.mutatedProgram();
                 // Suffix: _BugName_Index
                 String suffix = "_" + injector.getName() + "_" + index;
+                String mutatedProjectName = originalProjectName + suffix;
 
                 if (originalExt.equalsIgnoreCase("json")) {
                     JSONFileCreator.writeJsonFromProgram(mutated, output, suffix);
                 } else {
                     JSONFileCreator.writeSb3FromProgram(mutated, output, projectFile.toFile(), suffix);
                 }
+
+                // Write to CSV if enabled
+                if (csvPrinter != null) {
+                    writeCSVRow(program, mutated, injector, mutatedProjectName, injectionResult);
+                }
+
                 index++;
                 totalInjected++;
             }
@@ -68,25 +113,51 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Program
         log.info("Injected " + totalInjected + " bugs into " + projectFile.getFileName());
     }
 
+    private void writeCSVRow(
+            Program original,
+            Program mutated,
+            BugInjector injector,
+            String mutatedProjectName,
+            InjectionResult injectionResult
+    ) throws IOException {
+        IssueFinder finder = injector.getIssueFinder();
+        String originalProjectName = original.getIdent().getName();
+
+        // Count bugs
+        Set<Issue> originalIssues = finder.check(original);
+        Set<Issue> mutatedIssues = finder.check(mutated);
+
+        csvPrinter.printRecord(
+                originalProjectName,
+                finder.getName(),
+                mutatedProjectName,
+                originalIssues.size(),
+                mutatedIssues.size(),
+                injectionResult.originalScriptScratchBlocks(),
+                injectionResult.mutatedScriptScratchBlocks()
+        );
+        csvPrinter.flush();
+    }
+
     private record InjectorProgramAnalyzer(
-            List<BugInjector> injectors) implements ProgramAnalyzer<Map<BugInjector, List<Program>>> {
+            List<BugInjector> injectors) implements ProgramAnalyzer<Map<BugInjector, List<InjectionResult>>> {
 
         @Override
-            public Map<BugInjector, List<Program>> analyze(Program program) {
-                Map<BugInjector, List<Program>> result = new LinkedHashMap<>();
-                for (BugInjector injector : injectors) {
-                    try {
-                        // Injector is responsible for cloning the program as needed.
-                        List<Program> injected = injector.inject(program);
-                        if (!injected.isEmpty()) {
-                            result.put(injector, injected);
-                        }
-                    } catch (Exception e) {
-                        log.severe("Injector " + injector.getName() + " failed on project " + program.getIdent().getName() + ": " + e.getMessage());
-                        e.printStackTrace();
+        public Map<BugInjector, List<InjectionResult>> analyze(Program program) {
+            Map<BugInjector, List<InjectionResult>> result = new LinkedHashMap<>();
+            for (BugInjector injector : injectors) {
+                try {
+                    // Injector is responsible for cloning the program as needed.
+                    List<InjectionResult> injected = injector.inject(program);
+                    if (!injected.isEmpty()) {
+                        result.put(injector, injected);
                     }
+                } catch (Exception e) {
+                    log.severe("Injector " + injector.getName() + " failed on project " + program.getIdent().getName() + ": " + e.getMessage());
+                    e.printStackTrace();
                 }
-                return result;
             }
+            return result;
         }
+    }
 }

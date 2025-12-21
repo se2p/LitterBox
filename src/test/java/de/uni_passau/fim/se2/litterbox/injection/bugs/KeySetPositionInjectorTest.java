@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.KeySetPosition;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Test;
 
@@ -48,10 +49,10 @@ public class KeySetPositionInjectorTest implements JsonTest {
 
         // Inject - converts polling pattern to event-driven
         KeySetPositionInjector injector = new KeySetPositionInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertEquals(1, injected.size(), "Should produce exactly 1 program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify: extracted to key pressed event
         String result = ScratchBlocksVisitor.of(mutated);
@@ -79,10 +80,10 @@ public class KeySetPositionInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         KeySetPositionInjector injector = new KeySetPositionInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertEquals(1, injected.size());
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify
         String result = ScratchBlocksVisitor.of(mutated);
@@ -107,10 +108,10 @@ public class KeySetPositionInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         KeySetPositionInjector injector = new KeySetPositionInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertEquals(1, injected.size());
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify
         String result = ScratchBlocksVisitor.of(mutated);
@@ -133,10 +134,10 @@ public class KeySetPositionInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         KeySetPositionInjector injector = new KeySetPositionInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertEquals(1, injected.size());
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // The original pattern should remain unchanged
         String result = ScratchBlocksVisitor.of(mutated);
@@ -165,10 +166,10 @@ public class KeySetPositionInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         KeySetPositionInjector injector = new KeySetPositionInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertEquals(1, injected.size());
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // The injector will still extract since it has motion
         String result = ScratchBlocksVisitor.of(mutated);

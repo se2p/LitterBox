@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
 import java.util.List;
 
@@ -47,7 +48,7 @@ public abstract class AbstractPenInjector extends AbstractBugInjector {
     protected abstract Class<? extends Stmt> getStatementTypeToRemove();
 
     @Override
-    public List<Program> inject(Program program) {
+    public List<InjectionResult> inject(Program program) {
         // Check precondition: both PenUp and PenDown must exist
         hasPenUp = false;
         hasPenDown = false;

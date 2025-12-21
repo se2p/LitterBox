@@ -34,6 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +62,7 @@ public class TypeErrorInjector extends AbstractBugInjector {
     private NumExpr boolAsNumReplacement;
 
     @Override
-    public List<Program> inject(Program program) {
+    public List<InjectionResult> inject(Program program) {
         // First pass: collect boolean expressions from the program
         collectExpressions(program);
 

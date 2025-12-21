@@ -33,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
 import java.util.Collections;
 import java.util.List;
@@ -53,10 +54,11 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
     }
 
     @Override
-    public List<Program> inject(Program program) {
+    public List<InjectionResult> inject(Program program) {
         CustomMappingCloneVisitor visitor = new CustomMappingCloneVisitor();
         Program cloned = (Program) program.accept(visitor);
-        return Collections.singletonList(cloned);
+        // Simple injection without detailed script tracking
+        return Collections.singletonList(new InjectionResult(cloned, "", ""));
     }
 
     private static class CustomMappingCloneVisitor extends CloneVisitor {

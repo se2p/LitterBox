@@ -43,6 +43,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +67,7 @@ public class FloatingPointComparisonInjector extends AbstractBugInjector {
     }
 
     @Override
-    public List<Program> inject(Program program) {
+    public List<InjectionResult> inject(Program program) {
         // First pass: collect unsafe operands used in the program
         foundUnsafeOperands.clear();
         collectUnsafeOperands(program);

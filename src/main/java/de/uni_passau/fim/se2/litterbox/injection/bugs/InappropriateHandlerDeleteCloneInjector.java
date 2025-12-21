@@ -33,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class InappropriateHandlerDeleteCloneInjector extends AbstractBugInjector
     }
 
     @Override
-    public List<Program> inject(Program program) {
+    public List<InjectionResult> inject(Program program) {
         // Check prerequisites: program must have both CreateClone and StartedAsClone
         hasCreateClone = false;
         hasStartedAsClone = false;

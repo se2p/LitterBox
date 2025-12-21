@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.BlockingIfElse;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -47,12 +48,12 @@ public class BlockingIfElseInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         BlockingIfElseInjector injector = new BlockingIfElseInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         BlockingIfElse detector = new BlockingIfElse();
-        for (Program mutated : injected) {
+        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "BlockingIfElse detector should find the injected bug in all injected programs");
         }
@@ -71,7 +72,7 @@ public class BlockingIfElseInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         BlockingIfElseInjector injector = new BlockingIfElseInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertTrue(injected.isEmpty(), "Should NOT inject because it is the last statement and not in loop");
     }
@@ -90,13 +91,13 @@ public class BlockingIfElseInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         BlockingIfElseInjector injector = new BlockingIfElseInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertFalse(injected.isEmpty(), "Should inject because it is followed by code");
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         BlockingIfElse detector = new BlockingIfElse();
-        for (Program mutated : injected) {
+        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "Detector should find bug when followed by code in all injected programs");
         }

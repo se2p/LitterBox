@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.OverwrittenVisualEffect;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -44,10 +45,10 @@ public class OverwrittenVisualEffectInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         OverwrittenVisualEffectInjector injector = new OverwrittenVisualEffectInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify duplicate effect added
         String result = ScratchBlocksVisitor.of(mutated);
@@ -70,10 +71,10 @@ public class OverwrittenVisualEffectInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         OverwrittenVisualEffectInjector injector = new OverwrittenVisualEffectInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject for costume switch");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify duplicate costume switch added
         String result = ScratchBlocksVisitor.of(mutated);
@@ -96,10 +97,10 @@ public class OverwrittenVisualEffectInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         OverwrittenVisualEffectInjector injector = new OverwrittenVisualEffectInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject for show");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify duplicate show added
         String result = ScratchBlocksVisitor.of(mutated);
@@ -121,10 +122,10 @@ public class OverwrittenVisualEffectInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         OverwrittenVisualEffectInjector injector = new OverwrittenVisualEffectInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject for say");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify duplicate say added
         String result = ScratchBlocksVisitor.of(mutated);
@@ -147,7 +148,7 @@ public class OverwrittenVisualEffectInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         OverwrittenVisualEffectInjector injector = new OverwrittenVisualEffectInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertTrue(injected.isEmpty(), "Should not inject bug without visual effect statements");
     }

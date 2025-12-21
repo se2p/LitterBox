@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.HideWithoutShow;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import org.junit.jupiter.api.Assertions;
@@ -49,11 +50,11 @@ public class HideWithoutShowInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         HideWithoutShowInjector injector = new HideWithoutShowInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertFalse(injected.isEmpty(), "Should inject bug");
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verification: Check detector
         HideWithoutShow detector = new HideWithoutShow();
@@ -77,10 +78,10 @@ public class HideWithoutShowInjectorTest implements JsonTest {
         Assertions.assertTrue(hasShow(program), "Original should have Show");
 
         HideWithoutShowInjector injector = new HideWithoutShowInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify Show is removed
         Assertions.assertFalse(hasShow(mutated), "Show should be removed after injection");
@@ -98,7 +99,7 @@ public class HideWithoutShowInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         HideWithoutShowInjector injector = new HideWithoutShowInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertTrue(injected.isEmpty(), "Should not inject when there is no Show to remove");
     }
@@ -115,7 +116,7 @@ public class HideWithoutShowInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         HideWithoutShowInjector injector = new HideWithoutShowInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertTrue(injected.isEmpty(), "Should not inject without Hide (precondition not met)");
     }

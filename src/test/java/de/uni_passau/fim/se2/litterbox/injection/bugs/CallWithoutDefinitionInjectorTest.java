@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.CallWithoutDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -52,12 +53,12 @@ public class CallWithoutDefinitionInjectorTest implements JsonTest {
 
         // Inject bug
         CallWithoutDefinitionInjector injector = new CallWithoutDefinitionInjector();
-        List<Program> mutated = injector.inject(program);
+        List<InjectionResult> results = injector.inject(program);
 
-        Assertions.assertEquals(1, mutated.size(), "Should produce exactly 1 mutation");
+        Assertions.assertEquals(1, results.size(), "Should produce exactly 1 mutation");
 
         // Verify bug is now detected
-        Set<Issue> issues = detector.check(mutated.getFirst());
+        Set<Issue> issues = detector.check(results.getFirst().mutatedProgram());
         assertFalse(issues.isEmpty(), "Detector should find the injected bug");
     }
 
@@ -76,17 +77,17 @@ public class CallWithoutDefinitionInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         CallWithoutDefinitionInjector injector = new CallWithoutDefinitionInjector();
-        List<Program> mutated = injector.inject(program);
+        List<InjectionResult> results = injector.inject(program);
 
         // Just verify that the injector runs without error and produces a mutation.
         // The collision avoidance logic is internal, but this ensures no infinite loops or crashes if names are similar.
         // And we can check if the injected name exists in the original definitions?
         // Actually, we can't easily access the internal set of the injector, but we can verify the outcome is a bug.
 
-        assertFalse(mutated.isEmpty());
+        assertFalse(results.isEmpty());
         CallWithoutDefinition detector = new CallWithoutDefinition();
-        for (Program p : mutated) {
-            Set<Issue> issues = detector.check(p);
+        for (InjectionResult result : results) {
+            Set<Issue> issues = detector.check(result.mutatedProgram());
             assertFalse(issues.isEmpty(), "Detector should find the bug even with similar existing names");
         }
     }

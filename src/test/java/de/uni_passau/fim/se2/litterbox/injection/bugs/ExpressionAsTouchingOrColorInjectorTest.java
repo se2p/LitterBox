@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ExpressionAsTouchingOrColor;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -49,11 +50,11 @@ public class ExpressionAsTouchingOrColorInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         ExpressionAsTouchingOrColorInjector injector = new ExpressionAsTouchingOrColorInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertFalse(injected.isEmpty(), "Should inject bug");
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verification: Check detector
         ExpressionAsTouchingOrColor detector = new ExpressionAsTouchingOrColor();
@@ -85,10 +86,10 @@ public class ExpressionAsTouchingOrColorInjectorTest implements JsonTest {
         Assertions.assertTrue(originalHasColorLiteral.get(), "Original should have ColorLiteral in ColorTouchingColor");
 
         ExpressionAsTouchingOrColorInjector injector = new ExpressionAsTouchingOrColorInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify AST: ColorTouchingColor should no longer have ColorLiteral as operand1
         AtomicBoolean mutatedHasColorLiteralOperand1 = new AtomicBoolean(false);
@@ -116,13 +117,13 @@ public class ExpressionAsTouchingOrColorInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         ExpressionAsTouchingOrColorInjector injector = new ExpressionAsTouchingOrColorInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         // Note: The injector always returns a cloned program even if no changes were made
         // Bug will not be detected if there's nothing to inject
         ExpressionAsTouchingOrColor detector = new ExpressionAsTouchingOrColor();
-        for (Program p : injected) {
-            Set<Issue> issues = detector.check(p);
+        for (InjectionResult result : injected) {
+            Set<Issue> issues = detector.check(result.mutatedProgram());
             // If no color/touching blocks, detector should find nothing
             Assertions.assertTrue(issues.isEmpty(), "Should not detect bug when no color/touching blocks exist");
         }

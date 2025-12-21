@@ -29,12 +29,13 @@ import java.util.List;
 public interface BugInjector {
 
     /**
-     * Returns a list of modified programs, each containing one instance of the injected bug.
+     * Returns a list of injection results, each containing a modified program with one instance
+     * of the injected bug along with metadata about the injection.
      *
      * @param program The original program to inject bugs into.
-     * @return List of mutated programs.
+     * @return List of injection results with mutated programs and metadata.
      */
-    List<Program> inject(Program program);
+    List<InjectionResult> inject(Program program);
 
     /**
      * @return The canonical name of the bug injector.

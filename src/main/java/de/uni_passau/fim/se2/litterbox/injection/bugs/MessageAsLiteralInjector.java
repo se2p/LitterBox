@@ -42,6 +42,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSe
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,7 +77,7 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
     }
 
     @Override
-    public List<Program> inject(Program program) {
+    public List<InjectionResult> inject(Program program) {
         // Collect broadcasts and candidate StringLiterals (prioritized)
         List<BroadcastInfo> broadcasts = new ArrayList<>();
         List<StringLiteral> highPriorityCandidates = new ArrayList<>();  // List ops, Ask
@@ -106,7 +107,7 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
                 broadcast.stmt, targetLiteral, broadcast.message);
         Program mutated = (Program) program.accept(visitor);
 
-        return Collections.singletonList(mutated);
+        return Collections.singletonList(new InjectionResult(mutated, "", ""));
     }
 
     private String extractMessageContent(StringExpr expr) {

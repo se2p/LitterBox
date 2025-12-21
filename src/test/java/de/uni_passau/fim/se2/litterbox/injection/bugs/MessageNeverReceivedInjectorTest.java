@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageNeverReceived;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -46,13 +47,13 @@ public class MessageNeverReceivedInjectorTest implements JsonTest {
 
         // Inject
         MessageNeverReceivedInjector injector = new MessageNeverReceivedInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
         Assertions.assertFalse(injected.isEmpty(), "Should have injected at least one bug");
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         // Check
         MessageNeverReceived detector = new MessageNeverReceived();
-        for (Program mutated : injected) {
+        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "MessageNeverReceived detector should find the injected bug in all injected programs");
         }
@@ -77,14 +78,14 @@ public class MessageNeverReceivedInjectorTest implements JsonTest {
 
         // Inject
         MessageNeverReceivedInjector injector = new MessageNeverReceivedInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
         Assertions.assertFalse(injected.isEmpty(), "Should have injected at least one bug");
         // Should still be 1 mutation (one per unique message)
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program (all receivers for same message changed together)");
 
         // Check that the bug finder detects the injected bug
         MessageNeverReceived detector = new MessageNeverReceived();
-        for (Program mutated : injected) {
+        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(),
                     "MessageNeverReceived detector should find the injected bug when ALL reception blocks are changed");

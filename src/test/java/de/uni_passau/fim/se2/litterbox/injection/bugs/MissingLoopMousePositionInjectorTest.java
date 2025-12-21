@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopMousePosition;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -45,11 +46,11 @@ public class MissingLoopMousePositionInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingLoopMousePositionInjector injector = new MissingLoopMousePositionInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertFalse(injected.isEmpty(), "Should inject bug");
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verification: Check detector
         MissingLoopMousePosition detector = new MissingLoopMousePosition();
@@ -70,10 +71,10 @@ public class MissingLoopMousePositionInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingLoopMousePositionInjector injector = new MissingLoopMousePositionInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verification: Check detector
         MissingLoopMousePosition detector = new MissingLoopMousePosition();
@@ -94,7 +95,7 @@ public class MissingLoopMousePositionInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingLoopMousePositionInjector injector = new MissingLoopMousePositionInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
         // Note: The detector only checks for MousePos position type, not string-based
@@ -116,10 +117,10 @@ public class MissingLoopMousePositionInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingLoopMousePositionInjector injector = new MissingLoopMousePositionInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify the loop was unwrapped - statements should be outside the loop now
         String result = de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor.of(mutated);
@@ -147,10 +148,10 @@ public class MissingLoopMousePositionInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingLoopMousePositionInjector injector = new MissingLoopMousePositionInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program for repeat-until");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verification: Check detector
         MissingLoopMousePosition detector = new MissingLoopMousePosition();
@@ -169,7 +170,7 @@ public class MissingLoopMousePositionInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingLoopMousePositionInjector injector = new MissingLoopMousePositionInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertTrue(injected.isEmpty(), "Should not inject bug without loop");
     }

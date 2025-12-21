@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.OrphanedParameter;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -43,10 +44,10 @@ public class OrphanedParameterInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         OrphanedParameterInjector injector = new OrphanedParameterInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify via scratchblocks - parameter should be removed from definition
         String result = ScratchBlocksVisitor.of(mutated);
@@ -70,7 +71,7 @@ public class OrphanedParameterInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         OrphanedParameterInjector injector = new OrphanedParameterInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         // Should NOT inject since parameter is not used
         Assertions.assertTrue(injected.isEmpty(),
@@ -88,10 +89,10 @@ public class OrphanedParameterInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         OrphanedParameterInjector injector = new OrphanedParameterInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify via scratchblocks - param2 should be removed since it's used
         String result = ScratchBlocksVisitor.of(mutated);

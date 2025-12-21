@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ParameterAsLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -44,9 +45,9 @@ public class ParameterAsLiteralInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         ParameterAsLiteralInjector injector = new ParameterAsLiteralInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify via scratchblocks
         String result = ScratchBlocksVisitor.of(mutated);
@@ -69,9 +70,9 @@ public class ParameterAsLiteralInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         ParameterAsLiteralInjector injector = new ParameterAsLiteralInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
         Assertions.assertEquals(1, injected.size(), "Should inject for say for secs");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         String result = ScratchBlocksVisitor.of(mutated);
         Assertions.assertTrue(result.contains("say [myParam]"),
@@ -91,9 +92,9 @@ public class ParameterAsLiteralInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         ParameterAsLiteralInjector injector = new ParameterAsLiteralInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
         Assertions.assertEquals(1, injected.size(), "Should inject for think for secs");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         String result = ScratchBlocksVisitor.of(mutated);
         Assertions.assertTrue(result.contains("think [myParam]"),

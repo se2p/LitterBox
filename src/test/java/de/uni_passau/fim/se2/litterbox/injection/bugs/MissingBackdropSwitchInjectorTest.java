@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingBackdropSwitch;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -47,10 +48,10 @@ public class MissingBackdropSwitchInjectorTest implements JsonTest {
 
         // Inject
         MissingBackdropSwitchInjector injector = new MissingBackdropSwitchInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
         Assertions.assertFalse(injected.isEmpty(), "Should have injected at least one bug");
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verification: Check detector
         MissingBackdropSwitch detector = new MissingBackdropSwitch();
@@ -75,11 +76,11 @@ public class MissingBackdropSwitchInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingBackdropSwitchInjector injector = new MissingBackdropSwitchInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         // Should inject exactly 1 bug program, which removes BOTH switches
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify the detector finds Missing Backdrop Switch bug
         MissingBackdropSwitch detector = new MissingBackdropSwitch();
@@ -99,7 +100,7 @@ public class MissingBackdropSwitchInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingBackdropSwitchInjector injector = new MissingBackdropSwitchInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         // Without a handler for the backdrop switch, no meaningful bug
         Assertions.assertTrue(injected.isEmpty(), "Should not inject without a backdrop switch handler");

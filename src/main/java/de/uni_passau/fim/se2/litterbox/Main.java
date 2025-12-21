@@ -299,6 +299,13 @@ public class Main implements Callable<Integer> {
         )
         String injectors;
 
+        @CommandLine.Option(
+                names = {"--csv"},
+                description = "Path to a CSV file for logging injection metadata. "
+                        + "If the file exists, rows are appended; otherwise, a new file is created with headers."
+        )
+        Path csvPath;
+
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
@@ -310,7 +317,8 @@ public class Main implements Callable<Integer> {
             return new InjectorAnalyzer(
                     commonOptions.outputPath,
                     commonOptions.deleteProject,
-                    InjectorTool.getInjectors(injectors)
+                    InjectorTool.getInjectors(injectors),
+                    csvPath
             );
         }
     }

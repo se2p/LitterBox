@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ComparingLiterals;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Test;
 
@@ -53,11 +54,11 @@ public class ComparingLiteralsInjectorTest implements JsonTest {
 
         // Inject bug
         ComparingLiteralsInjector injector = new ComparingLiteralsInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertFalse(injected.isEmpty(), "Should inject bug");
         assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify expected output: (1) = (x) becomes (1) = (1)
         String result = ScratchBlocksVisitor.of(mutated);
@@ -86,10 +87,10 @@ public class ComparingLiteralsInjectorTest implements JsonTest {
 
         // Inject bug
         ComparingLiteralsInjector injector = new ComparingLiteralsInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify expected output: (x) = (5) becomes (5) = (5)
         String result = ScratchBlocksVisitor.of(mutated);
@@ -117,10 +118,10 @@ public class ComparingLiteralsInjectorTest implements JsonTest {
 
         // Inject bug
         ComparingLiteralsInjector injector = new ComparingLiteralsInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify expected output: (10) < (x) becomes (10) < (10)
         String result = ScratchBlocksVisitor.of(mutated);
@@ -148,10 +149,10 @@ public class ComparingLiteralsInjectorTest implements JsonTest {
 
         // Inject bug
         ComparingLiteralsInjector injector = new ComparingLiteralsInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify expected output: (x) > (100) becomes (100) > (100)
         String result = ScratchBlocksVisitor.of(mutated);
@@ -179,10 +180,10 @@ public class ComparingLiteralsInjectorTest implements JsonTest {
 
         // Inject bug
         ComparingLiteralsInjector injector = new ComparingLiteralsInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify expected output: [hello] = (x) becomes [hello] = [hello]
         String result = ScratchBlocksVisitor.of(mutated);
@@ -210,7 +211,7 @@ public class ComparingLiteralsInjectorTest implements JsonTest {
 
         // Inject - should not create any new mutation since both are already literals
         ComparingLiteralsInjector injector = new ComparingLiteralsInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertTrue(injected.isEmpty(), "Should NOT inject when both operands are already literals");
     }
@@ -233,7 +234,7 @@ public class ComparingLiteralsInjectorTest implements JsonTest {
 
         // Inject - should not create any mutation since neither is a literal
         ComparingLiteralsInjector injector = new ComparingLiteralsInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertTrue(injected.isEmpty(), "Should NOT inject when neither operand is a literal");
     }

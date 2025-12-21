@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.EndlessRecursion;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Test;
 
@@ -53,10 +54,10 @@ public class EndlessRecursionInjectorTest implements JsonTest {
 
         // Inject
         EndlessRecursionInjector injector = new EndlessRecursionInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify expected output
         String result = ScratchBlocksVisitor.of(mutated);
@@ -77,7 +78,7 @@ public class EndlessRecursionInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         EndlessRecursionInjector injector = new EndlessRecursionInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertTrue(injected.isEmpty(), "Should not inject without a procedure definition");
     }
@@ -94,7 +95,7 @@ public class EndlessRecursionInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         EndlessRecursionInjector injector = new EndlessRecursionInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertTrue(injected.isEmpty(), "Should not inject when procedure is not called");
     }
@@ -112,7 +113,7 @@ public class EndlessRecursionInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         EndlessRecursionInjector injector = new EndlessRecursionInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertTrue(injected.isEmpty(), "Should not inject when procedure is only called in tail position");
     }

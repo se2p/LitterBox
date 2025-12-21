@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingTerminationCondition;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -43,13 +44,13 @@ public class MissingTerminationConditionInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         MissingTerminationConditionInjector injector = new MissingTerminationConditionInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertFalse(injected.isEmpty(), "Should have injected at least one bug");
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         MissingTerminationCondition detector = new MissingTerminationCondition();
-        for (Program mutated : injected) {
+        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "MissingTerminationCondition detector should find the injected bug in all injected programs");
         }

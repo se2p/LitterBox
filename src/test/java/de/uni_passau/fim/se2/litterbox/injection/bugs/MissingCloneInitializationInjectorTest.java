@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingCloneInitialization;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -47,14 +48,14 @@ public class MissingCloneInitializationInjectorTest implements JsonTest {
 
         // Inject
         MissingCloneInitializationInjector injector = new MissingCloneInitializationInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
         Assertions.assertFalse(injected.isEmpty(), "Should have injected at least one bug");
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         // Check
         MissingCloneInitialization detector = new MissingCloneInitialization();
 
-        for (Program mutated : injected) {
+        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "Detector should find the injected bug (Missing StartAsClone) in all injected programs");
         }
@@ -83,11 +84,11 @@ public class MissingCloneInitializationInjectorTest implements JsonTest {
 
         // Inject
         MissingCloneInitializationInjector injector = new MissingCloneInitializationInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         // Should inject exactly 1 bug program (removing BOTH clone handlers)
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify the detector finds the bug
         Set<Issue> issues = detector.check(mutated);

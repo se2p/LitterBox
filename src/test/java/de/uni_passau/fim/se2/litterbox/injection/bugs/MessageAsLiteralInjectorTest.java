@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageAsLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -63,12 +64,12 @@ public class MessageAsLiteralInjectorTest implements JsonTest {
 
         // Inject
         MessageAsLiteralInjector injector = new MessageAsLiteralInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertFalse(injected.isEmpty(), "Should have injected at least one bug");
         assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Debug: collect all Say texts after mutation
         List<String> mutatedSayTexts = collectSayTexts(mutated);

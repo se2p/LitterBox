@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.NoWorkingScripts;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
@@ -46,15 +47,15 @@ public class NoWorkingScriptsInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         NoWorkingScriptsInjector injector = new NoWorkingScriptsInjector();
-        List<Program> mutated = injector.inject(program);
+        List<InjectionResult> results = injector.inject(program);
 
-        assertNotEquals(0, mutated.size(), "Should produce at least one mutation");
-        Assertions.assertEquals(1, mutated.size(), "Should produce exactly 1 mutation");
+        assertNotEquals(0, results.size(), "Should produce at least one mutation");
+        Assertions.assertEquals(1, results.size(), "Should produce exactly 1 mutation");
 
         // Verify bug with detector
         NoWorkingScripts detector = new NoWorkingScripts();
-        for (Program p : mutated) {
-            Set<Issue> issues = detector.check(p);
+        for (InjectionResult result : results) {
+            Set<Issue> issues = detector.check(result.mutatedProgram());
             assertFalse(issues.isEmpty(), "Detector should find the bug");
         }
     }
@@ -68,10 +69,10 @@ public class NoWorkingScriptsInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         NoWorkingScriptsInjector injector = new NoWorkingScriptsInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.get(0);
+        Program mutated = injected.get(0).mutatedProgram();
 
         // Verify AST structure: Should have an empty GreenFlag and a Never script with body
         boolean foundEmptyGreenFlag = false;
@@ -100,7 +101,7 @@ public class NoWorkingScriptsInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         NoWorkingScriptsInjector injector = new NoWorkingScriptsInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertTrue(injected.isEmpty(), "Should not inject when GreenFlag body is already empty");
     }
@@ -114,7 +115,7 @@ public class NoWorkingScriptsInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         NoWorkingScriptsInjector injector = new NoWorkingScriptsInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertTrue(injected.isEmpty(), "Should not inject without GreenFlag event");
     }

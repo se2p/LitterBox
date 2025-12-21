@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.CustomBlockWithTermination;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
@@ -48,13 +49,13 @@ public class CustomBlockWithTerminationInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         CustomBlockWithTerminationInjector injector = new CustomBlockWithTerminationInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertFalse(injected.isEmpty(), "Should have injected at least one bug");
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         CustomBlockWithTermination detector = new CustomBlockWithTermination();
-        for (Program mutated : injected) {
+        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "CustomBlockWithTermination detector should find the injected bug in all injected programs");
         }
@@ -72,10 +73,10 @@ public class CustomBlockWithTerminationInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         CustomBlockWithTerminationInjector injector = new CustomBlockWithTerminationInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify AST: Procedure should end with StopAll
         boolean foundStopAllInProc = false;
@@ -99,7 +100,7 @@ public class CustomBlockWithTerminationInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         CustomBlockWithTerminationInjector injector = new CustomBlockWithTerminationInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertTrue(injected.isEmpty(), "Should not inject without a procedure");
     }
@@ -117,7 +118,7 @@ public class CustomBlockWithTerminationInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         CustomBlockWithTerminationInjector injector = new CustomBlockWithTerminationInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertTrue(injected.isEmpty(), "Should not inject when custom block is in tail position");
     }

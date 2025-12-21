@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingInitialization;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -44,13 +45,13 @@ public class MissingInitializationInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingInitializationInjector injector = new MissingInitializationInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should generate exactly one mutated program");
 
         // Verify detector finds the bug
         MissingInitialization detector = new MissingInitialization();
-        Set<Issue> issues = detector.check(injected.getFirst());
+        Set<Issue> issues = detector.check(injected.getFirst().mutatedProgram());
         Assertions.assertFalse(issues.isEmpty(), "Detector should find Missing Initialization issue");
     }
 
@@ -65,7 +66,7 @@ public class MissingInitializationInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingInitializationInjector injector = new MissingInitializationInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject for hide block");
     }
@@ -81,7 +82,7 @@ public class MissingInitializationInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingInitializationInjector injector = new MissingInitializationInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject for point in direction block");
     }
@@ -97,7 +98,7 @@ public class MissingInitializationInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingInitializationInjector injector = new MissingInitializationInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject for switch costume block");
     }
@@ -113,7 +114,7 @@ public class MissingInitializationInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingInitializationInjector injector = new MissingInitializationInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject for set size block");
     }
@@ -129,7 +130,7 @@ public class MissingInitializationInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingInitializationInjector injector = new MissingInitializationInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject for set volume block");
     }
@@ -146,7 +147,7 @@ public class MissingInitializationInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingInitializationInjector injector = new MissingInitializationInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertTrue(injected.isEmpty(), "Should not inject without initialization blocks");
     }
@@ -165,7 +166,7 @@ public class MissingInitializationInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingInitializationInjector injector = new MissingInitializationInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         // Should create 3 mutations (one per initialization block)
         Assertions.assertEquals(3, injected.size(), "Should create mutation for each initialization block");

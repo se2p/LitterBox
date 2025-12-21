@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
 import java.util.HashSet;
 import java.util.List;
@@ -48,12 +49,12 @@ public abstract class AbstractCustomBlockInjector extends AbstractBugInjector {
     protected final Set<ProcedureDefinition> definitions = new HashSet<>();
 
     @Override
-    public List<Program> inject(Program program) {
+    public List<InjectionResult> inject(Program program) {
         candidateProcedures.clear();
         definitions.clear();
 
         // Pass 1: Visit to collect candidates and definitions
-        List<Program> results = super.inject(program);
+        List<InjectionResult> results = super.inject(program);
 
         // Pass 2: Apply mutations to candidate procedures
         for (ProcedureDefinition def : definitions) {

@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.InvalidNumberString;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -42,13 +43,13 @@ public class InvalidNumberStringInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         InvalidNumberStringInjector injector = new InvalidNumberStringInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertFalse(injected.isEmpty(), "Should inject bug, got: " + injected.size());
 
         // Check all mutated programs to see if any trigger the detector
         boolean foundIssue = false;
-        for (Program mutated : injected) {
+        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
             InvalidNumberString detector = new InvalidNumberString();
             Set<Issue> issues = detector.check(mutated);
             if (!issues.isEmpty()) {

@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingAsk;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -44,14 +45,14 @@ public class MissingAskInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingAskInjector injector = new MissingAskInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertFalse(injected.isEmpty(), "Should inject bug");
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         // Verification: Check detector finds the issue
         MissingAsk detector = new MissingAsk();
-        for (Program mutated : injected) {
+        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "Detector should find MissingAsk issue");
         }
@@ -70,14 +71,14 @@ public class MissingAskInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         MissingAskInjector injector = new MissingAskInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertFalse(injected.isEmpty(), "Should inject bug");
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         // Verification: Check detector finds the issue for all orphaned Answer usages
         MissingAsk detector = new MissingAsk();
-        for (Program mutated : injected) {
+        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "Detector should find MissingAsk issue");
         }

@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopSensing;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -54,11 +55,11 @@ public class MissingLoopSensingInjectorTest implements JsonTest {
 
         // Inject bug
         MissingLoopSensingInjector injector = new MissingLoopSensingInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertFalse(injected.isEmpty(), "Should inject bug");
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verification: Detector should find the bug after the loop is removed
         Set<Issue> issues = detector.check(mutated);
@@ -89,11 +90,11 @@ public class MissingLoopSensingInjectorTest implements JsonTest {
 
         // Inject bug
         MissingLoopSensingInjector injector = new MissingLoopSensingInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         // Should still inject 1 program (one mutation per loop)
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify scratchblocks output - ALL body statements should remain, loop is removed
         String result = ScratchBlocksVisitor.of(mutated);

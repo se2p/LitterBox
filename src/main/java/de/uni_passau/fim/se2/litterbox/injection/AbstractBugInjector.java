@@ -22,11 +22,14 @@ import de.uni_passau.fim.se2.litterbox.ast.ScratchNodeFactory;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TransformingCloneVisitor;
 
@@ -41,16 +44,16 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
 
     protected static final Logger log = Logger.getLogger(AbstractBugInjector.class.getName());
 
-    private List<Program> mutatedPrograms;
+    private List<InjectionResult> injectionResults;
     private Program originalProgram;
     protected final ScratchNodeFactory nodeFactory = new ScratchNodeFactory();
 
     @Override
-    public List<Program> inject(Program program) {
+    public List<InjectionResult> inject(Program program) {
         this.originalProgram = program;
-        this.mutatedPrograms = new ArrayList<>();
+        this.injectionResults = new ArrayList<>();
         program.accept(this);
-        return mutatedPrograms;
+        return injectionResults;
     }
 
     @Override
@@ -77,7 +80,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      * 1. Clones the original program using a MappingCloneVisitor to track node correspondence.
      * 2. Retrieves the cloned counterpart of the originalNode.
      * 3. Applies the mutation logic to the cloned node.
-     * 4. Adds the mutated program to the result list.
+     * 4. Adds the mutated program to the result list with ScratchBlocks metadata.
      *
      * @param originalNode The node in the original AST that triggered the injection.
      * @param mutator      The logic to apply to the matching CLONED node.
@@ -85,6 +88,9 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      */
     @SuppressWarnings("unchecked")
     protected <T extends ASTNode> void addMutation(T originalNode, Consumer<T> mutator) {
+        // Capture original script BEFORE cloning
+        String originalScratchBlocks = safeGetScratchBlocks(findContainingScript(originalNode));
+
         MappingCloneVisitor mappingVisitor = new MappingCloneVisitor();
 
         // Clone the program and capture mapping
@@ -103,7 +109,15 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
             if (originalNode.getClass().isInstance(clonedNode)) {
                 try {
                     mutator.accept((T) clonedNode);
-                    mutatedPrograms.add(clone);
+
+                    // Capture mutated script ScratchBlocks AFTER mutation
+                    String mutatedScratchBlocks = safeGetScratchBlocks(findContainingScript(clonedNode));
+
+                    injectionResults.add(new InjectionResult(
+                            clone,
+                            originalScratchBlocks,
+                            mutatedScratchBlocks
+                    ));
                 } catch (Exception e) {
                     log.log(WARNING, "Failed to apply mutation for " + getName(), e);
                 }
@@ -133,6 +147,9 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      * @param <T>          The type of the AST node.
      */
     protected <T extends ASTNode> void addImmutableMutation(T originalNode, Function<T, ASTNode> transformer) {
+        // Capture original script BEFORE transformation
+        String originalScratchBlocks = safeGetScratchBlocks(findContainingScript(originalNode));
+
         TransformingCloneVisitor visitor = new TransformingCloneVisitor();
         visitor.register(originalNode, transformer);
 
@@ -141,13 +158,83 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
             if (clonedRoot instanceof Program mutated) {
                 // Set up parent node relationships in the cloned AST
                 mutated.accept(new ParentVisitor());
-                mutatedPrograms.add(mutated);
+
+                // Get mutated script ScratchBlocks from the replacement node
+                ASTNode replacement = visitor.getReplacement(originalNode);
+                String mutatedScratchBlocks = safeGetScratchBlocks(
+                        replacement != null ? findContainingScript(replacement) : null);
+
+                injectionResults.add(new InjectionResult(
+                        mutated,
+                        originalScratchBlocks,
+                        mutatedScratchBlocks
+                ));
             } else {
                 log.warning("Cloning program returned " + clonedRoot.getClass().getName());
             }
         } catch (Exception e) {
             log.log(WARNING, "Failed to apply immutable mutation for " + getName(), e);
         }
+    }
+
+    /**
+     * Finds the Script or ProcedureDefinition containing the given node.
+     */
+    private ScriptEntity findContainingScript(ASTNode node) {
+        ASTNode current = node;
+        while (current != null) {
+            if (current instanceof Script script) {
+                return script;
+            }
+            if (current instanceof ProcedureDefinition proc) {
+                return proc;
+            }
+            current = current.getParentNode();
+        }
+        return null;
+    }
+
+    /**
+     * Safely converts a script entity to ScratchBlocks text.
+     * Returns empty string if the script is null or if conversion fails
+     * (e.g., for programs parsed from ScratchBlocks that lack proper actor context).
+     */
+    private String safeGetScratchBlocks(ScriptEntity script) {
+        if (script == null) {
+            return "";
+        }
+        try {
+            return ScratchBlocksVisitor.of(script);
+        } catch (Exception e) {
+            // Can fail for programs without proper actor context (e.g., test programs from parseScratchBlocks)
+            log.fine("Could not get ScratchBlocks text: " + e.getMessage());
+            return "";
+        }
+    }
+
+    /**
+     * Attempts to find the mutated script's ScratchBlocks text in a transformed program.
+     * Uses the TransformingCloneVisitor's replacement to locate the mutated node.
+     */
+    private String findMutatedScriptScratchBlocks(
+            Program mutatedProgram,
+            ScriptEntity originalScript,
+            ASTNode originalNode,
+            TransformingCloneVisitor visitor) {
+        // Get the replacement node that was created by the transformer
+        ASTNode replacementNode = visitor.getReplacement(originalNode);
+        if (replacementNode != null) {
+            ScriptEntity mutatedScript = findContainingScript(replacementNode);
+            if (mutatedScript != null) {
+                return ScratchBlocksVisitor.of(mutatedScript);
+            }
+        }
+
+        // Fallback: if we can't find the specific mutated script, use original
+        if (originalScript != null) {
+            return ScratchBlocksVisitor.of(originalScript);
+        }
+        return "";
     }
 
     /**
@@ -220,4 +307,3 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
         return false;
     }
 }
-

@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.InterruptedLoopSensing;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Test;
 
@@ -51,10 +52,10 @@ public class InterruptedLoopSensingInjectorTest implements JsonTest {
 
         // Inject
         InterruptedLoopSensingInjector injector = new InterruptedLoopSensingInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify: wait should be inserted in the loop
         String result = ScratchBlocksVisitor.of(mutated);
@@ -85,10 +86,10 @@ public class InterruptedLoopSensingInjectorTest implements JsonTest {
 
         // Inject
         InterruptedLoopSensingInjector injector = new InterruptedLoopSensingInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify: wait should be inserted in the forever loop
         String result = ScratchBlocksVisitor.of(mutated);
@@ -112,7 +113,7 @@ public class InterruptedLoopSensingInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         InterruptedLoopSensingInjector injector = new InterruptedLoopSensingInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertTrue(injected.isEmpty(),
                 "Should NOT inject for wait until (it already blocks properly)");
@@ -130,7 +131,7 @@ public class InterruptedLoopSensingInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         InterruptedLoopSensingInjector injector = new InterruptedLoopSensingInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertTrue(injected.isEmpty(), "Should not inject without sensing blocks");
     }

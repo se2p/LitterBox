@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.RedundantAssignment;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -43,10 +44,10 @@ public class RedundantAssignmentInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         RedundantAssignmentInjector injector = new RedundantAssignmentInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         String result = ScratchBlocksVisitor.of(mutated);
 
@@ -69,10 +70,10 @@ public class RedundantAssignmentInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         RedundantAssignmentInjector injector = new RedundantAssignmentInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject for SetXTo");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         String result = ScratchBlocksVisitor.of(mutated);
 
@@ -93,10 +94,10 @@ public class RedundantAssignmentInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         RedundantAssignmentInjector injector = new RedundantAssignmentInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject for PointInDirection");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         String result = ScratchBlocksVisitor.of(mutated);
 
@@ -117,10 +118,10 @@ public class RedundantAssignmentInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         RedundantAssignmentInjector injector = new RedundantAssignmentInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject for SwitchCostumeTo");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         String result = ScratchBlocksVisitor.of(mutated);
 
@@ -141,10 +142,10 @@ public class RedundantAssignmentInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         RedundantAssignmentInjector injector = new RedundantAssignmentInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject for SetSizeTo");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         String result = ScratchBlocksVisitor.of(mutated);
 

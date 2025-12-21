@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.TypeError;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -42,13 +43,13 @@ public class TypeErrorInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         TypeErrorInjector injector = new TypeErrorInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertFalse(injected.isEmpty(), "Should inject at least one bug");
 
         // Verify detector finds the type error
         TypeError detector = new TypeError();
-        for (Program mutated : injected) {
+        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             assertFalse(issues.isEmpty(), "Detector should find Type Error bug");
         }
@@ -64,7 +65,7 @@ public class TypeErrorInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         TypeErrorInjector injector = new TypeErrorInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         // Verify injection happens for both SetX and SetY statements
         assertEquals(2, injected.size(), "Should inject 2 bugs (one per set statement)");
@@ -81,13 +82,13 @@ public class TypeErrorInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         TypeErrorInjector injector = new TypeErrorInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         // Should inject for both the comparison AND the move statement
         assertTrue(injected.size() >= 2, "Should inject bugs for comparison and move");
 
         TypeError detector = new TypeError();
-        for (Program mutated : injected) {
+        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             assertFalse(issues.isEmpty(), "Detector should find Type Error bug");
         }
@@ -102,12 +103,12 @@ public class TypeErrorInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         TypeErrorInjector injector = new TypeErrorInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         assertEquals(1, injected.size(), "Should inject exactly 1 bug");
 
         TypeError detector = new TypeError();
-        Set<Issue> issues = detector.check(injected.getFirst());
+        Set<Issue> issues = detector.check(injected.getFirst().mutatedProgram());
         assertFalse(issues.isEmpty(), "Detector should find Type Error bug");
     }
 
@@ -124,14 +125,14 @@ public class TypeErrorInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
         TypeErrorInjector injector = new TypeErrorInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         // Should inject: 1 for the move statement (using the Touching expression as replacement)
         assertFalse(injected.isEmpty(), "Should inject bugs using program's boolean expressions");
 
         // Verify detector still finds the type error
         TypeError detector = new TypeError();
-        for (Program mutated : injected) {
+        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             assertFalse(issues.isEmpty(), "Detector should find Type Error bug");
         }

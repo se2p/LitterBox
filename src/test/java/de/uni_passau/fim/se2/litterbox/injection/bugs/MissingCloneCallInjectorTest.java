@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingCloneCall;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -52,11 +53,11 @@ public class MissingCloneCallInjectorTest implements JsonTest {
 
         // Inject
         MissingCloneCallInjector injector = new MissingCloneCallInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         // Verify detection on mutated program
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
         Set<Issue> issues = detector.check(mutated);
         Assertions.assertFalse(issues.isEmpty(), "Detector should find the injected bug");
     }
@@ -83,11 +84,11 @@ public class MissingCloneCallInjectorTest implements JsonTest {
 
         // Inject
         MissingCloneCallInjector injector = new MissingCloneCallInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         // Should inject exactly 1 bug program (removing BOTH clone calls)
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify the detector finds the bug
         Set<Issue> issues = detector.check(mutated);

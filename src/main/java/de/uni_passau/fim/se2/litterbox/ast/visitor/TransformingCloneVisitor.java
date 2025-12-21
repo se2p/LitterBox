@@ -60,6 +60,7 @@ import java.util.function.Function;
 public class TransformingCloneVisitor extends CloneVisitor {
 
     private final Map<ASTNode, Function<ASTNode, ASTNode>> transformations = new IdentityHashMap<>();
+    private final Map<ASTNode, ASTNode> replacements = new IdentityHashMap<>();
 
     /**
      * Registers a transformation for a specific node.
@@ -77,6 +78,17 @@ public class TransformingCloneVisitor extends CloneVisitor {
     }
 
     /**
+     * Returns the replacement node that was created for the given original node.
+     * Returns null if the node was not transformed.
+     *
+     * @param original The original node that was registered for transformation
+     * @return The replacement node, or null if not transformed
+     */
+    public ASTNode getReplacement(ASTNode original) {
+        return replacements.get(original);
+    }
+
+    /**
      * Checks if a node has a registered transformation.
      */
     protected boolean hasTransformation(ASTNode node) {
@@ -84,11 +96,13 @@ public class TransformingCloneVisitor extends CloneVisitor {
     }
 
     /**
-     * Applies the registered transformation to a node.
+     * Applies the registered transformation to a node and records the replacement.
      */
     @SuppressWarnings("unchecked")
     protected <T extends ASTNode> T applyTransformation(T node) {
-        return (T) transformations.get(node).apply(node);
+        T replacement = (T) transformations.get(node).apply(node);
+        replacements.put(node, replacement);
+        return replacement;
     }
 
     // --- Motion Blocks ---

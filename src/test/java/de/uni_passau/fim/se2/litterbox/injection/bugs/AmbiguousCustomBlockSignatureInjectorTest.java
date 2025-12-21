@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -44,11 +45,11 @@ public class AmbiguousCustomBlockSignatureInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         AmbiguousCustomBlockSignatureInjector injector = new AmbiguousCustomBlockSignatureInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertFalse(injected.isEmpty(), "Should inject bug");
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         String result = ScratchBlocksVisitor.of(mutated);
 
@@ -73,7 +74,7 @@ public class AmbiguousCustomBlockSignatureInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         AmbiguousCustomBlockSignatureInjector injector = new AmbiguousCustomBlockSignatureInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertTrue(injected.isEmpty(), "Should not inject bug without custom block");
     }
@@ -94,11 +95,11 @@ public class AmbiguousCustomBlockSignatureInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         AmbiguousCustomBlockSignatureInjector injector = new AmbiguousCustomBlockSignatureInjector();
-        List<Program> injected = injector.inject(program);
+        List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertFalse(injected.isEmpty(), "Should inject bug");
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
-        Program mutated = injected.getFirst();
+        Program mutated = injected.getFirst().mutatedProgram();
 
         String result = ScratchBlocksVisitor.of(mutated);
 
