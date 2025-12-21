@@ -53,7 +53,7 @@ public class CallWithoutDefinitionInjector extends AbstractBugInjector {
 
     @Override
     public void visit(CallStmt node) {
-        addMutation(node, clonedCall -> {
+        mutateClone(node, clonedCall -> {
             String uniqueTypo = generateUniqueTypo(clonedCall.getIdent().getName());
             CallStmt newCall = new CallStmt(
                     new StrId(uniqueTypo),

@@ -48,7 +48,7 @@ public class ForeverInsideLoopInjector extends AbstractBugInjector {
         }
 
         if (originalLoop.getStmtList().hasStatements()) {
-            addMutation(originalLoop, clonedLoop -> {
+            mutateClone(originalLoop, clonedLoop -> {
                 List<Stmt> stmts = clonedLoop.getStmtList().getStmts();
 
                 // Wrap the last statement in a forever loop

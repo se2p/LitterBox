@@ -62,7 +62,7 @@ public class AmbiguousParameterNameUsedInjector extends AbstractBugInjector {
                 String nameToReplace = usedParams.get(1).getIdent().getName();
                 int indexToModify = params.indexOf(usedParams.get(1));
 
-                addMutation(node, clonedDef -> applyParameterRename(clonedDef, indexToModify, nameToReplace, nameToKeep));
+                mutateClone(node, clonedDef -> applyParameterRename(clonedDef, indexToModify, nameToReplace, nameToKeep));
             }
         }
         super.visit(node);

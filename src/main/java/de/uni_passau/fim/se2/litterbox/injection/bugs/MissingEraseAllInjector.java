@@ -57,7 +57,7 @@ public class MissingEraseAllInjector extends AbstractBugInjector {
         }
 
         // Create ONE mutation that removes ALL erase all blocks
-        addMutation(penClearStmts.getFirst(), clonedFirst -> {
+        mutateClone(penClearStmts.getFirst(), clonedFirst -> {
             Program clonedProgram = findProgramRoot(clonedFirst);
             if (clonedProgram != null) {
                 removeAllPenClearStmts(clonedProgram);

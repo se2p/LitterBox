@@ -46,13 +46,32 @@ import java.util.logging.Logger;
 
 import static java.util.logging.Level.WARNING;
 
+/**
+ * Base class for bug injectors that mutate Scratch programs to introduce detectable bugs.
+ * <p>
+ * Subclasses override {@code visit} methods to identify injection points, then call
+ * {@link #addMutation} or {@link #addImmutableMutation} to create mutated program variants.
+ * <p>
+ * This class provides:
+ * <ul>
+ *   <li>Mutation infrastructure via clone-and-modify pattern</li>
+ *   <li>Shared utility methods for AST navigation and manipulation</li>
+ *   <li>Context helpers for determining node position in AST</li>
+ *   <li>Shared {@link CloneVisitor} instance for node cloning</li>
+ * </ul>
+ */
 public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor {
 
     protected static final Logger log = Logger.getLogger(AbstractBugInjector.class.getName());
 
+    /** Shared CloneVisitor instance for cloning AST nodes. Stateless and thread-safe. */
+    protected static final CloneVisitor cloner = new CloneVisitor();
+
+    /** Factory for creating AST nodes. */
+    protected final ScratchNodeFactory nodeFactory = new ScratchNodeFactory();
+
     private List<InjectionResult> injectionResults;
     private Program originalProgram;
-    protected final ScratchNodeFactory nodeFactory = new ScratchNodeFactory();
 
     @Override
     public List<InjectionResult> inject(Program program) {
@@ -81,19 +100,23 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     }
 
     /**
-     * Adds a mutation for the given original node.
-     * This method:
-     * 1. Clones the original program using a MappingCloneVisitor to track node correspondence.
-     * 2. Retrieves the cloned counterpart of the originalNode.
-     * 3. Applies the mutation logic to the cloned node.
-     * 4. Adds the mutated program to the result list with ScratchBlocks metadata.
+     * Mutates a cloned AST by applying a modifier to the cloned counterpart of the given node.
+     * <p>
+     * Use this when you need to add/remove elements from collections (e.g., StmtList)
+     * or modify the cloned structure in place.
+     * <p>
+     * Process:
+     * 1. Clones the program, tracking node correspondence
+     * 2. Finds the cloned counterpart of originalNode
+     * 3. Applies the mutator to modify the cloned node
+     * 4. Records the mutated program
      *
-     * @param originalNode The node in the original AST that triggered the injection.
-     * @param mutator      The logic to apply to the matching CLONED node.
-     * @param <T>          The type of the AST node.
+     * @param originalNode The node in the original AST that triggered the injection
+     * @param mutator      Logic to apply to the cloned node
+     * @param <T>          The type of the AST node
      */
     @SuppressWarnings("unchecked")
-    protected <T extends ASTNode> void addMutation(T originalNode, Consumer<T> mutator) {
+    protected <T extends ASTNode> void mutateClone(T originalNode, Consumer<T> mutator) {
         // Capture original script and sprite BEFORE cloning
         String originalScratchBlocks = safeGetScratchBlocks(findContainingScript(originalNode));
         String spriteName = findContainingActorName(originalNode);
@@ -139,22 +162,25 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     }
 
     /**
-     * Adds an immutable mutation for the given original node.
+     * Replaces a node with a new instance during cloning.
      * <p>
-     * Unlike {@link #addMutation}, this method maintains AST immutability by creating
-     * new node instances during cloning rather than modifying cloned nodes via setters.
+     * Use this when you need to create a new node instance (e.g., replacing an Add
+     * with a new Add that has a different operand). This maintains AST immutability.
      * <p>
-     * Usage:
+     * Unlike {@link #mutateClone}, the transformer creates a new node rather than
+     * modifying an existing one.
+     * <p>
+     * Example:
      * <pre>
-     * addImmutableMutation(originalMoveSteps, node ->
-     *     new MoveSteps(newStepsExpr, node.getMetadata()));
+     * replaceWith(originalMoveSteps, n ->
+     *     new MoveSteps(newStepsExpr, n.getMetadata()));
      * </pre>
      *
-     * @param originalNode The node in the original AST that should be transformed.
-     * @param transformer  Function that takes the original node and returns a new replacement node.
-     * @param <T>          The type of the AST node.
+     * @param originalNode The node to be replaced
+     * @param transformer  Function that returns the replacement node
+     * @param <T>          The type of the AST node
      */
-    protected <T extends ASTNode> void addImmutableMutation(T originalNode, Function<T, ASTNode> transformer) {
+    protected <T extends ASTNode> void replaceWith(T originalNode, Function<T, ASTNode> transformer) {
         // Capture original script and sprite BEFORE transformation
         String originalScratchBlocks = safeGetScratchBlocks(findContainingScript(originalNode));
         String spriteName = findContainingActorName(originalNode);
@@ -256,6 +282,20 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
         public ASTNode get(ASTNode original) {
             return mapping.get(original);
         }
+    }
+
+    // ==================== Injection Result Helpers ====================
+
+    /**
+     * Creates a single injection result with empty metadata.
+     * Use this for injectors that use custom CloneVisitor approaches
+     * and don't track individual script changes.
+     *
+     * @param mutatedProgram The mutated program
+     * @return A singleton list containing the injection result
+     */
+    protected List<InjectionResult> singleResult(Program mutatedProgram) {
+        return Collections.singletonList(new InjectionResult(mutatedProgram, "", "", ""));
     }
 
     // ==================== Shared Utility Methods ====================

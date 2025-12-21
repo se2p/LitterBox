@@ -71,7 +71,7 @@ public class OrphanedParameterInjector extends AbstractBugInjector {
         // Only inject if we found a used parameter to remove
         if (usedParam != null) {
             final int indexToRemove = usedParamIndex;
-            addMutation(node, clonedNode -> {
+            mutateClone(node, clonedNode -> {
                 if (indexToRemove < clonedNode.getParameterDefinitionList().getParameterDefinitions().size()) {
                     clonedNode.getParameterDefinitionList().getParameterDefinitions().remove(indexToRemove);
                 }

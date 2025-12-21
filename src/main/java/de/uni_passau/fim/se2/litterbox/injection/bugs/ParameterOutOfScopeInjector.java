@@ -88,7 +88,7 @@ public class ParameterOutOfScopeInjector extends AbstractBugInjector {
         List<ASTNode> targetNodes = findReplaceableNodes(actorDefinition);
 
         for (ASTNode node : targetNodes) {
-            addImmutableMutationForNode(node, paramName);
+            replaceNodeWith(node, paramName);
         }
     }
 
@@ -119,41 +119,41 @@ public class ParameterOutOfScopeInjector extends AbstractBugInjector {
     }
 
     /**
-     * Creates an immutable mutation for the given node.
+     * Creates a replacement for the given node, using a parameter.
      */
-    private void addImmutableMutationForNode(ASTNode node, String paramName) {
+    private void replaceNodeWith(ASTNode node, String paramName) {
         if (node instanceof MoveSteps moveSteps) {
-            addImmutableMutation(moveSteps, original -> {
+            replaceWith(moveSteps, original -> {
                 AsNumber paramAsNum = new AsNumber(createParameter(paramName));
                 return new MoveSteps(paramAsNum, original.getMetadata());
             });
         } else if (node instanceof Equals equals) {
-            addImmutableMutation(equals, original -> {
+            replaceWith(equals, original -> {
                 AsString paramAsStr = new AsString(createParameter(paramName));
                 return new Equals(paramAsStr, original.getOperand2(), original.getMetadata());
             });
         } else if (node instanceof BiggerThan biggerThan) {
-            addImmutableMutation(biggerThan, original -> {
+            replaceWith(biggerThan, original -> {
                 AsString paramAsStr = new AsString(createParameter(paramName));
                 return new BiggerThan(paramAsStr, original.getOperand2(), original.getMetadata());
             });
         } else if (node instanceof LessThan lessThan) {
-            addImmutableMutation(lessThan, original -> {
+            replaceWith(lessThan, original -> {
                 AsString paramAsStr = new AsString(createParameter(paramName));
                 return new LessThan(paramAsStr, original.getOperand2(), original.getMetadata());
             });
         } else if (node instanceof SetXTo setXTo) {
-            addImmutableMutation(setXTo, original -> {
+            replaceWith(setXTo, original -> {
                 AsNumber paramAsNum = new AsNumber(createParameter(paramName));
                 return new SetXTo(paramAsNum, original.getMetadata());
             });
         } else if (node instanceof SetYTo setYTo) {
-            addImmutableMutation(setYTo, original -> {
+            replaceWith(setYTo, original -> {
                 AsNumber paramAsNum = new AsNumber(createParameter(paramName));
                 return new SetYTo(paramAsNum, original.getMetadata());
             });
         } else if (node instanceof PointInDirection pointIn) {
-            addImmutableMutation(pointIn, original -> {
+            replaceWith(pointIn, original -> {
                 AsNumber paramAsNum = new AsNumber(createParameter(paramName));
                 return new PointInDirection(paramAsNum, original.getMetadata());
             });

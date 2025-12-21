@@ -33,28 +33,42 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Injects the {@link OverwrittenVisualEffect} bug.
  * <p>
- * This injector inserts a duplicate visual effect statement immediately after
- * an existing one, creating an overwritten visual effect bug.
+ * <b>Bug Pattern:</b> A visual effect is set and then immediately overwritten before
+ * it can take effect.
  * <p>
- * Supported statement types (matching the bug finder):
+ * <b>Injection Strategy:</b> Inserts a duplicate visual effect statement immediately
+ * after an existing one, making the first one redundant.
+ * <p>
+ * <b>Supported Statement Types:</b>
  * <ul>
- *   <li>Costume: {@link SwitchCostumeTo}, {@link NextCostume}</li>
- *   <li>Backdrop: {@link SwitchBackdrop}, {@link NextBackdrop}</li>
- *   <li>Size: {@link SetSizeTo}</li>
- *   <li>Visibility: {@link Show}, {@link Hide}</li>
- *   <li>Layer: {@link GoToLayer}, {@link ChangeLayerBy}</li>
- *   <li>Bubble: {@link Say}, {@link Think}</li>
- *   <li>Graphic Effects: {@link SetGraphicEffectTo}</li>
- *   <li>Clear Effects: {@link ClearGraphicEffects}</li>
+ *   <li>Costume: SwitchCostumeTo, NextCostume</li>
+ *   <li>Backdrop: SwitchBackdrop, NextBackdrop</li>
+ *   <li>Size: SetSizeTo</li>
+ *   <li>Visibility: Show, Hide</li>
+ *   <li>Layer: GoToLayer, ChangeLayerBy</li>
+ *   <li>Bubble: Say, Think</li>
+ *   <li>Graphic Effects: SetGraphicEffectTo, ClearGraphicEffects</li>
  * </ul>
  */
 public class OverwrittenVisualEffectInjector extends AbstractBugInjector {
 
     private static final NumExpr RESET_VALUE = new NumberLiteral(0.0);
+
+    /** Statement types that represent visual effects that can be duplicated. */
+    private static final Set<Class<? extends Stmt>> VISUAL_EFFECT_TYPES = Set.of(
+            SwitchCostumeTo.class, NextCostume.class,
+            SwitchBackdrop.class, NextBackdrop.class,
+            SetSizeTo.class,
+            Show.class, Hide.class,
+            GoToLayer.class, ChangeLayerBy.class,
+            Say.class, Think.class,
+            SetGraphicEffectTo.class, ClearGraphicEffects.class
+    );
 
     @Override
     public IssueFinder getIssueFinder() {
@@ -73,32 +87,12 @@ public class OverwrittenVisualEffectInjector extends AbstractBugInjector {
         super.visit(stmtList);
     }
 
-    /**
-     * Checks if a statement is a visual effect statement that can be duplicated.
-     */
     private boolean isVisualEffectStatement(Stmt stmt) {
-        return stmt instanceof SwitchCostumeTo
-                || stmt instanceof NextCostume
-                || stmt instanceof SwitchBackdrop
-                || stmt instanceof NextBackdrop
-                || stmt instanceof SetSizeTo
-                || stmt instanceof Show
-                || stmt instanceof Hide
-                || stmt instanceof GoToLayer
-                || stmt instanceof ChangeLayerBy
-                || stmt instanceof Say
-                || stmt instanceof Think
-                || stmt instanceof SetGraphicEffectTo
-                || stmt instanceof ClearGraphicEffects;
+        return VISUAL_EFFECT_TYPES.contains(stmt.getClass());
     }
 
-    /**
-     * Inserts a duplicate statement that overwrites the original.
-     * For SetGraphicEffectTo, inserts a reset to 0.
-     * For other statements, duplicates the same statement.
-     */
     private void addDuplicateMutation(StmtList stmtList, int index) {
-        addMutation(stmtList, clonedList -> {
+        mutateClone(stmtList, clonedList -> {
             if (index < clonedList.getStmts().size()) {
                 Stmt original = clonedList.getStmts().get(index);
                 Stmt duplicate = createDuplicate(original);
@@ -113,39 +107,25 @@ public class OverwrittenVisualEffectInjector extends AbstractBugInjector {
     /**
      * Creates a duplicate statement for the given original.
      * For SetGraphicEffectTo, creates a reset-to-0 version.
-     * For other statements, creates a copy with empty metadata.
      */
     private Stmt createDuplicate(Stmt original) {
         NonDataBlockMetadata emptyMeta = NonDataBlockMetadata.emptyNonBlockMetadata();
 
-        if (original instanceof SetGraphicEffectTo setEffect) {
-            // Reset effect to 0
-            return new SetGraphicEffectTo(setEffect.getEffect(), RESET_VALUE, emptyMeta);
-        } else if (original instanceof SwitchCostumeTo switchCostume) {
-            return new SwitchCostumeTo(switchCostume.getCostumeChoice(), emptyMeta);
-        } else if (original instanceof NextCostume) {
-            return new NextCostume(emptyMeta);
-        } else if (original instanceof SwitchBackdrop switchBackdrop) {
-            return new SwitchBackdrop(switchBackdrop.getElementChoice(), emptyMeta);
-        } else if (original instanceof NextBackdrop) {
-            return new NextBackdrop(emptyMeta);
-        } else if (original instanceof SetSizeTo setSizeTo) {
-            return new SetSizeTo(setSizeTo.getPercent(), emptyMeta);
-        } else if (original instanceof Show) {
-            return new Show(emptyMeta);
-        } else if (original instanceof Hide) {
-            return new Hide(emptyMeta);
-        } else if (original instanceof GoToLayer goToLayer) {
-            return new GoToLayer(goToLayer.getLayerChoice(), emptyMeta);
-        } else if (original instanceof ChangeLayerBy changeLayerBy) {
-            return new ChangeLayerBy(changeLayerBy.getNum(), changeLayerBy.getForwardBackwardChoice(), emptyMeta);
-        } else if (original instanceof Say say) {
-            return new Say(say.getString(), emptyMeta);
-        } else if (original instanceof Think think) {
-            return new Think(think.getThought(), emptyMeta);
-        } else if (original instanceof ClearGraphicEffects) {
-            return new ClearGraphicEffects(emptyMeta);
-        }
-        return null;
+        return switch (original) {
+            case SetGraphicEffectTo setEffect -> new SetGraphicEffectTo(setEffect.getEffect(), RESET_VALUE, emptyMeta);
+            case SwitchCostumeTo switchCostume -> new SwitchCostumeTo(switchCostume.getCostumeChoice(), emptyMeta);
+            case NextCostume ignored -> new NextCostume(emptyMeta);
+            case SwitchBackdrop switchBackdrop -> new SwitchBackdrop(switchBackdrop.getElementChoice(), emptyMeta);
+            case NextBackdrop ignored -> new NextBackdrop(emptyMeta);
+            case SetSizeTo setSizeTo -> new SetSizeTo(setSizeTo.getPercent(), emptyMeta);
+            case Show ignored -> new Show(emptyMeta);
+            case Hide ignored -> new Hide(emptyMeta);
+            case GoToLayer goToLayer -> new GoToLayer(goToLayer.getLayerChoice(), emptyMeta);
+            case ChangeLayerBy changeLayerBy -> new ChangeLayerBy(changeLayerBy.getNum(), changeLayerBy.getForwardBackwardChoice(), emptyMeta);
+            case Say say -> new Say(say.getString(), emptyMeta);
+            case Think think -> new Think(think.getThought(), emptyMeta);
+            case ClearGraphicEffects ignored -> new ClearGraphicEffects(emptyMeta);
+            default -> null;
+        };
     }
 }

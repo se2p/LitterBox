@@ -38,11 +38,17 @@ public abstract class FileAnalyzer<R> {
     protected final ProgramAnalyzer<R> analyzer;
     protected final Path output;
     protected final boolean delete;
+    protected final boolean skipAnalyzed;
 
     public FileAnalyzer(final ProgramAnalyzer<R> analyzer, final Path output, boolean delete) {
+        this(analyzer, output, delete, false);
+    }
+
+    public FileAnalyzer(final ProgramAnalyzer<R> analyzer, final Path output, boolean delete, boolean skipAnalyzed) {
         this.analyzer = analyzer;
         this.output = output;
         this.delete = delete;
+        this.skipAnalyzed = skipAnalyzed;
     }
 
     /**
@@ -118,6 +124,13 @@ public abstract class FileAnalyzer<R> {
      * @throws IOException In case either reading the program fails, or writing to the output file fails.
      */
     protected void checkAndWrite(final File file) throws IOException {
+        log.info("Analyzing: " + file.getName());
+
+        if (skipAnalyzed && hasExistingOutput(file)) {
+            log.info("Skipping already analyzed: " + file.getName());
+            return;
+        }
+
         final Program program = extractProgram(file);
         if (program == null) {
             return;
@@ -153,5 +166,33 @@ public abstract class FileAnalyzer<R> {
         }
 
         return null;
+    }
+
+    /**
+     * Checks if output files already exist for the given input file.
+     * A project is considered already analyzed if any file in the output directory
+     * starts with the input file's basename (without extension).
+     *
+     * @param inputFile The input file to check
+     * @return true if output files already exist, false otherwise
+     */
+    private boolean hasExistingOutput(File inputFile) {
+        if (output == null || !Files.isDirectory(output)) {
+            return false;
+        }
+
+        String baseName = inputFile.getName();
+        // Remove extension (.json or .sb3)
+        int dotIndex = baseName.lastIndexOf('.');
+        if (dotIndex > 0) {
+            baseName = baseName.substring(0, dotIndex);
+        }
+
+        final String prefix = baseName;
+        File[] matchingFiles = output.toFile().listFiles(
+                (dir, name) -> name.startsWith(prefix + "_")
+        );
+
+        return matchingFiles != null && matchingFiles.length > 0;
     }
 }

@@ -44,7 +44,7 @@ public class MissingTerminationConditionInjector extends AbstractBugInjector {
     @Override
     public void visit(UntilStmt node) {
         if (shouldInject(node)) {
-            addMutation(node, clonedUntil -> {
+            mutateClone(node, clonedUntil -> {
                 UntilStmt newUntil = nodeFactory.createUntil()
                         .withCondition(nodeFactory.unspecifiedBool())
                         .withBody(clonedUntil.getStmtList())

@@ -91,7 +91,7 @@ public class ImmediateDeleteCloneAfterBroadcastInjector extends AbstractBugInjec
             return;
         }
 
-        addMutation(node, clonedBroadcast -> {
+        mutateClone(node, clonedBroadcast -> {
             ASTNode parent = clonedBroadcast.getParentNode();
             if (parent instanceof StmtList stmtList) {
                 List<Stmt> stmts = stmtList.getStmts();

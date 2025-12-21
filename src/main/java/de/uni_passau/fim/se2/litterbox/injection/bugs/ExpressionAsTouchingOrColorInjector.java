@@ -35,7 +35,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
-import java.util.Collections;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -58,7 +58,7 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
         CustomMappingCloneVisitor visitor = new CustomMappingCloneVisitor();
         Program cloned = (Program) program.accept(visitor);
         // Simple injection without detailed script tracking
-        return Collections.singletonList(new InjectionResult(cloned, "", "", ""));
+        return singleResult(cloned);
     }
 
     private static class CustomMappingCloneVisitor extends CloneVisitor {

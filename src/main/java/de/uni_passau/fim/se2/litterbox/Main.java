@@ -306,6 +306,12 @@ public class Main implements Callable<Integer> {
         )
         Path csvPath;
 
+        @CommandLine.Option(
+                names = {"--skip-analyzed"},
+                description = "Skip projects that already have output files in the output directory."
+        )
+        boolean skipAnalyzed;
+
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
@@ -318,7 +324,8 @@ public class Main implements Callable<Integer> {
                     commonOptions.outputPath,
                     commonOptions.deleteProject,
                     InjectorTool.getInjectors(injectors),
-                    csvPath
+                    csvPath,
+                    skipAnalyzed
             );
         }
     }

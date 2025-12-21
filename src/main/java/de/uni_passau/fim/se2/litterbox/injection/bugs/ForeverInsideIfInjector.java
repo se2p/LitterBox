@@ -20,12 +20,10 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideIf;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
@@ -34,6 +32,7 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Injects ForeverInsideIf bug by wrapping the contents of an if-statement's
@@ -63,7 +62,7 @@ public class ForeverInsideIfInjector extends AbstractBugInjector {
 
         // Only inject if the then-block is suitable for wrapping
         if (isSuitableForWrapping(node.getThenStmts())) {
-            addMutation(node, clonedNode -> {
+            mutateClone(node, clonedNode -> {
                 wrapInForever(clonedNode.getThenStmts());
             });
         }
@@ -80,14 +79,14 @@ public class ForeverInsideIfInjector extends AbstractBugInjector {
 
         // Wrap then-block if suitable
         if (isSuitableForWrapping(node.getThenStmts())) {
-            addMutation(node, clonedNode -> {
+            mutateClone(node, clonedNode -> {
                 wrapInForever(clonedNode.getThenStmts());
             });
         }
 
         // Also consider wrapping else-block if suitable
         if (isSuitableForWrapping(node.getElseStmts())) {
-            addMutation(node, clonedNode -> {
+            mutateClone(node, clonedNode -> {
                 wrapInForever(clonedNode.getElseStmts());
             });
         }
@@ -109,36 +108,17 @@ public class ForeverInsideIfInjector extends AbstractBugInjector {
         return !isTerminatingStatement(lastStmt);
     }
 
-    /**
-     * Checks if the statement is a terminating statement (stop or delete clone).
-     * Wrapping such blocks in a forever loop makes no sense since they never loop.
-     */
+    /** Statement types that block execution (no point wrapping after these). */
+    private static final Set<Class<? extends Stmt>> TERMINATING_TYPES = Set.of(
+            StopAll.class, StopThisScript.class, DeleteClone.class
+    );
+
     private boolean isTerminatingStatement(Stmt stmt) {
-        return stmt instanceof StopAll
-                || stmt instanceof StopThisScript
-                || stmt instanceof DeleteClone;
+        return TERMINATING_TYPES.contains(stmt.getClass());
     }
 
-    /**
-     * Checks if the statement has successor statements OR is contained within a loop.
-     * Being inside a loop counts as having implicit successors because the loop repeats.
-     */
     private boolean hasSuccessorOrIsInLoop(Stmt stmt) {
         return hasSuccessorStatements(stmt) || isInsideLoop(stmt);
-    }
-
-    /**
-     * Checks if the given statement is contained within any kind of loop.
-     */
-    private boolean isInsideLoop(Stmt stmt) {
-        ASTNode current = stmt.getParentNode();
-        while (current != null) {
-            if (current instanceof LoopStmt) {
-                return true;
-            }
-            current = current.getParentNode();
-        }
-        return false;
     }
 
     private void wrapInForever(StmtList targetList) {

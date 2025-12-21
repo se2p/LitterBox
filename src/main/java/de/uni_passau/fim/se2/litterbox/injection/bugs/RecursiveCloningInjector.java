@@ -38,7 +38,7 @@ public class RecursiveCloningInjector extends AbstractBugInjector {
     @Override
     public void visit(Script node) {
         if (node.getEvent() instanceof StartedAsClone) {
-            addMutation(node, clonedNode -> {
+            mutateClone(node, clonedNode -> {
                 StmtList stmtList = clonedNode.getStmtList();
 
                 // create MySelf

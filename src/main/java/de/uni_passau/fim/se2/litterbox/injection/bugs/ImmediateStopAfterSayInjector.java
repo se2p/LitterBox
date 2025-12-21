@@ -62,7 +62,7 @@ public class ImmediateStopAfterSayInjector extends AbstractBugInjector {
             return;
         }
 
-        addMutation(sayOrThink, clonedStmt -> {
+        mutateClone(sayOrThink, clonedStmt -> {
             ASTNode parent = clonedStmt.getParentNode();
             if (parent instanceof StmtList stmtList) {
                 List<Stmt> stmts = stmtList.getStmts();

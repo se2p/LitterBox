@@ -95,7 +95,7 @@ public class HideWithoutShowInjector extends AbstractBugInjector {
         for (int i = 0; i < stmts.size(); i++) {
             if (stmts.get(i) instanceof Show) {
                 final int index = i;
-                addMutation(node, clonedList -> {
+                mutateClone(node, clonedList -> {
                     // Remove this specific Show statement
                     clonedList.getStmts().remove(index);
                 });

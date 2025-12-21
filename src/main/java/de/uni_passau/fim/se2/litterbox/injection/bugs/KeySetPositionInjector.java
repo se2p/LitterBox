@@ -33,7 +33,7 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
 import java.util.ArrayList;
-import java.util.Collections;
+
 import java.util.List;
 
 /**
@@ -70,7 +70,7 @@ public class KeySetPositionInjector extends AbstractBugInjector {
     public List<InjectionResult> inject(Program program) {
         ExtractingCloneVisitor visitor = new ExtractingCloneVisitor();
         Program cloned = (Program) program.accept(visitor);
-        return Collections.singletonList(new InjectionResult(cloned, "", "", ""));
+        return singleResult(cloned);
     }
 
     /**

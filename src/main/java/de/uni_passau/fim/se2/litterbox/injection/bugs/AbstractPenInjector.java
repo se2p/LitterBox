@@ -91,7 +91,7 @@ public abstract class AbstractPenInjector extends AbstractBugInjector {
         }
 
         if (hasTarget) {
-            addMutation(node, (StmtList clone) -> {
+            mutateClone(node, (StmtList clone) -> {
                 // Remove ALL occurrences of the target statement type
                 clone.getStmts().removeIf(targetType::isInstance);
             });

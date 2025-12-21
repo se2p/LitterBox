@@ -42,7 +42,7 @@ public class InterruptedLoopSensingInjector extends AbstractBugInjector {
 
     private void inject(LoopStmt originalLoop) {
         if (containsSensingInControlCondition(originalLoop)) {
-            addMutation(originalLoop, clonedLoop -> {
+            mutateClone(originalLoop, clonedLoop -> {
                 WaitSeconds waitStmt = nodeFactory.createWaitSeconds(1.0);
                 clonedLoop.getStmtList().getStmts().add(waitStmt);
                 waitStmt.setParentNode(clonedLoop.getStmtList());

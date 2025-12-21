@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.BlockingIfElse;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -32,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisS
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Injects the BlockingIfElse bug by appending StopThisScript to both branches.
@@ -49,17 +49,17 @@ public class BlockingIfElseInjector extends AbstractBugInjector {
     @Override
     public void visit(IfElseStmt node) {
         // Determine if this if-else is in a context where blocking matters
-        boolean isNotLastStatement = isNotLastStatement(node);
-        boolean isInsideLoop = isInsideLoop(node);
+        boolean hasSuccessors = hasSuccessorStatements(node);
+        boolean inLoop = isInsideLoop(node);
 
-        if (isNotLastStatement || isInsideLoop) {
+        if (hasSuccessors || inLoop) {
             // Check if both branches are suitable for appending stop
             boolean thenSuitable = isSuitableForStopAppend(node.getThenStmts());
             boolean elseSuitable = isSuitableForStopAppend(node.getElseStmts());
 
             // Only inject if at least one branch can be modified
             if (thenSuitable || elseSuitable) {
-                addMutation(node, clonedIfElse -> {
+                mutateClone(node, clonedIfElse -> {
                     if (thenSuitable) {
                         StopThisScript stopThen = new StopThisScript(NonDataBlockMetadata.emptyNonBlockMetadata());
                         clonedIfElse.getThenStmts().getStmts().add(stopThen);
@@ -90,26 +90,13 @@ public class BlockingIfElseInjector extends AbstractBugInjector {
         return !endsWithBlockingStatement(lastStmt);
     }
 
-    /**
-     * Checks if the statement is a blocking statement (stop, delete clone, or forever loop).
-     * Appending a stop block after these would have no effect.
-     */
+    /** Statement types that block execution (no point appending stop after these). */
+    private static final Set<Class<? extends Stmt>> BLOCKING_STATEMENT_TYPES = Set.of(
+            StopAll.class, StopThisScript.class, DeleteClone.class, RepeatForeverStmt.class
+    );
+
     private boolean endsWithBlockingStatement(Stmt stmt) {
-        return stmt instanceof StopAll
-                || stmt instanceof StopThisScript
-                || stmt instanceof DeleteClone
-                || stmt instanceof RepeatForeverStmt;
-    }
-
-
-
-    private boolean isNotLastStatement(ASTNode node) {
-        ASTNode parent = node.getParentNode();
-        if (parent instanceof StmtList stmtList) {
-            int index = stmtList.getStmts().indexOf(node);
-            return index < stmtList.getStmts().size() - 1;
-        }
-        return false;
+        return BLOCKING_STATEMENT_TYPES.contains(stmt.getClass());
     }
 }
 

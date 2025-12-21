@@ -29,12 +29,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 /**
- * Injects ComparingLiterals bug by replacing a non-literal operand with a matching literal.
- * The bug finder detects comparisons where BOTH sides are literals (StringLiteral or NumberLiteral).
- * This injector finds comparisons where one side is a literal and the other is not,
- * then replaces the non-literal with a matching literal type.
+ * Injects the {@link ComparingLiterals} bug.
  * <p>
- * Uses immutable transformations to maintain AST immutability.
+ * <b>Bug Pattern:</b> A comparison where both operands are literals is likely a mistake,
+ * since the result is always constant.
+ * <p>
+ * <b>Injection Strategy:</b> Finds comparisons where one side is a literal and the other is not,
+ * then replaces the non-literal with a matching literal type.
  */
 public class ComparingLiteralsInjector extends AbstractBugInjector {
 
@@ -50,10 +51,10 @@ public class ComparingLiteralsInjector extends AbstractBugInjector {
 
         if (isLiteral(op1) && !isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op1);
-            addImmutableMutation(node, n -> new Equals(n.getOperand1(), matchingLiteral, n.getMetadata()));
+            replaceWith(node, n -> new Equals(n.getOperand1(), matchingLiteral, n.getMetadata()));
         } else if (!isLiteral(op1) && isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op2);
-            addImmutableMutation(node, n -> new Equals(matchingLiteral, n.getOperand2(), n.getMetadata()));
+            replaceWith(node, n -> new Equals(matchingLiteral, n.getOperand2(), n.getMetadata()));
         }
         super.visit(node);
     }
@@ -65,10 +66,10 @@ public class ComparingLiteralsInjector extends AbstractBugInjector {
 
         if (isLiteral(op1) && !isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op1);
-            addImmutableMutation(node, n -> new LessThan(n.getOperand1(), matchingLiteral, n.getMetadata()));
+            replaceWith(node, n -> new LessThan(n.getOperand1(), matchingLiteral, n.getMetadata()));
         } else if (!isLiteral(op1) && isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op2);
-            addImmutableMutation(node, n -> new LessThan(matchingLiteral, n.getOperand2(), n.getMetadata()));
+            replaceWith(node, n -> new LessThan(matchingLiteral, n.getOperand2(), n.getMetadata()));
         }
         super.visit(node);
     }
@@ -80,10 +81,10 @@ public class ComparingLiteralsInjector extends AbstractBugInjector {
 
         if (isLiteral(op1) && !isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op1);
-            addImmutableMutation(node, n -> new BiggerThan(n.getOperand1(), matchingLiteral, n.getMetadata()));
+            replaceWith(node, n -> new BiggerThan(n.getOperand1(), matchingLiteral, n.getMetadata()));
         } else if (!isLiteral(op1) && isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op2);
-            addImmutableMutation(node, n -> new BiggerThan(matchingLiteral, n.getOperand2(), n.getMetadata()));
+            replaceWith(node, n -> new BiggerThan(matchingLiteral, n.getOperand2(), n.getMetadata()));
         }
         super.visit(node);
     }
@@ -92,17 +93,12 @@ public class ComparingLiteralsInjector extends AbstractBugInjector {
         return expr instanceof NumberLiteral || expr instanceof StringLiteral;
     }
 
-    /**
-     * Creates a literal of the same type as the reference literal.
-     * Uses the same value to make comparisons always true (for Equals).
-     */
     private ComparableExpr createMatchingLiteral(ComparableExpr reference) {
         if (reference instanceof NumberLiteral num) {
             return new NumberLiteral(num.getValue());
         } else if (reference instanceof StringLiteral str) {
             return new StringLiteral(str.getText());
         }
-        // Fallback (shouldn't happen if isLiteral check was done)
         return new NumberLiteral(0);
     }
 }

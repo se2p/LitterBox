@@ -48,7 +48,7 @@ public class MissingResourceInjector extends AbstractBugInjector {
         if (node.getCostumeChoice() instanceof WithExpr withExpr
                 && withExpr.getExpression() instanceof StrId) {
 
-            addMutation(node, this::replaceWithInvalidCostume);
+            mutateClone(node, this::replaceWithInvalidCostume);
         }
         super.visit(node);
     }
@@ -58,7 +58,7 @@ public class MissingResourceInjector extends AbstractBugInjector {
         if (node.getElementChoice() instanceof WithExpr withExpr
                 && withExpr.getExpression() instanceof StrId) {
 
-            addMutation(node, this::replaceWithInvalidSound);
+            mutateClone(node, this::replaceWithInvalidSound);
         }
         super.visit(node);
     }
@@ -68,7 +68,7 @@ public class MissingResourceInjector extends AbstractBugInjector {
         if (node.getElementChoice() instanceof WithExpr withExpr
                 && withExpr.getExpression() instanceof StrId) {
 
-            addMutation(node, this::replaceWithInvalidSoundStartSound);
+            mutateClone(node, this::replaceWithInvalidSoundStartSound);
         }
         super.visit(node);
     }

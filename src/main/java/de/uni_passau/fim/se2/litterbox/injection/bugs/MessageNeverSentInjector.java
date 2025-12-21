@@ -60,7 +60,7 @@ public class MessageNeverSentInjector extends AbstractBugInjector {
         // No point in changing broadcasts for messages that are already not received
         for (Map.Entry<String, List<Stmt>> entry : broadcastsByMessage.entrySet()) {
             if (receivedMessages.contains(entry.getKey())) {
-                addMutation(entry.getValue().getFirst(), this::applyTypoToAllBroadcasts);
+                mutateClone(entry.getValue().getFirst(), this::applyTypoToAllBroadcasts);
             }
         }
     }

@@ -153,7 +153,7 @@ public abstract class AbstractAsLiteralInjector extends AbstractBugInjector {
      * Helper method to inject a mutation that replaces a statement with a new one containing a string literal.
      */
     protected void injectMutation(Stmt originalNode, NodeReplacer replacer, String literalValue) {
-        addMutation(originalNode, clonedNode -> {
+        mutateClone(originalNode, clonedNode -> {
             StringLiteral literal = new StringLiteral(literalValue);
 
             Stmt newStmt = replacer.replace(clonedNode, literal);

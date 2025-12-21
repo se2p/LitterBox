@@ -81,7 +81,7 @@ public class MissingBackdropSwitchInjector extends AbstractBugInjector {
             // Find the first switch for this backdrop to use as mutation anchor
             Stmt firstSwitch = findFirstSwitchForBackdrop(node, backdropName);
             if (firstSwitch != null) {
-                addMutation(firstSwitch, clonedSwitch -> {
+                mutateClone(firstSwitch, clonedSwitch -> {
                     // Navigate from the cloned switch to find its program root
                     Program clonedProgram = findProgramRoot(clonedSwitch);
                     if (clonedProgram != null) {

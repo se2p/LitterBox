@@ -55,11 +55,15 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
     private CSVPrinter csvPrinter;
 
     public InjectorAnalyzer(Path output, boolean delete, List<BugInjector> injectors) {
-        this(output, delete, injectors, null);
+        this(output, delete, injectors, null, false);
     }
 
     public InjectorAnalyzer(Path output, boolean delete, List<BugInjector> injectors, Path csvPath) {
-        super(new InjectorProgramAnalyzer(injectors), output, delete);
+        this(output, delete, injectors, csvPath, false);
+    }
+
+    public InjectorAnalyzer(Path output, boolean delete, List<BugInjector> injectors, Path csvPath, boolean skipAnalyzed) {
+        super(new InjectorProgramAnalyzer(injectors), output, delete, skipAnalyzed);
         this.csvPath = csvPath;
     }
 

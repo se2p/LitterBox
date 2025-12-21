@@ -60,7 +60,7 @@ public abstract class AbstractCustomBlockInjector extends AbstractBugInjector {
         for (ProcedureDefinition def : definitions) {
             if (candidateProcedures.contains(def.getIdent().getName())) {
                 if (shouldMutate(def)) {
-                    addMutation(def, this::applyMutation);
+                    mutateClone(def, this::applyMutation);
                 }
             }
         }

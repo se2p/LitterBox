@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingCloneCall;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
@@ -30,8 +29,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+import de.uni_passau.fim.se2.litterbox.injection.util.ActorTrackingVisitor;
 
 import java.util.*;
 
@@ -39,8 +38,9 @@ import java.util.*;
  * Injects the MissingCloneCall bug by removing ALL CreateCloneOf statements
  * for actors that have StartedAsClone event handlers.
  * <p>
- * The MissingCloneCall bug occurs when an actor has a "when I start as a clone"
- * handler but is never cloned. To properly inject this bug, we must:
+ * <b>Bug Pattern:</b> An actor has a "when I start as a clone" handler but is never cloned.
+ * <p>
+ * <b>Injection Strategy:</b>
  * <ol>
  *   <li>Precondition: The target actor must have a StartedAsClone handler</li>
  *   <li>Remove ALL CreateCloneOf statements that clone that actor (not just one)</li>
@@ -69,32 +69,20 @@ public class MissingCloneCallInjector extends AbstractBugInjector {
         for (String actorName : actorsWithCloneHandlers) {
             List<CreateCloneOf> cloneCalls = clonesByTarget.get(actorName.toLowerCase());
             if (cloneCalls != null && !cloneCalls.isEmpty()) {
-                // Use the first clone call as the mutation target, but remove ALL
-                addMutation(cloneCalls.getFirst(), cloned -> removeAllCloneCalls(cloned, actorName));
+                mutateClone(cloneCalls.getFirst(), cloned -> removeAllCloneCalls(cloned, actorName));
             }
         }
     }
 
-    /**
-     * Collects all actor names that have StartedAsClone event handlers.
-     */
     private Set<String> collectActorsWithCloneHandlers(Program program) {
         Set<String> actors = new HashSet<>();
-        program.accept(new ScratchVisitor() {
-            private String currentActorName = null;
-
-            @Override
-            public void visit(ActorDefinition node) {
-                currentActorName = node.getIdent().getName();
-                visitChildren(node);
-                currentActorName = null;
-            }
-
+        program.accept(new ActorTrackingVisitor() {
             @Override
             public void visit(Script node) {
                 if (node.getEvent() instanceof StartedAsClone && !node.getStmtList().getStmts().isEmpty()) {
-                    if (currentActorName != null) {
-                        actors.add(currentActorName);
+                    String actorName = getCurrentActorName();
+                    if (actorName != null) {
+                        actors.add(actorName);
                     }
                 }
             }
@@ -102,24 +90,12 @@ public class MissingCloneCallInjector extends AbstractBugInjector {
         return actors;
     }
 
-    /**
-     * Collects all CreateCloneOf statements grouped by target actor name (case-insensitive).
-     */
     private Map<String, List<CreateCloneOf>> collectClonesByTarget(Program program) {
         Map<String, List<CreateCloneOf>> clonesByTarget = new HashMap<>();
-        program.accept(new ScratchVisitor() {
-            private String currentActorName = null;
-
-            @Override
-            public void visit(ActorDefinition node) {
-                currentActorName = node.getIdent().getName();
-                visitChildren(node);
-                currentActorName = null;
-            }
-
+        program.accept(new ActorTrackingVisitor() {
             @Override
             public void visit(CreateCloneOf node) {
-                String targetName = getCloneTargetName(node, currentActorName);
+                String targetName = getCloneTargetName(node, getCurrentActorName());
                 if (targetName != null) {
                     clonesByTarget.computeIfAbsent(targetName.toLowerCase(), k -> new ArrayList<>()).add(node);
                 }
@@ -128,9 +104,6 @@ public class MissingCloneCallInjector extends AbstractBugInjector {
         return clonesByTarget;
     }
 
-    /**
-     * Gets the name of the actor being cloned.
-     */
     private String getCloneTargetName(CreateCloneOf node, String currentActorName) {
         if (node.getCloneChoice() instanceof Myself) {
             return currentActorName;
@@ -142,33 +115,19 @@ public class MissingCloneCallInjector extends AbstractBugInjector {
         return null;
     }
 
-    /**
-     * Removes all CreateCloneOf statements for the given actor in the cloned program.
-     */
     private void removeAllCloneCalls(CreateCloneOf clonedFirst, String targetActorName) {
-        // Find the root program
         Program clonedProgram = findProgramRoot(clonedFirst);
         if (clonedProgram == null) {
             return;
         }
 
-        // Find and remove all CreateCloneOf statements for this actor
-        clonedProgram.accept(new ScratchVisitor() {
-            private String currentActorName = null;
-
-            @Override
-            public void visit(ActorDefinition node) {
-                currentActorName = node.getIdent().getName();
-                visitChildren(node);
-                currentActorName = null;
-            }
-
+        clonedProgram.accept(new ActorTrackingVisitor() {
             @Override
             public void visit(StmtList node) {
                 List<Stmt> stmts = node.getStmts();
                 stmts.removeIf(stmt -> {
                     if (stmt instanceof CreateCloneOf clone) {
-                        String target = getCloneTargetName(clone, currentActorName);
+                        String target = getCloneTargetName(clone, getCurrentActorName());
                         return target != null && target.equalsIgnoreCase(targetActorName);
                     }
                     return false;
@@ -178,4 +137,3 @@ public class MissingCloneCallInjector extends AbstractBugInjector {
         });
     }
 }
-

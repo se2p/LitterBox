@@ -75,7 +75,7 @@ public class NoWorkingScriptsInjector extends AbstractBugInjector {
      * @param index      the index of the GreenFlag script to split
      */
     private void addSplitScriptMutation(ScriptList scriptList, int index) {
-        addMutation(scriptList, clonedScriptList -> {
+        mutateClone(scriptList, clonedScriptList -> {
             Script originalScript = clonedScriptList.getScript(index);
 
             // Create empty GreenFlag script (keeps the event, loses the body)

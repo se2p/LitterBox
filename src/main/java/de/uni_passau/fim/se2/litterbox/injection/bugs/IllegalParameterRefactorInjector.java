@@ -31,7 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
-import java.util.Collections;
+
 import java.util.List;
 
 /**
@@ -51,7 +51,7 @@ public class IllegalParameterRefactorInjector extends AbstractBugInjector {
     public List<InjectionResult> inject(Program program) {
         CustomCloneVisitor visitor = new CustomCloneVisitor();
         Program cloned = (Program) program.accept(visitor);
-        return Collections.singletonList(new InjectionResult(cloned, "", "", ""));
+        return singleResult(cloned);
     }
 
     private static class CustomCloneVisitor extends CloneVisitor {

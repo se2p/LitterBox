@@ -31,7 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
@@ -68,8 +68,7 @@ public class TypeErrorInjector extends AbstractBugInjector {
 
         // Choose replacement expression
         if (!collectedBoolExprs.isEmpty()) {
-            BoolExpr chosen = collectedBoolExprs.getFirst();
-            BoolExpr cloned = (BoolExpr) chosen.accept(new CloneVisitor());
+            BoolExpr cloned = cloner.apply(collectedBoolExprs.getFirst());
             boolAsNumReplacement = new AsNumber(cloned);
         } else {
             boolAsNumReplacement = FALLBACK_BOOL_AS_NUM;
@@ -120,7 +119,7 @@ public class TypeErrorInjector extends AbstractBugInjector {
     @Override
     public void visit(Equals node) {
         if (node.getOperand1() instanceof NumberLiteral || node.getOperand1() instanceof StringLiteral) {
-            addImmutableMutation(node, n -> new Equals(
+            replaceWith(node, n -> new Equals(
                     n.getOperand1(),
                     getBoolAsNumReplacement(),
                     n.getMetadata()
@@ -132,7 +131,7 @@ public class TypeErrorInjector extends AbstractBugInjector {
     @Override
     public void visit(LessThan node) {
         if (node.getOperand1() instanceof NumberLiteral || node.getOperand1() instanceof StringLiteral) {
-            addImmutableMutation(node, n -> new LessThan(
+            replaceWith(node, n -> new LessThan(
                     n.getOperand1(),
                     getBoolAsNumReplacement(),
                     n.getMetadata()
@@ -144,7 +143,7 @@ public class TypeErrorInjector extends AbstractBugInjector {
     @Override
     public void visit(BiggerThan node) {
         if (node.getOperand1() instanceof NumberLiteral || node.getOperand1() instanceof StringLiteral) {
-            addImmutableMutation(node, n -> new BiggerThan(
+            replaceWith(node, n -> new BiggerThan(
                     n.getOperand1(),
                     getBoolAsNumReplacement(),
                     n.getMetadata()
@@ -158,7 +157,7 @@ public class TypeErrorInjector extends AbstractBugInjector {
 
     @Override
     public void visit(MoveSteps node) {
-        addImmutableMutation(node, n -> new MoveSteps(
+        replaceWith(node, n -> new MoveSteps(
                 getBoolAsNumReplacement(),
                 n.getMetadata()
         ));
@@ -167,7 +166,7 @@ public class TypeErrorInjector extends AbstractBugInjector {
 
     @Override
     public void visit(SetXTo node) {
-        addImmutableMutation(node, n -> new SetXTo(
+        replaceWith(node, n -> new SetXTo(
                 getBoolAsNumReplacement(),
                 n.getMetadata()
         ));
@@ -176,7 +175,7 @@ public class TypeErrorInjector extends AbstractBugInjector {
 
     @Override
     public void visit(SetYTo node) {
-        addImmutableMutation(node, n -> new SetYTo(
+        replaceWith(node, n -> new SetYTo(
                 getBoolAsNumReplacement(),
                 n.getMetadata()
         ));
@@ -185,7 +184,7 @@ public class TypeErrorInjector extends AbstractBugInjector {
 
     @Override
     public void visit(WaitSeconds node) {
-        addImmutableMutation(node, n -> new WaitSeconds(
+        replaceWith(node, n -> new WaitSeconds(
                 getBoolAsNumReplacement(),
                 n.getMetadata()
         ));
@@ -193,6 +192,6 @@ public class TypeErrorInjector extends AbstractBugInjector {
     }
 
     private NumExpr getBoolAsNumReplacement() {
-        return (NumExpr) boolAsNumReplacement.accept(new CloneVisitor());
+        return cloner.apply(boolAsNumReplacement);
     }
 }

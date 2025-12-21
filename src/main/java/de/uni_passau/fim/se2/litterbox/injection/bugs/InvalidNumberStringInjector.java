@@ -53,11 +53,11 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
     public void visit(Add node) {
         if (node.getOperand1() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new Add(replacement, n.getOperand2(), n.getMetadata()));
+            replaceWith(node, n -> new Add(replacement, n.getOperand2(), n.getMetadata()));
         }
         if (node.getOperand2() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new Add(n.getOperand1(), replacement, n.getMetadata()));
+            replaceWith(node, n -> new Add(n.getOperand1(), replacement, n.getMetadata()));
         }
         super.visit(node);
     }
@@ -66,11 +66,11 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
     public void visit(Minus node) {
         if (node.getOperand1() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new Minus(replacement, n.getOperand2(), n.getMetadata()));
+            replaceWith(node, n -> new Minus(replacement, n.getOperand2(), n.getMetadata()));
         }
         if (node.getOperand2() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new Minus(n.getOperand1(), replacement, n.getMetadata()));
+            replaceWith(node, n -> new Minus(n.getOperand1(), replacement, n.getMetadata()));
         }
         super.visit(node);
     }
@@ -79,11 +79,11 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
     public void visit(Mult node) {
         if (node.getOperand1() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new Mult(replacement, n.getOperand2(), n.getMetadata()));
+            replaceWith(node, n -> new Mult(replacement, n.getOperand2(), n.getMetadata()));
         }
         if (node.getOperand2() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new Mult(n.getOperand1(), replacement, n.getMetadata()));
+            replaceWith(node, n -> new Mult(n.getOperand1(), replacement, n.getMetadata()));
         }
         super.visit(node);
     }
@@ -92,11 +92,11 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
     public void visit(Div node) {
         if (node.getOperand1() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new Div(replacement, n.getOperand2(), n.getMetadata()));
+            replaceWith(node, n -> new Div(replacement, n.getOperand2(), n.getMetadata()));
         }
         if (node.getOperand2() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new Div(n.getOperand1(), replacement, n.getMetadata()));
+            replaceWith(node, n -> new Div(n.getOperand1(), replacement, n.getMetadata()));
         }
         super.visit(node);
     }
@@ -105,11 +105,11 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
     public void visit(Mod node) {
         if (node.getOperand1() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new Mod(replacement, n.getOperand2(), n.getMetadata()));
+            replaceWith(node, n -> new Mod(replacement, n.getOperand2(), n.getMetadata()));
         }
         if (node.getOperand2() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new Mod(n.getOperand1(), replacement, n.getMetadata()));
+            replaceWith(node, n -> new Mod(n.getOperand1(), replacement, n.getMetadata()));
         }
         super.visit(node);
     }
@@ -119,11 +119,11 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
     public void visit(Equals node) {
         if (node.getOperand1() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new Equals(replacement, n.getOperand2(), n.getMetadata()));
+            replaceWith(node, n -> new Equals(replacement, n.getOperand2(), n.getMetadata()));
         }
         if (node.getOperand2() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new Equals(n.getOperand1(), replacement, n.getMetadata()));
+            replaceWith(node, n -> new Equals(n.getOperand1(), replacement, n.getMetadata()));
         }
         super.visit(node);
     }
@@ -132,11 +132,11 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
     public void visit(LessThan node) {
         if (node.getOperand1() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new LessThan(replacement, n.getOperand2(), n.getMetadata()));
+            replaceWith(node, n -> new LessThan(replacement, n.getOperand2(), n.getMetadata()));
         }
         if (node.getOperand2() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new LessThan(n.getOperand1(), replacement, n.getMetadata()));
+            replaceWith(node, n -> new LessThan(n.getOperand1(), replacement, n.getMetadata()));
         }
         super.visit(node);
     }
@@ -145,11 +145,11 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
     public void visit(BiggerThan node) {
         if (node.getOperand1() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new BiggerThan(replacement, n.getOperand2(), n.getMetadata()));
+            replaceWith(node, n -> new BiggerThan(replacement, n.getOperand2(), n.getMetadata()));
         }
         if (node.getOperand2() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new BiggerThan(n.getOperand1(), replacement, n.getMetadata()));
+            replaceWith(node, n -> new BiggerThan(n.getOperand1(), replacement, n.getMetadata()));
         }
         super.visit(node);
     }
@@ -159,7 +159,7 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
     public void visit(MoveSteps node) {
         if (node.getSteps() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new MoveSteps(replacement, n.getMetadata()));
+            replaceWith(node, n -> new MoveSteps(replacement, n.getMetadata()));
         }
         super.visit(node);
     }
@@ -168,7 +168,7 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
     public void visit(SetXTo node) {
         if (node.getNum() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new SetXTo(replacement, n.getMetadata()));
+            replaceWith(node, n -> new SetXTo(replacement, n.getMetadata()));
         }
         super.visit(node);
     }
@@ -177,7 +177,7 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
     public void visit(SetYTo node) {
         if (node.getNum() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new SetYTo(replacement, n.getMetadata()));
+            replaceWith(node, n -> new SetYTo(replacement, n.getMetadata()));
         }
         super.visit(node);
     }
@@ -186,7 +186,7 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
     public void visit(PointInDirection node) {
         if (node.getDirection() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new PointInDirection(replacement, n.getMetadata()));
+            replaceWith(node, n -> new PointInDirection(replacement, n.getMetadata()));
         }
         super.visit(node);
     }
@@ -196,7 +196,7 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
     public void visit(WaitSeconds node) {
         if (node.getSeconds() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new WaitSeconds(replacement, n.getMetadata()));
+            replaceWith(node, n -> new WaitSeconds(replacement, n.getMetadata()));
         }
         super.visit(node);
     }
@@ -206,7 +206,7 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
         // Only inject in script/procedure context, not in SetStmtList (variable initialization)
         if (isInScriptContext(node) && node.getExpr() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new ChangeVariableBy(n.getIdentifier(), replacement, n.getMetadata()));
+            replaceWith(node, n -> new ChangeVariableBy(n.getIdentifier(), replacement, n.getMetadata()));
         }
         super.visit(node);
     }
@@ -216,7 +216,7 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
         // Only inject in script/procedure context, not in SetStmtList (variable initialization)
         if (isInScriptContext(node) && node.getExpr() instanceof NumberLiteral numLit) {
             NumExpr replacement = new AsNumber(new StringLiteral(makeInvalidNumber(numLit.getValue())));
-            addImmutableMutation(node, n -> new SetVariableTo(n.getIdentifier(), replacement, n.getMetadata()));
+            replaceWith(node, n -> new SetVariableTo(n.getIdentifier(), replacement, n.getMetadata()));
         }
         super.visit(node);
     }
