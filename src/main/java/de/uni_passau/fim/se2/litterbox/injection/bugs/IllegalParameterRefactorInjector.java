@@ -51,7 +51,7 @@ public class IllegalParameterRefactorInjector extends AbstractBugInjector {
     public List<InjectionResult> inject(Program program) {
         CustomCloneVisitor visitor = new CustomCloneVisitor();
         Program cloned = (Program) program.accept(visitor);
-        return Collections.singletonList(new InjectionResult(cloned, "", ""));
+        return Collections.singletonList(new InjectionResult(cloned, "", "", ""));
     }
 
     private static class CustomCloneVisitor extends CloneVisitor {

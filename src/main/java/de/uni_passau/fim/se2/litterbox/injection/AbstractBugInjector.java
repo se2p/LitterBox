@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.injection;
 
 import de.uni_passau.fim.se2.litterbox.ast.ScratchNodeFactory;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -88,8 +89,9 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      */
     @SuppressWarnings("unchecked")
     protected <T extends ASTNode> void addMutation(T originalNode, Consumer<T> mutator) {
-        // Capture original script BEFORE cloning
+        // Capture original script and sprite BEFORE cloning
         String originalScratchBlocks = safeGetScratchBlocks(findContainingScript(originalNode));
+        String spriteName = findContainingActorName(originalNode);
 
         MappingCloneVisitor mappingVisitor = new MappingCloneVisitor();
 
@@ -115,6 +117,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
 
                     injectionResults.add(new InjectionResult(
                             clone,
+                            spriteName,
                             originalScratchBlocks,
                             mutatedScratchBlocks
                     ));
@@ -147,8 +150,9 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      * @param <T>          The type of the AST node.
      */
     protected <T extends ASTNode> void addImmutableMutation(T originalNode, Function<T, ASTNode> transformer) {
-        // Capture original script BEFORE transformation
+        // Capture original script and sprite BEFORE transformation
         String originalScratchBlocks = safeGetScratchBlocks(findContainingScript(originalNode));
+        String spriteName = findContainingActorName(originalNode);
 
         TransformingCloneVisitor visitor = new TransformingCloneVisitor();
         visitor.register(originalNode, transformer);
@@ -166,6 +170,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
 
                 injectionResults.add(new InjectionResult(
                         mutated,
+                        spriteName,
                         originalScratchBlocks,
                         mutatedScratchBlocks
                 ));
@@ -192,6 +197,21 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
             current = current.getParentNode();
         }
         return null;
+    }
+
+    /**
+     * Finds the name of the ActorDefinition (sprite/stage) containing the given node.
+     * Returns empty string if not found.
+     */
+    private String findContainingActorName(ASTNode node) {
+        ASTNode current = node;
+        while (current != null) {
+            if (current instanceof ActorDefinition actor) {
+                return actor.getIdent().getName();
+            }
+            current = current.getParentNode();
+        }
+        return "";
     }
 
     /**

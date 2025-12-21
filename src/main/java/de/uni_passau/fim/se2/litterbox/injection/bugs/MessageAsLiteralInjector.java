@@ -107,7 +107,7 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
                 broadcast.stmt, targetLiteral, broadcast.message);
         Program mutated = (Program) program.accept(visitor);
 
-        return Collections.singletonList(new InjectionResult(mutated, "", ""));
+        return Collections.singletonList(new InjectionResult(mutated, "", "", ""));
     }
 
     private String extractMessageContent(StringExpr expr) {

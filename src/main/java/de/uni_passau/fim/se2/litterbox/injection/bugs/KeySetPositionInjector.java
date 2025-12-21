@@ -70,7 +70,7 @@ public class KeySetPositionInjector extends AbstractBugInjector {
     public List<InjectionResult> inject(Program program) {
         ExtractingCloneVisitor visitor = new ExtractingCloneVisitor();
         Program cloned = (Program) program.accept(visitor);
-        return Collections.singletonList(new InjectionResult(cloned, "", ""));
+        return Collections.singletonList(new InjectionResult(cloned, "", "", ""));
     }
 
     /**

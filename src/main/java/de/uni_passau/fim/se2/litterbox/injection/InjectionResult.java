@@ -24,11 +24,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
  * Holds the result of a single bug injection, including metadata for reporting.
  *
  * @param mutatedProgram              The program with the injected bug.
+ * @param spriteName                  The name of the sprite in which the bug was injected.
  * @param originalScriptScratchBlocks The ScratchBlocks text of the original script that was mutated.
  * @param mutatedScriptScratchBlocks  The ScratchBlocks text of the script after mutation.
  */
 public record InjectionResult(
         Program mutatedProgram,
+        String spriteName,
         String originalScriptScratchBlocks,
         String mutatedScriptScratchBlocks
 ) {

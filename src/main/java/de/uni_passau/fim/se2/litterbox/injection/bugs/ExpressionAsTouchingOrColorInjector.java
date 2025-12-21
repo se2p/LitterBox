@@ -58,7 +58,7 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
         CustomMappingCloneVisitor visitor = new CustomMappingCloneVisitor();
         Program cloned = (Program) program.accept(visitor);
         // Simple injection without detailed script tracking
-        return Collections.singletonList(new InjectionResult(cloned, "", ""));
+        return Collections.singletonList(new InjectionResult(cloned, "", "", ""));
     }
 
     private static class CustomMappingCloneVisitor extends CloneVisitor {
