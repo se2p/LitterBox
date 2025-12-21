@@ -20,11 +20,16 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideIf;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 import java.util.ArrayList;
@@ -35,8 +40,10 @@ import java.util.List;
  * then-block (or else-block) in a forever loop.
  * <p>
  * Conditions for injection:
- * - The if-statement must have successor statements (not be the last in its block)
+ * - The if-statement must have successor statements OR be inside a loop
+ *   (loops implicitly have successor statements due to repetition)
  * - The block being wrapped must not be empty
+ * - The block must not end with a terminating statement (stop/delete clone)
  * - For IfElseStmt, both then-block and else-block are candidates (if non-empty)
  */
 public class ForeverInsideIfInjector extends AbstractBugInjector {
@@ -48,14 +55,14 @@ public class ForeverInsideIfInjector extends AbstractBugInjector {
 
     @Override
     public void visit(IfThenStmt node) {
-        // Only inject if this if-statement has successor statements
-        if (!hasSuccessorStatements(node)) {
+        // Only inject if this if-statement has successor statements OR is inside a loop
+        if (!hasSuccessorOrIsInLoop(node)) {
             super.visit(node);
             return;
         }
 
-        // Only inject if the then-block is not empty
-        if (!node.getThenStmts().getStmts().isEmpty()) {
+        // Only inject if the then-block is suitable for wrapping
+        if (isSuitableForWrapping(node.getThenStmts())) {
             addMutation(node, clonedNode -> {
                 wrapInForever(clonedNode.getThenStmts());
             });
@@ -65,27 +72,73 @@ public class ForeverInsideIfInjector extends AbstractBugInjector {
 
     @Override
     public void visit(IfElseStmt node) {
-        // Only inject if this if-statement has successor statements
-        if (!hasSuccessorStatements(node)) {
+        // Only inject if this if-statement has successor statements OR is inside a loop
+        if (!hasSuccessorOrIsInLoop(node)) {
             super.visit(node);
             return;
         }
 
-        // Wrap then-block if not empty
-        if (!node.getThenStmts().getStmts().isEmpty()) {
+        // Wrap then-block if suitable
+        if (isSuitableForWrapping(node.getThenStmts())) {
             addMutation(node, clonedNode -> {
                 wrapInForever(clonedNode.getThenStmts());
             });
         }
 
-        // Also consider wrapping else-block if not empty
-        if (!node.getElseStmts().getStmts().isEmpty()) {
+        // Also consider wrapping else-block if suitable
+        if (isSuitableForWrapping(node.getElseStmts())) {
             addMutation(node, clonedNode -> {
                 wrapInForever(clonedNode.getElseStmts());
             });
         }
 
         super.visit(node);
+    }
+
+    /**
+     * Checks if a statement list is suitable for wrapping in a forever loop.
+     * Returns false if the list is empty or ends with a terminating statement.
+     */
+    private boolean isSuitableForWrapping(StmtList stmtList) {
+        List<Stmt> stmts = stmtList.getStmts();
+        if (stmts.isEmpty()) {
+            return false;
+        }
+        // Check if the last statement is a terminating statement
+        Stmt lastStmt = stmts.getLast();
+        return !isTerminatingStatement(lastStmt);
+    }
+
+    /**
+     * Checks if the statement is a terminating statement (stop or delete clone).
+     * Wrapping such blocks in a forever loop makes no sense since they never loop.
+     */
+    private boolean isTerminatingStatement(Stmt stmt) {
+        return stmt instanceof StopAll
+                || stmt instanceof StopThisScript
+                || stmt instanceof DeleteClone;
+    }
+
+    /**
+     * Checks if the statement has successor statements OR is contained within a loop.
+     * Being inside a loop counts as having implicit successors because the loop repeats.
+     */
+    private boolean hasSuccessorOrIsInLoop(Stmt stmt) {
+        return hasSuccessorStatements(stmt) || isInsideLoop(stmt);
+    }
+
+    /**
+     * Checks if the given statement is contained within any kind of loop.
+     */
+    private boolean isInsideLoop(Stmt stmt) {
+        ASTNode current = stmt.getParentNode();
+        while (current != null) {
+            if (current instanceof LoopStmt) {
+                return true;
+            }
+            current = current.getParentNode();
+        }
+        return false;
     }
 
     private void wrapInForever(StmtList targetList) {
@@ -104,3 +157,4 @@ public class ForeverInsideIfInjector extends AbstractBugInjector {
         forever.setParentNode(targetList);
     }
 }
+
