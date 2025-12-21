@@ -31,7 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.SpriteClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
@@ -130,7 +130,7 @@ public class MissingCloneInitializationInjector extends AbstractBugInjector {
                                         "_dead_code_" + UUID.randomUUID()
                                 )
                         ),
-                        NonDataBlockMetadata.emptyNonBlockMetadata()
+                        TopNonDataBlockMetadata.emptyTopNonBlockMetadata()
                 );
                 Script newScript = new Script(newEvent, script.getStmtList());
                 scripts.set(i, newScript);
