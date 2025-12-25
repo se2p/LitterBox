@@ -20,9 +20,11 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.HideWithoutShow;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ActorLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
@@ -31,19 +33,23 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMo
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
-import java.util.List;
-
 /**
- * Injects HideWithoutShow bug by removing Show statements.
- * Only injects when the actor has:
- * - A Hide statement
- * - A Show statement (which we will remove)
- * - Visible change blocks (SpriteMotionStmt, SpriteLookStmt, or ActorLookStmt)
+ * Injects HideWithoutShow bug by removing Show statements and adding Hide if needed.
+ * <p>
+ * Prerequisite: Actor has Show + visible change blocks (motion, look, etc.)
+ * <p>
+ * Transformation:
+ * <ul>
+ *   <li>Remove all Show statements</li>
+ *   <li>Add Hide at start of first script (if not already present)</li>
+ * </ul>
  */
 public class HideWithoutShowInjector extends AbstractBugInjector {
 
+    private boolean hasShow;
     private boolean hasHide;
     private boolean hasVisibleChange;
+    private Script firstScript;
 
     @Override
     public IssueFinder getIssueFinder() {
@@ -53,23 +59,78 @@ public class HideWithoutShowInjector extends AbstractBugInjector {
     @Override
     public void visit(ActorDefinition node) {
         // Reset state for each actor
+        hasShow = false;
         hasHide = false;
         hasVisibleChange = false;
+        firstScript = null;
 
-        // First pass: check if actor has hide and visible changes
+        // First pass: check prerequisites and find first script
         checkActorPrerequisites(node);
 
-        // Only proceed with injection if prerequisites are met
-        if (hasHide && hasVisibleChange) {
-            super.visit(node);
+        // Only proceed if actor has Show + visible changes
+        if (hasShow && hasVisibleChange) {
+            // Use firstScript as context for mutateClone so it correctly captures ScratchBlocks for the CSV
+            mutateClone(firstScript, clonedScript -> {
+                ActorDefinition clonedActor = findContainingActor(clonedScript);
+                if (clonedActor == null) {
+                    return;
+                }
+
+                // Remove ALL Show statements from ALL scripts in this actor
+                clonedActor.accept(new ScratchVisitor() {
+                    @Override
+                    public void visit(StmtList stmtList) {
+                        stmtList.getStmts().removeIf(stmt -> stmt instanceof Show);
+                        visitChildren(stmtList);
+                    }
+                });
+
+                // If no Hide existed in the original actor, add one at start of first script
+                if (!hasHide && firstScript != null) {
+                    // Find the first script in the cloned actor
+                    clonedActor.accept(new ScratchVisitor() {
+                        private boolean found = false;
+
+                        @Override
+                        public void visit(Script script) {
+                            if (!found && !script.getStmtList().getStmts().isEmpty()) {
+                                Hide hide = new Hide(NonDataBlockMetadata.emptyNonBlockMetadata());
+                                script.getStmtList().getStmts().addFirst(hide);
+                                found = true;
+                            }
+                        }
+                    });
+                }
+            });
         }
+    }
+
+    @Override
+    public void visit(StmtList node) {
+        // We handle mutation at the ActorDefinition level now
+        visitChildren(node);
     }
 
     private void checkActorPrerequisites(ActorDefinition node) {
         node.accept(new ScratchVisitor() {
             @Override
+            public void visit(Script script) {
+                if (firstScript == null && !script.getStmtList().getStmts().isEmpty()) {
+                    firstScript = script;
+                }
+                visitChildren(script);
+            }
+
+            @Override
+            public void visit(Show show) {
+                hasShow = true;
+                // visit((SpriteLookStmt) show); // Don't call, matching detector logic
+            }
+
+            @Override
             public void visit(Hide hide) {
                 hasHide = true;
+                // visit((SpriteLookStmt) hide); // Don't call, matching detector logic
             }
 
             @Override
@@ -89,18 +150,15 @@ public class HideWithoutShowInjector extends AbstractBugInjector {
         });
     }
 
-    @Override
-    public void visit(StmtList node) {
-        List<Stmt> stmts = node.getStmts();
-        for (int i = 0; i < stmts.size(); i++) {
-            if (stmts.get(i) instanceof Show) {
-                final int index = i;
-                mutateClone(node, clonedList -> {
-                    // Remove this specific Show statement
-                    clonedList.getStmts().remove(index);
-                });
+    private ActorDefinition findContainingActor(ASTNode node) {
+        ASTNode current = node;
+        while (current != null) {
+            if (current instanceof ActorDefinition actor) {
+                return actor;
             }
+            current = current.getParentNode();
         }
-        super.visit(node);
+        return null;
     }
 }
+

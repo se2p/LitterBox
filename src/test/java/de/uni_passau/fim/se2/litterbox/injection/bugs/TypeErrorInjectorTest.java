@@ -49,7 +49,8 @@ public class TypeErrorInjectorTest implements JsonTest {
 
         // Verify detector finds the type error
         TypeError detector = new TypeError();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             assertFalse(issues.isEmpty(), "Detector should find Type Error bug");
         }
@@ -88,7 +89,8 @@ public class TypeErrorInjectorTest implements JsonTest {
         assertTrue(injected.size() >= 2, "Should inject bugs for comparison and move");
 
         TypeError detector = new TypeError();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             assertFalse(issues.isEmpty(), "Detector should find Type Error bug");
         }
@@ -132,7 +134,8 @@ public class TypeErrorInjectorTest implements JsonTest {
 
         // Verify detector still finds the type error
         TypeError detector = new TypeError();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             assertFalse(issues.isEmpty(), "Detector should find Type Error bug");
         }

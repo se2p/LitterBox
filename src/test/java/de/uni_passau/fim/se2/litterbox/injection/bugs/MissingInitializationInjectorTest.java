@@ -57,10 +57,12 @@ public class MissingInitializationInjectorTest implements JsonTest {
 
     @Test
     public void testHideShowInitialization() throws IOException, ParsingException {
+        // Hide/Show are excluded because the finder explicitly skips VISIBILITY attributes
         String script = """
                 when green flag clicked
                 hide
                 move (10) steps
+                show
                 """;
 
         Program program = parseScratchBlocks(script);
@@ -68,7 +70,7 @@ public class MissingInitializationInjectorTest implements JsonTest {
         MissingInitializationInjector injector = new MissingInitializationInjector();
         List<InjectionResult> injected = injector.inject(program);
 
-        Assertions.assertEquals(1, injected.size(), "Should inject for hide block");
+        Assertions.assertEquals(0, injected.size(), "Should not inject for hide/show (finder skips visibility)");
     }
 
     @Test
@@ -77,6 +79,7 @@ public class MissingInitializationInjectorTest implements JsonTest {
                 when green flag clicked
                 point in direction (90)
                 move (10) steps
+                turn right (15) degrees
                 """;
 
         Program program = parseScratchBlocks(script);
@@ -93,6 +96,7 @@ public class MissingInitializationInjectorTest implements JsonTest {
                 when green flag clicked
                 switch costume to (costume1 v)
                 move (10) steps
+                next costume
                 """;
 
         Program program = parseScratchBlocks(script);
@@ -109,6 +113,7 @@ public class MissingInitializationInjectorTest implements JsonTest {
                 when green flag clicked
                 set size to (100) %
                 move (10) steps
+                change size by (10)
                 """;
 
         Program program = parseScratchBlocks(script);
@@ -125,6 +130,7 @@ public class MissingInitializationInjectorTest implements JsonTest {
                 when green flag clicked
                 set volume to (100) %
                 play sound (meow v) until done
+                change volume by (-10)
                 """;
 
         Program program = parseScratchBlocks(script);
@@ -155,12 +161,15 @@ public class MissingInitializationInjectorTest implements JsonTest {
     @Test
     public void testMultipleInitializationBlocks() throws IOException, ParsingException {
         // Multiple initialization blocks - each gets its own mutation
+        // Note: hide is excluded (finder skips visibility), so only 2 injections
         String script = """
                 when green flag clicked
                 go to x: (0) y: (0)
                 point in direction (90)
                 hide
                 move (10) steps
+                turn right (15) degrees
+                show
                 """;
 
         Program program = parseScratchBlocks(script);
@@ -168,7 +177,7 @@ public class MissingInitializationInjectorTest implements JsonTest {
         MissingInitializationInjector injector = new MissingInitializationInjector();
         List<InjectionResult> injected = injector.inject(program);
 
-        // Should create 3 mutations (one per initialization block)
-        Assertions.assertEquals(3, injected.size(), "Should create mutation for each initialization block");
+        // Should create 2 mutations (go to, point in direction - hide is excluded)
+        Assertions.assertEquals(2, injected.size(), "Should create mutation for each initialization block (excluding hide/show)");
     }
 }

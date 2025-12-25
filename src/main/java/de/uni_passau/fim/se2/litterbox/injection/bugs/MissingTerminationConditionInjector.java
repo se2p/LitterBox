@@ -22,8 +22,11 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingTerminationCondition;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+
+import java.util.List;
 
 /**
  * Injects the MissingTerminationCondition bug by replacing UntilStmt conditions with false.
@@ -31,8 +34,10 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
  * Preconditions:
  * <ul>
  *   <li>The condition is not already unspecified/false</li>
- *   <li>The loop has successor statements (otherwise no code would be blocked)</li>
+ *   <li>The loop body is non-empty (otherwise no meaningful code would loop infinitely)</li>
  * </ul>
+ * <p>
+ * Note: Uses index-based access to avoid indexOf() issues with multiple structurally-equal nodes.
  */
 public class MissingTerminationConditionInjector extends AbstractBugInjector {
 
@@ -42,9 +47,29 @@ public class MissingTerminationConditionInjector extends AbstractBugInjector {
     }
 
     @Override
-    public void visit(UntilStmt node) {
-        if (shouldInject(node)) {
-            mutateClone(node, clonedUntil -> {
+    public void visit(StmtList node) {
+        List<Stmt> statements = node.getStmts();
+
+        for (int i = 0; i < statements.size(); i++) {
+            Stmt stmt = statements.get(i);
+            if (stmt instanceof UntilStmt untilStmt) {
+                debugFoundCandidate();
+                if (shouldInject(untilStmt)) {
+                    debugMutationAttempted();
+                    injectAtIndex(node, i);
+                } else {
+                    debugPreconditionFailed();
+                }
+            }
+        }
+
+        super.visit(node);
+    }
+
+    private void injectAtIndex(StmtList stmtList, int index) {
+        mutateClone(stmtList, clonedList -> {
+            List<Stmt> stmts = clonedList.getStmts();
+            if (index < stmts.size() && stmts.get(index) instanceof UntilStmt clonedUntil) {
                 UntilStmt newUntil = nodeFactory.createUntil()
                         .withCondition(nodeFactory.unspecifiedBool())
                         .withBody(clonedUntil.getStmtList())
@@ -54,19 +79,11 @@ public class MissingTerminationConditionInjector extends AbstractBugInjector {
                 // Set parents
                 newUntil.getBoolExpr().setParentNode(newUntil);
                 newUntil.getStmtList().setParentNode(newUntil);
+                newUntil.setParentNode(clonedList);
 
-                // Replace in parent StmtList
-                var parent = clonedUntil.getParentNode();
-                if (parent instanceof StmtList stmtList) {
-                    int index = stmtList.getStmts().indexOf(clonedUntil);
-                    if (index != -1) {
-                        newUntil.setParentNode(stmtList);
-                        stmtList.getStmts().set(index, newUntil);
-                    }
-                }
-            });
-        }
-        super.visit(node);
+                stmts.set(index, newUntil);
+            }
+        });
     }
 
     private boolean shouldInject(UntilStmt node) {
@@ -75,13 +92,8 @@ public class MissingTerminationConditionInjector extends AbstractBugInjector {
             return false;
         }
 
-        // Skip if loop has no successors (no code would be blocked by infinite loop)
-        if (node.getParentNode() instanceof StmtList stmtList) {
-            int index = stmtList.getStmts().indexOf(node);
-            return index != stmtList.getStmts().size() - 1;
-        }
-
-        return true;
+        // Only inject if the loop body has statements (non-empty loop)
+        return !node.getStmtList().getStmts().isEmpty();
     }
 }
 

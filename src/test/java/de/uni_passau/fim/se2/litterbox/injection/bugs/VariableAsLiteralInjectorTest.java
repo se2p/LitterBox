@@ -23,8 +23,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.VariableAsLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -52,8 +52,8 @@ public class VariableAsLiteralInjectorTest implements JsonTest {
 
         // Verify via scratchblocks
         String result = ScratchBlocksVisitor.of(mutated);
-        Assertions.assertTrue(result.contains("say [myVar]"),
-                "Should have replaced (myVar) with [myVar]. Got:\n" + result);
+        Assertions.assertTrue(result.contains("say ([myVar])"),
+                "Should have replaced (myVar) with ([myVar]). Got:\n" + result);
 
         // Verify detection
         VariableAsLiteral detector = new VariableAsLiteral();
@@ -77,7 +77,7 @@ public class VariableAsLiteralInjectorTest implements JsonTest {
         Program mutated = injected.getFirst().mutatedProgram();
 
         String result = ScratchBlocksVisitor.of(mutated);
-        Assertions.assertTrue(result.contains("say [myVar]"),
+        Assertions.assertTrue(result.contains("say ([myVar])"),
                 "Say for secs should have variable replaced. Got:\n" + result);
 
         VariableAsLiteral detector = new VariableAsLiteral();
@@ -100,7 +100,7 @@ public class VariableAsLiteralInjectorTest implements JsonTest {
         Program mutated = injected.getFirst().mutatedProgram();
 
         String result = ScratchBlocksVisitor.of(mutated);
-        Assertions.assertTrue(result.contains("think [myVar]"),
+        Assertions.assertTrue(result.contains("think ([myVar])"),
                 "Think for secs should have variable replaced. Got:\n" + result);
 
         VariableAsLiteral detector = new VariableAsLiteral();

@@ -31,6 +31,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,54 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
 
 public class ProcedureJSONCreator {
+
+    /**
+     * Updates type placeholders in the procedure signature to match actual parameter types.
+     * <p>
+     * Scratch proccode strings contain type placeholders: %b (boolean), %n (number), %s (string/other).
+     * This method ensures the placeholders match the actual parameter types in the definition.
+     * <p>
+     * If there are fewer parameters than placeholders, extra placeholders are preserved
+     * to support OrphanedParameter bug injection.
+     *
+     * @param proccode the original procedure signature with type placeholders
+     * @param params   the current list of parameter definitions
+     * @return the updated proccode with synchronized type placeholders
+     */
+    private static String syncTypePlaceholders(String proccode, List<ParameterDefinition> params) {
+        StringBuilder result = new StringBuilder();
+        // Split by placeholders while keeping them: "move %n steps" -> ["move ", "%n", " steps"]
+        String[] segments = proccode.split("(?=%[sbn])|(?<=%[sbn])");
+        int paramIndex = 0;
+
+        for (String segment : segments) {
+            if (segment.matches("%[sbn]")) {
+                if (paramIndex < params.size()) {
+                    result.append(getTypePlaceholder(params.get(paramIndex)));
+                    paramIndex++;
+                } else {
+                    // Preserve placeholder for OrphanedParameter bugs
+                    result.append(segment);
+                }
+            } else {
+                result.append(segment);
+            }
+        }
+        return result.toString();
+    }
+
+    /**
+     * Returns the appropriate Scratch type placeholder for a parameter.
+     */
+    private static String getTypePlaceholder(ParameterDefinition param) {
+        if (param.getType() instanceof BooleanType) {
+            return "%b";
+        } else if (param.getType() instanceof NumberType) {
+            return "%n";
+        } else {
+            return "%s";
+        }
+    }
 
     /**
      * This method creates a JSON String of a {@link ProcedureDefinition} that can be used in a Scratch JSON.
@@ -95,7 +145,10 @@ public class ProcedureJSONCreator {
             i++;
         }
 
-        String mutationString = createPrototypeMetadata(procInfo.getName(),
+        // Sync type placeholders in proccode with actual parameter types
+        String proccode = syncTypePlaceholders(procInfo.getName(), parameterDefinitions);
+
+        String mutationString = createPrototypeMetadata(proccode,
                 argumentIds, parameterInfos, protoMutationMeta.isWarp());
         jsonString.append(createBlockWithMutationString(protoMetadata, null, defMetadata.getBlockId(),
                 createInputs(inputs), EMPTY_VALUE, mutationString, definition.getPrototypeOpcode()));

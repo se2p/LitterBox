@@ -20,10 +20,15 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopSensing;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
@@ -39,17 +44,60 @@ import java.util.List;
  */
 public class MissingLoopSensingInjector extends AbstractBugInjector {
 
+    private boolean inValidScript = false;
+
     @Override
     public IssueFinder getIssueFinder() {
         return new MissingLoopSensing();
     }
 
     @Override
+    public void visit(Script node) {
+        // Only process scripts with GreenFlag or StartedAsClone events (matching finder behavior)
+        if (node.getEvent() instanceof GreenFlag || node.getEvent() instanceof StartedAsClone) {
+            inValidScript = true;
+            super.visit(node);
+            inValidScript = false;
+        }
+    }
+
+    @Override
     public void visit(StmtList stmtList) {
+        // Only process if we're in a valid script (GreenFlag or StartedAsClone)
+        if (!inValidScript) {
+            super.visit(stmtList);
+            return;
+        }
+
+        // Track if we've seen WaitUntil or AskAndWait in this StmtList
+        // The finder sets afterWaitUntil/afterAskAndWait for the ENTIRE script,
+        // so any WaitUntil before the loop will prevent detection
+        boolean seenWaitUntilInParent = false;
+        boolean seenAskAndWaitInParent = false;
+
         List<Stmt> statements = stmtList.getStmts();
         for (int i = 0; i < statements.size(); i++) {
             Stmt stmt = statements.get(i);
+
+            // Track WaitUntil and AskAndWait in the parent StmtList
+            if (stmt instanceof WaitUntil) {
+                seenWaitUntilInParent = true;
+            }
+            if (stmt instanceof AskAndWait) {
+                seenAskAndWaitInParent = true;
+            }
+
             if (stmt instanceof LoopStmt loopStmt) {
+                // Skip if WaitUntil or AskAndWait appeared before this loop
+                // because the finder won't detect sensing after those
+                if (seenWaitUntilInParent || seenAskAndWaitInParent) {
+                    continue;
+                }
+
+                // Only target outermost loops - nested loops won't expose the bug
+                if (isInsideLoop(loopStmt)) {
+                    continue;
+                }
                 IfStmt sensingIf = findIfWithSensingCondition(loopStmt);
                 if (sensingIf != null) {
                     addUnwrapLoopMutation(stmtList, i, loopStmt, sensingIf);
@@ -60,7 +108,12 @@ public class MissingLoopSensingInjector extends AbstractBugInjector {
     }
 
     /**
-     * Finds an if-statement inside the loop that has a sensing condition.
+     * Finds an if-statement that is a direct child of the loop and has a sensing condition.
+     * Only direct children are checked to avoid removing loops that contain nested loops or
+     * ifs with sensing inside other ifs.
+     * <p>
+     * Additionally, we skip loops that contain WaitUntil or AskAndWait statements before
+     * the sensing if-statement, because the finder won't flag sensing conditions after these.
      */
     private IfStmt findIfWithSensingCondition(LoopStmt loopStmt) {
         StmtList body = getLoopBody(loopStmt);
@@ -68,9 +121,32 @@ public class MissingLoopSensingInjector extends AbstractBugInjector {
             return null;
         }
 
-        SensingIfFinder finder = new SensingIfFinder();
-        body.accept(finder);
-        return finder.getSensingIf();
+        // Track if we've seen WaitUntil or AskAndWait - finder skips sensing after these
+        boolean seenWaitUntil = false;
+        boolean seenAskAndWait = false;
+
+        // Only check direct children, not nested structures
+        for (Stmt stmt : body.getStmts()) {
+            // Check for WaitUntil or AskAndWait which would prevent detection
+            if (stmt instanceof WaitUntil) {
+                seenWaitUntil = true;
+            }
+            if (stmt instanceof AskAndWait) {
+                seenAskAndWait = true;
+            }
+
+            // Only return sensing if-statements that come BEFORE any WaitUntil/AskAndWait
+            // (finder sets afterWaitUntil/afterAskAndWait and skips sensing after those)
+            if (!seenWaitUntil && !seenAskAndWait) {
+                if (stmt instanceof IfThenStmt ifThen && hasSensingCondition(ifThen.getBoolExpr())) {
+                    return ifThen;
+                }
+                if (stmt instanceof IfElseStmt ifElse && hasSensingCondition(ifElse.getBoolExpr())) {
+                    return ifElse;
+                }
+            }
+        }
+        return null;
     }
 
     private StmtList getLoopBody(LoopStmt loopStmt) {
@@ -120,31 +196,6 @@ public class MissingLoopSensingInjector extends AbstractBugInjector {
         SensingConditionChecker checker = new SensingConditionChecker();
         expr.accept(checker);
         return checker.hasSensingCondition();
-    }
-
-    /**
-     * Visitor that finds an if-statement with a sensing condition.
-     */
-    private class SensingIfFinder implements ScratchVisitor {
-        private IfStmt sensingIf = null;
-
-        @Override
-        public void visit(IfThenStmt node) {
-            if (sensingIf == null && hasSensingCondition(node.getBoolExpr())) {
-                sensingIf = node;
-            }
-        }
-
-        @Override
-        public void visit(IfElseStmt node) {
-            if (sensingIf == null && hasSensingCondition(node.getBoolExpr())) {
-                sensingIf = node;
-            }
-        }
-
-        public IfStmt getSensingIf() {
-            return sensingIf;
-        }
     }
 
     /**

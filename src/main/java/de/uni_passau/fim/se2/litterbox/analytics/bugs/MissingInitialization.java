@@ -37,7 +37,7 @@ public class MissingInitialization extends AbstractIssueFinder {
 
     private static class UseIssue extends Issue {
 
-        private Use use;
+        private final Use use;
 
         public UseIssue(IssueFinder finder, Program program, Script script, Hint hint, Use use) {
             super(finder, IssueSeverity.HIGH, program,

@@ -51,7 +51,8 @@ public class ImmediateStopAfterSayInjectorTest implements JsonTest {
 
         // Verification: Check detector finds the issue
         ImmediateStopAfterSay detector = new ImmediateStopAfterSay();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "Detector should find ImmediateStopAfterSay issue");
         }
@@ -75,9 +76,62 @@ public class ImmediateStopAfterSayInjectorTest implements JsonTest {
 
         // Verification: Check detector finds the issue
         ImmediateStopAfterSay detector = new ImmediateStopAfterSay();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "Detector should find ImmediateStopAfterSay issue for Think");
         }
     }
+
+    @Test
+    public void testFallbackSayForSecsConversion() throws IOException, ParsingException {
+        // Script with timed say at end (no async version) - should convert and inject
+        String script = """
+                when green flag clicked
+                move (10) steps
+                say [Hello!] for (2) secs
+                """;
+
+        Program program = parseScratchBlocks(script);
+
+        ImmediateStopAfterSayInjector injector = new ImmediateStopAfterSayInjector();
+        List<InjectionResult> injected = injector.inject(program);
+
+        // Should convert SayForSecs at end to Say + StopAll
+        Assertions.assertEquals(1, injected.size(), "Should inject via fallback");
+
+        // Verify detection
+        ImmediateStopAfterSay detector = new ImmediateStopAfterSay();
+        Assertions.assertFalse(detector.check(injected.getFirst().mutatedProgram()).isEmpty(),
+                "Detector should find the bug");
+    }
+
+    @Test
+    public void testMultipleIdenticalSayStatements() throws IOException, ParsingException {
+        // Script with multiple identical say statements - verifies index-based access fix
+        String script = """
+                when green flag clicked
+                say [Hello!]
+                move (10) steps
+                say [Hello!]
+                move (5) steps
+                """;
+
+        Program program = parseScratchBlocks(script);
+
+        ImmediateStopAfterSayInjector injector = new ImmediateStopAfterSayInjector();
+        List<InjectionResult> injected = injector.inject(program);
+
+        // Should inject 2 mutations (one for each Say statement)
+        Assertions.assertEquals(2, injected.size(), "Should inject 2 bug programs (one per Say)");
+
+        // Verify each mutation is detected
+        ImmediateStopAfterSay detector = new ImmediateStopAfterSay();
+        for (int i = 0; i < injected.size(); i++) {
+            Set<Issue> issues = detector.check(injected.get(i).mutatedProgram());
+            Assertions.assertFalse(issues.isEmpty(),
+                    "Detector should find ImmediateStopAfterSay issue in mutation " + i);
+        }
+    }
 }
+

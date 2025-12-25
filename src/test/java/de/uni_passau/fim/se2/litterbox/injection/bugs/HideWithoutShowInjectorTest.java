@@ -23,9 +23,9 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.HideWithoutShow;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -105,8 +105,8 @@ public class HideWithoutShowInjectorTest implements JsonTest {
     }
 
     @Test
-    public void testNoHideNoInjection() throws IOException, ParsingException {
-        // Script with Show but no Hide - precondition not met
+    public void testNoHideAddsHide() throws IOException, ParsingException {
+        // Script with Show but no Hide - injector now adds Hide
         String script = """
                 when green flag clicked
                 show
@@ -118,7 +118,13 @@ public class HideWithoutShowInjectorTest implements JsonTest {
         HideWithoutShowInjector injector = new HideWithoutShowInjector();
         List<InjectionResult> injected = injector.inject(program);
 
-        Assertions.assertTrue(injected.isEmpty(), "Should not inject without Hide (precondition not met)");
+        // Now injects by adding Hide and removing Show
+        Assertions.assertFalse(injected.isEmpty(), "Should inject with Hide added");
+
+        // Verify detector finds the bug
+        HideWithoutShow detector = new HideWithoutShow();
+        Assertions.assertFalse(detector.check(injected.getFirst().mutatedProgram()).isEmpty(),
+                "Detector should find bug");
     }
 
     private boolean hasShow(Program program) {

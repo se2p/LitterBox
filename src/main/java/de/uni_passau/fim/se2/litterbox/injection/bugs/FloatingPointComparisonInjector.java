@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.FloatingPointComparison;
 import de.uni_passau.fim.se2.litterbox.ast.builder.IfStmtBuilder;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
@@ -33,9 +34,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
@@ -60,14 +64,18 @@ import java.util.Set;
  */
 public class FloatingPointComparisonInjector extends AbstractBugInjector {
 
-    /** Expression types that produce floating-point values (unsafe for exact comparison). */
+    /**
+     * Expression types that produce floating-point values (unsafe for exact comparison).
+     */
     private static final Set<Class<? extends Expression>> UNSAFE_OPERAND_TYPES = Set.of(
             MouseX.class, MouseY.class, DistanceTo.class,
             PositionX.class, PositionY.class, Direction.class,
             Volume.class, Timer.class
     );
 
-    /** AttributeOf fixed attribute types that are unsafe for exact comparison. */
+    /**
+     * AttributeOf fixed attribute types that are unsafe for exact comparison.
+     */
     private static final Set<FixedAttribute.FixedAttributeType> UNSAFE_ATTRIBUTE_TYPES = Set.of(
             FixedAttribute.FixedAttributeType.X_POSITION,
             FixedAttribute.FixedAttributeType.Y_POSITION,
@@ -86,34 +94,57 @@ public class FloatingPointComparisonInjector extends AbstractBugInjector {
     public List<InjectionResult> inject(Program program) {
         foundUnsafeOperands.clear();
         collectUnsafeOperands(program);
+
+        // Fallback: if no unsafe operands found, create a synthetic PositionX expression
+        // PositionX is more commonly used in Scratch projects than Timer
+        if (foundUnsafeOperands.isEmpty()) {
+            foundUnsafeOperands.add(new PositionX(NonDataBlockMetadata.emptyNonBlockMetadata()));
+        }
+
         return super.inject(program);
     }
 
     private void collectUnsafeOperands(Program program) {
         program.accept(new ScratchVisitor() {
             @Override
-            public void visit(Timer node) { foundUnsafeOperands.add(node); }
+            public void visit(Timer node) {
+                foundUnsafeOperands.add(node);
+            }
 
             @Override
-            public void visit(MouseX node) { foundUnsafeOperands.add(node); }
+            public void visit(MouseX node) {
+                foundUnsafeOperands.add(node);
+            }
 
             @Override
-            public void visit(MouseY node) { foundUnsafeOperands.add(node); }
+            public void visit(MouseY node) {
+                foundUnsafeOperands.add(node);
+            }
 
             @Override
-            public void visit(DistanceTo node) { foundUnsafeOperands.add(node); }
+            public void visit(DistanceTo node) {
+                foundUnsafeOperands.add(node);
+            }
 
             @Override
-            public void visit(PositionX node) { foundUnsafeOperands.add(node); }
+            public void visit(PositionX node) {
+                foundUnsafeOperands.add(node);
+            }
 
             @Override
-            public void visit(PositionY node) { foundUnsafeOperands.add(node); }
+            public void visit(PositionY node) {
+                foundUnsafeOperands.add(node);
+            }
 
             @Override
-            public void visit(Direction node) { foundUnsafeOperands.add(node); }
+            public void visit(Direction node) {
+                foundUnsafeOperands.add(node);
+            }
 
             @Override
-            public void visit(Volume node) { foundUnsafeOperands.add(node); }
+            public void visit(Volume node) {
+                foundUnsafeOperands.add(node);
+            }
 
             @Override
             public void visit(AttributeOf node) {
@@ -128,7 +159,9 @@ public class FloatingPointComparisonInjector extends AbstractBugInjector {
 
     @Override
     public void visit(Equals node) {
-        if (!isInConditionContext(node)) {
+        // Only inject when Equals is the DIRECT condition of an if/until/wait-until
+        // Not when it's nested inside Or/And or another comparison's operand
+        if (!isDirectCondition(node)) {
             super.visit(node);
             return;
         }
@@ -136,14 +169,47 @@ public class FloatingPointComparisonInjector extends AbstractBugInjector {
         ComparableExpr op1 = node.getOperand1();
         ComparableExpr op2 = node.getOperand2();
 
-        // Only inject if both operands are currently "safe" (no bug present yet)
-        if (isSafeOperand(op1) && isSafeOperand(op2) && foundUnsafeOperands.size() >= 2) {
-            ComparableExpr unsafe1 = cloner.apply(foundUnsafeOperands.get(0));
-            ComparableExpr unsafe2 = cloner.apply(foundUnsafeOperands.get(1));
-            replaceWith(node, n -> new Equals(unsafe1, unsafe2, n.getMetadata()));
+        boolean safe1 = isSafeOperand(op1);
+        boolean safe2 = isSafeOperand(op2);
+
+        // Only inject if at least one operand is safe (otherwise bug already exists)
+        if (safe1 || safe2) {
+            ComparableExpr unsafeReplacement = cloner.apply(foundUnsafeOperands.getFirst());
+
+            if (safe1 && safe2) {
+                // Both safe: replace one operand with an unsafe one
+                replaceWith(node, n -> new Equals(unsafeReplacement, op2, n.getMetadata()));
+            } else if (safe1) {
+                // Only op1 is safe: replace it, keep op2 (already unsafe)
+                replaceWith(node, n -> new Equals(unsafeReplacement, op2, n.getMetadata()));
+            } else {
+                // Only op2 is safe: replace it, keep op1 (already unsafe)
+                replaceWith(node, n -> new Equals(op1, unsafeReplacement, n.getMetadata()));
+            }
         }
 
         super.visit(node);
+    }
+
+    /**
+     * Checks if the Equals node is the DIRECT condition of an if/until/wait-until.
+     * Returns false if it's nested inside Or/And or another comparison's operand.
+     */
+    private boolean isDirectCondition(Equals node) {
+        ASTNode parent = node.getParentNode();
+        if (parent instanceof IfThenStmt ifStmt) {
+            return ifStmt.getBoolExpr() == node;
+        }
+        if (parent instanceof IfElseStmt ifElse) {
+            return ifElse.getBoolExpr() == node;
+        }
+        if (parent instanceof UntilStmt until) {
+            return until.getBoolExpr() == node;
+        }
+        if (parent instanceof WaitUntil waitUntil) {
+            return waitUntil.getUntil() == node;
+        }
+        return false;
     }
 
     @Override

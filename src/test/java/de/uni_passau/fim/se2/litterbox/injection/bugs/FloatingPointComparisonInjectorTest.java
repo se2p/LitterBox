@@ -23,8 +23,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.FloatingPointComparison;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -61,10 +61,10 @@ public class FloatingPointComparisonInjectorTest implements JsonTest {
         assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
         Program mutated = injected.getFirst().mutatedProgram();
 
-        // Verify: comparison should now use unsafe operands (timer and mouse x)
+        // Verify: one operand is replaced with an unsafe one (timer), the other kept as-is
         String result = ScratchBlocksVisitor.of(mutated);
-        assertTrue(result.contains("<(timer) = (mouse x)>"),
-                "Comparison should use unsafe operands from the program. Got:\n" + result);
+        assertTrue(result.contains("<(timer) = (1)>"),
+                "Comparison should have one unsafe operand from the program. Got:\n" + result);
 
         // Verify detection
         Set<Issue> issues = detector.check(mutated);
@@ -136,8 +136,8 @@ public class FloatingPointComparisonInjectorTest implements JsonTest {
     }
 
     @Test
-    public void testNoInjectionWithoutUnsafeOperands() throws IOException, ParsingException {
-        // Script with only safe operands - cannot inject
+    public void testInjectionWithSyntheticPositionXWhenNoUnsafeOperands() throws IOException, ParsingException {
+        // Script with only safe operands - injector uses synthetic PositionX fallback
         String script = """
                 when green flag clicked
                 if <(1) = (2)> then
@@ -149,7 +149,18 @@ public class FloatingPointComparisonInjectorTest implements JsonTest {
         FloatingPointComparisonInjector injector = new FloatingPointComparisonInjector();
         List<InjectionResult> injected = injector.inject(program);
 
-        assertTrue(injected.isEmpty(), "Should not inject without unsafe operands in program");
+        // With fallback, should inject using synthetic PositionX for one operand
+        assertEquals(1, injected.size(), "Should inject with synthetic PositionX fallback");
+
+        // Verify the mutation replaces one operand with x position
+        String result = ScratchBlocksVisitor.of(injected.getFirst().mutatedProgram());
+        assertTrue(result.contains("<(x position) = (2)>"),
+                "Comparison should have one synthetic PositionX operand. Got:\n" + result);
+
+        // Verify detection
+        FloatingPointComparison detector = new FloatingPointComparison();
+        assertFalse(detector.check(injected.getFirst().mutatedProgram()).isEmpty(),
+                "Detector should find bug with synthetic PositionX operand");
     }
 
     @Test

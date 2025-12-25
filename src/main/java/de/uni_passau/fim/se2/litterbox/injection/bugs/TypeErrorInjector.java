@@ -18,8 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.TypeError;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
@@ -31,13 +33,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
-
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Injects the {@link TypeError} bug using two strategies:
@@ -59,12 +62,22 @@ public class TypeErrorInjector extends AbstractBugInjector {
     private static final NumExpr FALLBACK_BOOL_AS_NUM = new AsNumber(new BoolLiteral(true));
 
     private final List<BoolExpr> collectedBoolExprs = new ArrayList<>();
+    private final Set<ASTNode> buggyNodes = new HashSet<>();
     private NumExpr boolAsNumReplacement;
 
     @Override
     public List<InjectionResult> inject(Program program) {
         // First pass: collect boolean expressions from the program
         collectExpressions(program);
+
+        // Pre-run finder to identify existing buggy nodes
+        buggyNodes.clear();
+        for (Issue issue : getIssueFinder().check(program)) {
+            ASTNode node = issue.getCodeLocation();
+            if (node != null) {
+                buggyNodes.add(node);
+            }
+        }
 
         // Choose replacement expression
         if (!collectedBoolExprs.isEmpty()) {
@@ -76,6 +89,18 @@ public class TypeErrorInjector extends AbstractBugInjector {
 
         // Second pass: inject bugs
         return super.inject(program);
+    }
+
+    private boolean isBuggy(ASTNode node) {
+        if (buggyNodes.contains(node)) {
+            return true;
+        }
+        for (ASTNode child : node.getChildren()) {
+            if (isBuggy(child)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void collectExpressions(Program program) {
@@ -118,7 +143,7 @@ public class TypeErrorInjector extends AbstractBugInjector {
 
     @Override
     public void visit(Equals node) {
-        if (node.getOperand1() instanceof NumberLiteral || node.getOperand1() instanceof StringLiteral) {
+        if (!isBuggy(node) && (node.getOperand1() instanceof NumberLiteral || node.getOperand1() instanceof StringLiteral)) {
             replaceWith(node, n -> new Equals(
                     n.getOperand1(),
                     getBoolAsNumReplacement(),
@@ -130,7 +155,7 @@ public class TypeErrorInjector extends AbstractBugInjector {
 
     @Override
     public void visit(LessThan node) {
-        if (node.getOperand1() instanceof NumberLiteral || node.getOperand1() instanceof StringLiteral) {
+        if (!isBuggy(node) && (node.getOperand1() instanceof NumberLiteral || node.getOperand1() instanceof StringLiteral)) {
             replaceWith(node, n -> new LessThan(
                     n.getOperand1(),
                     getBoolAsNumReplacement(),
@@ -142,7 +167,7 @@ public class TypeErrorInjector extends AbstractBugInjector {
 
     @Override
     public void visit(BiggerThan node) {
-        if (node.getOperand1() instanceof NumberLiteral || node.getOperand1() instanceof StringLiteral) {
+        if (!isBuggy(node) && (node.getOperand1() instanceof NumberLiteral || node.getOperand1() instanceof StringLiteral)) {
             replaceWith(node, n -> new BiggerThan(
                     n.getOperand1(),
                     getBoolAsNumReplacement(),
@@ -157,37 +182,45 @@ public class TypeErrorInjector extends AbstractBugInjector {
 
     @Override
     public void visit(MoveSteps node) {
-        replaceWith(node, n -> new MoveSteps(
-                getBoolAsNumReplacement(),
-                n.getMetadata()
-        ));
+        if (!isBuggy(node)) {
+            replaceWith(node, n -> new MoveSteps(
+                    getBoolAsNumReplacement(),
+                    n.getMetadata()
+            ));
+        }
         super.visit(node);
     }
 
     @Override
     public void visit(SetXTo node) {
-        replaceWith(node, n -> new SetXTo(
-                getBoolAsNumReplacement(),
-                n.getMetadata()
-        ));
+        if (!isBuggy(node)) {
+            replaceWith(node, n -> new SetXTo(
+                    getBoolAsNumReplacement(),
+                    n.getMetadata()
+            ));
+        }
         super.visit(node);
     }
 
     @Override
     public void visit(SetYTo node) {
-        replaceWith(node, n -> new SetYTo(
-                getBoolAsNumReplacement(),
-                n.getMetadata()
-        ));
+        if (!isBuggy(node)) {
+            replaceWith(node, n -> new SetYTo(
+                    getBoolAsNumReplacement(),
+                    n.getMetadata()
+            ));
+        }
         super.visit(node);
     }
 
     @Override
     public void visit(WaitSeconds node) {
-        replaceWith(node, n -> new WaitSeconds(
-                getBoolAsNumReplacement(),
-                n.getMetadata()
-        ));
+        if (!isBuggy(node)) {
+            replaceWith(node, n -> new WaitSeconds(
+                    getBoolAsNumReplacement(),
+                    n.getMetadata()
+            ));
+        }
         super.visit(node);
     }
 

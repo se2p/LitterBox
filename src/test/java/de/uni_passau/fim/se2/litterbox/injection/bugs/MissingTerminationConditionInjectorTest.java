@@ -50,9 +50,40 @@ public class MissingTerminationConditionInjectorTest implements JsonTest {
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         MissingTerminationCondition detector = new MissingTerminationCondition();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "MissingTerminationCondition detector should find the injected bug in all injected programs");
+        }
+    }
+
+    @Test
+    public void testMultipleIdenticalUntilStmts() throws IOException, ParsingException {
+        // Script with multiple identical until statements - verifies index-based access fix
+        String script = """
+                when green flag clicked
+                repeat until <key [space v] pressed?>
+                  move (10) steps
+                end
+                say [middle]
+                repeat until <key [space v] pressed?>
+                  move (10) steps
+                end
+                say [done]""";
+
+        Program program = parseScratchBlocks(script);
+        MissingTerminationConditionInjector injector = new MissingTerminationConditionInjector();
+        List<InjectionResult> injected = injector.inject(program);
+
+        // Should inject 2 mutations (one for each UntilStmt)
+        Assertions.assertEquals(2, injected.size(), "Should inject 2 bug programs (one per UntilStmt)");
+
+        // Verify each mutation is detected
+        MissingTerminationCondition detector = new MissingTerminationCondition();
+        for (int i = 0; i < injected.size(); i++) {
+            Set<Issue> issues = detector.check(injected.get(i).mutatedProgram());
+            Assertions.assertFalse(issues.isEmpty(),
+                    "Detector should find MissingTerminationCondition issue in mutation " + i);
         }
     }
 }
