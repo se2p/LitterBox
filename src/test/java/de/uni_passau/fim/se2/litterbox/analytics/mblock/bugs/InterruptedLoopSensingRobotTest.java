@@ -32,6 +32,6 @@ public class InterruptedLoopSensingRobotTest implements JsonTest {
 
     @Test
     public void testInterruptedLoopSensingRobot() throws ParsingException, IOException {
-        assertThatFinderReports(3, new InterruptedLoopSensingRobot(), "./src/test/fixtures/mblock/test/interruptedLoopRobot.json");
+        assertThatFinderReports(4, new InterruptedLoopSensingRobot(), "./src/test/fixtures/mblock/test/interruptedLoopRobot.json");
     }
 }
