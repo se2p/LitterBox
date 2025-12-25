@@ -1988,7 +1988,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
 
     @Test
-    void testParameterWithColonEscaped() throws ParsingException, IOException {
+    void testParameterWithColonEscaped() {
         Parameter parameter = new Parameter(new StrId("abc::de"), new StringType(), new NoBlockMetadata());
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false, false);
         parameter.accept(visitor);
