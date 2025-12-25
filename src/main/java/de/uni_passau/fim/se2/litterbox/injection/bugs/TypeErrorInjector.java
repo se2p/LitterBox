@@ -26,9 +26,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
@@ -58,7 +58,10 @@ import java.util.Set;
  */
 public class TypeErrorInjector extends AbstractBugInjector {
 
-    private static final NumExpr FALLBACK_BOOL_AS_NUM = new AsNumber(new BoolLiteral(true));
+    // Fallback: use IsMouseDown - a real Scratch boolean block, not BoolLiteral which doesn't exist in Scratch
+    private static final NumExpr FALLBACK_BOOL_AS_NUM = new AsNumber(
+            new IsMouseDown(NonDataBlockMetadata.emptyNonBlockMetadata())
+    );
 
     private final List<BoolExpr> collectedBoolExprs = new ArrayList<>();
     private final Set<ASTNode> buggyNodes = new HashSet<>();
