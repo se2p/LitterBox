@@ -143,9 +143,7 @@ public class MissingInitialization extends AbstractIssueFinder {
         if (first instanceof UseIssue firstUse && other instanceof UseIssue otherUse) {
             Use use1 = firstUse.getUse();
             Use use2 = otherUse.getUse();
-            if (use1.getDefinable().equals(use2.getDefinable())) {
-                return true;
-            }
+            return use1.getDefinable().equals(use2.getDefinable());
         }
 
         return false;

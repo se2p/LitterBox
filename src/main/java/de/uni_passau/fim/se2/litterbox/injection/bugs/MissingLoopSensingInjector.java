@@ -100,7 +100,7 @@ public class MissingLoopSensingInjector extends AbstractBugInjector {
                 }
                 IfStmt sensingIf = findIfWithSensingCondition(loopStmt);
                 if (sensingIf != null) {
-                    addUnwrapLoopMutation(stmtList, i, loopStmt, sensingIf);
+                    addUnwrapLoopMutation(stmtList, i);
                 }
             }
         }
@@ -166,7 +166,7 @@ public class MissingLoopSensingInjector extends AbstractBugInjector {
      * <p>
      * This creates a bug because the sensing check is no longer continuously evaluated.
      */
-    private void addUnwrapLoopMutation(StmtList stmtList, int index, LoopStmt loopStmt, IfStmt sensingIf) {
+    private void addUnwrapLoopMutation(StmtList stmtList, int index) {
         mutateClone(stmtList, clonedList -> {
             if (index < clonedList.getStmts().size()
                     && clonedList.getStmts().get(index) instanceof LoopStmt clonedLoop) {

@@ -54,8 +54,7 @@ import java.util.Set;
  * For realistic bugs, this injector collects boolean expressions from the program
  * (like {@code Touching}, {@code IsMouseDown}, etc.) and uses them as replacement values.
  * <p>
- * This injector uses immutable transformations via {@link #addImmutableMutation} to
- * maintain AST immutability.
+ * This injector uses {@link #replaceWith} for immutable transformations.
  */
 public class TypeErrorInjector extends AbstractBugInjector {
 
