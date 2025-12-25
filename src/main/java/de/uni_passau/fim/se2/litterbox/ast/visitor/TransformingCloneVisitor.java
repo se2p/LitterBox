@@ -27,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Div;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Minus;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mod;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Mult;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PickRandom;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Round;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
@@ -37,6 +36,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveStep
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -52,7 +53,7 @@ import java.util.function.Function;
  * Usage:
  * <pre>
  * TransformingCloneVisitor visitor = new TransformingCloneVisitor();
- * visitor.register(originalMoveSteps, node -> 
+ * visitor.register(originalMoveSteps, node ->
  *     new MoveSteps(newStepsExpr, node.getMetadata()));
  * Program mutated = visitor.apply(originalProgram);
  * </pre>
@@ -98,12 +99,33 @@ public class TransformingCloneVisitor extends CloneVisitor {
     /**
      * Applies the registered transformation to a node and records the replacement.
      */
-    @SuppressWarnings("unchecked")
-    protected <T extends ASTNode> T applyTransformation(T node) {
-        T replacement = (T) transformations.get(node).apply(node);
+    protected <T extends ASTNode> ASTNode applyTransformation(T node) {
+        ASTNode replacement = transformations.get(node).apply(node);
         replacements.put(node, replacement);
         return replacement;
     }
+
+    /**
+     * Override apply to handle transformations that change the node type.
+     * When a transformation is registered, skip the type cast since the
+     * replacement may be a different type than the original.
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends ASTNode> T apply(T node) {
+        if (node == null) {
+            return null;
+        }
+        // If this node has a transformation, apply it and return the result
+        // without the type check (since the type may change)
+        if (hasTransformation(node)) {
+            return (T) applyTransformation(node);
+        }
+        // Otherwise, use the default behavior
+        return super.apply(node);
+    }
+
+
 
     // --- Motion Blocks ---
 
@@ -243,6 +265,21 @@ public class TransformingCloneVisitor extends CloneVisitor {
 
     @Override
     public ASTNode visit(Round node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+    @Override
+    public ASTNode visit(Variable node) {
+        if (hasTransformation(node)) {
+            return applyTransformation(node);
+        }
+        return super.visit(node);
+    }
+
+    @Override
+    public ASTNode visit(Parameter node) {
         if (hasTransformation(node)) {
             return applyTransformation(node);
         }
