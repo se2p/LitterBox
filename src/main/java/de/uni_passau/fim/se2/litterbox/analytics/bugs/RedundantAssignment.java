@@ -29,53 +29,22 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
-import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPosXY;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointTowards;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
-import de.uni_passau.fim.se2.litterbox.cfg.Attribute;
-import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
-import de.uni_passau.fim.se2.litterbox.cfg.Defineable;
-import de.uni_passau.fim.se2.litterbox.cfg.Definition;
-import de.uni_passau.fim.se2.litterbox.cfg.Use;
+import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysis;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysisBuilder;
 import de.uni_passau.fim.se2.litterbox.dataflow.ForwardFlowDirection;
@@ -102,9 +71,8 @@ public class RedundantAssignment extends AbstractIssueFinder {
         ControlFlowGraph cfg = buildCFG(program);
         DataflowAnalysis<Defineable> livenessAnalysis = performLivenessAnalysis(cfg);
         DataflowAnalysis<ReachingDefinitionState> reachingAnalysis = performReachingAnalysis(cfg);
-        Set<Issue> issues = findRedundantAssignments(cfg, livenessAnalysis, reachingAnalysis, program);
 
-        return issues;
+        return findRedundantAssignments(cfg, livenessAnalysis, reachingAnalysis, program);
     }
 
     private ControlFlowGraph buildCFG(Program program) {
@@ -185,13 +153,6 @@ public class RedundantAssignment extends AbstractIssueFinder {
                                          Set<Definition> alwaysRedundantDefs) {
         Defineable variable = currentDef.getDefinable();
         CFGNode currentNode = currentDef.getDefinitionSource();
-        ASTNode stmt = currentNode.getASTNode();
-
-        // If the assignment uses a variable, this variable may be changed concurrently,
-        // so we can't know if it is redundant
-        if (stmt != null && isDynamicAssignment(stmt)) {
-            return;
-        }
 
         // If the variable is USED in the same node (e.g. "change x by 1"), then the reaching definition was used!
         for (Use use : currentNode.getUses()) {
@@ -210,7 +171,6 @@ public class RedundantAssignment extends AbstractIssueFinder {
                 continue;
             }
             if (reached.getDefinable().equals(variable)) {
-
                 // Refinement: If this overwrite point is reached by a definition that is unused on THIS path,
                 // check if it was used on ANY incoming path.
                 // Since the analysis merges facts (May Analysis), if it was used on any path,
@@ -219,21 +179,12 @@ public class RedundantAssignment extends AbstractIssueFinder {
                     continue; // Suppress (Partially Dead)
                 }
 
-                ASTNode reachedStmt = reached.getDefinitionSource().getASTNode();
-                if (reachedStmt != null && isDynamicAssignment(reachedStmt)) {
-                    continue;
-                }
-
                 createAndAddIssue(reached, program, issues, HINT_POSSIBLE);
             }
         }
     }
 
     private boolean reportAlwaysRedundant(Definition def, Program program, Set<Issue> issues) {
-        ASTNode statement = def.getDefinitionSource().getASTNode();
-        if (statement != null && isDynamicAssignment(statement)) {
-            return false;
-        }
         createAndAddIssue(def, program, issues, HINT_ALWAYS);
         return true;
     }
@@ -283,84 +234,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
         return null;
     }
 
-    /**
-     * Checks if the assignment involves a dynamic value (non-constant).
-     *
-     * <p>This method enumerates all AST nodes that result in a variable or attribute definition
-     * but do not inherently "read" the value (unlike "Change Variable By").
-     * We check these blocks to see if the assigned value is dynamic (e.g., depends on a sensor
-     * or user input). If it is dynamic, we conservatively assume the assignment is necessary
-     * (e.g., updating state in a loop) and suppress redundancy warnings.
-     *
-     * @param statement The AST node performing definitions.
-     * @return true if the assignment is dynamic/interactive and should be ignored; false otherwise.
-     */
-    private boolean isDynamicAssignment(ASTNode statement) {
-        return switch (statement) {
-            case SetVariableTo stmt -> !isConstant(stmt.getExpr());
-            case SetXTo stmt -> !isConstant(stmt.getNum());
-            case SetYTo stmt -> !isConstant(stmt.getNum());
-            case GoToPosXY stmt -> !isConstant(stmt.getX()) || !isConstant(stmt.getY());
-            case PointInDirection stmt -> !isConstant(stmt.getDirection());
-            case SetSizeTo stmt -> !isConstant(stmt.getPercent());
-            case SetGraphicEffectTo stmt -> !isConstant(stmt.getValue());
-            case SetSoundEffectTo stmt -> !isConstant(stmt.getValue());
-            case SetVolumeTo stmt -> !isConstant(stmt.getVolumeValue());
-            case SwitchCostumeTo stmt -> isDynamic(stmt.getCostumeChoice());
-            case SwitchBackdrop stmt -> isDynamic(stmt.getElementChoice());
-            case SwitchBackdropAndWait stmt -> isDynamic(stmt.getElementChoice());
-            case GoToPos stmt -> isDynamic(stmt.getPosition());
-            case PointTowards stmt -> isDynamic(stmt.getPosition());
-            case null, default -> false;
-            // AskAndWait would qualify, but dataflow analysis does not consider answer
-        };
-    }
-
-    private boolean isDynamic(ElementChoice choice) {
-        if (choice instanceof WithExpr withExpr) {
-            return !isConstant(withExpr.getExpression());
-        }
-        // Random, Next, Prev are all dynamic interactions or values
-        return choice instanceof Random || choice instanceof Next || choice instanceof Prev;
-    }
-
-    private boolean isDynamic(Position pos) {
-        if (pos instanceof FromExpression fromExpression) {
-            return !isConstant(fromExpression.getStringExpr());
-        }
-        // RandomPos, MousePos are dynamic
-        return pos instanceof RandomPos || pos instanceof MousePos;
-    }
-
-    private boolean isConstant(Expression expr) {
-        if (isConstantLiteral(expr)) {
-            return true;
-        }
-        return areAllChildrenConstant(expr);
-    }
-
-    private boolean isConstantLiteral(Expression expr) {
-        return expr instanceof BoolLiteral
-                || expr instanceof ColorLiteral
-                || expr instanceof NumberLiteral
-                || expr instanceof StringLiteral;
-    }
-
-    private boolean areAllChildrenConstant(Expression expr) {
-        if (expr.getChildren() == null) {
-            return true;
-        }
-        for (ASTNode child : expr.getChildren()) {
-            if (child instanceof Expression childExpr) {
-                if (!isConstant(childExpr)) {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        }
-        return true;
-    }
+    // deleted isDynamic, isConstant, etc.
 
     @Override
     public String getName() {
@@ -420,9 +294,15 @@ public class RedundantAssignment extends AbstractIssueFinder {
             }
 
             // Add variables implicitly used by halting (Gen)
-            outFacts.addAll(getHaltingUses(node));
+            if (isHaltingNode(node)) {
+                outFacts.addAll(allDefinedVariables);
+            }
 
             return outFacts;
+        }
+
+        private boolean isHaltingNode(CFGNode node) {
+            return containsHaltingNode(node.getASTNode());
         }
 
         private boolean isExitNode(CFGNode node) {
@@ -443,7 +323,6 @@ public class RedundantAssignment extends AbstractIssueFinder {
             for (Use use : node.getUses()) {
                 usedVariables.add(use.getDefinable());
             }
-            usedVariables.addAll(getHaltingUses(node));
 
             Set<Defineable> definedVariables = new HashSet<>();
             for (Definition def : node.getDefinitions()) {
@@ -460,6 +339,8 @@ public class RedundantAssignment extends AbstractIssueFinder {
                 // Gen Use: If variable used, mark as used
                 if (usedVariables.contains(state.getDefinition().getDefinable())) {
                     outFacts.add(new ReachingDefinitionState(state.getDefinition(), true));
+                } else if (isHaltingNode(node)) {
+                    outFacts.add(new ReachingDefinitionState(state.getDefinition(), true));
                 } else {
                     outFacts.add(state);
                 }
@@ -471,6 +352,10 @@ public class RedundantAssignment extends AbstractIssueFinder {
             }
 
             return outFacts;
+        }
+
+        private boolean isHaltingNode(CFGNode node) {
+            return containsHaltingNode(node.getASTNode());
         }
     }
 
@@ -514,28 +399,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
         }
     }
 
-    /**
-     * Collects implicit uses of visual attributes for halting blocks.
-     */
-    private static Set<Defineable> getHaltingUses(CFGNode node) {
-        Set<Defineable> extraUses = new HashSet<>();
-        if (containsHaltingNode(node.getASTNode()) && node.getActor() != null) {
-            extraUses.add(Attribute.visibilityOf(node.getActor().getIdent()));
-            extraUses.add(Attribute.costumeOf(node.getActor().getIdent()));
-            extraUses.add(Attribute.backdropOf(node.getActor().getIdent()));
-
-            for (GraphicEffect.GraphicEffectType effectType : GraphicEffect.GraphicEffectType.values()) {
-                extraUses.add(Attribute.graphicEffectOf(node.getActor().getIdent(), effectType.getToken()));
-            }
-            extraUses.add(Attribute.graphicEffectOf(node.getActor().getIdent()));
-
-            extraUses.add(new Attribute(node.getActor().getIdent(), Attribute.AttributeType.POSITION_X));
-            extraUses.add(new Attribute(node.getActor().getIdent(), Attribute.AttributeType.POSITION_Y));
-            extraUses.add(new Attribute(node.getActor().getIdent(), Attribute.AttributeType.ROTATION));
-            extraUses.add(new Attribute(node.getActor().getIdent(), Attribute.AttributeType.SIZE));
-        }
-        return extraUses;
-    }
+    // deleted getHaltingUses
 
     private static boolean containsHaltingNode(ASTNode node) {
         if (node instanceof Stmt stmt && isHalting(stmt)) {

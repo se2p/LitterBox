@@ -20,19 +20,35 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.RedundantAssignment;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Injects the {@link RedundantAssignment} bug.
@@ -45,6 +61,12 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
  * SetSizeTo, SetGraphicEffectTo, SetSoundEffectTo, SetVolumeTo, SwitchCostumeTo,
  * SwitchBackdrop, SwitchBackdropAndWait, GoToPos, PointTowards.
  * <p>
+ * Preconditions:
+ * <ul>
+ *   <li>The statement list is not inside a loop (finder treats loops as halting)</li>
+ *   <li>The previous statement is not a halting statement (finder marks all vars as live after halts)</li>
+ * </ul>
+ * <p>
  * Transformation:
  * <pre>
  * Before: [set x to (100)]
@@ -53,20 +75,118 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
  */
 public class RedundantAssignmentInjector extends AbstractBugInjector {
 
+    private ActorDefinition currentActor;
+
     @Override
     public IssueFinder getIssueFinder() {
         return new RedundantAssignment();
     }
 
     @Override
+    public void visit(ActorDefinition actor) {
+        this.currentActor = actor;
+        super.visit(actor);
+    }
+
+    private ActorDefinition getCurrentActor() {
+        return currentActor;
+    }
+
+    @Override
     public void visit(StmtList stmtList) {
+        // Skip if this StmtList is inside a loop (finder treats loops as halting)
+        if (isInsideLoop(stmtList)) {
+            super.visit(stmtList);
+            return;
+        }
+
         for (int i = 0; i < stmtList.getStmts().size(); i++) {
             Stmt stmt = stmtList.getStmts().get(i);
-            if (isDuplicatable(stmt)) {
+            if (isDuplicatable(stmt)
+                    && !isPrecededByHaltingStatement(stmtList, i)
+                    && !isSelfReferential(stmt)) {
                 addDuplicateStatementMutation(stmtList, i);
             }
         }
         super.visit(stmtList);
+    }
+
+    /**
+     * Checks if a statement uses the same attribute/variable it defines.
+     * E.g., "switch costume to ((costume number) - 1)" uses costume to set costume.
+     * Duplicating such statements is NOT redundant because each execution changes the value.
+     */
+    private boolean isSelfReferential(Stmt stmt) {
+        // Collect what the statement defines
+        AttributeDefinitionVisitor attrDefVisitor = new AttributeDefinitionVisitor(getCurrentActor());
+        stmt.accept(attrDefVisitor);
+        Set<Defineable> definitions = new HashSet<>(attrDefVisitor.getDefineables());
+
+        VariableDefinitionVisitor varDefVisitor = new VariableDefinitionVisitor();
+        stmt.accept(varDefVisitor);
+        definitions.addAll(varDefVisitor.getDefineables());
+
+        ListDefinitionVisitor listDefVisitor = new ListDefinitionVisitor();
+        stmt.accept(listDefVisitor);
+        definitions.addAll(listDefVisitor.getDefineables());
+
+        if (definitions.isEmpty()) {
+            return false;
+        }
+
+        // Collect what the statement uses
+        AttributeUseVisitor attrUseVisitor = new AttributeUseVisitor(getCurrentActor());
+        stmt.accept(attrUseVisitor);
+        Set<Defineable> uses = new HashSet<>(attrUseVisitor.getDefineables());
+
+        VariableUseVisitor varUseVisitor = new VariableUseVisitor();
+        stmt.accept(varUseVisitor);
+        uses.addAll(varUseVisitor.getDefineables());
+
+        ListUseVisitor listUseVisitor = new ListUseVisitor();
+        stmt.accept(listUseVisitor);
+        uses.addAll(listUseVisitor.getDefineables());
+
+        // Check for overlap
+        for (Defineable def : definitions) {
+            if (uses.contains(def)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the statement at the given index is preceded by a halting statement.
+     * The finder treats halting statements as making all variables live, so duplicating
+     * after a halt won't be detected as redundant.
+     */
+    private boolean isPrecededByHaltingStatement(StmtList stmtList, int index) {
+        if (index == 0) {
+            return false;
+        }
+        Stmt prevStmt = stmtList.getStmts().get(index - 1);
+        return isHaltingStatement(prevStmt);
+    }
+
+    /**
+     * Checks if a statement is a halting statement (matches the finder's isHalting).
+     */
+    private boolean isHaltingStatement(Stmt stmt) {
+        return stmt instanceof AskAndWait
+                || stmt instanceof BroadcastAndWait
+                || stmt instanceof DeleteClone
+                || stmt instanceof GlideSecsToXY
+                || stmt instanceof GlideSecsTo
+                || stmt instanceof LoopStmt
+                || stmt instanceof PlaySoundUntilDone
+                || stmt instanceof SayForSecs
+                || stmt instanceof StopThisScript
+                || stmt instanceof StopAll
+                || stmt instanceof SwitchBackdropAndWait
+                || stmt instanceof ThinkForSecs
+                || stmt instanceof WaitSeconds
+                || stmt instanceof WaitUntil;
     }
 
     /**
@@ -88,7 +208,8 @@ public class RedundantAssignmentInjector extends AbstractBugInjector {
     }
 
     /**
-     * Inserts a duplicate of the statement immediately after it.
+     * Inserts a duplicate of the statement immediately BEFORE it.
+     * This makes the duplicate redundant because it's immediately overwritten by the original.
      *
      * @param stmtList the statement list containing the statement
      * @param index    the index of the statement to duplicate
@@ -102,8 +223,9 @@ public class RedundantAssignmentInjector extends AbstractBugInjector {
                 Stmt duplicate = (Stmt) original.accept(new CloneVisitor());
                 duplicate.setParentNode(clonedList);
 
-                // Insert the duplicate immediately after the original
-                clonedList.getStmts().add(index + 1, duplicate);
+                // Insert the duplicate immediately BEFORE the original (at the same index)
+                // This makes the duplicate redundant, not the original
+                clonedList.getStmts().add(index, duplicate);
             }
         });
     }

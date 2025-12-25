@@ -47,6 +47,21 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
     }
 
     @Test
+    public void testRedundantVariableAssignmentOfVariables() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                set [SpriteLocalVariable v] to (OtherSpriteLocalVariable v)
+                set [SpriteLocalVariable v] to (OtherSpriteLocalVariable v)""";
+
+        Program program = parseScratchBlocks(script);
+
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+
+        Assertions.assertTrue(issues.isEmpty(), "Should NOT report one redundant assignment");
+    }
+
+    @Test
     public void testValidVariableAssignmentWithRead() throws IOException, ParsingException {
         // Assign, Read (Say), Assign. First assign is used.
         String script = """
@@ -176,7 +191,7 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
 
-        Assertions.assertEquals(2, issues.size());
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment because loop causes implicit thread switch");
     }
 
     @Test
@@ -594,7 +609,7 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Program program = parseScratchBlocks(script);
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        Assertions.assertTrue(issues.size() > 0, "Should report redundant clear graphic effects");
+        Assertions.assertFalse(issues.isEmpty(), "Should report redundant clear graphic effects");
     }
 
     @Test
@@ -606,7 +621,7 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Program program = parseScratchBlocks(script);
         RedundantAssignment finder = new RedundantAssignment();
         Set<Issue> issues = finder.check(program);
-        Assertions.assertTrue(issues.size() > 0, "Should report redundant clear sound effects");
+        Assertions.assertFalse(issues.isEmpty(), "Should report redundant clear sound effects");
     }
 
     @Test
@@ -620,6 +635,19 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
         Set<Issue> issues = finder.check(program);
         Assertions.assertEquals(1, issues.size(), "Should report redundant set volume");
     }
+
+    @Test
+    public void testRedundantSetVolumeToVariable() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                set volume to (SpriteLocalVariable v) %
+                set volume to (SpriteLocalVariable v) %""";
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant set volume");
+    }
+
 
     @Test
     public void testDynamicSetVolumeTo() throws IOException, ParsingException {
