@@ -23,10 +23,10 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.CustomBlockWithTermination;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +55,8 @@ public class CustomBlockWithTerminationInjectorTest implements JsonTest {
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         CustomBlockWithTermination detector = new CustomBlockWithTermination();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "CustomBlockWithTermination detector should find the injected bug in all injected programs");
         }

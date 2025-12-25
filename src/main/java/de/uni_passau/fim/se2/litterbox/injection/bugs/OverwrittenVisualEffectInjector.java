@@ -59,7 +59,9 @@ public class OverwrittenVisualEffectInjector extends AbstractBugInjector {
 
     private static final NumExpr RESET_VALUE = new NumberLiteral(0.0);
 
-    /** Statement types that represent visual effects that can be duplicated. */
+    /**
+     * Statement types that represent visual effects that can be duplicated.
+     */
     private static final Set<Class<? extends Stmt>> VISUAL_EFFECT_TYPES = Set.of(
             SwitchCostumeTo.class, NextCostume.class,
             SwitchBackdrop.class, NextBackdrop.class,
@@ -121,7 +123,8 @@ public class OverwrittenVisualEffectInjector extends AbstractBugInjector {
             case Show ignored -> new Show(emptyMeta);
             case Hide ignored -> new Hide(emptyMeta);
             case GoToLayer goToLayer -> new GoToLayer(goToLayer.getLayerChoice(), emptyMeta);
-            case ChangeLayerBy changeLayerBy -> new ChangeLayerBy(changeLayerBy.getNum(), changeLayerBy.getForwardBackwardChoice(), emptyMeta);
+            case ChangeLayerBy changeLayerBy ->
+                    new ChangeLayerBy(changeLayerBy.getNum(), changeLayerBy.getForwardBackwardChoice(), emptyMeta);
             case Say say -> new Say(say.getString(), emptyMeta);
             case Think think -> new Think(think.getThought(), emptyMeta);
             case ClearGraphicEffects ignored -> new ClearGraphicEffects(emptyMeta);

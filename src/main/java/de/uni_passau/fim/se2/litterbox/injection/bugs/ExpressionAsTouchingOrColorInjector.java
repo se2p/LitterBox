@@ -23,19 +23,26 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugs.ExpressionAsTouchingOrColo
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
-
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,38 +64,103 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
     public List<InjectionResult> inject(Program program) {
         CustomMappingCloneVisitor visitor = new CustomMappingCloneVisitor();
         Program cloned = (Program) program.accept(visitor);
-        // Simple injection without detailed script tracking
-        return singleResult(cloned);
+        if (visitor.isModified()) {
+            cloned.accept(new ParentVisitor());
+            return singleResult(cloned);
+        }
+        return Collections.emptyList();
     }
 
     private static class CustomMappingCloneVisitor extends CloneVisitor {
+        private boolean modified = false;
+
+        public boolean isModified() {
+            return modified;
+        }
+
         @Override
         public ASTNode visit(Touching node) {
-            return new Touching(
-                    new AsTouchable(
-                            new Variable(
-                                    new StrId(new StringLiteral("var_" + UUID.randomUUID())),
-                                    new NoBlockMetadata()
-                            )
-                    ),
-                    node.getMetadata()
-            );
+            // Only inject if the touchable is currently valid (not already buggy)
+            if (node.getTouchable() instanceof MousePointer
+                    || node.getTouchable() instanceof Edge
+                    || node.getTouchable() instanceof SpriteTouchable) {
+                modified = true;
+                return new Touching(
+                        new AsTouchable(
+                                new Variable(
+                                        new StrId(new StringLiteral("var_" + UUID.randomUUID())),
+                                        new NoBlockMetadata()
+                                )
+                        ),
+                        apply(node.getMetadata())
+                );
+            }
+            // Already buggy, just clone normally
+            return super.visit(node);
         }
 
         @Override
         public ASTNode visit(ColorTouchingColor node) {
-            return new ColorTouchingColor(
-                    new FromNumber(
-                            new AsNumber(
-                                    new Variable(
-                                            new StrId(new StringLiteral("var_" + UUID.randomUUID())),
-                                            new NoBlockMetadata()
-                                    )
-                            )
-                    ),
-                    apply(node.getOperand2()), // Clone the second color
-                    node.getMetadata()
-            );
+            // Only inject if operand1 is a valid ColorLiteral
+            if (node.getOperand1() instanceof ColorLiteral) {
+                modified = true;
+                return new ColorTouchingColor(
+                        new FromNumber(
+                                new AsNumber(
+                                        new Variable(
+                                                new StrId(new StringLiteral("var_" + UUID.randomUUID())),
+                                                new NoBlockMetadata()
+                                        )
+                                )
+                        ),
+                        apply(node.getOperand2()), // Clone the second color
+                        apply(node.getMetadata())
+                );
+            }
+            // Already buggy, just clone normally
+            return super.visit(node);
+        }
+
+        @Override
+        public ASTNode visit(SpriteTouchingColor node) {
+            // Only inject if color is a valid ColorLiteral
+            if (node.getColor() instanceof ColorLiteral) {
+                modified = true;
+                return new SpriteTouchingColor(
+                        new FromNumber(
+                                new AsNumber(
+                                        new Variable(
+                                                new StrId(new StringLiteral("var_" + UUID.randomUUID())),
+                                                new NoBlockMetadata()
+                                        )
+                                )
+                        ),
+                        apply(node.getMetadata())
+                );
+            }
+            // Already buggy, just clone normally
+            return super.visit(node);
+        }
+
+        @Override
+        public ASTNode visit(SetPenColorToColorStmt node) {
+            // Only inject if colorExpr is a valid ColorLiteral
+            if (node.getColorExpr() instanceof ColorLiteral) {
+                modified = true;
+                return new SetPenColorToColorStmt(
+                        new FromNumber(
+                                new AsNumber(
+                                        new Variable(
+                                                new StrId(new StringLiteral("var_" + UUID.randomUUID())),
+                                                new NoBlockMetadata()
+                                        )
+                                )
+                        ),
+                        apply(node.getMetadata())
+                );
+            }
+            // Already buggy, just clone normally
+            return super.visit(node);
         }
     }
 }

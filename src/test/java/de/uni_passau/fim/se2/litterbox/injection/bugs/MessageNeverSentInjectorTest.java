@@ -84,7 +84,8 @@ public class MessageNeverSentInjectorTest implements JsonTest {
 
         // Check that the bug finder detects the injected bug
         MessageNeverSent detector = new MessageNeverSent();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(),
                     "MessageNeverSent detector should find the injected bug when ALL broadcast blocks are changed");

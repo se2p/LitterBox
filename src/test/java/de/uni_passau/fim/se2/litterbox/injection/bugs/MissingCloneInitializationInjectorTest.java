@@ -55,7 +55,8 @@ public class MissingCloneInitializationInjectorTest implements JsonTest {
         // Check
         MissingCloneInitialization detector = new MissingCloneInitialization();
 
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "Detector should find the injected bug (Missing StartAsClone) in all injected programs");
         }

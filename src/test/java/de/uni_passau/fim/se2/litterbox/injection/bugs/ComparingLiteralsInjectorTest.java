@@ -23,8 +23,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ComparingLiterals;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -238,4 +238,36 @@ public class ComparingLiteralsInjectorTest implements JsonTest {
 
         assertTrue(injected.isEmpty(), "Should NOT inject when neither operand is a literal");
     }
+
+    /**
+     * Integration test using a real Scratch project fixture.
+     * This verifies the injector works on projects where numbers are stored as strings in JSON.
+     */
+    @Test
+    public void testComparingLiteralsInjectorRealProject() throws IOException, ParsingException {
+        // oneVariable.json contains "if <(my variable) = (50)>" which has one literal
+        Program program = getAST("src/test/fixtures/questions/oneVariable.json");
+
+        ComparingLiteralsInjector injector = new ComparingLiteralsInjector();
+        List<InjectionResult> injected = injector.inject(program);
+
+        // Should be able to inject at least one comparison bug
+        assertFalse(injected.isEmpty(),
+                "Should inject at least one bug in real project, got: " + injected.size());
+
+        // Verify at least one mutation triggers the detector
+        ComparingLiterals detector = new ComparingLiterals();
+        boolean foundIssue = false;
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
+            Set<Issue> issues = detector.check(mutated);
+            if (!issues.isEmpty()) {
+                foundIssue = true;
+                break;
+            }
+        }
+        assertTrue(foundIssue,
+                "At least one mutation in real project should trigger the detector");
+    }
 }
+

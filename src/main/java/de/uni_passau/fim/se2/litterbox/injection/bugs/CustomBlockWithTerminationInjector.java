@@ -52,7 +52,7 @@ public class CustomBlockWithTerminationInjector extends AbstractCustomBlockInjec
     }
 
     @Override
-    protected void applyMutation(ProcedureDefinition clonedDef) {
+    protected void applyMutation(ProcedureDefinition clonedDef, String proccode) {
         Stmt stopAll = new StopAll(NonDataBlockMetadata.emptyNonBlockMetadata());
         clonedDef.getStmtList().getStmts().add(stopAll);
         stopAll.setParentNode(clonedDef.getStmtList());

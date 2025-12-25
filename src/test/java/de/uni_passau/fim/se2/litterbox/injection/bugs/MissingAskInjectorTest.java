@@ -52,7 +52,8 @@ public class MissingAskInjectorTest implements JsonTest {
 
         // Verification: Check detector finds the issue
         MissingAsk detector = new MissingAsk();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "Detector should find MissingAsk issue");
         }
@@ -78,7 +79,8 @@ public class MissingAskInjectorTest implements JsonTest {
 
         // Verification: Check detector finds the issue for all orphaned Answer usages
         MissingAsk detector = new MissingAsk();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "Detector should find MissingAsk issue");
         }

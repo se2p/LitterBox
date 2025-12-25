@@ -56,7 +56,7 @@ public class CustomBlockWithForeverInjector extends AbstractCustomBlockInjector 
     }
 
     @Override
-    protected void applyMutation(ProcedureDefinition clonedDef) {
+    protected void applyMutation(ProcedureDefinition clonedDef, String proccode) {
         List<Stmt> clonedStmts = clonedDef.getStmtList().getStmts();
 
         // Wrap the last statement in a forever loop

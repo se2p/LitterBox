@@ -49,7 +49,8 @@ public class ForeverInsideLoopInjectorTest implements JsonTest {
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         ForeverInsideLoop detector = new ForeverInsideLoop();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "ForeverInsideLoop detector should find the injected bug in all injected programs");
         }

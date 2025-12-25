@@ -41,8 +41,8 @@ public class EndlessRecursionInjector extends AbstractCustomBlockInjector {
     }
 
     @Override
-    protected void applyMutation(ProcedureDefinition clonedDef) {
-        CallStmt recursiveCall = ProcedureBuilder.createCallTo(clonedDef);
+    protected void applyMutation(ProcedureDefinition clonedDef, String proccode) {
+        CallStmt recursiveCall = ProcedureBuilder.createCallTo(clonedDef, proccode);
         clonedDef.getStmtList().getStmts().addFirst(recursiveCall);
         recursiveCall.setParentNode(clonedDef.getStmtList());
     }

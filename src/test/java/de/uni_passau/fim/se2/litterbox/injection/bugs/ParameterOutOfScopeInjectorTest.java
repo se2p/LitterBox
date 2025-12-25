@@ -23,8 +23,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ParameterOutOfScope;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +39,7 @@ public class ParameterOutOfScopeInjectorTest implements JsonTest {
         String script = """
                 define myBlock (myParam)
                 say (myParam)
-                
+
                 when green flag clicked
                 move (10) steps
                 """;
@@ -70,7 +70,7 @@ public class ParameterOutOfScopeInjectorTest implements JsonTest {
         String script = """
                 define myBlock (myParam)
                 say (myParam)
-                
+
                 when green flag clicked
                 if <(answer) = [yes]> then
                     say [matched]
@@ -103,7 +103,7 @@ public class ParameterOutOfScopeInjectorTest implements JsonTest {
         String script = """
                 define myBlock (myParam)
                 say (myParam)
-                
+
                 when green flag clicked
                 say [hello]
                 """;

@@ -22,7 +22,8 @@ package de.uni_passau.fim.se2.litterbox.injection.util;
  * Shared constants for bug injectors.
  */
 public final class InjectionConstants {
-    private InjectionConstants() {} // Prevent instantiation
+    private InjectionConstants() {
+    } // Prevent instantiation
 
     // Resource placeholders for MissingResourceInjector
     public static final String INVALID_COSTUME_NAME = "invalid_costume_xyz";

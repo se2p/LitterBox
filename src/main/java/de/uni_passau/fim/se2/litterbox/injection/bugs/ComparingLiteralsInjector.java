@@ -24,6 +24,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
@@ -89,16 +91,74 @@ public class ComparingLiteralsInjector extends AbstractBugInjector {
         super.visit(node);
     }
 
+    /**
+     * Checks if an expression is a literal value, including wrapped literals.
+     * Real Scratch projects often store numbers as AsNumber(StringLiteral("10")).
+     */
     private boolean isLiteral(ComparableExpr expr) {
-        return expr instanceof NumberLiteral || expr instanceof StringLiteral;
+        // Direct literals
+        if (expr instanceof NumberLiteral || expr instanceof StringLiteral) {
+            return true;
+        }
+        // AsNumber wrapping a literal (common in real Scratch JSON)
+        if (expr instanceof AsNumber asNum) {
+            if (asNum.getOperand1() instanceof NumberLiteral) {
+                return true;
+            }
+            if (asNum.getOperand1() instanceof StringLiteral sl) {
+                // Check if string parses as a number
+                try {
+                    Double.parseDouble(sl.getText());
+                    return true;
+                } catch (NumberFormatException e) {
+                    return false;
+                }
+            }
+        }
+        // AsString wrapping a literal
+        if (expr instanceof AsString asStr) {
+            return asStr.getOperand1() instanceof StringLiteral
+                    || asStr.getOperand1() instanceof NumberLiteral;
+        }
+        return false;
     }
 
+    /**
+     * Creates a matching literal for the given reference expression.
+     * Handles both direct literals and wrapped literals.
+     */
     private ComparableExpr createMatchingLiteral(ComparableExpr reference) {
+        // Direct literals
         if (reference instanceof NumberLiteral num) {
             return new NumberLiteral(num.getValue());
-        } else if (reference instanceof StringLiteral str) {
+        }
+        if (reference instanceof StringLiteral str) {
             return new StringLiteral(str.getText());
+        }
+        // AsNumber wrapping a literal
+        if (reference instanceof AsNumber asNum) {
+            if (asNum.getOperand1() instanceof NumberLiteral num) {
+                return new NumberLiteral(num.getValue());
+            }
+            if (asNum.getOperand1() instanceof StringLiteral sl) {
+                try {
+                    double value = Double.parseDouble(sl.getText());
+                    return new NumberLiteral(value);
+                } catch (NumberFormatException e) {
+                    return new StringLiteral(sl.getText());
+                }
+            }
+        }
+        // AsString wrapping a literal
+        if (reference instanceof AsString asStr) {
+            if (asStr.getOperand1() instanceof StringLiteral sl) {
+                return new StringLiteral(sl.getText());
+            }
+            if (asStr.getOperand1() instanceof NumberLiteral num) {
+                return new StringLiteral(String.valueOf(num.getValue()));
+            }
         }
         return new NumberLiteral(0);
     }
 }
+

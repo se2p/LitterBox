@@ -23,27 +23,26 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugs.NoWorkingScripts;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Injects the {@link NoWorkingScripts} bug by splitting a GreenFlag script.
+ * Injects the {@link NoWorkingScripts} bug by emptying all event scripts and creating detached code.
  * <p>
  * The bug pattern requires:
  * <ol>
- *   <li>An event handler (e.g., GreenFlag) with an <b>empty</b> body</li>
+ *   <li>All event handlers have <b>empty</b> bodies</li>
  *   <li>Dead code (script with Never event) with a <b>non-empty</b> body</li>
  * </ol>
  * <p>
- * Transformation:
+ * Transformation (for entire sprite):
  * <pre>
- * Before: [GreenFlag -> {move 10 steps}]
- * After:  [GreenFlag -> {}], [Never -> {move 10 steps}]
+ * Before: [GreenFlag -> {move}], [KeyPressed -> {say}]
+ * After:  [GreenFlag -> {}], [KeyPressed -> {}], [Never -> {move}], [Never -> {say}]
  * </pre>
- * This simulates a scenario where the user accidentally detached code from its event handler.
  */
 public class NoWorkingScriptsInjector extends AbstractBugInjector {
 
@@ -54,48 +53,55 @@ public class NoWorkingScriptsInjector extends AbstractBugInjector {
 
     @Override
     public void visit(ScriptList node) {
-        for (int i = 0; i < node.getScriptList().size(); i++) {
-            Script script = node.getScript(i);
-            if (isGreenFlagWithBody(script)) {
-                addSplitScriptMutation(node, i);
-            }
+        // Check if there are any scripts with non-empty bodies to detach
+        boolean hasContentToDetach = node.getScriptList().stream()
+                .anyMatch(s -> !(s.getEvent() instanceof Never) && !s.getStmtList().getStmts().isEmpty());
+
+        if (hasContentToDetach) {
+            addSplitAllScriptsMutation(node);
         }
         super.visit(node);
     }
 
-    private boolean isGreenFlagWithBody(Script script) {
-        return script.getEvent() instanceof GreenFlag
-                && !script.getStmtList().getStmts().isEmpty();
-    }
-
     /**
-     * Splits a GreenFlag script into an empty event handler and detached dead code.
-     *
-     * @param scriptList the script list containing the target script
-     * @param index      the index of the GreenFlag script to split
+     * Empties ALL scripts in the sprite and creates detached Never scripts for their bodies.
      */
-    private void addSplitScriptMutation(ScriptList scriptList, int index) {
+    private void addSplitAllScriptsMutation(ScriptList scriptList) {
         mutateClone(scriptList, clonedScriptList -> {
-            Script originalScript = clonedScriptList.getScript(index);
+            List<Script> newScripts = new ArrayList<>();
+            List<Script> neverScripts = new ArrayList<>();
 
-            // Create empty GreenFlag script (keeps the event, loses the body)
-            Script emptyEventHandler = new Script(
-                    originalScript.getEvent(),
-                    new StmtList(new ArrayList<>())
-            );
+            for (Script script : clonedScriptList.getScriptList()) {
+                if (script.getEvent() instanceof Never) {
+                    // Keep existing Never scripts as-is
+                    newScripts.add(script);
+                } else if (script.getStmtList().getStmts().isEmpty()) {
+                    // Already empty, keep as-is
+                    newScripts.add(script);
+                } else {
+                    // Empty the event handler
+                    Script emptyEventHandler = new Script(
+                            script.getEvent(),
+                            new StmtList(new ArrayList<>())
+                    );
+                    emptyEventHandler.setParentNode(clonedScriptList);
+                    newScripts.add(emptyEventHandler);
 
-            // Create detached code with Never event (represents loose blocks without hat)
-            Script detachedCode = new Script(
-                    new Never(),
-                    originalScript.getStmtList()
-            );
+                    // Create detached code with Never event
+                    Script detachedCode = new Script(
+                            new Never(),
+                            script.getStmtList()
+                    );
+                    detachedCode.setParentNode(clonedScriptList);
+                    neverScripts.add(detachedCode);
+                }
+            }
 
-            // Replace original and insert detached code after it
-            clonedScriptList.getScriptList().set(index, emptyEventHandler);
-            clonedScriptList.getScriptList().add(index + 1, detachedCode);
-
-            emptyEventHandler.setParentNode(clonedScriptList);
-            detachedCode.setParentNode(clonedScriptList);
+            // Replace script list: all event handlers first, then all Never scripts
+            clonedScriptList.getScriptList().clear();
+            clonedScriptList.getScriptList().addAll(newScripts);
+            clonedScriptList.getScriptList().addAll(neverScripts);
         });
     }
 }
+

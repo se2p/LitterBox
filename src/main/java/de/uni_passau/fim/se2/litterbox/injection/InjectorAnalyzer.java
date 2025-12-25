@@ -30,7 +30,10 @@ import org.apache.commons.io.FilenameUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -152,6 +155,7 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
         public Map<BugInjector, List<InjectionResult>> analyze(Program program) {
             Map<BugInjector, List<InjectionResult>> result = new LinkedHashMap<>();
             for (BugInjector injector : injectors) {
+                log.info("Applying injection for " + injector);
                 try {
                     // Injector is responsible for cloning the program as needed.
                     List<InjectionResult> injected = injector.inject(program);

@@ -53,6 +53,15 @@ public class CallWithoutDefinitionInjector extends AbstractBugInjector {
 
     @Override
     public void visit(CallStmt node) {
+        String callName = node.getIdent().getName();
+
+        // Skip if this call is already orphaned (calling an undefined procedure)
+        // Only inject on calls that have a matching definition
+        if (!existingProcedures.contains(callName)) {
+            super.visit(node);
+            return;
+        }
+
         mutateClone(node, clonedCall -> {
             String uniqueTypo = generateUniqueTypo(clonedCall.getIdent().getName());
             CallStmt newCall = new CallStmt(

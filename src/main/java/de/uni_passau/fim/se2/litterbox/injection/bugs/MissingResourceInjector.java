@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingResource;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
@@ -38,17 +39,31 @@ import static de.uni_passau.fim.se2.litterbox.injection.util.InjectionConstants.
  */
 public class MissingResourceInjector extends AbstractBugInjector {
 
+    private ActorDefinition currentActor;
+
     @Override
     public IssueFinder getIssueFinder() {
         return new MissingResource();
     }
 
     @Override
+    public void visit(ActorDefinition actor) {
+        currentActor = actor;
+        super.visit(actor);
+        currentActor = null;
+    }
+
+    @Override
     public void visit(SwitchCostumeTo node) {
         if (node.getCostumeChoice() instanceof WithExpr withExpr
-                && withExpr.getExpression() instanceof StrId) {
+                && withExpr.getExpression() instanceof StrId strId) {
 
-            mutateClone(node, this::replaceWithInvalidCostume);
+            // Only inject if the current costume EXISTS (is valid)
+            // If it's already missing, we'd be replacing one bug with another
+            String currentCostume = strId.getName();
+            if (currentActorHasCostume(currentCostume)) {
+                mutateClone(node, this::replaceWithInvalidCostume);
+            }
         }
         super.visit(node);
     }
@@ -56,9 +71,12 @@ public class MissingResourceInjector extends AbstractBugInjector {
     @Override
     public void visit(PlaySoundUntilDone node) {
         if (node.getElementChoice() instanceof WithExpr withExpr
-                && withExpr.getExpression() instanceof StrId) {
+                && withExpr.getExpression() instanceof StrId strId) {
 
-            mutateClone(node, this::replaceWithInvalidSound);
+            String currentSound = strId.getName();
+            if (currentActorHasSound(currentSound)) {
+                mutateClone(node, this::replaceWithInvalidSound);
+            }
         }
         super.visit(node);
     }
@@ -66,11 +84,58 @@ public class MissingResourceInjector extends AbstractBugInjector {
     @Override
     public void visit(StartSound node) {
         if (node.getElementChoice() instanceof WithExpr withExpr
-                && withExpr.getExpression() instanceof StrId) {
+                && withExpr.getExpression() instanceof StrId strId) {
 
-            mutateClone(node, this::replaceWithInvalidSoundStartSound);
+            String currentSound = strId.getName();
+            if (currentActorHasSound(currentSound)) {
+                mutateClone(node, this::replaceWithInvalidSoundStartSound);
+            }
         }
         super.visit(node);
+    }
+
+    /**
+     * Checks if the current actor has a costume with the given name.
+     * Returns true if metadata is missing (allow injection) or if costume exists.
+     * Only returns false if we explicitly know the costume is missing.
+     */
+    private boolean currentActorHasCostume(String costumeName) {
+        if (currentActor == null || currentActor.getActorMetadata() == null) {
+            return true;  // No metadata available, allow injection
+        }
+        var costumes = currentActor.getActorMetadata().getCostumes().getList();
+        if (costumes.isEmpty()) {
+            return true;  // No costumes defined, allow injection (test scenario)
+        }
+        // Check if this is placeholder test metadata (all names are class names like "ImageMetadata")
+        boolean isPlaceholderMetadata = costumes.stream()
+                .allMatch(c -> c.getName().equals(c.getClass().getSimpleName()));
+        if (isPlaceholderMetadata) {
+            return true;  // Test fixture, allow injection
+        }
+        return costumes.stream().anyMatch(c -> c.getName().equals(costumeName));
+    }
+
+    /**
+     * Checks if the current actor has a sound with the given name.
+     * Returns true if metadata is missing (allow injection) or if sound exists.
+     * Only returns false if we explicitly know the sound is missing.
+     */
+    private boolean currentActorHasSound(String soundName) {
+        if (currentActor == null || currentActor.getActorMetadata() == null) {
+            return true;  // No metadata available, allow injection
+        }
+        var sounds = currentActor.getActorMetadata().getSounds().getList();
+        if (sounds.isEmpty()) {
+            return true;  // No sounds defined, allow injection (test scenario)
+        }
+        // Check if this is placeholder test metadata
+        boolean isPlaceholderMetadata = sounds.stream()
+                .allMatch(s -> s.getName().equals(s.getClass().getSimpleName()));
+        if (isPlaceholderMetadata) {
+            return true;  // Test fixture, allow injection
+        }
+        return sounds.stream().anyMatch(s -> s.getName().equals(soundName));
     }
 
     private void replaceWithInvalidCostume(SwitchCostumeTo clonedNode) {

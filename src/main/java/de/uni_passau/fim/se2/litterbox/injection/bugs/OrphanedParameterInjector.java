@@ -51,30 +51,41 @@ public class OrphanedParameterInjector extends AbstractBugInjector {
             return;
         }
 
+        // Collect defined parameter names and their counts
+        List<ParameterDefinition> params = node.getParameterDefinitionList().getParameterDefinitions();
+        Set<String> definedParamNames = new HashSet<>();
+        for (ParameterDefinition param : params) {
+            definedParamNames.add(param.getIdent().getName());
+        }
+
         // Find parameters that are actually used in the procedure body
         Set<String> usedParameterNames = findUsedParameters(node);
 
-        // Find the first parameter definition that is used in the body
-        List<ParameterDefinition> params = node.getParameterDefinitionList().getParameterDefinitions();
-        ParameterDefinition usedParam = null;
-        int usedParamIndex = -1;
+        // Skip if orphaned parameters already exist (used but not defined)
+        for (String usedName : usedParameterNames) {
+            if (!definedParamNames.contains(usedName)) {
+                super.visit(node);
+                return; // Bug already exists
+            }
+        }
 
-        for (int i = 0; i < params.size(); i++) {
-            String paramName = params.get(i).getIdent().getName();
-            if (usedParameterNames.contains(paramName)) {
-                usedParam = params.get(i);
-                usedParamIndex = i;
+        // Find a parameter name that is used in the body
+        String targetParamName = null;
+        for (ParameterDefinition param : params) {
+            String name = param.getIdent().getName();
+            if (usedParameterNames.contains(name)) {
+                targetParamName = name;
                 break;
             }
         }
 
-        // Only inject if we found a used parameter to remove
-        if (usedParam != null) {
-            final int indexToRemove = usedParamIndex;
+        // Only inject if we found a used parameter name to remove
+        if (targetParamName != null) {
+            final String nameToRemove = targetParamName;
             mutateClone(node, clonedNode -> {
-                if (indexToRemove < clonedNode.getParameterDefinitionList().getParameterDefinitions().size()) {
-                    clonedNode.getParameterDefinitionList().getParameterDefinitions().remove(indexToRemove);
-                }
+                // Remove ALL definition matches for this name
+                clonedNode.getParameterDefinitionList().getParameterDefinitions()
+                        .removeIf(p -> p.getIdent().getName().equals(nameToRemove));
             });
         }
 

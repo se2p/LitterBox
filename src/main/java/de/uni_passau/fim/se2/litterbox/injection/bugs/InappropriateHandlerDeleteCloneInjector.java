@@ -139,11 +139,14 @@ public class InappropriateHandlerDeleteCloneInjector extends AbstractBugInjector
     }
 
     private boolean hasDeleteClone(StmtList stmtList) {
-        for (Stmt stmt : stmtList.getStmts()) {
-            if (stmt instanceof DeleteClone) {
-                return true;
+        // Use a visitor to recursively check ALL nested structures
+        final boolean[] found = {false};
+        stmtList.accept(new ScratchVisitor() {
+            @Override
+            public void visit(DeleteClone node) {
+                found[0] = true;
             }
-        }
-        return false;
+        });
+        return found[0];
     }
 }

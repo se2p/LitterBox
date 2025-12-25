@@ -23,10 +23,10 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.NoWorkingScripts;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -107,8 +107,8 @@ public class NoWorkingScriptsInjectorTest implements JsonTest {
     }
 
     @Test
-    public void testNoGreenFlagNoInjection() throws IOException, ParsingException {
-        // Script without GreenFlag - not applicable
+    public void testNonGreenFlagEventStillInjects() throws IOException, ParsingException {
+        // Script with SpriteClicked event - now also injects
         String script = """
                 when this sprite clicked
                 move (10) steps""";
@@ -117,7 +117,13 @@ public class NoWorkingScriptsInjectorTest implements JsonTest {
         NoWorkingScriptsInjector injector = new NoWorkingScriptsInjector();
         List<InjectionResult> injected = injector.inject(program);
 
-        Assertions.assertTrue(injected.isEmpty(), "Should not inject without GreenFlag event");
+        // Now supports all event types
+        Assertions.assertFalse(injected.isEmpty(), "Should inject for any event type");
+
+        // Verify detection
+        NoWorkingScripts detector = new NoWorkingScripts();
+        Assertions.assertFalse(detector.check(injected.getFirst().mutatedProgram()).isEmpty(),
+                "Detector should find the bug");
     }
 }
 

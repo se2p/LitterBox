@@ -20,7 +20,10 @@ package de.uni_passau.fim.se2.litterbox.injection;
 
 import de.uni_passau.fim.se2.litterbox.injection.bugs.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Registry and management tool for BugInjectors.
@@ -34,18 +37,75 @@ public class InjectorTool {
      */
     public static Map<String, BugInjector> generateBugInjectors() {
         Map<String, BugInjector> injectors = new LinkedHashMap<>();
+
+        // Control flow bugs
         registerInjector(new ForeverInsideIfInjector(), injectors);
+        registerInjector(new ForeverInsideLoopInjector(), injectors);
         registerInjector(new TerminatedLoopInjector(), injectors);
+        registerInjector(new BlockingIfElseInjector(), injectors);
+        registerInjector(new MissingTerminationConditionInjector(), injectors);
+        registerInjector(new InterruptedLoopSensingInjector(), injectors);
+
+        // Custom block bugs
         registerInjector(new CustomBlockWithTerminationInjector(), injectors);
         registerInjector(new CustomBlockWithForeverInjector(), injectors);
-        registerInjector(new ForeverInsideLoopInjector(), injectors);
-        registerInjector(new MissingTerminationConditionInjector(), injectors);
         registerInjector(new EndlessRecursionInjector(), injectors);
-        registerInjector(new BlockingIfElseInjector(), injectors);
+        registerInjector(new CallWithoutDefinitionInjector(), injectors);
+        registerInjector(new RecursiveCloningInjector(), injectors);
+
+        // Message/broadcast bugs
         registerInjector(new MessageNeverSentInjector(), injectors);
         registerInjector(new MessageNeverReceivedInjector(), injectors);
+        registerInjector(new MessageAsLiteralInjector(), injectors);
+
+        // Clone bugs
         registerInjector(new ImmediateDeleteCloneAfterBroadcastInjector(), injectors);
         registerInjector(new MissingCloneInitializationInjector(), injectors);
+        registerInjector(new MissingCloneCallInjector(), injectors);
+        registerInjector(new InappropriateHandlerDeleteCloneInjector(), injectors);
+
+        // Parameter-related bugs
+        registerInjector(new OrphanedParameterInjector(), injectors);
+        registerInjector(new AmbiguousCustomBlockSignatureInjector(), injectors);
+        registerInjector(new AmbiguousParameterNameUsedInjector(), injectors);
+        registerInjector(new ParameterAsLiteralInjector(), injectors);
+        registerInjector(new ParameterOutOfScopeInjector(), injectors);
+        registerInjector(new IllegalParameterRefactorInjector(), injectors);
+
+        // Variable/literal bugs
+        registerInjector(new VariableAsLiteralInjector(), injectors);
+        registerInjector(new ComparingLiteralsInjector(), injectors);
+        registerInjector(new InvalidNumberStringInjector(), injectors);
+        registerInjector(new TypeErrorInjector(), injectors);
+
+        // Missing initialization/resource bugs
+        registerInjector(new MissingInitializationInjector(), injectors);
+        registerInjector(new MissingResourceInjector(), injectors);
+        registerInjector(new MissingAskInjector(), injectors);
+        registerInjector(new MissingBackdropSwitchInjector(), injectors);
+
+        // Sensing bugs
+        registerInjector(new MissingLoopSensingInjector(), injectors);
+        registerInjector(new MissingLoopMousePositionInjector(), injectors);
+        registerInjector(new KeySetPositionInjector(), injectors);
+
+        // Pen bugs
+        registerInjector(new MissingPenDownInjector(), injectors);
+        registerInjector(new MissingPenUpInjector(), injectors);
+        registerInjector(new MissingEraseAllInjector(), injectors);
+
+        // Looks/effects bugs
+        registerInjector(new HideWithoutShowInjector(), injectors);
+        registerInjector(new OverwrittenVisualEffectInjector(), injectors);
+        registerInjector(new ImmediateStopAfterSayInjector(), injectors);
+
+        // Expression bugs
+        registerInjector(new ExpressionAsTouchingOrColorInjector(), injectors);
+        registerInjector(new FloatingPointComparisonInjector(), injectors);
+
+        // Redundancy/structure bugs
+        registerInjector(new RedundantAssignmentInjector(), injectors);
+        registerInjector(new NoWorkingScriptsInjector(), injectors);
 
         return injectors;
     }

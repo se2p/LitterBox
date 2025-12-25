@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageNeverSent;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -72,10 +73,14 @@ public class MessageNeverSentInjector extends AbstractBugInjector {
         Set<String> messages = new HashSet<>();
         program.accept(new ScratchVisitor() {
             @Override
-            public void visit(ReceptionOfMessage node) {
-                if (node.getMsg().getMessage() instanceof StringLiteral lit) {
-                    messages.add(lit.getText().toLowerCase());
+            public void visit(Script node) {
+                if (node.getEvent() instanceof ReceptionOfMessage event
+                        && node.getStmtList().hasStatements()) {
+                    if (event.getMsg().getMessage() instanceof StringLiteral lit) {
+                        messages.add(lit.getText().toLowerCase());
+                    }
                 }
+                visitChildren(node);
             }
         });
         return messages;

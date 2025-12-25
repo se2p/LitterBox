@@ -56,7 +56,8 @@ public class ImmediateDeleteCloneAfterBroadcastInjectorTest implements JsonTest 
 
         // Check
         ImmediateDeleteCloneAfterBroadcast detector = new ImmediateDeleteCloneAfterBroadcast();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "Detector should find the injected bug in all injected programs");
         }

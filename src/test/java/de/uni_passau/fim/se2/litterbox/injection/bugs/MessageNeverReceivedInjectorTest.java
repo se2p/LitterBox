@@ -53,7 +53,8 @@ public class MessageNeverReceivedInjectorTest implements JsonTest {
 
         // Check
         MessageNeverReceived detector = new MessageNeverReceived();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "MessageNeverReceived detector should find the injected bug in all injected programs");
         }
@@ -85,7 +86,8 @@ public class MessageNeverReceivedInjectorTest implements JsonTest {
 
         // Check that the bug finder detects the injected bug
         MessageNeverReceived detector = new MessageNeverReceived();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(),
                     "MessageNeverReceived detector should find the injected bug when ALL reception blocks are changed");

@@ -26,8 +26,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
+/**
+ * Injects the RecursiveCloning bug by adding a "create clone of myself" block
+ * at the start of "when I start as a clone" scripts.
+ * <p>
+ * Only applies to scripts that do NOT already contain a "delete this clone" block,
+ * since the finder ignores scripts with DeleteClone (no infinite recursion possible).
+ */
 public class RecursiveCloningInjector extends AbstractBugInjector {
 
     @Override
@@ -37,7 +46,8 @@ public class RecursiveCloningInjector extends AbstractBugInjector {
 
     @Override
     public void visit(Script node) {
-        if (node.getEvent() instanceof StartedAsClone) {
+        // Only inject if it's a StartedAsClone event and doesn't already delete the clone
+        if (node.getEvent() instanceof StartedAsClone && !containsDeleteClone(node)) {
             mutateClone(node, clonedNode -> {
                 StmtList stmtList = clonedNode.getStmtList();
 
@@ -55,5 +65,24 @@ public class RecursiveCloningInjector extends AbstractBugInjector {
             });
         }
         super.visit(node);
+    }
+
+    /**
+     * Checks if the script contains a DeleteClone block.
+     * The finder ignores scripts with DeleteClone since they can't cause infinite recursion.
+     */
+    private boolean containsDeleteClone(Script script) {
+        DeleteCloneFinder finder = new DeleteCloneFinder();
+        script.accept(finder);
+        return finder.found;
+    }
+
+    private static class DeleteCloneFinder implements ScratchVisitor {
+        boolean found = false;
+
+        @Override
+        public void visit(DeleteClone node) {
+            found = true;
+        }
     }
 }

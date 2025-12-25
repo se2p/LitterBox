@@ -50,7 +50,8 @@ public class MissingResourceInjectorTest implements JsonTest {
 
         // Verification: Check detector finds the issue
         MissingResource detector = new MissingResource();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "Detector should find MissingResource issue");
         }
@@ -73,7 +74,8 @@ public class MissingResourceInjectorTest implements JsonTest {
 
         // Verification: Check detector finds the issue
         MissingResource detector = new MissingResource();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "Detector should find MissingResource issue for sound");
         }
