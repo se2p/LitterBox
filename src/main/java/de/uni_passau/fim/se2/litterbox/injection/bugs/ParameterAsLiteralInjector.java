@@ -20,21 +20,50 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ParameterAsLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Injects the ParameterAsLiteral bug by replacing Parameter references with string literals of their names.
+ * <p>
+ * Unlike VariableAsLiteralInjector, this injector does NOT check for string context because
+ * the ParameterAsLiteral finder detects StringLiterals matching parameter names regardless of
+ * where they appear (in numeric, boolean, or string positions).
  */
 public class ParameterAsLiteralInjector extends AbstractAsLiteralInjector {
 
     @Override
     public IssueFinder getIssueFinder() {
         return new ParameterAsLiteral();
+    }
+
+    @Override
+    protected int countTargetNodes(Program program) {
+        AtomicInteger count = new AtomicInteger(0);
+        program.accept(new ScratchVisitor() {
+            @Override
+            public void visit(Parameter node) {
+                count.incrementAndGet();
+                ScratchVisitor.super.visit(node);
+            }
+        });
+        return count.get();
+    }
+
+    /**
+     * Override to skip string context check - parameters can be replaced in any context
+     * because the finder detects the bug based on literal text matching parameter names.
+     */
+    @Override
+    protected boolean shouldCheckStringContext() {
+        return false;
     }
 
     @Override
@@ -50,5 +79,20 @@ public class ParameterAsLiteralInjector extends AbstractAsLiteralInjector {
             }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public void visit(Qualified qualified) {
+        // Only attempt injection if this Qualified actually contains a Parameter
+        if (qualified.getSecond() instanceof Parameter) {
+            checkAndInject(qualified);
+        }
+        super.visit(qualified);
+    }
+
+    @Override
+    public void visit(Parameter parameter) {
+        checkAndInject(parameter);
+        super.visit(parameter);
     }
 }

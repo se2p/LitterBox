@@ -26,10 +26,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
@@ -43,76 +48,19 @@ public class KeySetPosition extends AbstractIssueFinder {
 
     @Override
     public void visit(Script node) {
-        if (ignoreLooseBlocks && node.getEvent() instanceof Never) {
-            // Ignore unconnected blocks
-            return;
-        }
+        if (ignoreLooseBlocks && node.getEvent() instanceof Never) return;
+
         if (node.getEvent() instanceof GreenFlag || node.getEvent() instanceof StartedAsClone) {
             inCondition = false;
             lastKeyValue = null;
             super.visit(node);
-        } else if (node.getEvent() instanceof KeyPressed keyPressed && !node.getStmtList().getStmts().isEmpty()) {
+        } else if (node.getEvent() instanceof KeyPressed event && !node.getStmtList().getStmts().isEmpty()) {
             currentScript = node;
-            Key keyNode = keyPressed.getKey();
-            NumberLiteral keyNum = (NumberLiteral) keyNode.getKey();
-            int key = (int) keyNum.getValue();
-            if (
-                    key == KeyCode.DOWN_ARROW.getKeycode()
-                            || key == KeyCode.UP_ARROW.getKeycode()
-                            || key == KeyCode.LEFT_ARROW.getKeycode()
-                            || key == KeyCode.RIGHT_ARROW.getKeycode()
-            ) {
-                if (node.getStmtList().getStmts().size() == 1) {
-                    checkStmt(node.getStmtList().getStmts().getFirst(), key);
-                } else {
-                    checkNumberStmts(node.getStmtList().getStmts(), key, 2); //used 2 as a placeholder
-                }
+            int key = resolveKey(event.getKey());
+            if (isSupportedKey(key)) {
+                checkStmts(node.getStmtList().getStmts(), key);
             }
         }
-    }
-
-    private void checkNumberStmts(List<Stmt> stmts, int key, int numberOfStmts) {
-        boolean foundSet;
-        for (int i = 0; i < numberOfStmts && i < stmts.size(); i++) {
-            foundSet = checkStmt(stmts.get(i), key);
-            if (foundSet) {
-                break;
-            }
-        }
-    }
-
-    private boolean checkStmt(Stmt stmt, int key) {
-        if (key == KeyCode.DOWN_ARROW.getKeycode() || key == KeyCode.UP_ARROW.getKeycode()) {
-            if (stmt instanceof SetYTo) {
-                Hint hint = Hint.fromKey(NAME);
-                hint.setParameter("XY", "y");
-                if (key == KeyCode.DOWN_ARROW.getKeycode()) {
-                    hint.setParameter(Hint.HINT_KEY, new HintPlaceholder.Translatable("down_arrow"));
-                } else {
-                    hint.setParameter(Hint.HINT_KEY, new HintPlaceholder.Translatable("up_arrow"));
-                }
-                addIssue(stmt, stmt.getMetadata(), hint);
-                return true;
-            }
-        } else if (key == KeyCode.LEFT_ARROW.getKeycode() || key == KeyCode.RIGHT_ARROW.getKeycode()) {
-            if (stmt instanceof SetXTo) {
-                Hint hint = Hint.fromKey(NAME);
-                hint.setParameter("XY", "x");
-                if (key == KeyCode.LEFT_ARROW.getKeycode()) {
-                    hint.setParameter(Hint.HINT_KEY, new HintPlaceholder.Translatable("left_arrow"));
-                } else {
-                    hint.setParameter(Hint.HINT_KEY, new HintPlaceholder.Translatable("right_arrow"));
-                }
-                addIssue(stmt, stmt.getMetadata(), hint);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void visit(ProcedureDefinition node) {
-        //NOP should not look in Procedures
     }
 
     @Override
@@ -120,49 +68,129 @@ public class KeySetPosition extends AbstractIssueFinder {
         inCondition = true;
         node.getBoolExpr().accept(this);
         inCondition = false;
+
         if (lastKeyValue != null) {
-            if (node.getThenStmts().getStmts().size() == 1) {
-                checkStmt(node.getThenStmts().getStmts().getFirst(), (int) lastKeyValue.getValue());
-            } else {
-                // used 2 as a placeholder
-                checkNumberStmts(node.getThenStmts().getStmts(), (int) lastKeyValue.getValue(), 2);
+            int key = (int) lastKeyValue.getValue();
+            if (isSupportedKey(key)) {
+                checkStmts(node.getThenStmts().getStmts(), key);
             }
         }
+
         lastKeyValue = null;
         node.getThenStmts().accept(this);
     }
 
-    @Override
-    public void visit(Key node) {
-        if (inCondition && node.getKey() instanceof NumberLiteral numberLiteral) {
-            lastKeyValue = numberLiteral;
+    private void checkStmts(List<Stmt> stmts, int key) {
+        // Finder matches only the first 2 statements of a script/then-branch
+        for (int i = 0; i < Math.min(stmts.size(), 2); i++) {
+            if (reportIfBuggy(stmts.get(i), key)) break;
         }
     }
 
-    @Override
-    public String getName() {
-        return NAME;
+    private boolean reportIfBuggy(Stmt stmt, int key) {
+        String axis = null;
+        String keyLabel = null;
+
+        if (isVerticalKey(key) && isVerticalMotion(stmt)) {
+            axis = "y";
+            keyLabel = getVerticalKeyLabel(key);
+        } else if (isHorizontalKey(key) && isHorizontalMotion(stmt)) {
+            axis = "x";
+            keyLabel = getHorizontalKeyLabel(key);
+        }
+
+        if (axis != null) {
+            Hint hint = Hint.fromKey(NAME);
+            hint.setParameter("XY", axis);
+            hint.setParameter(Hint.HINT_KEY, new HintPlaceholder.Value(keyLabel));
+            addIssue(stmt, stmt.getMetadata(), hint);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isVerticalMotion(Stmt stmt) {
+        return stmt instanceof SetYTo || stmt instanceof ChangeYBy || stmt instanceof MoveSteps;
+    }
+
+    private boolean isHorizontalMotion(Stmt stmt) {
+        return stmt instanceof SetXTo || stmt instanceof ChangeXBy || stmt instanceof MoveSteps;
+    }
+
+    private boolean isVerticalKey(int key) {
+        return key == KeyCode.UP_ARROW.getKeycode() || key == KeyCode.DOWN_ARROW.getKeycode()
+                || key == 'w' || key == 'W' || key == 's' || key == 'S';
+    }
+
+    private boolean isHorizontalKey(int key) {
+        return key == KeyCode.LEFT_ARROW.getKeycode() || key == KeyCode.RIGHT_ARROW.getKeycode()
+                || key == 'a' || key == 'A' || key == 'd' || key == 'D';
+    }
+
+    private String getVerticalKeyLabel(int key) {
+        if (key == KeyCode.UP_ARROW.getKeycode()) return "up arrow";
+        if (key == KeyCode.DOWN_ARROW.getKeycode()) return "down arrow";
+        return String.valueOf((char) key).toLowerCase();
+    }
+
+    private String getHorizontalKeyLabel(int key) {
+        if (key == KeyCode.LEFT_ARROW.getKeycode()) return "left arrow";
+        if (key == KeyCode.RIGHT_ARROW.getKeycode()) return "right arrow";
+        return String.valueOf((char) key).toLowerCase();
+    }
+
+    private int resolveKey(Key keyNode) {
+        ASTNode expr = keyNode.getKey();
+        if (expr instanceof AsNumber asNumber) expr = asNumber.getOperand1();
+
+        if (expr instanceof NumberLiteral num) return (int) num.getValue();
+        if (expr instanceof StringLiteral str) return getKeyCodeFromName(str.getText());
+        return -1;
     }
 
     @Override
-    public IssueType getIssueType() {
-        return IssueType.BUG;
+    public void visit(Key node) {
+        if (inCondition) {
+            int key = resolveKey(node);
+            if (key != -1) {
+                lastKeyValue = new NumberLiteral(key);
+            }
+        }
     }
+
+    private int getKeyCodeFromName(String keyName) {
+        return switch (keyName.toLowerCase()) {
+            case "up arrow" -> KeyCode.UP_ARROW.getKeycode();
+            case "down arrow" -> KeyCode.DOWN_ARROW.getKeycode();
+            case "left arrow" -> KeyCode.LEFT_ARROW.getKeycode();
+            case "right arrow" -> KeyCode.RIGHT_ARROW.getKeycode();
+            default -> keyName.length() == 1 ? keyName.toLowerCase().charAt(0) : -1;
+        };
+    }
+
+    private boolean isSupportedKey(int key) {
+        return isVerticalKey(key) || isHorizontalKey(key);
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) { /* NOP */ }
+
+    @Override
+    public String getName() { return NAME; }
+
+    @Override
+    public IssueType getIssueType() { return IssueType.BUG; }
 
     @Override
     public boolean isSubsumedBy(Issue first, Issue other) {
-        if (first.getFinder() != this) {
-            return super.isSubsumedBy(first, other);
-        }
+        if (first.getFinder() != this) return super.isSubsumedBy(first, other);
 
         if (other.getFinder() instanceof MissingLoopSensing) {
             ASTNode node = first.getCodeLocation().getParentNode().getParentNode();
             if (node instanceof IfThenStmt ifThenStmt) {
                 return ifThenStmt.getBoolExpr() == (other.getCodeLocation());
             }
-
         }
-
         return false;
     }
 }

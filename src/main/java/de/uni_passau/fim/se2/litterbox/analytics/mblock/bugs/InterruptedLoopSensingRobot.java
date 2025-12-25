@@ -306,7 +306,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     @Override
     public void visit(FaceTimed node) {
         if (!checkingVariable && !checkingStop) {
-            if (insideControl && sensingOther) {
+            if (insideControl && (sensingCollision || sensingOther)) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("wait_seconds")); //TODO
@@ -318,7 +318,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     @Override
     public void visit(FaceTimedPort node) {
         if (!checkingVariable && !checkingStop) {
-            if (insideControl && sensingOther) {
+            if (insideControl && (sensingCollision || sensingOther)) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("wait_seconds")); //TODO
@@ -330,7 +330,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     @Override
     public void visit(LEDColorTimed node) {
         if (!checkingVariable && !checkingStop) {
-            if (insideControl && sensingOther) {
+            if (insideControl && (sensingCollision || sensingOther)) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("wait_seconds")); //TODO
@@ -342,7 +342,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     @Override
     public void visit(LEDColorTimedPosition node) {
         if (!checkingVariable && !checkingStop) {
-            if (insideControl && sensingOther) {
+            if (insideControl && (sensingCollision || sensingOther)) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("wait_seconds")); //TODO
@@ -354,7 +354,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     @Override
     public void visit(PlayFrequency node) {
         if (!checkingVariable && !checkingStop) {
-            if (insideControl && sensingOther) {
+            if (insideControl && (sensingCollision || sensingOther)) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("think_seconds")); //TODO
@@ -366,7 +366,7 @@ public class InterruptedLoopSensingRobot extends AbstractRobotFinder {
     @Override
     public void visit(WaitSeconds node) {
         if (!checkingVariable && !checkingStop) {
-            if (insideControl && sensingOther) {
+            if (insideControl && (sensingCollision || sensingOther)) {
                 Hint hint = Hint.fromKey(getName());
                 hint.setParameter(Hint.THEN_ELSE, blockName);
                 hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("wait_seconds"));

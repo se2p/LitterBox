@@ -22,19 +22,25 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.KeySetPosition;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
 import java.util.ArrayList;
-
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Injects the "Key Set Position" bug pattern by converting key-polling motion code
@@ -70,112 +76,86 @@ public class KeySetPositionInjector extends AbstractBugInjector {
     public List<InjectionResult> inject(Program program) {
         ExtractingCloneVisitor visitor = new ExtractingCloneVisitor();
         Program cloned = (Program) program.accept(visitor);
-        return singleResult(cloned);
+        return visitor.extractedAny ? singleResult(cloned) : Collections.emptyList();
     }
 
     /**
-     * Checks if a statement is a motion statement that benefits from continuous polling.
-     * <p>
-     * Currently limited to statements that the {@link KeySetPosition} detector flags.
-     * <p>
-     * Future extension: The polling vs event-driven issue applies to any continuous/incremental
-     * changes that benefit from rapid repeated execution. Consider expanding to include:
-     * <ul>
-     *   <li>Motion: TurnRight, TurnLeft</li>
-     *   <li>Looks: ChangeSize, ChangeGraphicEffectBy</li>
-     *   <li>Sound: ChangeVolumeBy</li>
-     * </ul>
-     * Note: The detector would also need to be extended to flag these patterns.
+     * Identifies "If [supported key] Pressed then [motion]" statements.
      */
-    private boolean isMotionStatement(Stmt stmt) {
+    private boolean isCandidate(Stmt stmt) {
+        if (!(stmt instanceof IfThenStmt ifStmt)) return false;
+
+        BoolExpr cond = ifStmt.getBoolExpr();
+        if (cond instanceof AsBool asBool) cond = (BoolExpr) asBool.getOperand1();
+
+        if (!(cond instanceof IsKeyPressed keyPressed)) return false;
+        if (!isSupportedKey(keyPressed)) return false;
+
+        // The finder typically checks the first 1-2 statements
+        List<Stmt> body = ifStmt.getThenStmts().getStmts();
+        return !body.isEmpty() && (isMotion(body.get(0)) || (body.size() > 1 && isMotion(body.get(1))));
+    }
+
+    private boolean isMotion(Stmt stmt) {
         return stmt instanceof ChangeXBy || stmt instanceof ChangeYBy
                 || stmt instanceof MoveSteps || stmt instanceof SetXTo || stmt instanceof SetYTo;
     }
 
-    private boolean isKeyPressedIfWithMotion(Stmt stmt) {
-        if (!(stmt instanceof IfThenStmt ifStmt)) {
-            return false;
+    private boolean isSupportedKey(IsKeyPressed node) {
+        ASTNode expr = node.getKey().getKey();
+        if (expr instanceof AsNumber asNumber) expr = asNumber.getOperand1();
+
+        if (expr instanceof NumberLiteral num) {
+            int key = (int) num.getValue();
+            return isCodeSupported(key);
         }
-        if (!(ifStmt.getBoolExpr() instanceof IsKeyPressed)) {
-            return false;
-        }
-        return ifStmt.getThenStmts().getStmts().stream().anyMatch(this::isMotionStatement);
+        return false;
+    }
+
+    private boolean isCodeSupported(int key) {
+        return key == KeyCode.DOWN_ARROW.getKeycode() || key == KeyCode.UP_ARROW.getKeycode()
+                || key == KeyCode.LEFT_ARROW.getKeycode() || key == KeyCode.RIGHT_ARROW.getKeycode()
+                || key == 'w' || key == 'W' || key == 'a' || key == 'A'
+                || key == 's' || key == 'S' || key == 'd' || key == 'D';
     }
 
     /**
-     * Clone visitor that extracts key-pressed-if statements from forever loops
-     * into separate event-driven scripts.
+     * Clone visitor that extracts candidates from forever loops into event-driven scripts.
      */
     private class ExtractingCloneVisitor extends CloneVisitor {
-        private final List<Script> extractedScripts = new ArrayList<>();
+        private final List<Script> extraScripts = new ArrayList<>();
+        private boolean extractedAny = false;
 
         @Override
         public ASTNode visit(ScriptList node) {
-            extractedScripts.clear();
-
-            List<Script> newScripts = new ArrayList<>();
-            for (Script script : node.getScriptList()) {
-                newScripts.add(processScript(script));
-            }
-            newScripts.addAll(extractedScripts);
-
-            return new ScriptList(newScripts);
+            extraScripts.clear();
+            List<Script> scripts = node.getScriptList().stream()
+                    .map(s -> (Script) s.accept(this))
+                    .collect(Collectors.toCollection(ArrayList::new));
+            scripts.addAll(extraScripts);
+            return new ScriptList(scripts);
         }
 
-        private Script processScript(Script script) {
-            List<Stmt> newStmts = new ArrayList<>();
-            boolean modified = false;
-
-            for (Stmt stmt : script.getStmtList().getStmts()) {
-                if (stmt instanceof RepeatForeverStmt loop) {
-                    RepeatForeverStmt processedLoop = processForeverLoop(loop);
-                    if (processedLoop != loop) {
-                        modified = true;
-                        newStmts.add(processedLoop);
-                    } else {
-                        newStmts.add(apply(stmt));
-                    }
-                } else {
-                    newStmts.add(apply(stmt));
+        @Override
+        public ASTNode visit(RepeatForeverStmt node) {
+            List<Stmt> stmts = new ArrayList<>();
+            for (Stmt stmt : node.getStmtList().getStmts()) {
+                stmts.add((Stmt) stmt.accept(this));
+                if (isCandidate(stmt)) {
+                    extractToEvent((IfThenStmt) stmt);
                 }
             }
-
-            if (modified) {
-                return new Script(apply(script.getEvent()), new StmtList(newStmts));
-            }
-            return (Script) super.visit(script);
+            return new RepeatForeverStmt(new StmtList(stmts), apply(node.getMetadata()));
         }
 
-        private RepeatForeverStmt processForeverLoop(RepeatForeverStmt loop) {
-            List<Stmt> remainingStmts = new ArrayList<>();
-            boolean extracted = false;
+        private void extractToEvent(IfThenStmt ifStmt) {
+            BoolExpr cond = ifStmt.getBoolExpr();
+            if (cond instanceof AsBool asBool) cond = (BoolExpr) asBool.getOperand1();
 
-            for (Stmt stmt : loop.getStmtList().getStmts()) {
-                if (isKeyPressedIfWithMotion(stmt)) {
-                    extractAsKeyPressedScript((IfThenStmt) stmt);
-                    extracted = true;
-                } else {
-                    remainingStmts.add(apply(stmt));
-                }
-            }
-
-            if (extracted) {
-                return new RepeatForeverStmt(
-                        new StmtList(remainingStmts),
-                        apply(loop.getMetadata())
-                );
-            }
-            return loop;
-        }
-
-        private void extractAsKeyPressedScript(IfThenStmt ifStmt) {
-            IsKeyPressed condition = (IsKeyPressed) ifStmt.getBoolExpr();
-            KeyPressed event = new KeyPressed(
-                    apply(condition.getKey()),
-                    new NoBlockMetadata()
-            );
-            StmtList body = apply(ifStmt.getThenStmts());
-            extractedScripts.add(new Script(event, body));
+            IsKeyPressed keyPressed = (IsKeyPressed) cond;
+            KeyPressed event = new KeyPressed(apply(keyPressed.getKey()), TopNonDataBlockMetadata.emptyTopNonBlockMetadata());
+            extraScripts.add(new Script(event, apply(ifStmt.getThenStmts())));
+            extractedAny = true;
         }
     }
 }

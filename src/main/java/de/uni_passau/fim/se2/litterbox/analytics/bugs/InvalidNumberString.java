@@ -47,6 +47,8 @@ public class InvalidNumberString extends AbstractIssueFinder {
                 addIssue(node, node.getMetadata(), IssueSeverity.LOW);
             }
         }
+        // Continue traversal to find nested AsNumber nodes
+        visitChildren(node);
     }
 
     @Override

@@ -24,7 +24,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -68,6 +70,12 @@ public class ParameterAsLiteral extends AbstractIssueFinder {
             return;
         }
 
+        // Skip StringLiterals that are part of Parameter or ParameterDefinition nodes
+        // These represent the parameter NAME itself, not a misuse of a literal
+        if (isInsideParameterNode(node)) {
+            return;
+        }
+
         String literal = node.getText();
         if (parametersInScope.contains(literal)) {
             IssueBuilder builder = prepareIssueBuilder()
@@ -78,6 +86,22 @@ public class ParameterAsLiteral extends AbstractIssueFinder {
             builder = builder.withCurrentNode(getCurrentReferencableNode(node));
             addIssue(builder.withHint(hint));
         }
+    }
+
+    /**
+     * Checks if the node is a descendant of a Parameter or ParameterDefinition node.
+     * StringLiterals inside these nodes are the parameter NAME, not a misuse.
+     */
+    private boolean isInsideParameterNode(ASTNode node) {
+        ASTNode current = node.getParentNode();
+        while (current != null) {
+            if (current instanceof Parameter
+                    || current instanceof ParameterDefinition) {
+                return true;
+            }
+            current = current.getParentNode();
+        }
+        return false;
     }
 
     private ASTNode getCurrentReferencableNode(ASTNode node) {

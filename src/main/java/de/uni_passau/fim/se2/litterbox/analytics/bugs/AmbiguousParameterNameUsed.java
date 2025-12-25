@@ -27,8 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -58,15 +58,17 @@ public class AmbiguousParameterNameUsed extends AbstractIssueFinder {
         return super.check(program);
     }
 
-    private void checkArguments(ArgumentInfo[] arguments) {
+    private void checkArguments(List<ParameterDefinition> parameters) {
         paraNames = new LinkedList<>();
 
-        for (int i = 0; i < arguments.length; i++) {
-            ArgumentInfo current = arguments[i];
-            for (int j = i + 1; j < arguments.length; j++) {
-                if (i != j && current.name().equals(arguments[j].name())) {
-                    if (!paraNames.contains(current.name())) {
-                        paraNames.add(current.name());
+        for (int i = 0; i < parameters.size(); i++) {
+            ParameterDefinition current = parameters.get(i);
+            String currentName = current.getIdent().getName();
+            for (int j = i + 1; j < parameters.size(); j++) {
+                String otherName = parameters.get(j).getIdent().getName();
+                if (currentName.equals(otherName)) {
+                    if (!paraNames.contains(currentName)) {
+                        paraNames.add(currentName);
                     }
                     found = true;
                 }
@@ -85,16 +87,17 @@ public class AmbiguousParameterNameUsed extends AbstractIssueFinder {
 
     @Override
     public void visit(StmtList node) {
+        boolean wasInStmtList = inStmtList;
         inStmtList = true;
         visitChildren(node);
-        inStmtList = false;
+        inStmtList = wasInStmtList;
     }
 
     @Override
     public void visit(ProcedureDefinition node) {
         currentProcedure = node;
         if (!node.getStmtList().getStmts().isEmpty()) {
-            checkArguments(procMap.get(node.getIdent()).getArguments());
+            checkArguments(node.getParameterDefinitionList().getParameterDefinitions());
         }
 
         visitChildren(node);

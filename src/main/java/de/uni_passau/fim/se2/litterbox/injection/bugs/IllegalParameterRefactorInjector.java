@@ -27,12 +27,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
-
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Injects IllegalParameterRefactor bug by changing a Boolean parameter type to String.
@@ -49,20 +53,33 @@ public class IllegalParameterRefactorInjector extends AbstractBugInjector {
 
     @Override
     public List<InjectionResult> inject(Program program) {
-        CustomCloneVisitor visitor = new CustomCloneVisitor();
+        CustomMappingCloneVisitor visitor = new CustomMappingCloneVisitor();
         Program cloned = (Program) program.accept(visitor);
-        return singleResult(cloned);
+        if (visitor.isModified()) {
+            cloned.accept(new ParentVisitor());
+            return singleResult(cloned);
+        }
+        return Collections.emptyList();
     }
 
-    private static class CustomCloneVisitor extends CloneVisitor {
+    private static class CustomMappingCloneVisitor extends CloneVisitor {
+        private boolean modified = false;
+
+        public boolean isModified() {
+            return modified;
+        }
+
         @Override
         public ASTNode visit(ProcedureDefinition node) {
             List<ParameterDefinition> clonedParams = applyList(node.getParameterDefinitionList().getParameterDefinitions());
 
-            // Find a boolean parameter to corrupt
+            // Find parameters used in boolean contexts
+            Set<String> usedAsBool = findParametersUsedAsBool(node);
+
+            // Find a boolean parameter that is used as a boolean to corrupt
             for (int i = 0; i < clonedParams.size(); i++) {
                 ParameterDefinition param = clonedParams.get(i);
-                if (param.getType() instanceof BooleanType) {
+                if (param.getType() instanceof BooleanType && usedAsBool.contains(param.getIdent().getName())) {
                     // Change type to String to cause illegal usage if used as boolean
                     ParameterDefinition mutated = new ParameterDefinition(
                             apply(param.getIdent()),
@@ -70,6 +87,7 @@ public class IllegalParameterRefactorInjector extends AbstractBugInjector {
                             apply(param.getMetadata())
                     );
                     clonedParams.set(i, mutated);
+                    modified = true;
                     break; // Only mutate one
                 }
             }
@@ -80,6 +98,20 @@ public class IllegalParameterRefactorInjector extends AbstractBugInjector {
                     .withBody(apply(node.getStmtList()))
                     .withMetadata(apply(node.getMetadata()))
                     .build();
+        }
+
+        private Set<String> findParametersUsedAsBool(ProcedureDefinition node) {
+            Set<String> usedAsBool = new HashSet<>();
+            node.getStmtList().accept(new de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor() {
+                @Override
+                public void visit(de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool asBool) {
+                    if (asBool.getOperand1() instanceof Parameter param) {
+                        usedAsBool.add(param.getName().getName());
+                    }
+                    visitChildren(asBool);
+                }
+            });
+            return usedAsBool;
         }
     }
 }

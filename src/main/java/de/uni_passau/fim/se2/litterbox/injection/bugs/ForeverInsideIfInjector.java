@@ -40,7 +40,7 @@ import java.util.Set;
  * <p>
  * Conditions for injection:
  * - The if-statement must have successor statements OR be inside a loop
- *   (loops implicitly have successor statements due to repetition)
+ * (loops implicitly have successor statements due to repetition)
  * - The block being wrapped must not be empty
  * - The block must not end with a terminating statement (stop/delete clone)
  * - For IfElseStmt, both then-block and else-block are candidates (if non-empty)
@@ -108,7 +108,9 @@ public class ForeverInsideIfInjector extends AbstractBugInjector {
         return !isTerminatingStatement(lastStmt);
     }
 
-    /** Statement types that block execution (no point wrapping after these). */
+    /**
+     * Statement types that block execution (no point wrapping after these).
+     */
     private static final Set<Class<? extends Stmt>> TERMINATING_TYPES = Set.of(
             StopAll.class, StopThisScript.class, DeleteClone.class
     );

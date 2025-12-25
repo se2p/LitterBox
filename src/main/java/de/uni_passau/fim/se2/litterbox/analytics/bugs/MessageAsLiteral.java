@@ -58,7 +58,8 @@ public class MessageAsLiteral extends AbstractIssueFinder {
 
         for (StringLiteral node : potentialLiterals) {
             String text = node.getText();
-            if (unsentMessages.contains(text)) {
+            // Case-insensitive matching since Scratch messages are case-insensitive
+            if (unsentMessages.stream().anyMatch(msg -> msg.equalsIgnoreCase(text))) {
                 IssueBuilder builder = prepareIssueBuilder()
                         .withSeverity(IssueSeverity.HIGH)
                         .withMetadata(getMetadata(node));

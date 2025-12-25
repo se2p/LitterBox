@@ -23,7 +23,9 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageAsLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -47,6 +49,8 @@ import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Injects the "Message As Literal" bug pattern by replacing a StringLiteral in an existing
@@ -78,43 +82,49 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
 
     @Override
     public List<InjectionResult> inject(Program program) {
-        // Collect broadcasts and candidate StringLiterals (prioritized)
         List<BroadcastInfo> broadcasts = new ArrayList<>();
-        List<StringLiteral> highPriorityCandidates = new ArrayList<>();  // List ops, Ask
-        List<StringLiteral> lowPriorityCandidates = new ArrayList<>();   // Say, Think
+        List<StringLiteral> highPriority = new ArrayList<>();
+        List<StringLiteral> lowPriority = new ArrayList<>();
 
-        program.accept(new CollectorVisitor(broadcasts, highPriorityCandidates, lowPriorityCandidates));
+        program.accept(new CollectorVisitor(broadcasts, highPriority, lowPriority));
 
         if (broadcasts.isEmpty()) {
             return Collections.emptyList();
         }
 
-        // Use high priority candidates first, fall back to low priority
-        List<StringLiteral> candidates = highPriorityCandidates.isEmpty()
-                ? lowPriorityCandidates
-                : highPriorityCandidates;
+        // Find messages sent exactly once
+        Map<String, List<BroadcastInfo>> byMessage = broadcasts.stream()
+                .collect(Collectors.groupingBy(b -> b.message().toLowerCase()));
 
+        BroadcastInfo uniqueBroadcast = byMessage.values().stream()
+                .filter(list -> list.size() == 1)
+                .map(List::getFirst)
+                .findFirst()
+                .orElse(null);
+
+        if (uniqueBroadcast == null) {
+            return Collections.emptyList();
+        }
+
+        List<StringLiteral> candidates = highPriority.isEmpty() ? lowPriority : highPriority;
         if (candidates.isEmpty()) {
             return Collections.emptyList();
         }
 
-        // Use the first broadcast and first candidate literal
-        BroadcastInfo broadcast = broadcasts.getFirst();
+        // Replace the first candidate literal and remove the broadcast
         StringLiteral targetLiteral = candidates.getFirst();
-
-        // Clone with transformation
-        LiteralReplacementVisitor visitor = new LiteralReplacementVisitor(
-                broadcast.stmt, targetLiteral, broadcast.message);
+        LiteralReplacementVisitor visitor = new LiteralReplacementVisitor(targetLiteral, uniqueBroadcast.message());
         Program mutated = (Program) program.accept(visitor);
 
         return singleResult(mutated);
     }
 
-    private String extractMessageContent(StringExpr expr) {
-        if (expr instanceof StringLiteral literal) {
-            return literal.getText();
-        } else if (expr instanceof LocalIdentifier identifier) {
-            return identifier.getName();
+    private String getMessageText(StringExpr expr) {
+        if (expr instanceof StringLiteral lit) {
+            return lit.getText();
+        }
+        if (expr instanceof LocalIdentifier ident) {
+            return ident.getName();
         }
         return null;
     }
@@ -122,17 +132,12 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
     private record BroadcastInfo(Stmt stmt, String message) {
     }
 
-    /**
-     * Visitor to collect broadcasts and candidate StringLiterals (prioritized).
-     */
     private class CollectorVisitor implements ScratchVisitor {
         private final List<BroadcastInfo> broadcasts;
         private final List<StringLiteral> highPriority;
         private final List<StringLiteral> lowPriority;
 
-        CollectorVisitor(List<BroadcastInfo> broadcasts,
-                         List<StringLiteral> highPriority,
-                         List<StringLiteral> lowPriority) {
+        CollectorVisitor(List<BroadcastInfo> broadcasts, List<StringLiteral> highPriority, List<StringLiteral> lowPriority) {
             this.broadcasts = broadcasts;
             this.highPriority = highPriority;
             this.lowPriority = lowPriority;
@@ -140,141 +145,106 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
 
         @Override
         public void visit(Broadcast node) {
-            String msg = extractMessageContent(node.getMessage().getMessage());
+            String msg = getMessageText(node.getMessage().getMessage());
             if (msg != null) {
                 broadcasts.add(new BroadcastInfo(node, msg));
             }
-            // Don't visit children - we don't want the message literal itself
         }
 
         @Override
         public void visit(BroadcastAndWait node) {
-            String msg = extractMessageContent(node.getMessage().getMessage());
+            String msg = getMessageText(node.getMessage().getMessage());
             if (msg != null) {
                 broadcasts.add(new BroadcastInfo(node, msg));
             }
         }
 
-        // High priority: List operations
         @Override
-        public void visit(AddTo node) {
-            if (node.getString() instanceof StringLiteral lit) {
-                highPriority.add(lit);
+        public void visit(StringLiteral node) {
+            ASTNode parent = node.getParentNode();
+            if (parent instanceof AsString asString) {
+                parent = asString.getParentNode();
             }
-            visitChildren(node);
+
+            if (isHighPrioritySite(parent)) {
+                highPriority.add(node);
+            } else if (isLowPrioritySite(parent)) {
+                lowPriority.add(node);
+            }
+        }
+
+        private boolean isHighPrioritySite(ASTNode parent) {
+            return parent instanceof AddTo || parent instanceof InsertAt || parent instanceof ReplaceItem
+                    || parent instanceof SetVariableTo || parent instanceof Equals;
+        }
+
+        private boolean isLowPrioritySite(ASTNode parent) {
+            return parent instanceof Say || parent instanceof SayForSecs
+                    || parent instanceof Think || parent instanceof ThinkForSecs
+                    || parent instanceof AskAndWait;
         }
 
         @Override
-        public void visit(InsertAt node) {
-            if (node.getString() instanceof StringLiteral lit) {
-                highPriority.add(lit);
-            }
-            visitChildren(node);
-        }
+        public void visit(LocalIdentifier node) {
+        } // Avoid child literals
 
         @Override
-        public void visit(ReplaceItem node) {
-            if (node.getString() instanceof StringLiteral lit) {
-                highPriority.add(lit);
-            }
-            visitChildren(node);
-        }
-
-        // High priority: SetVariableTo
-        @Override
-        public void visit(SetVariableTo node) {
-            if (node.getExpr() instanceof StringLiteral lit) {
-                highPriority.add(lit);
-            }
-            visitChildren(node);
-        }
-
-        // Low priority: Say/Think variants
-        @Override
-        public void visit(Say node) {
-            if (node.getString() instanceof StringLiteral lit) {
-                lowPriority.add(lit);
-            }
-            visitChildren(node);
-        }
-
-        @Override
-        public void visit(SayForSecs node) {
-            if (node.getString() instanceof StringLiteral lit) {
-                lowPriority.add(lit);
-            }
-            visitChildren(node);
-        }
-
-        @Override
-        public void visit(Think node) {
-            if (node.getThought() instanceof StringLiteral lit) {
-                lowPriority.add(lit);
-            }
-            visitChildren(node);
-        }
-
-        @Override
-        public void visit(ThinkForSecs node) {
-            if (node.getThought() instanceof StringLiteral lit) {
-                lowPriority.add(lit);
-            }
-            visitChildren(node);
-        }
-
-        // Low priority: Ask
-        @Override
-        public void visit(AskAndWait node) {
-            if (node.getQuestion() instanceof StringLiteral lit) {
-                lowPriority.add(lit);
-            }
-            visitChildren(node);
-        }
-
-        // High priority: Comparisons with StringLiterals
-        @Override
-        public void visit(Equals node) {
-            if (node.getOperand1() instanceof StringLiteral lit) {
-                highPriority.add(lit);
-            }
-            if (node.getOperand2() instanceof StringLiteral lit) {
-                highPriority.add(lit);
-            }
-            visitChildren(node);
-        }
+        public void visit(ReceptionOfMessage node) {
+        } // Avoid message literals
     }
 
-    /**
-     * Clone visitor that removes the broadcast and replaces the target literal's text.
-     */
     private static class LiteralReplacementVisitor extends CloneVisitor {
-        private final Stmt broadcastToRemove;
-        private final StringLiteral literalToReplace;
-        private final String newText;
+        private final String messageToRemove;
+        private final String originalText;
+        private boolean removed = false;
+        private boolean replaced = false;
 
-        LiteralReplacementVisitor(Stmt broadcastToRemove, StringLiteral literalToReplace, String newText) {
-            this.broadcastToRemove = broadcastToRemove;
-            this.literalToReplace = literalToReplace;
-            this.newText = newText;
+        LiteralReplacementVisitor(StringLiteral literal, String newText) {
+            this.messageToRemove = newText;
+            this.originalText = literal.getText();
         }
 
         @Override
         public ASTNode visit(StmtList node) {
-            List<Stmt> newStmts = new ArrayList<>();
-            for (Stmt stmt : node.getStmts()) {
-                // Skip the broadcast we want to remove
-                if (stmt == broadcastToRemove) {
-                    continue;
+            List<Stmt> stmts = new ArrayList<>();
+            for (Stmt s : node.getStmts()) {
+                Stmt cloned = apply(s);
+                if (cloned != null) {
+                    stmts.add(cloned);
                 }
-                newStmts.add(apply(stmt));
             }
-            return new StmtList(newStmts);
+            return new StmtList(stmts);
+        }
+
+        @Override
+        public ASTNode visit(Broadcast node) {
+            if (shouldRemove(node.getMessage().getMessage())) {
+                return null;
+            }
+            return new Broadcast(cloner.apply(node.getMessage()), apply(node.getMetadata()));
+        }
+
+        @Override
+        public ASTNode visit(BroadcastAndWait node) {
+            if (shouldRemove(node.getMessage().getMessage())) {
+                return null;
+            }
+            return new BroadcastAndWait(cloner.apply(node.getMessage()), apply(node.getMetadata()));
+        }
+
+        private boolean shouldRemove(StringExpr msgExpr) {
+            if (!removed && msgExpr instanceof StringLiteral lit && lit.getText().equalsIgnoreCase(messageToRemove)) {
+                removed = true;
+                return true;
+            }
+            return false;
         }
 
         @Override
         public ASTNode visit(StringLiteral node) {
-            if (node == literalToReplace) {
-                return new StringLiteral(newText);
+            if (!replaced && node.getText().equals(originalText)) {
+                replaced = true;
+                return new StringLiteral(messageToRemove);
             }
             return super.visit(node);
         }

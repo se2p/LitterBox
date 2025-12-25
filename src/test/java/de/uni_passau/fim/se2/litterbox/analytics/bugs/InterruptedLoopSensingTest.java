@@ -90,4 +90,35 @@ public class InterruptedLoopSensingTest implements FinderTest, JsonTest {
     public void testInterruptedLoopSensingNotAfterRepeatUntil() throws IOException, ParsingException {
         assertThatFinderReports(0, new InterruptedLoopSensing(), "./src/test/fixtures/bugs/interruptedLoopSensingNotAfterRepeatUntil.json");
     }
+
+    @Test
+    public void testWaitSecondsWithTouching() throws IOException, ParsingException {
+        String blocks = "when green flag clicked\n" +
+                "forever\n" +
+                "if <touching (mouse-pointer v) ?> then\n" +
+                "wait (1) seconds\n" +
+                "end\n" +
+                "end\n";
+        Program program = parseScratchBlocks(blocks);
+        InterruptedLoopSensing finder = new InterruptedLoopSensing();
+        Set<Issue> reports = finder.check(program);
+        Assertions.assertEquals(1, reports.size());
+    }
+
+    @Test
+    public void testWaitSecondsWithTouchingIfElse() throws IOException, ParsingException {
+        String blocks = "when green flag clicked\n" +
+                "forever\n" +
+                "if <touching (mouse-pointer v) ?> then\n" +
+                "wait (1) seconds\n" +
+                "else\n" +
+                "wait (1) seconds\n" +
+                "end\n" +
+                "end\n";
+        Program program = parseScratchBlocks(blocks);
+        InterruptedLoopSensing finder = new InterruptedLoopSensing();
+        Set<Issue> reports = finder.check(program);
+        // It should report 2 issues, one for each branch.
+        Assertions.assertEquals(2, reports.size());
+    }
 }

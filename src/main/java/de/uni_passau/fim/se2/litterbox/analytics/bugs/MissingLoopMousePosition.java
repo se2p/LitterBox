@@ -28,6 +28,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.SingularExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseX;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseY;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -38,11 +40,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public class MissingLoopMousePosition extends AbstractIssueFinder {
     public static final String NAME = "missing_loop_mouse_position";
     private static final String MOTION = "missing_loop_mouse_position_motion";
     private static final String DIRECTION = "missing_loop_mouse_position_direction";
+    private static final Set<String> MOUSE_IDENTIFIERS = Set.of("_mouse_", "mouse-pointer");
     private boolean insideLoop = false;
     private boolean inMotionStmtWithoutLoop = false;
 
@@ -64,16 +68,18 @@ public class MissingLoopMousePosition extends AbstractIssueFinder {
 
     @Override
     public void visit(RepeatForeverStmt node) {
+        boolean wasInsideLoop = insideLoop;
         insideLoop = true;
         visitChildren(node);
-        insideLoop = false;
+        insideLoop = wasInsideLoop;
     }
 
     @Override
     public void visit(UntilStmt node) {
+        boolean wasInsideLoop = insideLoop;
         insideLoop = true;
         visitChildren(node);
-        insideLoop = false;
+        insideLoop = wasInsideLoop;
     }
 
     @Override
@@ -98,38 +104,42 @@ public class MissingLoopMousePosition extends AbstractIssueFinder {
 
     @Override
     public void visit(PointTowards node) {
-        if (!insideLoop) {
-            Position pos = node.getPosition();
-            if (pos instanceof MousePos) {
-                Hint hint = Hint.fromKey(DIRECTION);
-                addIssue(node, node.getMetadata(), hint);
-            }
+        if (!insideLoop && isMousePosition(node.getPosition())) {
+            Hint hint = Hint.fromKey(DIRECTION);
+            addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
     }
 
     @Override
     public void visit(GlideSecsTo node) {
-        if (!insideLoop) {
-            Position pos = node.getPosition();
-            if (pos instanceof MousePos) {
-                Hint hint = Hint.fromKey(DIRECTION);
-                addIssue(node, node.getMetadata(), hint);
-            }
+        if (!insideLoop && isMousePosition(node.getPosition())) {
+            Hint hint = Hint.fromKey(DIRECTION);
+            addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
     }
 
     @Override
     public void visit(GoToPos node) {
-        if (!insideLoop) {
-            Position pos = node.getPosition();
-            if (pos instanceof MousePos) {
-                Hint hint = Hint.fromKey(DIRECTION);
-                addIssue(node, node.getMetadata(), hint);
-            }
+        if (!insideLoop && isMousePosition(node.getPosition())) {
+            Hint hint = Hint.fromKey(DIRECTION);
+            addIssue(node, node.getMetadata(), hint);
         }
         visitChildren(node);
+    }
+
+    /**
+     * Checks if a position refers to mouse position (either as MousePos or FromExpression with mouse identifier).
+     */
+    private boolean isMousePosition(Position pos) {
+        if (pos instanceof MousePos) {
+            return true;
+        }
+        if (pos instanceof FromExpression fromExpr && fromExpr.getStringExpr() instanceof StringLiteral strLit) {
+            return MOUSE_IDENTIFIERS.contains(strLit.getText());
+        }
+        return false;
     }
 
     private void checkMotionStmt(SpriteMotionStmt node) {

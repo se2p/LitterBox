@@ -124,9 +124,29 @@ public class ProcedureBuilder {
 
     /**
      * Creates a CallStmt that calls the given procedure with empty string arguments.
+     * <p>
+     * Warning: This method uses the procedure's internal identifier, which may not match
+     * what bug finders expect. For injectors that need detection by finders, use
+     * {@link #createCallTo(ProcedureDefinition, String)} with the proccode instead.
      */
     public static CallStmt createCallTo(ProcedureDefinition proc) {
         return createCallTo(proc.getIdent(), proc.getParameterDefinitionList().getParameterDefinitions().size());
+    }
+
+    /**
+     * Creates a CallStmt that calls the given procedure with empty string arguments,
+     * using the specified proccode as the identifier.
+     * <p>
+     * This is the preferred method for injectors as it ensures the CallStmt identifier
+     * matches what bug finders expect (the human-readable proccode like "foo" or "write %s").
+     *
+     * @param proc The procedure definition to call
+     * @param proccode The procedure code/name (e.g., "my procedure %s") from procMap
+     * @return A CallStmt with the proccode as identifier
+     */
+    public static CallStmt createCallTo(ProcedureDefinition proc, String proccode) {
+        StrId callId = new StrId(proccode);
+        return createCallTo(callId, proc.getParameterDefinitionList().getParameterDefinitions().size());
     }
 
     /**
@@ -141,7 +161,7 @@ public class ProcedureBuilder {
         for (Expression e : args) {
             e.setParentNode(exprList);
         }
-        CallStmt call = new CallStmt(ident, exprList, NonDataBlockMetadata.emptyNonBlockMetadata());
+        CallStmt call = new CallStmt(ident, exprList, NonDataBlockMetadata.createCallMetadata(false));
         exprList.setParentNode(call);
         return call;
     }

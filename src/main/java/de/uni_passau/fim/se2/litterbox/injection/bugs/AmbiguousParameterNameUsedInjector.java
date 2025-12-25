@@ -20,22 +20,23 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.AmbiguousParameterNameUsed;
-import de.uni_passau.fim.se2.litterbox.ast.builder.ProcedureBuilder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
-import static de.uni_passau.fim.se2.litterbox.injection.util.InjectionConstants.MIN_PARAMS_REQUIRED;
-
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import static de.uni_passau.fim.se2.litterbox.injection.util.InjectionConstants.MIN_PARAMS_REQUIRED;
 
 /**
  * Injects ambiguous parameter naming by renaming the second used parameter
@@ -55,6 +56,12 @@ public class AmbiguousParameterNameUsedInjector extends AbstractBugInjector {
         List<ParameterDefinition> params = node.getParameterDefinitionList().getParameterDefinitions();
 
         if (params.size() >= MIN_PARAMS_REQUIRED) {
+            // Skip if ambiguous parameter names already exist
+            if (hasAmbiguousParameterNames(params)) {
+                super.visit(node);
+                return;
+            }
+
             List<ParameterDefinition> usedParams = findUsedParameters(node, params);
 
             if (usedParams.size() >= MIN_PARAMS_REQUIRED) {
@@ -66,6 +73,20 @@ public class AmbiguousParameterNameUsedInjector extends AbstractBugInjector {
             }
         }
         super.visit(node);
+    }
+
+    /**
+     * Checks if any two parameters already have the same name.
+     */
+    private boolean hasAmbiguousParameterNames(List<ParameterDefinition> params) {
+        Set<String> names = new HashSet<>();
+        for (ParameterDefinition param : params) {
+            String name = param.getIdent().getName();
+            if (!names.add(name)) {
+                return true; // Duplicate found
+            }
+        }
+        return false;
     }
 
     private List<ParameterDefinition> findUsedParameters(ProcedureDefinition node, List<ParameterDefinition> params) {
@@ -100,14 +121,17 @@ public class AmbiguousParameterNameUsedInjector extends AbstractBugInjector {
         renamedParam.setParentNode(def.getParameterDefinitionList());
         params.set(paramIndex, renamedParam);
 
-        // Rename all references in the body
-        StmtList newBody = new ParameterRenamer(oldName, newName).apply(def.getStmtList());
+        // Rename all references in the body - modify in place
+        // Clone each statement in the body with renamed parameters and replace
+        StmtList body = def.getStmtList();
+        List<Stmt> originalStmts = new ArrayList<>(body.getStmts());
+        body.getStmts().clear();
 
-        // Create and replace the procedure using builder
-        ProcedureDefinition newDef = new ProcedureBuilder().from(def).withBody(newBody).build();
-
-        if (def.getParentNode() instanceof ProcedureDefinitionList parentList) {
-            ProcedureBuilder.replaceIn(parentList, def, newDef);
+        ParameterRenamer renamer = new ParameterRenamer(oldName, newName);
+        for (Stmt stmt : originalStmts) {
+            Stmt renamedStmt = renamer.apply(stmt);
+            renamedStmt.setParentNode(body);
+            body.getStmts().add(renamedStmt);
         }
     }
 

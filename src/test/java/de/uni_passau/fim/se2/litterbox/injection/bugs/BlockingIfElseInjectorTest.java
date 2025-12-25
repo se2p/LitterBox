@@ -53,7 +53,8 @@ public class BlockingIfElseInjectorTest implements JsonTest {
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         BlockingIfElse detector = new BlockingIfElse();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "BlockingIfElse detector should find the injected bug in all injected programs");
         }
@@ -97,7 +98,8 @@ public class BlockingIfElseInjectorTest implements JsonTest {
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         BlockingIfElse detector = new BlockingIfElse();
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
             Assertions.assertFalse(issues.isEmpty(), "Detector should find bug when followed by code in all injected programs");
         }

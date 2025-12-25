@@ -23,8 +23,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ParameterAsLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -45,14 +45,18 @@ public class ParameterAsLiteralInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         ParameterAsLiteralInjector injector = new ParameterAsLiteralInjector();
+        // Since ScratchBlocks parser may create shadow literals that trigger the bug detector,
+        // we explicitly ignore existing issues to verify the injection logic itself.
+        injector.setIgnoreExistingIssues(true);
+
         List<InjectionResult> injected = injector.inject(program);
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
         Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify via scratchblocks
         String result = ScratchBlocksVisitor.of(mutated);
-        Assertions.assertTrue(result.contains("say [myParam]"),
-                "Should have replaced (myParam) with [myParam]. Got:\n" + result);
+        Assertions.assertTrue(result.contains("say ([myParam])"),
+                "Should have replaced (myParam) with ([myParam]). Got:\n" + result);
 
         // Verify detection
         ParameterAsLiteral detector = new ParameterAsLiteral();
@@ -70,12 +74,14 @@ public class ParameterAsLiteralInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         ParameterAsLiteralInjector injector = new ParameterAsLiteralInjector();
+        injector.setIgnoreExistingIssues(true);
+
         List<InjectionResult> injected = injector.inject(program);
         Assertions.assertEquals(1, injected.size(), "Should inject for say for secs");
         Program mutated = injected.getFirst().mutatedProgram();
 
         String result = ScratchBlocksVisitor.of(mutated);
-        Assertions.assertTrue(result.contains("say [myParam]"),
+        Assertions.assertTrue(result.contains("say ([myParam])"),
                 "Say for secs should have parameter replaced. Got:\n" + result);
 
         ParameterAsLiteral detector = new ParameterAsLiteral();
@@ -92,12 +98,14 @@ public class ParameterAsLiteralInjectorTest implements JsonTest {
         Program program = parseScratchBlocks(script);
 
         ParameterAsLiteralInjector injector = new ParameterAsLiteralInjector();
+        injector.setIgnoreExistingIssues(true);
+
         List<InjectionResult> injected = injector.inject(program);
         Assertions.assertEquals(1, injected.size(), "Should inject for think for secs");
         Program mutated = injected.getFirst().mutatedProgram();
 
         String result = ScratchBlocksVisitor.of(mutated);
-        Assertions.assertTrue(result.contains("think [myParam]"),
+        Assertions.assertTrue(result.contains("think ([myParam])"),
                 "Think for secs should have parameter replaced. Got:\n" + result);
 
         ParameterAsLiteral detector = new ParameterAsLiteral();

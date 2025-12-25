@@ -85,9 +85,10 @@ public class AmbiguousParameterNameUnused extends AbstractIssueFinder {
 
     @Override
     public void visit(StmtList node) {
+        boolean wasInStmtList = inStmtList;
         inStmtList = true;
         visitChildren(node);
-        inStmtList = false;
+        inStmtList = wasInStmtList;
     }
 
     @Override

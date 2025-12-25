@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.AmbiguousCustomBlockSignature;
 import de.uni_passau.fim.se2.litterbox.ast.builder.ProcedureBuilder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
@@ -57,6 +58,7 @@ public class AmbiguousCustomBlockSignatureInjector extends AbstractBugInjector {
             Set<String> calledProcedures = getCalledProcedureNames(actor);
 
             mutateClone(actor, clonedActor -> {
+                Program clonedProgram = findProgramRoot(clonedActor);
                 ProcedureDefinitionList clonedProcList = clonedActor.getProcedureDefinitionList();
                 List<ProcedureDefinition> clonedProcedures = clonedProcList.getList();
 
@@ -64,9 +66,13 @@ public class AmbiguousCustomBlockSignatureInjector extends AbstractBugInjector {
                     ProcedureDefinition targetProc = findTargetProcedure(clonedProcedures, calledProcedures);
 
                     if (targetProc != null) {
+                        String proccode = getProcedureName(clonedProgram, clonedActor, targetProc);
                         ProcedureDefinition duplicate = createDestructiveDuplicate(targetProc);
                         clonedProcedures.addFirst(duplicate);
                         duplicate.setParentNode(clonedProcList);
+
+                        // Register the duplicate with the same proccode to ensure collisions are detectable
+                        registerProcedure(clonedProgram, clonedActor, duplicate, proccode);
                     }
                 }
             });

@@ -19,13 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.injection;
 
 import de.uni_passau.fim.se2.litterbox.ast.ScratchNodeFactory;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
@@ -33,11 +29,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.TransformingCloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -64,21 +58,109 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
 
     protected static final Logger log = Logger.getLogger(AbstractBugInjector.class.getName());
 
-    /** Shared CloneVisitor instance for cloning AST nodes. Stateless and thread-safe. */
+    /**
+     * Shared CloneVisitor instance for cloning AST nodes. Stateless and thread-safe.
+     */
     protected static final CloneVisitor cloner = new CloneVisitor();
 
-    /** Factory for creating AST nodes. */
+    /**
+     * Maximum number of mutations to generate per injector to prevent memory exhaustion.
+     */
+    protected static final int MAX_MUTATIONS_PER_INJECTOR = 50;
+
+    /**
+     * Factory for creating AST nodes.
+     */
     protected final ScratchNodeFactory nodeFactory = new ScratchNodeFactory();
 
     private List<InjectionResult> injectionResults;
     private Program originalProgram;
 
+    // Debug statistics - enabled via -Dinjection.debug=true
+    private static final boolean DEBUG_ENABLED = Boolean.getBoolean("injection.debug");
+    private int debugCandidatesFound = 0;
+    private int debugPreconditionsFailed = 0;
+    private int debugMutationsAttempted = 0;
+    private int debugTargetNodesInProgram = 0;
+
     @Override
     public List<InjectionResult> inject(Program program) {
+        // Reset debug stats
+        debugCandidatesFound = 0;
+        debugPreconditionsFailed = 0;
+        debugMutationsAttempted = 0;
+        debugTargetNodesInProgram = 0;
+
+        // Count target nodes for debug output
+        if (DEBUG_ENABLED) {
+            debugTargetNodesInProgram = countTargetNodes(program);
+        }
+
+        // Ensure parent pointers are set before visiting
+        program.accept(new ParentVisitor());
         this.originalProgram = program;
         this.injectionResults = new ArrayList<>();
         program.accept(this);
+
+        // Log debug stats if enabled
+        if (DEBUG_ENABLED) {
+            logDebugStats(program);
+        }
+
         return injectionResults;
+    }
+
+    /**
+     * Count the number of target nodes (e.g., Parameters, Variables) in the program.
+     * Subclasses can override to provide accurate counts for debugging.
+     *
+     * @param program The program to analyze
+     * @return The count of target nodes, or 0 if not implemented
+     */
+    protected int countTargetNodes(Program program) {
+        return 0; // Default: subclasses override for specific counts
+    }
+
+    /**
+     * Log debug statistics after injection. Enable with -Dinjection.debug=true
+     */
+    private void logDebugStats(Program program) {
+        String programName = program.getIdent().getName();
+        log.info(String.format("[DEBUG] %s | program=%s | targetNodes=%d | candidates=%d | preconditionsFailed=%d | mutationsAttempted=%d | mutationsProduced=%d",
+                getName(),
+                programName,
+                debugTargetNodesInProgram,
+                debugCandidatesFound,
+                debugPreconditionsFailed,
+                debugMutationsAttempted,
+                injectionResults.size()));
+    }
+
+    /**
+     * Increment candidate count for debug tracking. Call when finding a potential injection point.
+     */
+    protected void debugFoundCandidate() {
+        if (DEBUG_ENABLED) {
+            debugCandidatesFound++;
+        }
+    }
+
+    /**
+     * Increment precondition failure count for debug tracking. Call when skipping due to precondition.
+     */
+    protected void debugPreconditionFailed() {
+        if (DEBUG_ENABLED) {
+            debugPreconditionsFailed++;
+        }
+    }
+
+    /**
+     * Increment mutation attempt count for debug tracking. Call when attempting a mutation.
+     */
+    protected void debugMutationAttempted() {
+        if (DEBUG_ENABLED) {
+            debugMutationsAttempted++;
+        }
     }
 
     @Override
@@ -104,12 +186,6 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      * <p>
      * Use this when you need to add/remove elements from collections (e.g., StmtList)
      * or modify the cloned structure in place.
-     * <p>
-     * Process:
-     * 1. Clones the program, tracking node correspondence
-     * 2. Finds the cloned counterpart of originalNode
-     * 3. Applies the mutator to modify the cloned node
-     * 4. Records the mutated program
      *
      * @param originalNode The node in the original AST that triggered the injection
      * @param mutator      Logic to apply to the cloned node
@@ -117,47 +193,41 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      */
     @SuppressWarnings("unchecked")
     protected <T extends ASTNode> void mutateClone(T originalNode, Consumer<T> mutator) {
-        // Capture original script and sprite BEFORE cloning
-        String originalScratchBlocks = safeGetScratchBlocks(findContainingScript(originalNode));
+        if (reachesLimit()) {
+            return;
+        }
+
+        ScriptEntity originalScript = findContainingScript(originalNode);
+        String originalScratchBlocks = safeGetScratchBlocks(originalScript);
         String spriteName = findContainingActorName(originalNode);
 
         MappingCloneVisitor mappingVisitor = new MappingCloneVisitor();
-
-        // Clone the program and capture mapping
-        // A standard CloneVisitor would not expose this mapping.
         ASTNode clonedRootNode = originalProgram.accept(mappingVisitor);
+
         if (!(clonedRootNode instanceof Program clone)) {
             log.warning("Cloning program returned " + clonedRootNode.getClass().getName());
             return;
         }
 
-        // Find the cloned node corresponding to the original node
+        clone.accept(new ParentVisitor());
         ASTNode clonedNode = mappingVisitor.get(originalNode);
 
-        if (clonedNode != null) {
-            // Verify class compatibility
-            if (originalNode.getClass().isInstance(clonedNode)) {
-                try {
-                    mutator.accept((T) clonedNode);
+        if (clonedNode != null && originalNode.getClass().isInstance(clonedNode)) {
+            try {
+                mutator.accept((T) clonedNode);
+                String mutatedScratchBlocks = safeGetScratchBlocks(findContainingScript(clonedNode));
 
-                    // Capture mutated script ScratchBlocks AFTER mutation
-                    String mutatedScratchBlocks = safeGetScratchBlocks(findContainingScript(clonedNode));
-
-                    injectionResults.add(new InjectionResult(
-                            clone,
-                            spriteName,
-                            originalScratchBlocks,
-                            mutatedScratchBlocks
-                    ));
-                } catch (Exception e) {
-                    log.log(WARNING, "Failed to apply mutation for " + getName(), e);
-                }
-            } else {
-                log.warning("Cloned node type mismatch. Expected " + originalNode.getClass().getName() + " but got " + clonedNode.getClass().getName());
+                injectionResults.add(new InjectionResult(
+                        clone,
+                        spriteName,
+                        originalScratchBlocks,
+                        mutatedScratchBlocks
+                ));
+            } catch (Exception e) {
+                log.log(WARNING, "Failed to apply mutation for " + getName(), e);
             }
         } else {
-            // This can happen if the node was not visited/cloned (e.g. if it's metadata the visitor skipped, though unlikely for Stmts)
-            log.warning("Could not find cloned node for original: " + originalNode);
+            log.warning("Could not find suitable cloned node for " + originalNode);
         }
     }
 
@@ -166,23 +236,18 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      * <p>
      * Use this when you need to create a new node instance (e.g., replacing an Add
      * with a new Add that has a different operand). This maintains AST immutability.
-     * <p>
-     * Unlike {@link #mutateClone}, the transformer creates a new node rather than
-     * modifying an existing one.
-     * <p>
-     * Example:
-     * <pre>
-     * replaceWith(originalMoveSteps, n ->
-     *     new MoveSteps(newStepsExpr, n.getMetadata()));
-     * </pre>
      *
      * @param originalNode The node to be replaced
      * @param transformer  Function that returns the replacement node
      * @param <T>          The type of the AST node
      */
     protected <T extends ASTNode> void replaceWith(T originalNode, Function<T, ASTNode> transformer) {
-        // Capture original script and sprite BEFORE transformation
-        String originalScratchBlocks = safeGetScratchBlocks(findContainingScript(originalNode));
+        if (reachesLimit()) {
+            return;
+        }
+
+        ScriptEntity originalScript = findContainingScript(originalNode);
+        String originalScratchBlocks = safeGetScratchBlocks(originalScript);
         String spriteName = findContainingActorName(originalNode);
 
         TransformingCloneVisitor visitor = new TransformingCloneVisitor();
@@ -191,10 +256,8 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
         try {
             ASTNode clonedRoot = originalProgram.accept(visitor);
             if (clonedRoot instanceof Program mutated) {
-                // Set up parent node relationships in the cloned AST
                 mutated.accept(new ParentVisitor());
 
-                // Get mutated script ScratchBlocks from the replacement node
                 ASTNode replacement = visitor.getReplacement(originalNode);
                 String mutatedScratchBlocks = safeGetScratchBlocks(
                         replacement != null ? findContainingScript(replacement) : null);
@@ -213,21 +276,15 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
         }
     }
 
+    private boolean reachesLimit() {
+        return injectionResults.size() >= MAX_MUTATIONS_PER_INJECTOR;
+    }
+
     /**
      * Finds the Script or ProcedureDefinition containing the given node.
      */
     private ScriptEntity findContainingScript(ASTNode node) {
-        ASTNode current = node;
-        while (current != null) {
-            if (current instanceof Script script) {
-                return script;
-            }
-            if (current instanceof ProcedureDefinition proc) {
-                return proc;
-            }
-            current = current.getParentNode();
-        }
-        return null;
+        return AstNodeUtil.findParent(node, ScriptEntity.class);
     }
 
     /**
@@ -235,14 +292,8 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      * Returns empty string if not found.
      */
     private String findContainingActorName(ASTNode node) {
-        ASTNode current = node;
-        while (current != null) {
-            if (current instanceof ActorDefinition actor) {
-                return actor.getIdent().getName();
-            }
-            current = current.getParentNode();
-        }
-        return "";
+        ActorDefinition actor = AstNodeUtil.findParent(node, ActorDefinition.class);
+        return actor != null ? actor.getIdent().getName() : "";
     }
 
     /**
@@ -301,20 +352,55 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     // ==================== Shared Utility Methods ====================
 
     /**
+     * Safely retrieves the procedure name (proccode) for the given procedure.
+     * Attempts to look up the name in the program's mapping, and falls back
+     * to the identifier's name if not found.
+     *
+     * @param program The program containing the actor and procedure
+     * @param actor   The actor containing the procedure
+     * @param proc    The procedure to get the name for
+     * @return The proccode, or the identifier's name as a fallback
+     */
+    protected String getProcedureName(Program program, ActorDefinition actor, ProcedureDefinition proc) {
+        if (program.getProcedureMapping() != null) {
+            Map<LocalIdentifier, ProcedureInfo> actorMap = program.getProcedureMapping()
+                    .getProceduresForActor(actor.getIdent().getName());
+            ProcedureInfo info = actorMap.get(proc.getIdent());
+            if (info != null) {
+                return info.getName();
+            }
+        }
+        return proc.getIdent().getName();
+    }
+
+    /**
+     * Registers a procedure in the program's procedure mapping.
+     * This is useful for duplicated or new procedures created during injection.
+     *
+     * @param program   The program to update
+     * @param actor     The actor the procedure belongs to
+     * @param proc      The procedure definition to register
+     * @param proccode  The procedure code (signature name)
+     */
+    protected void registerProcedure(Program program, ActorDefinition actor, ProcedureDefinition proc, String proccode) {
+        if (program.getProcedureMapping() != null) {
+            program.getProcedureMapping().addProcedure(
+                    proc.getIdent(),
+                    actor.getIdent().getName(),
+                    proccode,
+                    proc.getParameterDefinitionList()
+            );
+        }
+    }
+
+    /**
      * Navigates up the AST to find the Program root from any node.
      *
      * @param node The starting node
      * @return The Program root, or null if not found
      */
     protected Program findProgramRoot(ASTNode node) {
-        ASTNode current = node;
-        while (current != null) {
-            if (current instanceof Program program) {
-                return program;
-            }
-            current = current.getParentNode();
-        }
-        return null;
+        return AstNodeUtil.findParent(node, Program.class);
     }
 
     /**
@@ -338,8 +424,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      * Checks if the given statement has successor statements in its parent StmtList.
      */
     protected boolean hasSuccessorStatements(Stmt stmt) {
-        ASTNode parent = stmt.getParentNode();
-        if (parent instanceof StmtList stmtList) {
+        if (stmt.getParentNode() instanceof StmtList stmtList) {
             List<Stmt> stmts = stmtList.getStmts();
             int index = stmts.indexOf(stmt);
             return index >= 0 && index < stmts.size() - 1;
@@ -355,40 +440,30 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     protected boolean isInConditionContext(ASTNode node) {
         ASTNode parent = node.getParentNode();
         while (parent != null) {
-            if (parent instanceof IfThenStmt || parent instanceof IfElseStmt
-                    || parent instanceof UntilStmt || parent instanceof WaitUntil) {
+            if (isConditionBlock(parent)) {
                 return true;
             }
             parent = parent.getParentNode();
         }
         return false;
+    }
+
+    private boolean isConditionBlock(ASTNode node) {
+        return node instanceof IfThenStmt || node instanceof IfElseStmt
+                || node instanceof UntilStmt || node instanceof WaitUntil;
     }
 
     /**
      * Checks if the node is within a loop context.
      */
     protected boolean isInsideLoop(ASTNode node) {
-        ASTNode parent = node.getParentNode();
-        while (parent != null) {
-            if (parent instanceof LoopStmt) {
-                return true;
-            }
-            parent = parent.getParentNode();
-        }
-        return false;
+        return AstNodeUtil.findParent(node.getParentNode(), LoopStmt.class) != null;
     }
 
     /**
      * Checks if the node is within a Script or ProcedureDefinition (not variable initialization).
      */
     protected boolean isInScriptContext(ASTNode node) {
-        ASTNode parent = node.getParentNode();
-        while (parent != null) {
-            if (parent instanceof Script || parent instanceof ProcedureDefinition) {
-                return true;
-            }
-            parent = parent.getParentNode();
-        }
-        return false;
+        return AstNodeUtil.findParent(node.getParentNode(), ScriptEntity.class) != null;
     }
 }

@@ -39,6 +39,8 @@ public abstract class AbstractPenInjector extends AbstractBugInjector {
 
     private boolean hasPenUp = false;
     private boolean hasPenDown = false;
+    private int penUpCount = 0;
+    private int penDownCount = 0;
 
     /**
      * Returns the class of the pen statement type to remove.
@@ -52,10 +54,22 @@ public abstract class AbstractPenInjector extends AbstractBugInjector {
         // Check precondition: both PenUp and PenDown must exist
         hasPenUp = false;
         hasPenDown = false;
+        penUpCount = 0;
+        penDownCount = 0;
         checkPenStatements(program);
 
         if (!hasPenUp || !hasPenDown) {
             // Bug already exists or no pen statements - skip injection
+            return List.of();
+        }
+
+        // Only inject if we can create a detectable bug by removing statements
+        // The finder works at actor level, so removing must eliminate ALL target statements
+        Class<? extends Stmt> targetType = getStatementTypeToRemove();
+        int targetCount = (targetType == PenUpStmt.class) ? penUpCount : penDownCount;
+
+        if (targetCount > 1) {
+            // Can't create detectable bug - multiple locations exist
             return List.of();
         }
 
@@ -69,8 +83,10 @@ public abstract class AbstractPenInjector extends AbstractBugInjector {
     private void checkNode(ASTNode node) {
         if (node instanceof PenUpStmt) {
             hasPenUp = true;
+            penUpCount++;
         } else if (node instanceof PenDownStmt) {
             hasPenDown = true;
+            penDownCount++;
         }
         for (var child : node.getChildren()) {
             checkNode(child);

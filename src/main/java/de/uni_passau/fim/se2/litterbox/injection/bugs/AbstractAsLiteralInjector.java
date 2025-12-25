@@ -18,22 +18,38 @@
  */
 package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.StringContains;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.LetterOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationIdentAsTypeStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.AddTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.InsertAt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ReplaceItem;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Abstract base class for injectors that replace identifier references (Variable or Parameter)
@@ -41,101 +57,210 @@ import java.util.Optional;
  */
 public abstract class AbstractAsLiteralInjector extends AbstractBugInjector {
 
-    /**
-     * Functional interface for creating replacement statements.
-     */
-    @FunctionalInterface
-    protected interface NodeReplacer {
-        Stmt replace(Stmt clonedStmt, StringLiteral newLiteral);
+    private Set<Expression> injectedNodes;
+    private Set<String> existingIssueNames;
+    private boolean ignoreExistingIssues = false;
+
+    public void setIgnoreExistingIssues(boolean ignore) {
+        this.ignoreExistingIssues = ignore;
     }
 
     @Override
-    public void visit(Say node) {
-        Optional<StringLiteral> replacement = checkAndCreateReplacement(node.getString());
-        replacement.ifPresent(stringLiteral -> injectMutation(node, (clonedStmt, lit) -> {
-            Say say = (Say) clonedStmt;
-            return new Say(lit, say.getMetadata());
-        }, stringLiteral.getText()));
-        super.visit(node);
-    }
-
-    @Override
-    public void visit(SayForSecs node) {
-        Optional<StringLiteral> replacement = checkAndCreateReplacement(node.getString());
-        replacement.ifPresent(stringLiteral -> injectMutation(node, (clonedStmt, lit) -> {
-            SayForSecs sayForSecs = (SayForSecs) clonedStmt;
-            return new SayForSecs(lit, sayForSecs.getSecs(), sayForSecs.getMetadata());
-        }, stringLiteral.getText()));
-        super.visit(node);
-    }
-
-    @Override
-    public void visit(Think node) {
-        Optional<StringLiteral> replacement = checkAndCreateReplacement(node.getThought());
-        replacement.ifPresent(stringLiteral -> injectMutation(node, (clonedStmt, lit) -> {
-            Think think = (Think) clonedStmt;
-            return new Think(lit, think.getMetadata());
-        }, stringLiteral.getText()));
-        super.visit(node);
-    }
-
-    @Override
-    public void visit(ThinkForSecs node) {
-        Optional<StringLiteral> replacement = checkAndCreateReplacement(node.getThought());
-        replacement.ifPresent(stringLiteral -> injectMutation(node, (clonedStmt, lit) -> {
-            ThinkForSecs thinkForSecs = (ThinkForSecs) clonedStmt;
-            return new ThinkForSecs(lit, thinkForSecs.getSecs(), thinkForSecs.getMetadata());
-        }, stringLiteral.getText()));
-        super.visit(node);
-    }
-
-    @Override
-    public void visit(AskAndWait node) {
-        Optional<StringLiteral> replacement = checkAndCreateReplacement(node.getQuestion());
-        replacement.ifPresent(stringLiteral -> injectMutation(node, (clonedStmt, lit) -> {
-            AskAndWait ask = (AskAndWait) clonedStmt;
-            return new AskAndWait(lit, ask.getMetadata());
-        }, stringLiteral.getText()));
-        super.visit(node);
-    }
-
-    @Override
-    public void visit(SetVariableTo node) {
-        Optional<StringLiteral> replacement = checkAndCreateReplacementGeneric(node.getExpr());
-        replacement.ifPresent(stringLiteral -> injectMutation(node, (clonedStmt, lit) -> {
-            SetVariableTo set = (SetVariableTo) clonedStmt;
-            return new SetVariableTo(set.getIdentifier(), lit, set.getMetadata());
-        }, stringLiteral.getText()));
-        super.visit(node);
-    }
-
-    /**
-     * Checks if the string expression contains the target identifier type (e.g., Variable or Parameter)
-     * wrapped in AsString, and creates a replacement StringLiteral if found.
-     *
-     * @param expr The string expression to check
-     * @return Optional containing the replacement literal, or empty if no match
-     */
-    protected Optional<StringLiteral> checkAndCreateReplacement(StringExpr expr) {
-        if (expr instanceof AsString asString) {
-            return extractIdentifierName(asString.getOperand1());
+    public List<InjectionResult> inject(Program program) {
+        injectedNodes = new HashSet<>();
+        // Collect names that already trigger issues - skip injecting for these
+        if (!ignoreExistingIssues) {
+            existingIssueNames = collectExistingIssueNames(program);
+        } else {
+            existingIssueNames = new HashSet<>();
         }
-        return Optional.empty();
+        return super.inject(program);
+    }
+
+    /**
+     * Replaces specific visit methods with generic checkAndInject.
+     * Subclasses should call this method in their visit(Variable) or visit(Parameter) implementations.
+     */
+    protected void checkAndInject(Expression node) {
+        debugFoundCandidate();
+
+        // Check string context unless subclass opts out (e.g., ParameterAsLiteralInjector)
+        if (shouldCheckStringContext() && !isInStringContext(node)) {
+            debugPreconditionFailed();
+            return;
+        }
+
+        // Skip nodes inside Message (broadcast messages) - finder doesn't descend into those
+        if (isInsideMessage(node)) {
+            debugPreconditionFailed();
+            return;
+        }
+
+        if (injectedNodes.contains(node)) {
+            debugPreconditionFailed();
+            return;
+        }
+        injectedNodes.add(node);
+
+        Optional<StringLiteral> replacement = checkAndCreateReplacementGeneric(node);
+        if (replacement.isPresent()) {
+            String literalName = replacement.get().getText();
+
+            // Skip if the bug already exists for this name (precondition)
+            if (existingIssueNames.contains(literalName)) {
+                debugPreconditionFailed();
+                return;
+            }
+
+            debugMutationAttempted();
+            replaceWith(node, n -> new StringLiteral(literalName));
+        } else {
+            debugPreconditionFailed();
+        }
+    }
+
+    /**
+     * Returns true if this injector should check for string context before injecting.
+     * Subclasses can override to return false if they want to inject in all contexts.
+     *
+     * @return true by default (check string context), false to skip the check
+     */
+    protected boolean shouldCheckStringContext() {
+        return true;
+    }
+
+    /**
+     * Collects the names (literal values) that already trigger issues in the program.
+     * We skip injecting for these names since the bug already exists.
+     */
+    private Set<String> collectExistingIssueNames(Program program) {
+        Set<Issue> existingIssues = getIssueFinder().check(program);
+        Set<String> names = new HashSet<>();
+        for (Issue issue : existingIssues) {
+            // The issue's code location contains a StringLiteral - find it and extract text
+            ASTNode node = issue.getCodeLocation();
+            if (node != null) {
+                findStringLiteralNames(node, names);
+            }
+        }
+        return names;
+    }
+
+    private void findStringLiteralNames(ASTNode node, Set<String> names) {
+        if (node instanceof StringLiteral literal) {
+            names.add(literal.getText());
+        }
+        for (ASTNode child : node.getChildren()) {
+            findStringLiteralNames(child, names);
+        }
+    }
+
+    private boolean isInStringContext(ASTNode node) {
+        ASTNode current = node;
+        while (current != null) {
+            ASTNode parent = current.getParentNode();
+            if (parent == null) {
+                return false;
+            }
+
+            // Pass-through: AsString is a wrapper, continue checking its parent
+            if (parent instanceof AsString) {
+                current = parent;
+                continue;
+            }
+
+            // SpriteLook statements
+            if (parent instanceof Say || parent instanceof SayForSecs
+                    || parent instanceof Think || parent instanceof ThinkForSecs) {
+                return true;
+            }
+
+            // Sensing
+            if (parent instanceof AskAndWait) {
+                return true;
+            }
+
+            // String Operators
+            if (parent instanceof Join || parent instanceof LetterOf) {
+                return true;
+            }
+
+            // Numeric functions that operate on strings
+            if (parent instanceof LengthOfString) {
+                return true;
+            }
+
+            // String functions
+            if (parent instanceof StringContains) {
+                return true;
+            }
+
+            // Comparison operators - Scratch allows comparing strings as well as numbers
+            if (parent instanceof Equals || parent instanceof BiggerThan || parent instanceof LessThan) {
+                return true;
+            }
+
+            // List operations - accept string items
+            if (parent instanceof AddTo addTo) {
+                if (addTo.getString() == current) {
+                    return true;
+                }
+            }
+            if (parent instanceof InsertAt insertAt) {
+                if (insertAt.getString() == current) {
+                    return true;
+                }
+            }
+            if (parent instanceof ReplaceItem replaceItem) {
+                if (replaceItem.getString() == current) {
+                    return true;
+                }
+            }
+
+            // Exclude strict contexts that require a Variable/DataExpr node
+            // These would cause ClassCastException if replaced by StringLiteral
+            if (parent instanceof AttributeFromVariable
+                    || parent instanceof Qualified
+                    || parent instanceof DeclarationIdentAsTypeStmt) {
+                return false;
+            }
+
+            // SetVariableTo - only if we are the expression (value)
+            if (parent instanceof SetVariableTo setStmt) {
+                return setStmt.getExpr() == current;
+            }
+
+            current = parent;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the node is inside a Message node (used in broadcast blocks).
+     * The VariableAsLiteral finder has visit(Message) as a no-op, so it won't detect
+     * StringLiterals inside Message nodes.
+     */
+    private boolean isInsideMessage(ASTNode node) {
+        ASTNode current = node.getParentNode();
+        while (current != null) {
+            if (current instanceof de.uni_passau.fim.se2.litterbox.ast.model.Message) {
+                return true;
+            }
+            current = current.getParentNode();
+        }
+        return false;
     }
 
     /**
      * Checks if the expression contains the target identifier type directly or wrapped.
-     *
-     * @param expr The expression to check
-     * @return Optional containing the replacement literal, or empty if no match
      */
     protected Optional<StringLiteral> checkAndCreateReplacementGeneric(Expression expr) {
         Optional<StringLiteral> direct = extractIdentifierName(expr);
         if (direct.isPresent()) {
             return direct;
         }
-        if (expr instanceof StringExpr stringExpr) {
-            return checkAndCreateReplacement(stringExpr);
+        if (expr instanceof AsString stringExpr) {
+            return checkAndCreateReplacementGeneric(stringExpr.getOperand1());
         }
         return Optional.empty();
     }
@@ -143,30 +268,6 @@ public abstract class AbstractAsLiteralInjector extends AbstractBugInjector {
     /**
      * Extract the identifier name from an expression if it matches the target type.
      * Subclasses implement this to check for Variable or Parameter.
-     *
-     * @param expr The expression to check
-     * @return Optional containing a StringLiteral with the identifier name, or empty if no match
      */
     protected abstract Optional<StringLiteral> extractIdentifierName(Expression expr);
-
-    /**
-     * Helper method to inject a mutation that replaces a statement with a new one containing a string literal.
-     */
-    protected void injectMutation(Stmt originalNode, NodeReplacer replacer, String literalValue) {
-        mutateClone(originalNode, clonedNode -> {
-            StringLiteral literal = new StringLiteral(literalValue);
-
-            Stmt newStmt = replacer.replace(clonedNode, literal);
-
-            ASTNode parent = (clonedNode).getParentNode();
-            if (parent instanceof StmtList stmtList) {
-                int index = stmtList.getStmts().indexOf(clonedNode);
-                if (index != -1) {
-                    newStmt.setParentNode(stmtList);
-                    literal.setParentNode(newStmt);
-                    stmtList.getStmts().set(index, newStmt);
-                }
-            }
-        });
-    }
 }

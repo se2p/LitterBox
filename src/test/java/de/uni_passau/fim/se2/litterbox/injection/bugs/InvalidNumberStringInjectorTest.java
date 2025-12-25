@@ -49,7 +49,8 @@ public class InvalidNumberStringInjectorTest implements JsonTest {
 
         // Check all mutated programs to see if any trigger the detector
         boolean foundIssue = false;
-        for (InjectionResult result : injected) { Program mutated = result.mutatedProgram();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
             InvalidNumberString detector = new InvalidNumberString();
             Set<Issue> issues = detector.check(mutated);
             if (!issues.isEmpty()) {
@@ -58,5 +59,35 @@ public class InvalidNumberStringInjectorTest implements JsonTest {
             }
         }
         Assertions.assertTrue(foundIssue, "At least one mutation should trigger the detector");
+    }
+
+    /**
+     * Integration test using a real Scratch project fixture.
+     * This tests the injector on projects where numbers are stored as strings in JSON.
+     */
+    @Test
+    public void testInvalidNumberStringInjectorRealProject() throws IOException, ParsingException {
+        // allBlocks.json contains many blocks with literal numbers stored as strings
+        Program program = getAST("src/test/fixtures/allBlocks.json");
+
+        InvalidNumberStringInjector injector = new InvalidNumberStringInjector();
+        List<InjectionResult> injected = injector.inject(program);
+
+        Assertions.assertFalse(injected.isEmpty(),
+                "Should inject at least one bug in real project, got: " + injected.size());
+
+        // Verify at least one mutation triggers the detector
+        boolean foundIssue = false;
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
+            InvalidNumberString detector = new InvalidNumberString();
+            Set<Issue> issues = detector.check(mutated);
+            if (!issues.isEmpty()) {
+                foundIssue = true;
+                break;
+            }
+        }
+        Assertions.assertTrue(foundIssue,
+                "At least one mutation in real project should trigger the detector");
     }
 }

@@ -20,18 +20,34 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.InterruptedLoopSensing;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 /**
- * Injects the InterruptedLoopSensing bug by inserting a WaitSeconds(1) block into a responsive loop.
+ * Injects the InterruptedLoopSensing bug by inserting a WaitSeconds(1) block into a control
+ * structure (if/until) that contains sensing in its condition.
  * <p>
- * Only applies to loops where sensing is in a control condition (if-statement or until-loop condition),
- * not inside a WaitUntil statement (which already blocks until the condition is true).
+ * The bug is injected inside the control structure's body (not at loop level), matching
+ * what the InterruptedLoopSensing finder detects.
+ * <p>
+ * Preconditions:
+ * <ul>
+ *   <li>The statement list doesn't already contain a blocking statement (wait, glide, etc.)</li>
+ *   <li>The statement list doesn't contain stop statements (finder ignores these)</li>
+ * </ul>
  */
 public class InterruptedLoopSensingInjector extends AbstractBugInjector {
 
@@ -40,95 +56,140 @@ public class InterruptedLoopSensingInjector extends AbstractBugInjector {
         return new InterruptedLoopSensing();
     }
 
-    private void inject(LoopStmt originalLoop) {
-        if (containsSensingInControlCondition(originalLoop)) {
-            mutateClone(originalLoop, clonedLoop -> {
-                WaitSeconds waitStmt = nodeFactory.createWaitSeconds(1.0);
-                clonedLoop.getStmtList().getStmts().add(waitStmt);
-                waitStmt.setParentNode(clonedLoop.getStmtList());
-            });
+    @Override
+    public void visit(IfThenStmt node) {
+        // Target outermost if statements inside a forever loop
+        if (isInsideForever(node) && !isNestedInControl(node)
+                && shouldInject(node.getBoolExpr(), node.getThenStmts())) {
+            mutateClone(node, cloned -> injectWait(cloned.getThenStmts()));
         }
-    }
-
-    private boolean containsSensingInControlCondition(LoopStmt loop) {
-        SensingFinder finder = new SensingFinder();
-        loop.accept(finder);
-        return finder.foundSensing;
+        super.visit(node);
     }
 
     @Override
-    public void visit(RepeatForeverStmt node) {
-        inject(node);
+    public void visit(IfElseStmt node) {
+        // Target if-else statements inside a forever loop (potentially nested)
+        if (isInsideForever(node) && shouldInject(node.getBoolExpr(), node.getThenStmts(), node.getElseStmts())) {
+            mutateClone(node, cloned -> {
+                injectWait(cloned.getThenStmts());
+                injectWait(cloned.getElseStmts());
+            });
+        }
         super.visit(node);
     }
 
     @Override
     public void visit(UntilStmt node) {
-        inject(node);
+        // Target until loops inside forever OR as top-level control structures
+        if ((isInsideForever(node) || !isNestedInControl(node))
+                && shouldInject(node.getBoolExpr(), node.getStmtList())) {
+            mutateClone(node, cloned -> injectWait(cloned.getStmtList()));
+        }
         super.visit(node);
     }
 
+    // ==================== Helper Methods ====================
+
+    private boolean shouldInject(BoolExpr condition, StmtList... bodies) {
+        for (StmtList body : bodies) {
+            if (containsBlocking(body) || containsStop(body)) {
+                return false;
+            }
+        }
+        return containsSensing(condition);
+    }
+
+    private void injectWait(StmtList stmtList) {
+        WaitSeconds wait = nodeFactory.createWaitSeconds(1.0);
+        stmtList.getStmts().addFirst(wait);
+        wait.setParentNode(stmtList);
+    }
+
+    private boolean isInsideForever(ASTNode node) {
+        ASTNode parent = node.getParentNode();
+        while (parent != null) {
+            if (parent instanceof RepeatForeverStmt) {
+                return true;
+            }
+            parent = parent.getParentNode();
+        }
+        return false;
+    }
+
+    private boolean isNestedInControl(ASTNode node) {
+        ASTNode parent = node.getParentNode();
+        while (parent != null) {
+            if (parent instanceof LoopStmt) {
+                return false;
+            }
+            if (parent instanceof IfThenStmt || parent instanceof IfElseStmt || parent instanceof UntilStmt) {
+                return true;
+            }
+            parent = parent.getParentNode();
+        }
+        return false;
+    }
+
+    private boolean containsBlocking(StmtList list) {
+        return list.getStmts().stream().anyMatch(s ->
+                s instanceof WaitSeconds || s instanceof GlideSecsTo || s instanceof GlideSecsToXY
+                        || s instanceof SayForSecs || s instanceof ThinkForSecs || s instanceof PlaySoundUntilDone);
+    }
+
+    private boolean containsStop(StmtList list) {
+        return list.getStmts().stream().anyMatch(s -> s instanceof StopAll || s instanceof StopThisScript);
+    }
+
+    private boolean containsSensing(BoolExpr condition) {
+        SensingFinder finder = new SensingFinder();
+        condition.accept(finder);
+        return finder.foundSensing;
+    }
+
     /**
-     * Visitor that checks if an AST contains sensing blocks in control conditions.
+     * Visitor that checks if an expression contains sensing blocks.
      * Sensing inside WaitUntil is excluded (WaitUntil already blocks properly).
      */
     private static class SensingFinder implements ScratchVisitor {
-        boolean foundSensing = false;
-        boolean insideWaitUntil = false;
-
-        private void markFound() {
-            // Only count sensing if not inside a WaitUntil
-            if (!insideWaitUntil) {
-                foundSensing = true;
-            }
-        }
+        private boolean foundSensing = false;
+        private boolean insideWaitUntil = false;
 
         @Override
         public void visit(WaitUntil node) {
-            // Skip sensing inside WaitUntil - it already blocks properly
             insideWaitUntil = true;
             visitChildren(node);
             insideWaitUntil = false;
         }
 
         @Override
-        public void visit(IfThenStmt node) {
-            visitChildren(node);
-        }
-
-        @Override
-        public void visit(IfElseStmt node) {
-            visitChildren(node);
-        }
-
-        @Override
-        public void visit(UntilStmt node) {
-            visitChildren(node);
-        }
-
-        @Override
         public void visit(Touching node) {
-            markFound();
+            mark();
         }
 
         @Override
         public void visit(IsKeyPressed node) {
-            markFound();
+            mark();
         }
 
         @Override
         public void visit(IsMouseDown node) {
-            markFound();
+            mark();
         }
 
         @Override
         public void visit(ColorTouchingColor node) {
-            markFound();
+            mark();
         }
 
         @Override
         public void visit(SpriteTouchingColor node) {
-            markFound();
+            mark();
+        }
+
+        private void mark() {
+            if (!insideWaitUntil) {
+                foundSensing = true;
+            }
         }
     }
 }

@@ -22,16 +22,9 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.BlockingIfElse;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * Injects the BlockingIfElse bug by appending StopThisScript to both branches.
@@ -79,24 +72,10 @@ public class BlockingIfElseInjector extends AbstractBugInjector {
 
     /**
      * Checks if a branch is suitable for appending a stop statement.
-     * Returns false if the branch already ends with a blocking statement.
+     * Returns false if the branch already ends with or contains a blocking statement.
      */
-    private boolean isSuitableForStopAppend(StmtList stmtList) {
-        List<Stmt> stmts = stmtList.getStmts();
-        if (stmts.isEmpty()) {
-            return true; // Empty branch can receive a stop
-        }
-        Stmt lastStmt = stmts.getLast();
-        return !endsWithBlockingStatement(lastStmt);
-    }
-
-    /** Statement types that block execution (no point appending stop after these). */
-    private static final Set<Class<? extends Stmt>> BLOCKING_STATEMENT_TYPES = Set.of(
-            StopAll.class, StopThisScript.class, DeleteClone.class, RepeatForeverStmt.class
-    );
-
-    private boolean endsWithBlockingStatement(Stmt stmt) {
-        return BLOCKING_STATEMENT_TYPES.contains(stmt.getClass());
+    protected boolean isSuitableForStopAppend(StmtList stmtList) {
+        return !BlockingIfElse.isBlocking(stmtList.getStmts());
     }
 }
 
