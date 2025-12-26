@@ -249,7 +249,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
         }
 
         // Use the first node as the anchor for metadata
-        T anchorNode = originalNodes.get(0);
+        T anchorNode = originalNodes.getFirst();
         ScriptEntity originalScript = findContainingScript(anchorNode);
         String originalScratchBlocks = safeGetScratchBlocks(originalScript);
         String spriteName = findContainingActorName(anchorNode);

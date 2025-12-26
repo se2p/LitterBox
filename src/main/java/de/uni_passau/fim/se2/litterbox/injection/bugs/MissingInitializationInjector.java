@@ -27,9 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSoundEffects;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
@@ -37,6 +35,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSou
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToLayer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
@@ -252,7 +251,6 @@ public class MissingInitializationInjector extends AbstractBugInjector {
         return defs;
     }
 
-
     /**
      * Checks if any of the target definitions are used after the given index.
      */
@@ -305,6 +303,10 @@ public class MissingInitializationInjector extends AbstractBugInjector {
     /**
      * Identifies defineables from the 'targets' set that are GUARANTEED to be defined
      * by this statement BEFORE being used, assuming the statement is reached.
+     * <p>
+     * For conditional statements like IfThen or loops, we check if ALL uses within
+     * the block are covered by definitions WITHIN that same block, making the removal
+     * of a prior initialization undetectable.
      */
     private Set<Defineable> getCoveringDefinitions(Stmt stmt, Set<Defineable> targets) {
         if (isInitializationStatement(stmt)) {
@@ -316,7 +318,7 @@ public class MissingInitializationInjector extends AbstractBugInjector {
             return covered;
         }
 
-        if (stmt instanceof de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt ifElse) {
+        if (stmt instanceof IfElseStmt ifElse) {
             // Condition uses happen BEFORE branches
             Set<Defineable> usesInCondition = getUses(ifElse.getBoolExpr());
             if (!Collections.disjoint(usesInCondition, targets)) {
@@ -331,7 +333,81 @@ public class MissingInitializationInjector extends AbstractBugInjector {
             return intersection;
         }
 
+        if (stmt instanceof IfThenStmt ifThen) {
+            // Check if condition uses any targets
+            Set<Defineable> usesInCondition = getUses(ifThen.getBoolExpr());
+            if (!Collections.disjoint(usesInCondition, targets)) {
+                return Collections.emptySet();
+            }
+            // For IfThen (no else), targets that are USED inside but also DEFINED inside
+            // before use are effectively "self-covered" - removing prior init is undetectable
+            return getInternallyDefinedBeforeUse(ifThen.getThenStmts().getStmts(), targets);
+        }
+
+        // For loops, check if uses inside loop are covered by defs inside loop
+        if (stmt instanceof RepeatForeverStmt forever) {
+            return getInternallyDefinedBeforeUse(forever.getStmtList().getStmts(), targets);
+        }
+
+        if (stmt instanceof RepeatTimesStmt repeatTimes) {
+            Set<Defineable> usesInTimes = getUses(repeatTimes.getTimes());
+            if (!Collections.disjoint(usesInTimes, targets)) {
+                return Collections.emptySet();
+            }
+            return getInternallyDefinedBeforeUse(repeatTimes.getStmtList().getStmts(), targets);
+        }
+
+        if (stmt instanceof UntilStmt until) {
+            Set<Defineable> usesInCondition = getUses(until.getBoolExpr());
+            if (!Collections.disjoint(usesInCondition, targets)) {
+                return Collections.emptySet();
+            }
+            return getInternallyDefinedBeforeUse(until.getStmtList().getStmts(), targets);
+        }
+
         return Collections.emptySet();
+    }
+
+    /**
+     * For a list of statements, returns targets that are DEFINED before first USE
+     * within that block. This means removing a prior initialization is undetectable
+     * because any use is preceded by a definition in the same block.
+     */
+    private Set<Defineable> getInternallyDefinedBeforeUse(List<Stmt> statements, Set<Defineable> targets) {
+        Set<Defineable> definedBeforeUse = new HashSet<>();
+        Set<Defineable> usedSoFar = new HashSet<>();
+
+        for (Stmt stmt : statements) {
+            // For compound statements (if, loops), the uses inside them are handled
+            // by getCoveringDefinitions recursively. We only count direct uses here
+            // for simple statements like SetVariableTo expressions.
+            boolean isCompoundStmt = stmt instanceof IfThenStmt
+                    || stmt instanceof IfElseStmt
+                    || stmt instanceof RepeatForeverStmt
+                    || stmt instanceof RepeatTimesStmt
+                    || stmt instanceof UntilStmt;
+
+            if (!isCompoundStmt) {
+                // For simple statements, check uses first
+                Set<Defineable> usesHere = getUses(stmt);
+                for (Defineable d : usesHere) {
+                    if (targets.contains(d)) {
+                        usedSoFar.add(d);
+                    }
+                }
+            }
+
+            // Check definitions (also handles compound stmts via recursion)
+            Set<Defineable> covered = getCoveringDefinitions(stmt, targets);
+            for (Defineable d : covered) {
+                if (!usedSoFar.contains(d)) {
+                    // This target was defined before any use in this block
+                    definedBeforeUse.add(d);
+                }
+            }
+        }
+
+        return definedBeforeUse;
     }
 
     private Set<Defineable> getCoveringDefinitions(List<Stmt> statements, Set<Defineable> targets) {
@@ -361,7 +437,7 @@ public class MissingInitializationInjector extends AbstractBugInjector {
         return coveredInThisList;
     }
 
-    private Set<Defineable> getUses(de.uni_passau.fim.se2.litterbox.ast.model.ASTNode node) {
+    private Set<Defineable> getUses(ASTNode node) {
         UseCollector collector = new UseCollector(currentActor);
         node.accept(collector);
         return collector.uses;
@@ -401,12 +477,12 @@ public class MissingInitializationInjector extends AbstractBugInjector {
         }
 
         @Override
-        public void visit(de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable node) {
+        public void visit(HideVariable node) {
             // Don't traverse - HideVariable doesn't use the variable's value
         }
 
         @Override
-        public void visit(de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable node) {
+        public void visit(ShowVariable node) {
             // Don't traverse - ShowVariable doesn't use the variable's value
         }
 

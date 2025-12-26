@@ -165,20 +165,13 @@ public class FloatingPointComparisonInjector extends AbstractBugInjector {
         boolean safe1 = isSafeOperand(op1);
         boolean safe2 = isSafeOperand(op2);
 
-        // Only inject if at least one operand is safe (otherwise bug already exists)
-        if (safe1 || safe2) {
+        // Only inject if BOTH operands are safe.
+        // The finder reports an issue if EITHER operand is unsafe,
+        // so injecting when one is already unsafe wouldn't increase the issue count.
+        if (safe1 && safe2) {
             ComparableExpr unsafeReplacement = cloner.apply(foundUnsafeOperands.getFirst());
-
-            if (safe1 && safe2) {
-                // Both safe: replace one operand with an unsafe one
-                replaceWith(node, n -> new Equals(unsafeReplacement, op2, n.getMetadata()));
-            } else if (safe1) {
-                // Only op1 is safe: replace it, keep op2 (already unsafe)
-                replaceWith(node, n -> new Equals(unsafeReplacement, op2, n.getMetadata()));
-            } else {
-                // Only op2 is safe: replace it, keep op1 (already unsafe)
-                replaceWith(node, n -> new Equals(op1, unsafeReplacement, n.getMetadata()));
-            }
+            // Replace one operand with an unsafe one
+            replaceWith(node, n -> new Equals(unsafeReplacement, cloner.apply(op2), n.getMetadata()));
         }
 
         super.visit(node);
