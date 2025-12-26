@@ -65,11 +65,16 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
 
     /**
      * Maximum number of mutations to generate per injector to prevent memory exhaustion.
+     * <p>
+     * This limit bounds the number of mutated program variants created by a single injector
+     * for a single input program. Without this limit, programs with many potential injection
+     * points could consume excessive memory. The value of 50 was chosen empirically to
+     * balance coverage with resource usage.
      */
     protected static final int MAX_MUTATIONS_PER_INJECTOR = 50;
 
     /**
-     * Factory for creating AST nodes.
+     * Factory for creating AST nodes with proper metadata.
      */
     protected final ScratchNodeFactory nodeFactory = new ScratchNodeFactory();
 
@@ -493,22 +498,43 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     // ==================== AST Context Helpers ====================
 
     /**
-     * Checks if the node is within a conditional context (if, until, wait until).
+     * Checks if the node is within a conditional expression (the condition of an if, until, wait until).
+     * This does NOT return true for nodes in the body/statements of these control structures.
      */
     protected boolean isInConditionContext(ASTNode node) {
-        ASTNode parent = node.getParentNode();
-        while (parent != null) {
-            if (isConditionBlock(parent)) {
+        ASTNode current = node;
+        while (current != null) {
+            ASTNode parent = current.getParentNode();
+            if (parent instanceof IfThenStmt ifStmt) {
+                // Node must be in getBoolExpr(), not in getThenStmts()
+                return isAncestorOf(ifStmt.getBoolExpr(), node);
+            } else if (parent instanceof IfElseStmt ifElseStmt) {
+                // Node must be in getBoolExpr(), not in getThenStmts() or getElseStmts()
+                return isAncestorOf(ifElseStmt.getBoolExpr(), node);
+            } else if (parent instanceof UntilStmt untilStmt) {
+                // Node must be in getBoolExpr(), not in getStmtList()
+                return isAncestorOf(untilStmt.getBoolExpr(), node);
+            } else if (parent instanceof WaitUntil) {
+                // WaitUntil only has a condition, no body
                 return true;
             }
-            parent = parent.getParentNode();
+            current = parent;
         }
         return false;
     }
 
-    private boolean isConditionBlock(ASTNode node) {
-        return node instanceof IfThenStmt || node instanceof IfElseStmt
-                || node instanceof UntilStmt || node instanceof WaitUntil;
+    /**
+     * Checks if the target node is the ancestor or the same as the node.
+     */
+    private boolean isAncestorOf(ASTNode potentialAncestor, ASTNode node) {
+        ASTNode current = node;
+        while (current != null) {
+            if (current == potentialAncestor) {
+                return true;
+            }
+            current = current.getParentNode();
+        }
+        return false;
     }
 
     /**

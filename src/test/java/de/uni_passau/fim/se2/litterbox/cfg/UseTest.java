@@ -277,10 +277,10 @@ public class UseTest implements JsonTest {
                 .findFirst().get();
 
         Set<Use> uses = glideNode.getUses();
-        // It uses "height" parameter
-        assertThat(uses).hasSize(1);
-        Defineable use = uses.iterator().next().getDefinable();
-        assertThat(use).isInstanceOf(Parameter.class);
-        assertThat(((Parameter) use).getIdentifier().getName()).isEqualTo("height");
+        // It uses "height" parameter + 2 implicit attribute uses (x and y position)
+        assertThat(uses).hasSize(3);
+        boolean foundParameter = uses.stream()
+                .anyMatch(u -> u.getDefinable() instanceof Parameter p && p.getIdentifier().getName().equals("height"));
+        assertThat(foundParameter).isTrue();
     }
 }

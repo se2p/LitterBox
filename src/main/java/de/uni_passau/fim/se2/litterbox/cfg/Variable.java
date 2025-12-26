@@ -55,6 +55,9 @@ public class Variable implements Defineable {
 
     @Override
     public int hashCode() {
+        if (identifier instanceof Qualified q) {
+            return Objects.hash(q.getFirst(), q.getSecond().getName());
+        }
         return Objects.hash(identifier);
     }
 

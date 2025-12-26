@@ -126,6 +126,32 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     public void visit(MoveSteps node) {
         uses.add(Attribute.positionXOf(currentActor.getIdent()));
         uses.add(Attribute.positionYOf(currentActor.getIdent()));
+        uses.add(Attribute.rotationOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(GlideSecsToXY node) {
+        uses.add(Attribute.positionXOf(currentActor.getIdent()));
+        uses.add(Attribute.positionYOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(GlideSecsTo node) {
+        uses.add(Attribute.positionXOf(currentActor.getIdent()));
+        uses.add(Attribute.positionYOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(PointTowards node) {
+        uses.add(Attribute.positionXOf(currentActor.getIdent()));
+        uses.add(Attribute.positionYOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(IfOnEdgeBounce node) {
+        uses.add(Attribute.positionXOf(currentActor.getIdent()));
+        uses.add(Attribute.positionYOf(currentActor.getIdent()));
+        uses.add(Attribute.rotationOf(currentActor.getIdent()));
     }
 
     @Override

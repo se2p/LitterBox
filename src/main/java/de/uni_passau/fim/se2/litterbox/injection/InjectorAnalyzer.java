@@ -34,6 +34,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -96,6 +97,12 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
             BugInjector injector = entry.getKey();
             List<InjectionResult> injectionResults = entry.getValue();
 
+            // Cache original issue count - avoid recomputing for every mutation
+            int originalIssueCount = -1;
+            if (csvPrinter != null) {
+                originalIssueCount = injector.getIssueFinder().check(program).size();
+            }
+
             int index = 0;
             for (InjectionResult injectionResult : injectionResults) {
                 Program mutated = injectionResult.mutatedProgram();
@@ -111,7 +118,7 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
 
                 // Write to CSV if enabled
                 if (csvPrinter != null) {
-                    writeCSVRow(program, mutated, injector, mutatedProjectName, injectionResult);
+                    writeCSVRow(program, mutated, injector, mutatedProjectName, injectionResult, originalIssueCount);
                 }
 
                 index++;
@@ -126,13 +133,13 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
             Program mutated,
             BugInjector injector,
             String mutatedProjectName,
-            InjectionResult injectionResult
+            InjectionResult injectionResult,
+            int originalIssueCount
     ) throws IOException {
         IssueFinder finder = injector.getIssueFinder();
         String originalProjectName = original.getIdent().getName();
 
-        // Count bugs
-        Set<Issue> originalIssues = finder.check(original);
+        // Only count mutated issues - original count is cached
         Set<Issue> mutatedIssues = finder.check(mutated);
 
         csvPrinter.printRecord(
@@ -140,7 +147,7 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
                 finder.getName(),
                 mutatedProjectName,
                 injectionResult.spriteName(),
-                originalIssues.size(),
+                originalIssueCount,
                 mutatedIssues.size(),
                 injectionResult.originalScriptScratchBlocks(),
                 injectionResult.mutatedScriptScratchBlocks()
@@ -163,8 +170,7 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
                         result.put(injector, injected);
                     }
                 } catch (Exception e) {
-                    log.severe("Injector " + injector.getName() + " failed on project " + program.getIdent().getName() + ": " + e.getMessage());
-                    e.printStackTrace();
+                    log.log(Level.SEVERE, "Injector " + injector.getName() + " failed on project " + program.getIdent().getName(), e);
                 }
             }
             return result;

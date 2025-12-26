@@ -23,10 +23,14 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingResource;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+
+import java.util.function.BiFunction;
 
 import static de.uni_passau.fim.se2.litterbox.injection.util.InjectionConstants.INVALID_COSTUME_NAME;
 import static de.uni_passau.fim.se2.litterbox.injection.util.InjectionConstants.INVALID_SOUND_NAME;
@@ -48,9 +52,13 @@ public class MissingResourceInjector extends AbstractBugInjector {
 
     @Override
     public void visit(ActorDefinition actor) {
-        currentActor = actor;
-        super.visit(actor);
-        currentActor = null;
+        ActorDefinition previousActor = currentActor;
+        try {
+            currentActor = actor;
+            super.visit(actor);
+        } finally {
+            currentActor = previousActor;
+        }
     }
 
     @Override
@@ -58,11 +66,10 @@ public class MissingResourceInjector extends AbstractBugInjector {
         if (node.getCostumeChoice() instanceof WithExpr withExpr
                 && withExpr.getExpression() instanceof StrId strId) {
 
-            // Only inject if the current costume EXISTS (is valid)
-            // If it's already missing, we'd be replacing one bug with another
             String currentCostume = strId.getName();
             if (currentActorHasCostume(currentCostume)) {
-                mutateClone(node, this::replaceWithInvalidCostume);
+                replaceWithInvalidResource(node, withExpr, INVALID_COSTUME_NAME,
+                        node.getMetadata(), SwitchCostumeTo::new);
             }
         }
         super.visit(node);
@@ -75,7 +82,8 @@ public class MissingResourceInjector extends AbstractBugInjector {
 
             String currentSound = strId.getName();
             if (currentActorHasSound(currentSound)) {
-                mutateClone(node, this::replaceWithInvalidSound);
+                replaceWithInvalidResource(node, withExpr, INVALID_SOUND_NAME,
+                        node.getMetadata(), PlaySoundUntilDone::new);
             }
         }
         super.visit(node);
@@ -88,30 +96,69 @@ public class MissingResourceInjector extends AbstractBugInjector {
 
             String currentSound = strId.getName();
             if (currentActorHasSound(currentSound)) {
-                mutateClone(node, this::replaceWithInvalidSoundStartSound);
+                replaceWithInvalidResource(node, withExpr, INVALID_SOUND_NAME,
+                        node.getMetadata(), StartSound::new);
             }
         }
         super.visit(node);
     }
 
+    // ==================== Helper Methods ====================
+
+    /**
+     * Generic method to replace a resource reference with an invalid one.
+     *
+     * @param node            The original statement to replace
+     * @param originalWithExpr The original WithExpr containing the valid resource
+     * @param invalidName     The invalid resource name to use
+     * @param metadata        The metadata to preserve
+     * @param constructor     Constructor for the replacement statement
+     * @param <T>             The statement type
+     */
+    private <T extends Stmt> void replaceWithInvalidResource(
+            T node,
+            WithExpr originalWithExpr,
+            String invalidName,
+            BlockMetadata metadata,
+            BiFunction<WithExpr, BlockMetadata, T> constructor) {
+
+        mutateClone(node, clonedNode -> {
+            WithExpr newWithExpr = createInvalidWithExpr(originalWithExpr, invalidName);
+            T newStmt = constructor.apply(newWithExpr, metadata);
+            newWithExpr.setParentNode(newStmt);
+            replaceInParent(clonedNode, newStmt);
+        });
+    }
+
+    /**
+     * Creates a new WithExpr with an invalid resource name.
+     */
+    private WithExpr createInvalidWithExpr(WithExpr originalWithExpr, String invalidName) {
+        StrId invalidStrId = new StrId(invalidName);
+        WithExpr newWithExpr = new WithExpr(invalidStrId, originalWithExpr.getMetadata());
+        invalidStrId.setParentNode(newWithExpr);
+        return newWithExpr;
+    }
+
+    // ==================== Resource Validation ====================
+
     /**
      * Checks if the current actor has a costume with the given name.
      * Returns true if metadata is missing (allow injection) or if costume exists.
-     * Only returns false if we explicitly know the costume is missing.
      */
     private boolean currentActorHasCostume(String costumeName) {
         if (currentActor == null || currentActor.getActorMetadata() == null) {
-            return true;  // No metadata available, allow injection
+            return true;
         }
         var costumes = currentActor.getActorMetadata().getCostumes().getList();
         if (costumes.isEmpty()) {
-            return true;  // No costumes defined, allow injection (test scenario)
+            return true;
         }
-        // Check if this is placeholder test metadata (all names are class names like "ImageMetadata")
+        // Check if this is placeholder test metadata
         boolean isPlaceholderMetadata = costumes.stream()
                 .allMatch(c -> c.getName().equals(c.getClass().getSimpleName()));
         if (isPlaceholderMetadata) {
-            return true;  // Test fixture, allow injection
+            return true;
         }
         return costumes.stream().anyMatch(c -> c.getName().equals(costumeName));
     }
@@ -119,63 +166,21 @@ public class MissingResourceInjector extends AbstractBugInjector {
     /**
      * Checks if the current actor has a sound with the given name.
      * Returns true if metadata is missing (allow injection) or if sound exists.
-     * Only returns false if we explicitly know the sound is missing.
      */
     private boolean currentActorHasSound(String soundName) {
         if (currentActor == null || currentActor.getActorMetadata() == null) {
-            return true;  // No metadata available, allow injection
+            return true;
         }
         var sounds = currentActor.getActorMetadata().getSounds().getList();
         if (sounds.isEmpty()) {
-            return true;  // No sounds defined, allow injection (test scenario)
+            return true;
         }
         // Check if this is placeholder test metadata
         boolean isPlaceholderMetadata = sounds.stream()
                 .allMatch(s -> s.getName().equals(s.getClass().getSimpleName()));
         if (isPlaceholderMetadata) {
-            return true;  // Test fixture, allow injection
+            return true;
         }
         return sounds.stream().anyMatch(s -> s.getName().equals(soundName));
-    }
-
-    private void replaceWithInvalidCostume(SwitchCostumeTo clonedNode) {
-        // Create a new invalid StrId
-        StrId invalidStrId = new StrId(INVALID_COSTUME_NAME);
-
-        // Get original metadata from the WithExpr if present
-        WithExpr originalWithExpr = (WithExpr) clonedNode.getCostumeChoice();
-        WithExpr newWithExpr = new WithExpr(invalidStrId, originalWithExpr.getMetadata());
-        invalidStrId.setParentNode(newWithExpr);
-
-        // Create a new SwitchCostumeTo with the invalid choice
-        SwitchCostumeTo newStmt = new SwitchCostumeTo(newWithExpr, clonedNode.getMetadata());
-        newWithExpr.setParentNode(newStmt);
-
-        // Replace in parent StmtList
-        replaceInParent(clonedNode, newStmt);
-    }
-
-    private void replaceWithInvalidSound(PlaySoundUntilDone clonedNode) {
-        StrId invalidStrId = new StrId(INVALID_SOUND_NAME);
-        WithExpr originalWithExpr = (WithExpr) clonedNode.getElementChoice();
-        WithExpr newWithExpr = new WithExpr(invalidStrId, originalWithExpr.getMetadata());
-        invalidStrId.setParentNode(newWithExpr);
-
-        PlaySoundUntilDone newStmt = new PlaySoundUntilDone(newWithExpr, clonedNode.getMetadata());
-        newWithExpr.setParentNode(newStmt);
-
-        replaceInParent(clonedNode, newStmt);
-    }
-
-    private void replaceWithInvalidSoundStartSound(StartSound clonedNode) {
-        StrId invalidStrId = new StrId(INVALID_SOUND_NAME);
-        WithExpr originalWithExpr = (WithExpr) clonedNode.getElementChoice();
-        WithExpr newWithExpr = new WithExpr(invalidStrId, originalWithExpr.getMetadata());
-        invalidStrId.setParentNode(newWithExpr);
-
-        StartSound newStmt = new StartSound(newWithExpr, clonedNode.getMetadata());
-        newWithExpr.setParentNode(newStmt);
-
-        replaceInParent(clonedNode, newStmt);
     }
 }

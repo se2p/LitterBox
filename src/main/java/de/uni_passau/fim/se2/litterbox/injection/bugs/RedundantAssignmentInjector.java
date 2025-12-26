@@ -84,8 +84,13 @@ public class RedundantAssignmentInjector extends AbstractBugInjector {
 
     @Override
     public void visit(ActorDefinition actor) {
-        this.currentActor = actor;
-        super.visit(actor);
+        ActorDefinition previousActor = currentActor;
+        try {
+            this.currentActor = actor;
+            super.visit(actor);
+        } finally {
+            this.currentActor = previousActor;
+        }
     }
 
     private ActorDefinition getCurrentActor() {

@@ -88,6 +88,12 @@ public class MissingInitialization extends AbstractIssueFinder {
         Set<Use> initialUses = livenessAnalysis.getDataflowFacts(cfg.getEntryNode());
 
         for (Use use : initialUses) {
+            if (use.getDefinable() instanceof Variable var) {
+                if (var.getIdentifier().toString().contains("☁")) {
+                    continue;
+                }
+            }
+
             if (use.getDefinable() instanceof Attribute attribute) {
                 if (attribute.getAttributeType().equals(Attribute.AttributeType.VISIBILITY)) {
                     // TODO: Handle visibility properly in a way that does not produce too many false positives
@@ -97,8 +103,10 @@ public class MissingInitialization extends AbstractIssueFinder {
             }
 
             // If there are no initial definitions of the same defineable in other scripts it's an anomaly
+            // Only script-based initializations count as backups (not procedures, which don't run at startup)
             if (initialDefinitions.stream()
                     .filter(d -> d.getDefinable().equals(use.getDefinable()))
+                    .filter(d -> d.getDefinitionSource().getScriptOrProcedure() instanceof Script)
                     .noneMatch(d -> d.getDefinitionSource().getScriptOrProcedure()
                             != use.getUseTarget().getScriptOrProcedure())) {
 

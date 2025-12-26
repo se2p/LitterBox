@@ -24,7 +24,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import java.util.List;
 
 /**
- * Interface that all BugInjectors must implement.
+ * Interface for bug injectors that mutate Scratch programs to introduce specific bug patterns.
+ * <p>
+ * Implementations of this interface create modified versions of programs that contain
+ * bugs detectable by the associated {@link IssueFinder}. This is primarily used for
+ * generating test cases, mutation testing, and validating bug detection capabilities.
+ * <p>
+ * Each injector is associated with a specific bug finder via {@link #getIssueFinder()},
+ * ensuring that injected bugs are always detectable by the corresponding analysis.
+ *
+ * @see AbstractBugInjector
+ * @see InjectionResult
  */
 public interface BugInjector {
 

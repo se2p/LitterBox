@@ -38,6 +38,23 @@ public class Use implements DataflowFact {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Use use = (Use) o;
+        return java.util.Objects.equals(target, use.target) && java.util.Objects.equals(defineable, use.defineable);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(target, defineable);
+    }
+
+    @Override
     public String toString() {
         return "Use{" + defineable + "}";
     }

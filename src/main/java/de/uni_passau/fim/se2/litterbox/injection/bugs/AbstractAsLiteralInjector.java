@@ -169,71 +169,90 @@ public abstract class AbstractAsLiteralInjector extends AbstractBugInjector {
                 continue;
             }
 
-            // SpriteLook statements
-            if (parent instanceof Say || parent instanceof SayForSecs
-                    || parent instanceof Think || parent instanceof ThinkForSecs) {
-                return true;
-            }
-
-            // Sensing
-            if (parent instanceof AskAndWait) {
-                return true;
-            }
-
-            // String Operators
-            if (parent instanceof Join || parent instanceof LetterOf) {
-                return true;
-            }
-
-            // Numeric functions that operate on strings
-            if (parent instanceof LengthOfString) {
-                return true;
-            }
-
-            // String functions
-            if (parent instanceof StringContains) {
-                return true;
-            }
-
-            // Comparison operators - Scratch allows comparing strings as well as numbers
-            if (parent instanceof Equals || parent instanceof BiggerThan || parent instanceof LessThan) {
-                return true;
-            }
-
-            // List operations - accept string items
-            if (parent instanceof AddTo addTo) {
-                if (addTo.getString() == current) {
-                    return true;
-                }
-            }
-            if (parent instanceof InsertAt insertAt) {
-                if (insertAt.getString() == current) {
-                    return true;
-                }
-            }
-            if (parent instanceof ReplaceItem replaceItem) {
-                if (replaceItem.getString() == current) {
-                    return true;
-                }
-            }
-
-            // Exclude strict contexts that require a Variable/DataExpr node
-            // These would cause ClassCastException if replaced by StringLiteral
-            if (parent instanceof AttributeFromVariable
-                    || parent instanceof Qualified
-                    || parent instanceof DeclarationIdentAsTypeStmt) {
+            // Check for excluded (strict type) contexts first
+            if (isExcludedContext(parent)) {
                 return false;
             }
 
-            // SetVariableTo - only if we are the expression (value)
-            if (parent instanceof SetVariableTo setStmt) {
-                return setStmt.getExpr() == current;
+            // Check various string-accepting contexts
+            if (isSpriteLookContext(parent)
+                    || isStringOperatorContext(parent)
+                    || isComparisonContext(parent)
+                    || isListOperationContext(parent, current)
+                    || isVariableAssignmentContext(parent, current)) {
+                return true;
             }
 
             current = parent;
         }
         return false;
     }
+
+    /**
+     * Checks if parent is a SpriteLook statement that accepts strings.
+     */
+    private boolean isSpriteLookContext(ASTNode parent) {
+        return parent instanceof Say
+                || parent instanceof SayForSecs
+                || parent instanceof Think
+                || parent instanceof ThinkForSecs
+                || parent instanceof AskAndWait;
+    }
+
+    /**
+     * Checks if parent is a string operator or string function.
+     */
+    private boolean isStringOperatorContext(ASTNode parent) {
+        return parent instanceof Join
+                || parent instanceof LetterOf
+                || parent instanceof LengthOfString
+                || parent instanceof StringContains;
+    }
+
+    /**
+     * Checks if parent is a comparison operator (which accepts strings).
+     */
+    private boolean isComparisonContext(ASTNode parent) {
+        return parent instanceof Equals
+                || parent instanceof BiggerThan
+                || parent instanceof LessThan;
+    }
+
+    /**
+     * Checks if parent is a list operation with the node in a string-accepting position.
+     */
+    private boolean isListOperationContext(ASTNode parent, ASTNode current) {
+        if (parent instanceof AddTo addTo) {
+            return addTo.getString() == current;
+        }
+        if (parent instanceof InsertAt insertAt) {
+            return insertAt.getString() == current;
+        }
+        if (parent instanceof ReplaceItem replaceItem) {
+            return replaceItem.getString() == current;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if parent is a variable assignment with the node in the value position.
+     */
+    private boolean isVariableAssignmentContext(ASTNode parent, ASTNode current) {
+        if (parent instanceof SetVariableTo setStmt) {
+            return setStmt.getExpr() == current;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if parent requires a strict type (Variable/DataExpr) and would fail with StringLiteral.
+     */
+    private boolean isExcludedContext(ASTNode parent) {
+        return parent instanceof AttributeFromVariable
+                || parent instanceof Qualified
+                || parent instanceof DeclarationIdentAsTypeStmt;
+    }
+
 
     /**
      * Checks if the node is inside a Message node (used in broadcast blocks).

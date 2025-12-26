@@ -213,6 +213,13 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
         definitions.add(Attribute.positionYOf(currentActor.getIdent()));
     }
 
+    @Override
+    public void visit(IfOnEdgeBounce node) {
+        definitions.add(Attribute.positionXOf(currentActor.getIdent()));
+        definitions.add(Attribute.positionYOf(currentActor.getIdent()));
+        definitions.add(Attribute.rotationOf(currentActor.getIdent()));
+    }
+
     //---------------------------------------------------------------
     // Rotation
 

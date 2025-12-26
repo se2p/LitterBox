@@ -84,6 +84,12 @@ public abstract class AbstractPenInjector extends AbstractBugInjector {
 
     @Override
     public void visit(ActorDefinition actor) {
+        // Actor-level check: only inject if this actor has BOTH PenUp and PenDown
+        // This matches the finder's actor-level detection logic
+        if (!actorHasBothPenStatements(actor)) {
+            return;
+        }
+
         Class<? extends Stmt> targetType = getStatementTypeToRemove();
 
         // Collect all StmtLists in this actor that contain the target statement type
@@ -99,6 +105,35 @@ public abstract class AbstractPenInjector extends AbstractBugInjector {
         }
 
         // Don't call super.visit() - we handle the entire actor in one mutation
+    }
+
+    /**
+     * Checks if the actor has both PenUp and PenDown statements.
+     * The finder only reports an issue at actor level, so we must inject
+     * only in actors that have both statement types.
+     */
+    private boolean actorHasBothPenStatements(ActorDefinition actor) {
+        boolean[] result = {false, false}; // [hasPenUp, hasPenDown]
+        checkActorPenStatements(actor, result);
+        return result[0] && result[1];
+    }
+
+    private void checkActorPenStatements(ASTNode node, boolean[] result) {
+        if (node instanceof PenUpStmt) {
+            result[0] = true;
+        } else if (node instanceof PenDownStmt) {
+            result[1] = true;
+        }
+        // Short-circuit if both found
+        if (result[0] && result[1]) {
+            return;
+        }
+        for (var child : node.getChildren()) {
+            checkActorPenStatements(child, result);
+            if (result[0] && result[1]) {
+                return;
+            }
+        }
     }
 
     private void collectStmtListsWithTarget(ASTNode node, Class<? extends Stmt> targetType,

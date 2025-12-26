@@ -20,32 +20,31 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingInitialization;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.ClearSoundEffects;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StopAllSounds;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.GoToLayer;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.cfg.*;
+import de.uni_passau.fim.se2.litterbox.cfg.Attribute;
+import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
+import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
+import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
+import de.uni_passau.fim.se2.litterbox.cfg.Defineable;
+import de.uni_passau.fim.se2.litterbox.cfg.Definition;
+import de.uni_passau.fim.se2.litterbox.cfg.Use;
+import de.uni_passau.fim.se2.litterbox.cfg.Variable;
+import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysis;
+import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysisBuilder;
+import de.uni_passau.fim.se2.litterbox.dataflow.InitialDefinitionTransferFunction;
+import de.uni_passau.fim.se2.litterbox.dataflow.LivenessTransferFunction;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Injects the {@link MissingInitialization} bug by removing initialization statements
@@ -60,29 +59,17 @@ import java.util.*;
  *   <li>No other GreenFlag script may initialize the same attribute</li>
  *   <li>No later unconditional definition may "cover" the use</li>
  * </ol>
+ *
+ * @see MissingInitialization
  */
 public class MissingInitializationInjector extends AbstractBugInjector {
 
-    /**
-     * Statement types that represent initialization operations.
-     * Note: Hide/Show are excluded because the finder explicitly skips VISIBILITY attributes.
-     */
-    private static final Set<Class<? extends Stmt>> INITIALIZATION_TYPES = Set.of(
-            // Motion
-            GoToPosXY.class, GoToPos.class, SetXTo.class, SetYTo.class,
-            PointInDirection.class, PointTowards.class, SetRotationStyle.class, SetDragMode.class,
-            // Sprite look (excluding Hide/Show)
-            SwitchCostumeTo.class, SetSizeTo.class, GoToLayer.class,
-            // Actor look
-            SwitchBackdrop.class, SetGraphicEffectTo.class, ClearGraphicEffects.class,
-            // Sound
-            StopAllSounds.class, ClearSoundEffects.class, SetSoundEffectTo.class, SetVolumeTo.class,
-            // Common
-            SetVariableTo.class, ResetTimer.class
-    );
+    private ControlFlowGraph globalCfg;
+    private DataflowAnalysis<Use> globalLiveness;
+    private DataflowAnalysis<Definition> globalInitialDefinitions;
 
-    private ActorDefinition currentActor;
-    private Map<Defineable, Set<Script>> globalInitializations;
+    private final InitialDefinitionTransferFunction initialDefinitionTransferFunction =
+            new InitialDefinitionTransferFunction();
 
     @Override
     public IssueFinder getIssueFinder() {
@@ -91,13 +78,26 @@ public class MissingInitializationInjector extends AbstractBugInjector {
 
     @Override
     public List<InjectionResult> inject(Program program) {
-        globalInitializations = collectGlobalInitializations(program);
+        // Build global CFG and compute liveness once for the original program
+        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
+        program.accept(visitor);
+        this.globalCfg = visitor.getControlFlowGraph();
+
+        DataflowAnalysisBuilder<Use> useBuilder = new DataflowAnalysisBuilder<>(globalCfg);
+        this.globalLiveness = useBuilder.withBackward().withMay()
+                .withTransferFunction(new LivenessTransferFunction()).build();
+        globalLiveness.applyAnalysis();
+
+        DataflowAnalysisBuilder<Definition> initBuilder = new DataflowAnalysisBuilder<>(globalCfg);
+        this.globalInitialDefinitions = initBuilder.withBackward().withMay()
+                .withTransferFunction(initialDefinitionTransferFunction).build();
+        globalInitialDefinitions.applyAnalysis();
+
         return super.inject(program);
     }
 
     @Override
     public void visit(ActorDefinition actor) {
-        this.currentActor = actor;
         super.visit(actor);
     }
 
@@ -117,8 +117,9 @@ public class MissingInitializationInjector extends AbstractBugInjector {
 
         for (int i = 0; i < statements.size(); i++) {
             Stmt stmt = statements.get(i);
+            boolean isInit = isInitialDefinitionStatement(stmt);
 
-            if (!isInitializationStatement(stmt)) {
+            if (!isInit) {
                 break; // Stop at first non-initialization statement
             }
 
@@ -131,380 +132,142 @@ public class MissingInitializationInjector extends AbstractBugInjector {
         }
     }
 
-    /**
-     * Determines if removing the initialization at the given index would create a detectable bug.
-     */
     private boolean canRemoveInitialization(Script script, List<Stmt> statements, int index) {
-        Set<Defineable> definitions = getDefinitions(statements.get(index));
+        Stmt stmt = statements.get(index);
+        Set<Definition> definitions = getDefinitions(stmt);
 
-        // Must not be already initialized by an EARLIER statement in the same script
-        // (e.g., "go to random position" initializes BOTH x and y, so removing "set y to"
-        // won't create a detectable bug since y is still initialized)
+        // Must not be already initialized by an earlier statement in the same script
         if (isInitializedEarlierInScript(statements, index, definitions)) {
             return false;
         }
 
-        // Must be used later in the script
-        if (!isUsedAfterIndex(statements, index + 1, definitions)) {
-            return false;
-        }
-
-        // Must not be initialized by another GreenFlag script
+        // Must not be initialized by another script
         if (isInitializedByOtherScript(script, definitions)) {
             return false;
         }
 
-        // Must not have a later unconditional definition that covers the use
-        return !hasCoveringDefinition(statements, index + 1, definitions);
+        // Must not have an unconditional definition later in the same script
+        // (which would provide a backup initialization that the finder would detect)
+        if (isDefinedLaterInScript(statements, index, definitions)) {
+            return false;
+        }
+
+        // Must be live at the point immediately after the initialization statement.
+        // This ensures that removing the initialization makes it live at the entry point.
+        Optional<CFGNode> nodeOpt = globalCfg.getNode(stmt);
+        if (nodeOpt.isEmpty()) {
+            return false;
+        }
+
+        Set<Use> liveOut = globalLiveness.getDataflowFacts(nodeOpt.get());
+        for (Definition def : definitions) {
+            // Skip cloud variables as they are skipped by the finder
+            if (def.getDefinable() instanceof Variable var && var.getIdentifier().toString().contains("☁")) {
+                continue;
+            }
+
+            // Skip visibility attributes as they are skipped by the finder
+            if (def.getDefinable() instanceof Attribute attribute
+                    && attribute.getAttributeType().equals(Attribute.AttributeType.VISIBILITY)) {
+                continue;
+            }
+
+            if (liveOut.stream().anyMatch(u -> u.getDefinable().equals(def.getDefinable()))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
-     * Checks if any of the target definitions are already initialized by an earlier
-     * statement in the same script.
+     * Checks if any of the target definitions are already initialized earlier.
      */
-    private boolean isInitializedEarlierInScript(List<Stmt> statements, int currentIndex, Set<Defineable> targets) {
+    private boolean isInitializedEarlierInScript(List<Stmt> statements, int currentIndex, Set<Definition> targets) {
         for (int i = 0; i < currentIndex; i++) {
             Stmt stmt = statements.get(i);
-            if (!isInitializationStatement(stmt)) {
-                break; // Only check initialization block at the start
+            if (!isInitialDefinitionStatement(stmt)) {
+                break;
             }
-            Set<Defineable> earlierDefs = getDefinitions(stmt);
-            if (!Collections.disjoint(earlierDefs, targets)) {
-                return true; // Found earlier initialization of same attribute
-            }
-        }
-        return false;
-    }
-
-    // ==================== Global Initialization Tracking ====================
-
-    /**
-     * Pre-scans all GreenFlag scripts to track which scripts initialize which attributes.
-     */
-    private Map<Defineable, Set<Script>> collectGlobalInitializations(Program program) {
-        Map<Defineable, Set<Script>> result = new HashMap<>();
-
-        for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
-            for (Script script : actor.getScripts().getScriptList()) {
-                collectScriptInitializations(script, actor, result);
-            }
-        }
-        return result;
-    }
-
-    private void collectScriptInitializations(Script script, ActorDefinition actor,
-                                              Map<Defineable, Set<Script>> result) {
-        ActorDefinition savedActor = this.currentActor;
-        this.currentActor = actor;
-
-        script.accept(new ScratchVisitor() {
-            @Override
-            public void visit(ASTNode node) {
-                if (node instanceof Stmt stmt && isInitializationStatement(stmt)) {
-                    for (Defineable def : getDefinitions(stmt)) {
-                        result.computeIfAbsent(def, k -> new HashSet<>()).add(script);
-                    }
+            Set<Definition> earlierDefs = getDefinitions(stmt);
+            Set<Defineable> earlierDefineables = earlierDefs.stream()
+                    .map(Definition::getDefinable)
+                    .collect(Collectors.toSet());
+            for (Definition target : targets) {
+                if (earlierDefineables.contains(target.getDefinable())) {
+                    return true;
                 }
-                visitChildren(node);
-            }
-        });
-
-        this.currentActor = savedActor;
-    }
-
-    private boolean isInitializedByOtherScript(Script currentScript, Set<Defineable> definitions) {
-        for (Defineable def : definitions) {
-            Set<Script> scripts = globalInitializations.get(def);
-            if (scripts != null && scripts.stream().anyMatch(s -> s != currentScript)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // ==================== Definition & Use Analysis ====================
-
-    private boolean isInitializationStatement(Stmt stmt) {
-        return INITIALIZATION_TYPES.contains(stmt.getClass());
-    }
-
-    /**
-     * Gets all defineables (attributes, variables, lists) that this statement defines.
-     */
-    private Set<Defineable> getDefinitions(Stmt stmt) {
-        Set<Defineable> defs = new HashSet<>();
-
-        if (currentActor != null) {
-            AttributeDefinitionVisitor attrVisitor = new AttributeDefinitionVisitor(currentActor);
-            stmt.accept(attrVisitor);
-            defs.addAll(attrVisitor.getDefineables());
-        }
-
-        VariableDefinitionVisitor varVisitor = new VariableDefinitionVisitor();
-        stmt.accept(varVisitor);
-        defs.addAll(varVisitor.getDefineables());
-
-        ListDefinitionVisitor listVisitor = new ListDefinitionVisitor();
-        stmt.accept(listVisitor);
-        defs.addAll(listVisitor.getDefineables());
-
-        return defs;
-    }
-
-    /**
-     * Checks if any of the target definitions are used after the given index.
-     */
-    private boolean isUsedAfterIndex(List<Stmt> statements, int startIndex, Set<Defineable> targets) {
-        for (int i = startIndex; i < statements.size(); i++) {
-            Set<Defineable> uses = getUses(statements.get(i));
-            if (!Collections.disjoint(uses, targets)) {
-                return true;
             }
         }
         return false;
     }
 
     /**
-     * Checks if all target definitions are "covered" by later unconditional definitions
-     * before they are used.
-     * <p>
-     * A definition is "covered" if it appears in a top-level initialization statement
-     * before any use of that definition. Only top-level statements count because
-     * definitions inside control flow are conditional.
+     * Checks if any of the target definitions are defined elsewhere in the same script.
+     * A later definition would serve as a backup initialization that the finder would detect.
+     * This checks all statements in the script, including those nested in loops and conditionals.
      */
-    private boolean hasCoveringDefinition(List<Stmt> statements, int startIndex, Set<Defineable> targets) {
-        Set<Defineable> remainingTargets = new HashSet<>(targets);
+    private boolean isDefinedLaterInScript(List<Stmt> statements, int currentIndex, Set<Definition> targets) {
+        Stmt currentStmt = statements.get(currentIndex);
+        Set<Defineable> targetDefineables = targets.stream()
+                .map(Definition::getDefinable)
+                .collect(Collectors.toSet());
 
-        for (int i = startIndex; i < statements.size(); i++) {
-            Stmt stmt = statements.get(i);
-
-            // 1. Check for covering definitions within this statement
-            Set<Defineable> coveredByStmt = getCoveringDefinitions(stmt, remainingTargets);
-            remainingTargets.removeAll(coveredByStmt);
-
-            if (remainingTargets.isEmpty()) {
-                return true; // All targets are covered
+        // Check all nodes in the global CFG for definitions of the same variables
+        // that belong to the same script but are different statements
+        for (CFGNode node : globalCfg.getNodes()) {
+            // Skip the current statement
+            if (node.getASTNode() == currentStmt) {
+                continue;
             }
 
-            // 2. Check for uses within this statement of the REMAINING targets.
-            // (Note: getCoveringDefinitions already checked for uses before definitions within certain stmt types,
-            // but for others like IfThen or loops, we still need to check if they use anything).
-            Set<Defineable> usesInStmt = getUses(stmt);
-            if (!Collections.disjoint(usesInStmt, remainingTargets)) {
-                return false; // Found a use before any covering definition
-            }
-        }
-
-        // No use found for remaining targets by end of script.
-        // Effectively covered (undetectable by finder).
-        return true;
-    }
-
-    /**
-     * Identifies defineables from the 'targets' set that are GUARANTEED to be defined
-     * by this statement BEFORE being used, assuming the statement is reached.
-     * <p>
-     * For conditional statements like IfThen or loops, we check if ALL uses within
-     * the block are covered by definitions WITHIN that same block, making the removal
-     * of a prior initialization undetectable.
-     */
-    private Set<Defineable> getCoveringDefinitions(Stmt stmt, Set<Defineable> targets) {
-        if (isInitializationStatement(stmt)) {
-            Set<Defineable> defs = getDefinitions(stmt);
-            Set<Defineable> uses = getUses(stmt);
-            Set<Defineable> covered = new HashSet<>(defs);
-            covered.retainAll(targets);
-            covered.removeAll(uses); // Defines must happen before Uses (e.g., ChangeVariable uses then defines)
-            return covered;
-        }
-
-        if (stmt instanceof IfElseStmt ifElse) {
-            // Condition uses happen BEFORE branches
-            Set<Defineable> usesInCondition = getUses(ifElse.getBoolExpr());
-            if (!Collections.disjoint(usesInCondition, targets)) {
-                return Collections.emptySet();
+            // Only consider initial definitions (those that would reach entry in backward analysis)
+            if (node.getASTNode() instanceof Stmt nodeStmt && !isInitialDefinitionStatement(nodeStmt)) {
+                continue;
             }
 
-            Set<Defineable> thenCovered = getCoveringDefinitions(ifElse.getThenStmts().getStmts(), targets);
-            Set<Defineable> elseCovered = getCoveringDefinitions(ifElse.getElseStmts().getStmts(), targets);
-
-            Set<Defineable> intersection = new HashSet<>(thenCovered);
-            intersection.retainAll(elseCovered);
-            return intersection;
-        }
-
-        if (stmt instanceof IfThenStmt ifThen) {
-            // Check if condition uses any targets
-            Set<Defineable> usesInCondition = getUses(ifThen.getBoolExpr());
-            if (!Collections.disjoint(usesInCondition, targets)) {
-                return Collections.emptySet();
-            }
-            // For IfThen (no else), targets that are USED inside but also DEFINED inside
-            // before use are effectively "self-covered" - removing prior init is undetectable
-            return getInternallyDefinedBeforeUse(ifThen.getThenStmts().getStmts(), targets);
-        }
-
-        // For loops, check if uses inside loop are covered by defs inside loop
-        if (stmt instanceof RepeatForeverStmt forever) {
-            return getInternallyDefinedBeforeUse(forever.getStmtList().getStmts(), targets);
-        }
-
-        if (stmt instanceof RepeatTimesStmt repeatTimes) {
-            Set<Defineable> usesInTimes = getUses(repeatTimes.getTimes());
-            if (!Collections.disjoint(usesInTimes, targets)) {
-                return Collections.emptySet();
-            }
-            return getInternallyDefinedBeforeUse(repeatTimes.getStmtList().getStmts(), targets);
-        }
-
-        if (stmt instanceof UntilStmt until) {
-            Set<Defineable> usesInCondition = getUses(until.getBoolExpr());
-            if (!Collections.disjoint(usesInCondition, targets)) {
-                return Collections.emptySet();
-            }
-            return getInternallyDefinedBeforeUse(until.getStmtList().getStmts(), targets);
-        }
-
-        return Collections.emptySet();
-    }
-
-    /**
-     * For a list of statements, returns targets that are DEFINED before first USE
-     * within that block. This means removing a prior initialization is undetectable
-     * because any use is preceded by a definition in the same block.
-     */
-    private Set<Defineable> getInternallyDefinedBeforeUse(List<Stmt> statements, Set<Defineable> targets) {
-        Set<Defineable> definedBeforeUse = new HashSet<>();
-        Set<Defineable> usedSoFar = new HashSet<>();
-
-        for (Stmt stmt : statements) {
-            // For compound statements (if, loops), the uses inside them are handled
-            // by getCoveringDefinitions recursively. We only count direct uses here
-            // for simple statements like SetVariableTo expressions.
-            boolean isCompoundStmt = stmt instanceof IfThenStmt
-                    || stmt instanceof IfElseStmt
-                    || stmt instanceof RepeatForeverStmt
-                    || stmt instanceof RepeatTimesStmt
-                    || stmt instanceof UntilStmt;
-
-            if (!isCompoundStmt) {
-                // For simple statements, check uses first
-                Set<Defineable> usesHere = getUses(stmt);
-                for (Defineable d : usesHere) {
-                    if (targets.contains(d)) {
-                        usedSoFar.add(d);
+            // Check if this node defines any of the target variables
+            for (Definition nodeDef : node.getDefinitions()) {
+                if (targetDefineables.contains(nodeDef.getDefinable())) {
+                    // Check if this definition is in the same script
+                    if (nodeDef.getDefinitionSource().getScriptOrProcedure()
+                            == targets.iterator().next().getDefinitionSource().getScriptOrProcedure()) {
+                        return true;
                     }
                 }
             }
-
-            // Check definitions (also handles compound stmts via recursion)
-            Set<Defineable> covered = getCoveringDefinitions(stmt, targets);
-            for (Defineable d : covered) {
-                if (!usedSoFar.contains(d)) {
-                    // This target was defined before any use in this block
-                    definedBeforeUse.add(d);
-                }
-            }
         }
-
-        return definedBeforeUse;
+        return false;
     }
 
-    private Set<Defineable> getCoveringDefinitions(List<Stmt> statements, Set<Defineable> targets) {
-        Set<Defineable> coveredInThisList = new HashSet<>();
-        Set<Defineable> remainingTargets = new HashSet<>(targets);
-
-        for (Stmt stmt : statements) {
-            Set<Defineable> coveredByStmt = getCoveringDefinitions(stmt, remainingTargets);
-            coveredInThisList.addAll(coveredByStmt);
-            remainingTargets.removeAll(coveredByStmt);
-
-            if (remainingTargets.isEmpty()) {
-                break;
-            }
-
-            // Check if ANY of the still-remaining targets are used here
-            Set<Defineable> usesInStmt = getUses(stmt);
-            if (!Collections.disjoint(usesInStmt, remainingTargets)) {
-                // These are used before being covered. They can't be covered by later stmts.
-                remainingTargets.removeAll(usesInStmt);
-            }
-
-            if (remainingTargets.isEmpty()) {
-                break;
-            }
+    private boolean isInitialDefinitionStatement(Stmt stmt) {
+        Optional<CFGNode> nodeOpt = globalCfg.getNode(stmt);
+        if (nodeOpt.isEmpty()) {
+            return false;
         }
-        return coveredInThisList;
+        CFGNode node = nodeOpt.get();
+        // A statement is an initial definition if it generates a definition that is NOT killed by a use
+        // in the same node.
+        Set<Definition> defs = node.getDefinitions();
+        Set<Definition> initialDefs = initialDefinitionTransferFunction.apply(node, Collections.emptySet());
+        return !initialDefs.isEmpty() && defs.size() == initialDefs.size();
     }
 
-    private Set<Defineable> getUses(ASTNode node) {
-        UseCollector collector = new UseCollector(currentActor);
-        node.accept(collector);
-        return collector.uses;
+    private Set<Definition> getDefinitions(Stmt stmt) {
+        Optional<CFGNode> nodeOpt = globalCfg.getNode(stmt);
+        return nodeOpt.map(CFGNode::getDefinitions).orElse(Collections.emptySet());
     }
 
-    // ==================== Use Collector ====================
+    private boolean isInitializedByOtherScript(Script currentScript, Set<Definition> definitions) {
+        // A variable is initialized by another script if it reaches the global entry point
+        // from a script other than the current one.
+        Set<Definition> initialDefinitions = globalInitialDefinitions.getDataflowFacts(globalCfg.getEntryNode());
+        Set<Defineable> targetDefineables = definitions.stream()
+                .map(Definition::getDefinable)
+                .collect(Collectors.toSet());
 
-    /**
-     * Collects all USED (read) attributes, variables, and lists from a statement tree.
-     * Handles definition statements specially to avoid counting assignment targets as uses.
-     */
-    private static class UseCollector implements ScratchVisitor {
-        private final Set<Defineable> uses = new HashSet<>();
-        private final ActorDefinition actor;
-
-        UseCollector(ActorDefinition actor) {
-            this.actor = actor;
-        }
-
-        @Override
-        public void visit(ASTNode node) {
-            collectUses(node);
-            visitChildren(node);
-        }
-
-        @Override
-        public void visit(SetVariableTo node) {
-            // Only the expression is a use, not the variable being assigned
-            node.getExpr().accept(this);
-        }
-
-        @Override
-        public void visit(ChangeVariableBy node) {
-            // The variable is a use (read before modify) AND the expression
-            collectUses(node);
-            node.getExpr().accept(this);
-        }
-
-        @Override
-        public void visit(HideVariable node) {
-            // Don't traverse - HideVariable doesn't use the variable's value
-        }
-
-        @Override
-        public void visit(ShowVariable node) {
-            // Don't traverse - ShowVariable doesn't use the variable's value
-        }
-
-        @Override
-        public void visit(ProcedureDefinition node) {
-            // Don't traverse into procedure definitions
-        }
-
-        private void collectUses(ASTNode node) {
-            if (actor != null) {
-                AttributeUseVisitor attrVisitor = new AttributeUseVisitor(actor);
-                node.accept(attrVisitor);
-                uses.addAll(attrVisitor.getDefineables());
-            }
-
-            VariableUseVisitor varVisitor = new VariableUseVisitor();
-            node.accept(varVisitor);
-            uses.addAll(varVisitor.getDefineables());
-
-            ListUseVisitor listVisitor = new ListUseVisitor();
-            node.accept(listVisitor);
-            uses.addAll(listVisitor.getDefineables());
-        }
+        return initialDefinitions.stream()
+                .filter(d -> targetDefineables.contains(d.getDefinable()))
+                .filter(d -> d.getDefinitionSource().getScriptOrProcedure() instanceof Script)
+                .anyMatch(d -> d.getDefinitionSource().getScriptOrProcedure() != currentScript);
     }
 }

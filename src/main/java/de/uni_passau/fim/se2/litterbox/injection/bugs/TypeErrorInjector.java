@@ -23,7 +23,14 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.TypeError;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsMouseDown;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -41,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Injects the {@link TypeError} bug using two strategies:
@@ -58,10 +66,15 @@ import java.util.Set;
  */
 public class TypeErrorInjector extends AbstractBugInjector {
 
-    // Fallback: use IsMouseDown - a real Scratch boolean block, not BoolLiteral which doesn't exist in Scratch
-    private static final NumExpr FALLBACK_BOOL_AS_NUM = new AsNumber(
-            new IsMouseDown(NonDataBlockMetadata.emptyNonBlockMetadata())
-    );
+    /**
+     * Lazy holder for fallback boolean expression.
+     * Uses holder pattern to defer initialization and avoid static init issues.
+     */
+    private static class FallbackHolder {
+        static final NumExpr FALLBACK_BOOL_AS_NUM = new AsNumber(
+                new IsMouseDown(NonDataBlockMetadata.emptyNonBlockMetadata())
+        );
+    }
 
     private final List<BoolExpr> collectedBoolExprs = new ArrayList<>();
     private final Set<ASTNode> buggyNodes = new HashSet<>();
@@ -81,16 +94,104 @@ public class TypeErrorInjector extends AbstractBugInjector {
             }
         }
 
-        // Choose replacement expression
+        // Choose replacement expression (lazy initialization of fallback)
         if (!collectedBoolExprs.isEmpty()) {
             BoolExpr cloned = cloner.apply(collectedBoolExprs.getFirst());
             boolAsNumReplacement = new AsNumber(cloned);
         } else {
-            boolAsNumReplacement = FALLBACK_BOOL_AS_NUM;
+            boolAsNumReplacement = FallbackHolder.FALLBACK_BOOL_AS_NUM;
         }
 
         // Second pass: inject bugs
         return super.inject(program);
+    }
+
+    @Override
+    public IssueFinder getIssueFinder() {
+        return new TypeError();
+    }
+
+    // ==================== Strategy 1: Comparison Type Errors ====================
+
+    @Override
+    public void visit(Equals node) {
+        injectIntoComparison(node, node.getOperand1(),
+                replacement -> new Equals(node.getOperand1(), replacement, node.getMetadata()));
+        super.visit(node);
+    }
+
+    @Override
+    public void visit(LessThan node) {
+        injectIntoComparison(node, node.getOperand1(),
+                replacement -> new LessThan(node.getOperand1(), replacement, node.getMetadata()));
+        super.visit(node);
+    }
+
+    @Override
+    public void visit(BiggerThan node) {
+        injectIntoComparison(node, node.getOperand1(),
+                replacement -> new BiggerThan(node.getOperand1(), replacement, node.getMetadata()));
+        super.visit(node);
+    }
+
+    // ==================== Strategy 2: Number-to-Boolean Injection ====================
+
+    @Override
+    public void visit(MoveSteps node) {
+        injectIntoNumericParam(node, n -> new MoveSteps(getBoolAsNumReplacement(), n.getMetadata()));
+        super.visit(node);
+    }
+
+    @Override
+    public void visit(SetXTo node) {
+        injectIntoNumericParam(node, n -> new SetXTo(getBoolAsNumReplacement(), n.getMetadata()));
+        super.visit(node);
+    }
+
+    @Override
+    public void visit(SetYTo node) {
+        injectIntoNumericParam(node, n -> new SetYTo(getBoolAsNumReplacement(), n.getMetadata()));
+        super.visit(node);
+    }
+
+    @Override
+    public void visit(WaitSeconds node) {
+        injectIntoNumericParam(node, n -> new WaitSeconds(getBoolAsNumReplacement(), n.getMetadata()));
+        super.visit(node);
+    }
+
+    // ==================== Helper Methods ====================
+
+    /**
+     * Injects a type error into a comparison node if it's a valid candidate.
+     * A node is a candidate if it's not already buggy and has a literal operand.
+     *
+     * @param node        The comparison node
+     * @param operand1    The first operand to check for literal type
+     * @param constructor Function to construct the replacement
+     * @param <T>         The node type
+     */
+    private <T extends ASTNode> void injectIntoComparison(
+            T node,
+            ASTNode operand1,
+            Function<NumExpr, T> constructor) {
+
+        if (!isBuggy(node) && (operand1 instanceof NumberLiteral || operand1 instanceof StringLiteral)) {
+            replaceWith(node, n -> constructor.apply(getBoolAsNumReplacement()));
+        }
+    }
+
+    /**
+     * Injects a type error into blocks with numeric parameters.
+     *
+     * @param node        The node to potentially replace
+     * @param constructor Function to construct the replacement
+     * @param <T>         The node type
+     */
+    private <T extends ASTNode> void injectIntoNumericParam(T node, Function<T, ASTNode> constructor) {
+        if (!isBuggy(node)) {
+            replaceWith(node, constructor);
+        }
     }
 
     private boolean isBuggy(ASTNode node) {
@@ -108,6 +209,10 @@ public class TypeErrorInjector extends AbstractBugInjector {
     private void collectExpressions(Program program) {
         collectedBoolExprs.clear();
         program.accept(new ExpressionCollector());
+    }
+
+    private NumExpr getBoolAsNumReplacement() {
+        return cloner.apply(boolAsNumReplacement);
     }
 
     /**
@@ -133,100 +238,5 @@ public class TypeErrorInjector extends AbstractBugInjector {
         public void visit(SpriteTouchingColor node) {
             collectedBoolExprs.add(node);
         }
-    }
-
-    @Override
-    public IssueFinder getIssueFinder() {
-        return new TypeError();
-    }
-
-    // --- Strategy 1: Comparison Type Errors ---
-    // Uses immutable transformations to replace operands
-
-    @Override
-    public void visit(Equals node) {
-        if (!isBuggy(node) && (node.getOperand1() instanceof NumberLiteral || node.getOperand1() instanceof StringLiteral)) {
-            replaceWith(node, n -> new Equals(
-                    n.getOperand1(),
-                    getBoolAsNumReplacement(),
-                    n.getMetadata()
-            ));
-        }
-        super.visit(node);
-    }
-
-    @Override
-    public void visit(LessThan node) {
-        if (!isBuggy(node) && (node.getOperand1() instanceof NumberLiteral || node.getOperand1() instanceof StringLiteral)) {
-            replaceWith(node, n -> new LessThan(
-                    n.getOperand1(),
-                    getBoolAsNumReplacement(),
-                    n.getMetadata()
-            ));
-        }
-        super.visit(node);
-    }
-
-    @Override
-    public void visit(BiggerThan node) {
-        if (!isBuggy(node) && (node.getOperand1() instanceof NumberLiteral || node.getOperand1() instanceof StringLiteral)) {
-            replaceWith(node, n -> new BiggerThan(
-                    n.getOperand1(),
-                    getBoolAsNumReplacement(),
-                    n.getMetadata()
-            ));
-        }
-        super.visit(node);
-    }
-
-    // --- Strategy 2: Number-to-Boolean Injection ---
-    // Uses immutable transformations to replace numeric parameters
-
-    @Override
-    public void visit(MoveSteps node) {
-        if (!isBuggy(node)) {
-            replaceWith(node, n -> new MoveSteps(
-                    getBoolAsNumReplacement(),
-                    n.getMetadata()
-            ));
-        }
-        super.visit(node);
-    }
-
-    @Override
-    public void visit(SetXTo node) {
-        if (!isBuggy(node)) {
-            replaceWith(node, n -> new SetXTo(
-                    getBoolAsNumReplacement(),
-                    n.getMetadata()
-            ));
-        }
-        super.visit(node);
-    }
-
-    @Override
-    public void visit(SetYTo node) {
-        if (!isBuggy(node)) {
-            replaceWith(node, n -> new SetYTo(
-                    getBoolAsNumReplacement(),
-                    n.getMetadata()
-            ));
-        }
-        super.visit(node);
-    }
-
-    @Override
-    public void visit(WaitSeconds node) {
-        if (!isBuggy(node)) {
-            replaceWith(node, n -> new WaitSeconds(
-                    getBoolAsNumReplacement(),
-                    n.getMetadata()
-            ));
-        }
-        super.visit(node);
-    }
-
-    private NumExpr getBoolAsNumReplacement() {
-        return cloner.apply(boolAsNumReplacement);
     }
 }
