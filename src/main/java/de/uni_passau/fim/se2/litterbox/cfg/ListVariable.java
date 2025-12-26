@@ -24,7 +24,7 @@ import java.util.Objects;
 
 public class ListVariable implements Defineable {
 
-    private Identifier identifier;
+    private final Identifier identifier;
 
     public ListVariable(Identifier identifier) {
         this.identifier = identifier;

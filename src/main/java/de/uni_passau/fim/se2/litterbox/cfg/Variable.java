@@ -25,7 +25,7 @@ import java.util.Objects;
 
 public class Variable implements Defineable {
 
-    private Identifier identifier;
+    private final Identifier identifier;
 
     public Variable(Identifier identifier) {
         this.identifier = identifier;

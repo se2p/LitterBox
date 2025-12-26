@@ -49,9 +49,9 @@ import java.util.Set;
 
 public class AttributeUseVisitor implements DefinableCollector<Attribute> {
 
-    private Set<Attribute> uses = new LinkedHashSet<>();
+    private final Set<Attribute> uses = new LinkedHashSet<>();
 
-    private ActorDefinition currentActor;
+    private final ActorDefinition currentActor;
 
     public AttributeUseVisitor(ActorDefinition currentActor) {
         this.currentActor = currentActor;

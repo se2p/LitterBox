@@ -20,9 +20,9 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 public class Use implements DataflowFact {
 
-    private CFGNode target;
+    private final CFGNode target;
 
-    private Defineable defineable;
+    private final Defineable defineable;
 
     public Use(CFGNode target, Defineable defineable) {
         this.target = target;
