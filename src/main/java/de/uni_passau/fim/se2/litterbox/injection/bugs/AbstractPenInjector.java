@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
@@ -27,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,6 +36,9 @@ import java.util.List;
  * <p>
  * Precondition: The program must have BOTH PenUp and PenDown statements.
  * Subclasses specify which statement type to remove.
+ * <p>
+ * Creates a single mutation per actor that removes ALL target statements
+ * from all scripts in the actor. This matches the finder's actor-level detection.
  */
 public abstract class AbstractPenInjector extends AbstractBugInjector {
 
@@ -59,8 +64,6 @@ public abstract class AbstractPenInjector extends AbstractBugInjector {
             return List.of();
         }
 
-        // The visitor will remove ALL target statements of the specified type.
-        // This works correctly even when multiple statements exist.
         return super.inject(program);
     }
 
@@ -80,24 +83,37 @@ public abstract class AbstractPenInjector extends AbstractBugInjector {
     }
 
     @Override
-    public void visit(StmtList node) {
+    public void visit(ActorDefinition actor) {
         Class<? extends Stmt> targetType = getStatementTypeToRemove();
 
-        // Only create mutation if this StmtList contains the target statement type
-        boolean hasTarget = false;
-        for (Stmt stmt : node.getStmts()) {
-            if (targetType.isInstance(stmt)) {
-                hasTarget = true;
-                break;
-            }
-        }
+        // Collect all StmtLists in this actor that contain the target statement type
+        List<StmtList> stmtListsWithTarget = new ArrayList<>();
+        collectStmtListsWithTarget(actor, targetType, stmtListsWithTarget);
 
-        if (hasTarget) {
-            mutateClone(node, (StmtList clone) -> {
-                // Remove ALL occurrences of the target statement type
-                clone.getStmts().removeIf(targetType::isInstance);
+        if (!stmtListsWithTarget.isEmpty()) {
+            // Create a SINGLE mutation that removes the target from ALL StmtLists
+            mutateMultipleClones(stmtListsWithTarget, (StmtList clonedList) -> {
+                // Remove ALL occurrences of the target statement type from this StmtList
+                clonedList.getStmts().removeIf(targetType::isInstance);
             });
         }
-        super.visit(node);
+
+        // Don't call super.visit() - we handle the entire actor in one mutation
+    }
+
+    private void collectStmtListsWithTarget(ASTNode node, Class<? extends Stmt> targetType,
+                                            List<StmtList> result) {
+        if (node instanceof StmtList stmtList) {
+            for (Stmt stmt : stmtList.getStmts()) {
+                if (targetType.isInstance(stmt)) {
+                    result.add(stmtList);
+                    break;
+                }
+            }
+        }
+        for (var child : node.getChildren()) {
+            collectStmtListsWithTarget(child, targetType, result);
+        }
     }
 }
+

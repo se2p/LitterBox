@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.hint.FloatingPointComparisonHintFactory;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
@@ -55,7 +56,8 @@ public class FloatingPointComparison extends AbstractIssueFinder {
     private boolean isSafeOperand(ComparableExpr operand) {
         if (operand instanceof MouseX || operand instanceof MouseY || operand instanceof DistanceTo
                 || operand instanceof PositionX || operand instanceof PositionY || operand instanceof Direction
-                || operand instanceof Volume || operand instanceof Timer) {
+                || operand instanceof Volume || operand instanceof Timer || operand instanceof Loudness
+                || operand instanceof DaysSince2000) {
             return false;
         } else if (operand instanceof AttributeOf attributeOf) {
             if (attributeOf.getAttribute() instanceof AttributeFromFixed attributeFromFixed) {
@@ -65,6 +67,16 @@ public class FloatingPointComparison extends AbstractIssueFinder {
                         && attributeFromFixed.getAttribute().getType() != FixedAttribute.FixedAttributeType.VOLUME;
             }
         }
+
+        // Recursively check children for unsafeness (e.g., Timer inside Add)
+        for (ASTNode child : operand.getChildren()) {
+            if (child instanceof ComparableExpr comparableChild) {
+                if (!isSafeOperand(comparableChild)) {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 
@@ -81,6 +93,8 @@ public class FloatingPointComparison extends AbstractIssueFinder {
             Hint hint = FloatingPointComparisonHintFactory.generateHint(node);
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH, hint);
         }
+        // Always visit children to detect nested Equals comparisons
+        visitChildren(node);
     }
 
     @Override

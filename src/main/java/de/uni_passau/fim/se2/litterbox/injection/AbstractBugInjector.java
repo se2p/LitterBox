@@ -232,6 +232,64 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     }
 
     /**
+     * Mutates multiple nodes in a cloned AST using the same mutator.
+     * Creates a single mutation that applies the mutator to all cloned counterparts of the given nodes.
+     * <p>
+     * Use this when you need to apply the same modification to multiple nodes in one mutation
+     * (e.g., removing all PenUp statements from all scripts in an actor).
+     *
+     * @param originalNodes The nodes in the original AST to mutate
+     * @param mutator       Logic to apply to each cloned node
+     * @param <T>           The type of the AST nodes
+     */
+    @SuppressWarnings("unchecked")
+    protected <T extends ASTNode> void mutateMultipleClones(List<T> originalNodes, Consumer<T> mutator) {
+        if (reachesLimit() || originalNodes.isEmpty()) {
+            return;
+        }
+
+        // Use the first node as the anchor for metadata
+        T anchorNode = originalNodes.get(0);
+        ScriptEntity originalScript = findContainingScript(anchorNode);
+        String originalScratchBlocks = safeGetScratchBlocks(originalScript);
+        String spriteName = findContainingActorName(anchorNode);
+
+        MappingCloneVisitor mappingVisitor = new MappingCloneVisitor();
+        ASTNode clonedRootNode = originalProgram.accept(mappingVisitor);
+
+        if (!(clonedRootNode instanceof Program clone)) {
+            log.warning("Cloning program returned " + clonedRootNode.getClass().getName());
+            return;
+        }
+
+        clone.accept(new ParentVisitor());
+
+        // Apply the mutator to ALL cloned nodes
+        boolean anyMutated = false;
+        for (T originalNode : originalNodes) {
+            ASTNode clonedNode = mappingVisitor.get(originalNode);
+            if (clonedNode != null && originalNode.getClass().isInstance(clonedNode)) {
+                try {
+                    mutator.accept((T) clonedNode);
+                    anyMutated = true;
+                } catch (Exception e) {
+                    log.log(WARNING, "Failed to apply mutation to node for " + getName(), e);
+                }
+            }
+        }
+
+        if (anyMutated) {
+            String mutatedScratchBlocks = safeGetScratchBlocks(findContainingScript(mappingVisitor.get(anchorNode)));
+            injectionResults.add(new InjectionResult(
+                    clone,
+                    spriteName,
+                    originalScratchBlocks,
+                    mutatedScratchBlocks
+            ));
+        }
+    }
+
+    /**
      * Replaces a node with a new instance during cloning.
      * <p>
      * Use this when you need to create a new node instance (e.g., replacing an Add

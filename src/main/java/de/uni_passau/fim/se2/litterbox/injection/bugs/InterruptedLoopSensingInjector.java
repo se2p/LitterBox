@@ -131,19 +131,102 @@ public class InterruptedLoopSensingInjector extends AbstractBugInjector {
     }
 
     private boolean containsBlocking(StmtList list) {
-        return list.getStmts().stream().anyMatch(s ->
-                s instanceof WaitSeconds || s instanceof GlideSecsTo || s instanceof GlideSecsToXY
-                        || s instanceof SayForSecs || s instanceof ThinkForSecs || s instanceof PlaySoundUntilDone);
+        BlockingFinder finder = new BlockingFinder();
+        list.accept(finder);
+        return finder.foundBlocking;
     }
 
     private boolean containsStop(StmtList list) {
-        return list.getStmts().stream().anyMatch(s -> s instanceof StopAll || s instanceof StopThisScript);
+        StopFinder finder = new StopFinder();
+        list.accept(finder);
+        return finder.foundStop;
     }
 
     private boolean containsSensing(BoolExpr condition) {
         SensingFinder finder = new SensingFinder();
         condition.accept(finder);
         return finder.foundSensing;
+    }
+
+    /**
+     * Visitor that checks if any statement in a list takes a longer time (blocking),
+     * matching the types checked by the InterruptedLoopSensing finder.
+     */
+    private static class BlockingFinder implements ScratchVisitor {
+        private boolean foundBlocking = false;
+
+        @Override
+        public void visit(WaitSeconds node) {
+            foundBlocking = true;
+        }
+
+        @Override
+        public void visit(GlideSecsTo node) {
+            foundBlocking = true;
+        }
+
+        @Override
+        public void visit(GlideSecsToXY node) {
+            foundBlocking = true;
+        }
+
+        @Override
+        public void visit(SayForSecs node) {
+            foundBlocking = true;
+        }
+
+        @Override
+        public void visit(ThinkForSecs node) {
+            foundBlocking = true;
+        }
+
+        @Override
+        public void visit(PlaySoundUntilDone node) {
+            foundBlocking = true;
+        }
+    }
+
+    /**
+     * Visitor that checks if a statement list leads to a stop, matching the
+     * recursive logic in InterruptedLoopSensing.checkForStop.
+     */
+    private static class StopFinder implements ScratchVisitor {
+        private boolean foundStop = false;
+        private boolean insideIfElse = false;
+
+        @Override
+        public void visit(StopAll node) {
+            foundStop = true;
+        }
+
+        @Override
+        public void visit(StopThisScript node) {
+            foundStop = true;
+        }
+
+        @Override
+        public void visit(RepeatForeverStmt node) {
+            // InterruptedLoopSensing.checkForStop descends into forever loops
+            visitChildren(node);
+        }
+
+        @Override
+        public void visit(IfElseStmt node) {
+            boolean wasInsideIfElse = insideIfElse;
+            insideIfElse = true;
+
+            node.getThenStmts().accept(this);
+            boolean stopInThen = foundStop;
+            foundStop = false; // Reset to check else
+
+            node.getElseStmts().accept(this);
+            boolean stopInElse = foundStop;
+
+            foundStop = stopInThen || stopInElse;
+            insideIfElse = wasInsideIfElse;
+        }
+
+        // Note: Finder skips IfThenStmt and UntilStmt for stop checking (matches non-guaranteed stop)
     }
 
     /**

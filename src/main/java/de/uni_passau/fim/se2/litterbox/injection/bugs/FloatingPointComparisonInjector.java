@@ -20,14 +20,12 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.FloatingPointComparison;
-import de.uni_passau.fim.se2.litterbox.ast.builder.IfStmtBuilder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
@@ -35,11 +33,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
@@ -70,7 +63,7 @@ public class FloatingPointComparisonInjector extends AbstractBugInjector {
     private static final Set<Class<? extends Expression>> UNSAFE_OPERAND_TYPES = Set.of(
             MouseX.class, MouseY.class, DistanceTo.class,
             PositionX.class, PositionY.class, Direction.class,
-            Volume.class, Timer.class
+            Volume.class, Timer.class, Loudness.class, DaysSince2000.class
     );
 
     /**
@@ -159,9 +152,9 @@ public class FloatingPointComparisonInjector extends AbstractBugInjector {
 
     @Override
     public void visit(Equals node) {
-        // Only inject when Equals is the DIRECT condition of an if/until/wait-until
-        // Not when it's nested inside Or/And or another comparison's operand
-        if (!isDirectCondition(node)) {
+        // Only inject when Equals is part of an if/until/wait-until condition
+        // The finder handles recursion via inCondition flag.
+        if (!isInConditionContext(node)) {
             super.visit(node);
             return;
         }
@@ -191,79 +184,25 @@ public class FloatingPointComparisonInjector extends AbstractBugInjector {
         super.visit(node);
     }
 
-    /**
-     * Checks if the Equals node is the DIRECT condition of an if/until/wait-until.
-     * Returns false if it's nested inside Or/And or another comparison's operand.
-     */
-    private boolean isDirectCondition(Equals node) {
-        ASTNode parent = node.getParentNode();
-        if (parent instanceof IfThenStmt ifStmt) {
-            return ifStmt.getBoolExpr() == node;
-        }
-        if (parent instanceof IfElseStmt ifElse) {
-            return ifElse.getBoolExpr() == node;
-        }
-        if (parent instanceof UntilStmt until) {
-            return until.getBoolExpr() == node;
-        }
-        if (parent instanceof WaitUntil waitUntil) {
-            return waitUntil.getUntil() == node;
-        }
-        return false;
-    }
 
     @Override
-    public void visit(IfThenStmt node) {
-        tryInjectComparisonReplacement(node);
+    public void visit(LessThan node) {
+        if (isInConditionContext(node) && isUnsafeComparison(node)) {
+            replaceWith(node, n -> new Equals(cloner.apply(n.getOperand1()), cloner.apply(n.getOperand2()), n.getMetadata()));
+        }
         super.visit(node);
     }
 
     @Override
-    public void visit(IfElseStmt node) {
-        tryInjectComparisonReplacement(node);
+    public void visit(BiggerThan node) {
+        if (isInConditionContext(node) && isUnsafeComparison(node)) {
+            replaceWith(node, n -> new Equals(cloner.apply(n.getOperand1()), cloner.apply(n.getOperand2()), n.getMetadata()));
+        }
         super.visit(node);
     }
 
-    private void tryInjectComparisonReplacement(IfStmt node) {
-        BoolExpr condition = node.getBoolExpr();
-
-        if (!isUnsafeComparison(condition)) {
-            return;
-        }
-
-        mutateClone(node, clone -> {
-            BoolExpr clonedCondition = clone.getBoolExpr();
-
-            @SuppressWarnings("unchecked")
-            BinaryExpression<ComparableExpr, ComparableExpr> comparison =
-                    (BinaryExpression<ComparableExpr, ComparableExpr>) clonedCondition;
-
-            Equals equals = new Equals(
-                    cloner.apply(comparison.getOperand1()),
-                    cloner.apply(comparison.getOperand2()),
-                    clonedCondition.getMetadata()
-            );
-
-            IfStmtBuilder builder = new IfStmtBuilder()
-                    .withCondition(equals)
-                    .withBody(clone.getThenStmts())
-                    .withMetadata(clone.getMetadata());
-
-            if (clone instanceof IfElseStmt ifElse) {
-                builder.withElseBody(ifElse.getElseStmts());
-            }
-
-            replaceInParent(clone, builder.build());
-        });
-    }
-
-    private boolean isUnsafeComparison(BoolExpr condition) {
-        if (condition instanceof LessThan lt) {
-            return !isSafeOperand(lt.getOperand1()) && !isSafeOperand(lt.getOperand2());
-        } else if (condition instanceof BiggerThan gt) {
-            return !isSafeOperand(gt.getOperand1()) && !isSafeOperand(gt.getOperand2());
-        }
-        return false;
+    private boolean isUnsafeComparison(BinaryExpression<ComparableExpr, ComparableExpr> condition) {
+        return !isSafeOperand(condition.getOperand1()) || !isSafeOperand(condition.getOperand2());
     }
 
     private boolean isSafeOperand(ComparableExpr operand) {
@@ -272,9 +211,21 @@ public class FloatingPointComparisonInjector extends AbstractBugInjector {
         }
         if (operand instanceof AttributeOf attributeOf) {
             if (attributeOf.getAttribute() instanceof AttributeFromFixed attrFixed) {
-                return !UNSAFE_ATTRIBUTE_TYPES.contains(attrFixed.getAttribute().getType());
+                if (UNSAFE_ATTRIBUTE_TYPES.contains(attrFixed.getAttribute().getType())) {
+                    return false;
+                }
             }
         }
+
+        // Recursively check children for unsafeness (e.g., Timer inside Add)
+        for (ASTNode child : operand.getChildren()) {
+            if (child instanceof ComparableExpr comparableChild) {
+                if (!isSafeOperand(comparableChild)) {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 }

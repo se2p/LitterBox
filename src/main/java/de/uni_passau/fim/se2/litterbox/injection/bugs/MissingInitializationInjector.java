@@ -138,6 +138,13 @@ public class MissingInitializationInjector extends AbstractBugInjector {
     private boolean canRemoveInitialization(Script script, List<Stmt> statements, int index) {
         Set<Defineable> definitions = getDefinitions(statements.get(index));
 
+        // Must not be already initialized by an EARLIER statement in the same script
+        // (e.g., "go to random position" initializes BOTH x and y, so removing "set y to"
+        // won't create a detectable bug since y is still initialized)
+        if (isInitializedEarlierInScript(statements, index, definitions)) {
+            return false;
+        }
+
         // Must be used later in the script
         if (!isUsedAfterIndex(statements, index + 1, definitions)) {
             return false;
@@ -152,6 +159,24 @@ public class MissingInitializationInjector extends AbstractBugInjector {
         return !hasCoveringDefinition(statements, index + 1, definitions);
     }
 
+    /**
+     * Checks if any of the target definitions are already initialized by an earlier
+     * statement in the same script.
+     */
+    private boolean isInitializedEarlierInScript(List<Stmt> statements, int currentIndex, Set<Defineable> targets) {
+        for (int i = 0; i < currentIndex; i++) {
+            Stmt stmt = statements.get(i);
+            if (!isInitializationStatement(stmt)) {
+                break; // Only check initialization block at the start
+            }
+            Set<Defineable> earlierDefs = getDefinitions(stmt);
+            if (!Collections.disjoint(earlierDefs, targets)) {
+                return true; // Found earlier initialization of same attribute
+            }
+        }
+        return false;
+    }
+
     // ==================== Global Initialization Tracking ====================
 
     /**
@@ -162,9 +187,7 @@ public class MissingInitializationInjector extends AbstractBugInjector {
 
         for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
             for (Script script : actor.getScripts().getScriptList()) {
-                if (script.getEvent() instanceof GreenFlag) {
-                    collectScriptInitializations(script, actor, result);
-                }
+                collectScriptInitializations(script, actor, result);
             }
         }
         return result;
@@ -175,14 +198,17 @@ public class MissingInitializationInjector extends AbstractBugInjector {
         ActorDefinition savedActor = this.currentActor;
         this.currentActor = actor;
 
-        for (Stmt stmt : script.getStmtList().getStmts()) {
-            if (!isInitializationStatement(stmt)) {
-                break;
+        script.accept(new ScratchVisitor() {
+            @Override
+            public void visit(ASTNode node) {
+                if (node instanceof Stmt stmt && isInitializationStatement(stmt)) {
+                    for (Defineable def : getDefinitions(stmt)) {
+                        result.computeIfAbsent(def, k -> new HashSet<>()).add(script);
+                    }
+                }
+                visitChildren(node);
             }
-            for (Defineable def : getDefinitions(stmt)) {
-                result.computeIfAbsent(def, k -> new HashSet<>()).add(script);
-            }
-        }
+        });
 
         this.currentActor = savedActor;
     }
@@ -226,14 +252,6 @@ public class MissingInitializationInjector extends AbstractBugInjector {
         return defs;
     }
 
-    /**
-     * Gets all defineables that are USED (read) by this statement and its descendants.
-     */
-    private Set<Defineable> getUses(Stmt stmt) {
-        UseCollector collector = new UseCollector(currentActor);
-        stmt.accept(collector);
-        return collector.uses;
-    }
 
     /**
      * Checks if any of the target definitions are used after the given index.
@@ -257,32 +275,96 @@ public class MissingInitializationInjector extends AbstractBugInjector {
      * definitions inside control flow are conditional.
      */
     private boolean hasCoveringDefinition(List<Stmt> statements, int startIndex, Set<Defineable> targets) {
-        Set<Defineable> uncovered = new HashSet<>(targets);
+        Set<Defineable> remainingTargets = new HashSet<>(targets);
 
         for (int i = startIndex; i < statements.size(); i++) {
             Stmt stmt = statements.get(i);
 
-            // Check uses first (use happens before definition in execution order)
-            Set<Defineable> uses = getUses(stmt);
-            uncovered.removeAll(uses); // These have uses, so not covered
+            // 1. Check for covering definitions within this statement
+            Set<Defineable> coveredByStmt = getCoveringDefinitions(stmt, remainingTargets);
+            remainingTargets.removeAll(coveredByStmt);
 
-            if (uncovered.isEmpty()) {
-                return false; // All have uses before covering definitions
+            if (remainingTargets.isEmpty()) {
+                return true; // All targets are covered
             }
 
-            // Only top-level init statements can provide covering definitions
-            if (isInitializationStatement(stmt)) {
-                Set<Defineable> defs = getDefinitions(stmt);
-                uncovered.removeAll(defs); // These are covered by later definition
-            }
-
-            if (uncovered.isEmpty()) {
-                return true; // All are covered
+            // 2. Check for uses within this statement of the REMAINING targets.
+            // (Note: getCoveringDefinitions already checked for uses before definitions within certain stmt types,
+            // but for others like IfThen or loops, we still need to check if they use anything).
+            Set<Defineable> usesInStmt = getUses(stmt);
+            if (!Collections.disjoint(usesInStmt, remainingTargets)) {
+                return false; // Found a use before any covering definition
             }
         }
 
-        // Remaining targets have neither use nor covering definition - effectively covered
+        // No use found for remaining targets by end of script.
+        // Effectively covered (undetectable by finder).
         return true;
+    }
+
+    /**
+     * Identifies defineables from the 'targets' set that are GUARANTEED to be defined
+     * by this statement BEFORE being used, assuming the statement is reached.
+     */
+    private Set<Defineable> getCoveringDefinitions(Stmt stmt, Set<Defineable> targets) {
+        if (isInitializationStatement(stmt)) {
+            Set<Defineable> defs = getDefinitions(stmt);
+            Set<Defineable> uses = getUses(stmt);
+            Set<Defineable> covered = new HashSet<>(defs);
+            covered.retainAll(targets);
+            covered.removeAll(uses); // Defines must happen before Uses (e.g., ChangeVariable uses then defines)
+            return covered;
+        }
+
+        if (stmt instanceof de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt ifElse) {
+            // Condition uses happen BEFORE branches
+            Set<Defineable> usesInCondition = getUses(ifElse.getBoolExpr());
+            if (!Collections.disjoint(usesInCondition, targets)) {
+                return Collections.emptySet();
+            }
+
+            Set<Defineable> thenCovered = getCoveringDefinitions(ifElse.getThenStmts().getStmts(), targets);
+            Set<Defineable> elseCovered = getCoveringDefinitions(ifElse.getElseStmts().getStmts(), targets);
+
+            Set<Defineable> intersection = new HashSet<>(thenCovered);
+            intersection.retainAll(elseCovered);
+            return intersection;
+        }
+
+        return Collections.emptySet();
+    }
+
+    private Set<Defineable> getCoveringDefinitions(List<Stmt> statements, Set<Defineable> targets) {
+        Set<Defineable> coveredInThisList = new HashSet<>();
+        Set<Defineable> remainingTargets = new HashSet<>(targets);
+
+        for (Stmt stmt : statements) {
+            Set<Defineable> coveredByStmt = getCoveringDefinitions(stmt, remainingTargets);
+            coveredInThisList.addAll(coveredByStmt);
+            remainingTargets.removeAll(coveredByStmt);
+
+            if (remainingTargets.isEmpty()) {
+                break;
+            }
+
+            // Check if ANY of the still-remaining targets are used here
+            Set<Defineable> usesInStmt = getUses(stmt);
+            if (!Collections.disjoint(usesInStmt, remainingTargets)) {
+                // These are used before being covered. They can't be covered by later stmts.
+                remainingTargets.removeAll(usesInStmt);
+            }
+
+            if (remainingTargets.isEmpty()) {
+                break;
+            }
+        }
+        return coveredInThisList;
+    }
+
+    private Set<Defineable> getUses(de.uni_passau.fim.se2.litterbox.ast.model.ASTNode node) {
+        UseCollector collector = new UseCollector(currentActor);
+        node.accept(collector);
+        return collector.uses;
     }
 
     // ==================== Use Collector ====================
@@ -316,6 +398,16 @@ public class MissingInitializationInjector extends AbstractBugInjector {
             // The variable is a use (read before modify) AND the expression
             collectUses(node);
             node.getExpr().accept(this);
+        }
+
+        @Override
+        public void visit(de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable node) {
+            // Don't traverse - HideVariable doesn't use the variable's value
+        }
+
+        @Override
+        public void visit(de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable node) {
+            // Don't traverse - ShowVariable doesn't use the variable's value
         }
 
         @Override

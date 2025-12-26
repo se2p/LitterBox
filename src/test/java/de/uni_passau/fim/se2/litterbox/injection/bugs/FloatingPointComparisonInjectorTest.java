@@ -177,8 +177,8 @@ public class FloatingPointComparisonInjectorTest implements JsonTest {
         FloatingPointComparisonInjector injector = new FloatingPointComparisonInjector();
         List<InjectionResult> injected = injector.inject(program);
 
-        // Should not inject because one operand is safe (literal 1)
-        assertTrue(injected.isEmpty(),
-                "Should not convert LessThan to Equals when one operand is safe");
+        // Should inject because one operand is unsafe (timer)
+        assertFalse(injected.isEmpty(),
+                "Should convert LessThan to Equals when even only one operand is unsafe");
     }
 }
