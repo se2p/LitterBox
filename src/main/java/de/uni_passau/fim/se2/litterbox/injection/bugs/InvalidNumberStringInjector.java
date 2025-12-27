@@ -42,6 +42,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveStep
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
+import de.uni_passau.fim.se2.litterbox.ast.builder.ComparisonBuilder;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 import java.util.function.BiFunction;
@@ -83,36 +84,31 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
 
     @Override
     public void visit(Add node) {
-        injectIntoBinaryNumericOp(node, node.getOperand1(), node.getOperand2(),
-                (op1, op2) -> new Add(op1, op2, cloner.apply(node.getMetadata())));
+        injectIntoBinaryNumericOp(node, node.getOperand1(), node.getOperand2(), Add::new);
         super.visit(node);
     }
 
     @Override
     public void visit(Minus node) {
-        injectIntoBinaryNumericOp(node, node.getOperand1(), node.getOperand2(),
-                (op1, op2) -> new Minus(op1, op2, cloner.apply(node.getMetadata())));
+        injectIntoBinaryNumericOp(node, node.getOperand1(), node.getOperand2(), Minus::new);
         super.visit(node);
     }
 
     @Override
     public void visit(Mult node) {
-        injectIntoBinaryNumericOp(node, node.getOperand1(), node.getOperand2(),
-                (op1, op2) -> new Mult(op1, op2, cloner.apply(node.getMetadata())));
+        injectIntoBinaryNumericOp(node, node.getOperand1(), node.getOperand2(), Mult::new);
         super.visit(node);
     }
 
     @Override
     public void visit(Div node) {
-        injectIntoBinaryNumericOp(node, node.getOperand1(), node.getOperand2(),
-                (op1, op2) -> new Div(op1, op2, cloner.apply(node.getMetadata())));
+        injectIntoBinaryNumericOp(node, node.getOperand1(), node.getOperand2(), Div::new);
         super.visit(node);
     }
 
     @Override
     public void visit(Mod node) {
-        injectIntoBinaryNumericOp(node, node.getOperand1(), node.getOperand2(),
-                (op1, op2) -> new Mod(op1, op2, cloner.apply(node.getMetadata())));
+        injectIntoBinaryNumericOp(node, node.getOperand1(), node.getOperand2(), Mod::new);
         super.visit(node);
     }
 
@@ -121,21 +117,33 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
     @Override
     public void visit(Equals node) {
         injectIntoComparisonOp(node, node.getOperand1(), node.getOperand2(),
-                (op1, op2) -> new Equals(op1, op2, cloner.apply(node.getMetadata())));
+                (op1, op2) -> new ComparisonBuilder()
+                        .from(node)
+                        .withOperand1(op1)
+                        .withOperand2(op2)
+                        .buildEquals());
         super.visit(node);
     }
 
     @Override
     public void visit(LessThan node) {
         injectIntoComparisonOp(node, node.getOperand1(), node.getOperand2(),
-                (op1, op2) -> new LessThan(op1, op2, cloner.apply(node.getMetadata())));
+                (op1, op2) -> new ComparisonBuilder()
+                        .from(node)
+                        .withOperand1(op1)
+                        .withOperand2(op2)
+                        .buildLessThan());
         super.visit(node);
     }
 
     @Override
     public void visit(BiggerThan node) {
         injectIntoComparisonOp(node, node.getOperand1(), node.getOperand2(),
-                (op1, op2) -> new BiggerThan(op1, op2, cloner.apply(node.getMetadata())));
+                (op1, op2) -> new ComparisonBuilder()
+                        .from(node)
+                        .withOperand1(op1)
+                        .withOperand2(op2)
+                        .buildBiggerThan());
         super.visit(node);
     }
 
@@ -224,18 +232,25 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
             T node,
             NumExpr operand1,
             NumExpr operand2,
-            BiFunction<NumExpr, NumExpr, T> constructor) {
+            TriFunction<NumExpr, NumExpr, BlockMetadata, T> constructor) {
 
         if (operand1 instanceof NumberLiteral numLit) {
             NumExpr replacement = createInvalidNumExpr(numLit.getValue());
             NumExpr clonedOp2 = cloner.apply(operand2);
-            replaceWith(node, n -> constructor.apply(replacement, clonedOp2));
+            BlockMetadata clonedMeta = cloner.apply(node.getMetadata());
+            replaceWith(node, n -> constructor.apply(replacement, clonedOp2, clonedMeta));
         }
         if (operand2 instanceof NumberLiteral numLit) {
             NumExpr replacement = createInvalidNumExpr(numLit.getValue());
             NumExpr clonedOp1 = cloner.apply(operand1);
-            replaceWith(node, n -> constructor.apply(clonedOp1, replacement));
+            BlockMetadata clonedMeta = cloner.apply(node.getMetadata());
+            replaceWith(node, n -> constructor.apply(clonedOp1, replacement, clonedMeta));
         }
+    }
+
+    @FunctionalInterface
+    private interface TriFunction<T, U, V, R> {
+        R apply(T t, U u, V v);
     }
 
     /**

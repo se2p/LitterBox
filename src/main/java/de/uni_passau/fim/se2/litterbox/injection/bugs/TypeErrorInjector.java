@@ -41,7 +41,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveStep
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+import de.uni_passau.fim.se2.litterbox.ast.builder.ComparisonBuilder;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ import java.util.function.Function;
  * <p>
  * This injector uses {@link #replaceWith} for immutable transformations.
  */
-public class TypeErrorInjector extends AbstractBugInjector {
+public class TypeErrorInjector extends AbstractComparisonInjector {
 
     /**
      * Lazy holder for fallback boolean expression.
@@ -116,21 +116,30 @@ public class TypeErrorInjector extends AbstractBugInjector {
     @Override
     public void visit(Equals node) {
         injectIntoComparison(node, node.getOperand1(),
-                replacement -> new Equals(node.getOperand1(), replacement, node.getMetadata()));
+                replacement -> new ComparisonBuilder()
+                        .from(node)
+                        .withOperand2(replacement)
+                        .buildEquals());
         super.visit(node);
     }
 
     @Override
     public void visit(LessThan node) {
         injectIntoComparison(node, node.getOperand1(),
-                replacement -> new LessThan(node.getOperand1(), replacement, node.getMetadata()));
+                replacement -> new ComparisonBuilder()
+                        .from(node)
+                        .withOperand2(replacement)
+                        .buildLessThan());
         super.visit(node);
     }
 
     @Override
     public void visit(BiggerThan node) {
         injectIntoComparison(node, node.getOperand1(),
-                replacement -> new BiggerThan(node.getOperand1(), replacement, node.getMetadata()));
+                replacement -> new ComparisonBuilder()
+                        .from(node)
+                        .withOperand2(replacement)
+                        .buildBiggerThan());
         super.visit(node);
     }
 

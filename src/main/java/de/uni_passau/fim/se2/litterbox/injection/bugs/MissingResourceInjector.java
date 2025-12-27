@@ -52,13 +52,10 @@ public class MissingResourceInjector extends AbstractBugInjector {
 
     @Override
     public void visit(ActorDefinition actor) {
-        ActorDefinition previousActor = currentActor;
-        try {
-            currentActor = actor;
-            super.visit(actor);
-        } finally {
-            currentActor = previousActor;
-        }
+        // Clear state before visiting new actor
+        this.currentActor = actor;
+        super.visit(actor);
+        this.currentActor = null; 
     }
 
     @Override

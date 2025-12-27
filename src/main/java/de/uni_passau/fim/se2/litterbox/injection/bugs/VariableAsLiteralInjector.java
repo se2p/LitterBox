@@ -20,15 +20,12 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.VariableAsLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Injects the VariableAsLiteral bug by replacing Variable references with string literals of their names.
@@ -38,19 +35,6 @@ public class VariableAsLiteralInjector extends AbstractAsLiteralInjector {
     @Override
     public IssueFinder getIssueFinder() {
         return new VariableAsLiteral();
-    }
-
-    @Override
-    protected int countTargetNodes(Program program) {
-        AtomicInteger count = new AtomicInteger(0);
-        program.accept(new ScratchVisitor() {
-            @Override
-            public void visit(Variable node) {
-                count.incrementAndGet();
-                ScratchVisitor.super.visit(node);
-            }
-        });
-        return count.get();
     }
 
     @Override

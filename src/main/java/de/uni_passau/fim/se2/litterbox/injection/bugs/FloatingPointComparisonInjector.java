@@ -34,7 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+import de.uni_passau.fim.se2.litterbox.ast.builder.ComparisonBuilder;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ import java.util.Set;
  * <p>
  * Only modifies comparisons inside conditions (if, until, wait until).
  */
-public class FloatingPointComparisonInjector extends AbstractBugInjector {
+public class FloatingPointComparisonInjector extends AbstractComparisonInjector {
 
     /**
      * Expression types that produce floating-point values (unsafe for exact comparison).
@@ -162,6 +162,13 @@ public class FloatingPointComparisonInjector extends AbstractBugInjector {
         ComparableExpr op1 = node.getOperand1();
         ComparableExpr op2 = node.getOperand2();
 
+        // Skip if not comparing numeric expressions (e.g., comparing booleans)
+        // The finder only reports floating-point issues for numeric comparisons
+        if (!(op1 instanceof NumExpr) || !(op2 instanceof NumExpr)) {
+            super.visit(node);
+            return;
+        }
+
         boolean safe1 = isSafeOperand(op1);
         boolean safe2 = isSafeOperand(op2);
 
@@ -171,7 +178,10 @@ public class FloatingPointComparisonInjector extends AbstractBugInjector {
         if (safe1 && safe2) {
             ComparableExpr unsafeReplacement = cloner.apply(foundUnsafeOperands.getFirst());
             // Replace one operand with an unsafe one
-            replaceWith(node, n -> new Equals(unsafeReplacement, cloner.apply(op2), n.getMetadata()));
+            replaceWith(node, n -> new ComparisonBuilder()
+                    .from(n)
+                    .withOperand1(unsafeReplacement)
+                    .buildEquals());
         }
 
         super.visit(node);
@@ -181,7 +191,9 @@ public class FloatingPointComparisonInjector extends AbstractBugInjector {
     @Override
     public void visit(LessThan node) {
         if (isInConditionContext(node) && isUnsafeComparison(node)) {
-            replaceWith(node, n -> new Equals(cloner.apply(n.getOperand1()), cloner.apply(n.getOperand2()), n.getMetadata()));
+            replaceWith(node, n -> new ComparisonBuilder()
+                    .from(n)
+                    .buildEquals());
         }
         super.visit(node);
     }
@@ -189,7 +201,9 @@ public class FloatingPointComparisonInjector extends AbstractBugInjector {
     @Override
     public void visit(BiggerThan node) {
         if (isInConditionContext(node) && isUnsafeComparison(node)) {
-            replaceWith(node, n -> new Equals(cloner.apply(n.getOperand1()), cloner.apply(n.getOperand2()), n.getMetadata()));
+            replaceWith(node, n -> new ComparisonBuilder()
+                    .from(n)
+                    .buildEquals());
         }
         super.visit(node);
     }

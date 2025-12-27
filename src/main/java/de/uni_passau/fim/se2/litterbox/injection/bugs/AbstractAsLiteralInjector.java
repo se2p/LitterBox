@@ -155,7 +155,7 @@ public abstract class AbstractAsLiteralInjector extends AbstractBugInjector {
         }
     }
 
-    private boolean isInStringContext(ASTNode node) {
+    protected boolean isInStringContext(ASTNode node) {
         ASTNode current = node;
         while (current != null) {
             ASTNode parent = current.getParentNode();
@@ -174,18 +174,25 @@ public abstract class AbstractAsLiteralInjector extends AbstractBugInjector {
                 return false;
             }
 
-            // Check various string-accepting contexts
-            if (isSpriteLookContext(parent)
-                    || isStringOperatorContext(parent)
-                    || isComparisonContext(parent)
-                    || isListOperationContext(parent, current)
-                    || isVariableAssignmentContext(parent, current)) {
+            // Check if context accepts string
+            if (acceptsStringInPosition(parent, current)) {
                 return true;
             }
 
             current = parent;
         }
         return false;
+    }
+
+    /**
+     * Checks if the parent node accepts a string in the position of the current node.
+     */
+    private boolean acceptsStringInPosition(ASTNode parent, ASTNode child) {
+        return isSpriteLookContext(parent)
+                || isStringOperatorContext(parent)
+                || isComparisonContext(parent)
+                || isListOperationContext(parent, child)
+                || isVariableAssignmentContext(parent, child);
     }
 
     /**

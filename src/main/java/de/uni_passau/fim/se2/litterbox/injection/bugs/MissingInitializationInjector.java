@@ -20,8 +20,8 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingInitialization;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -94,11 +94,6 @@ public class MissingInitializationInjector extends AbstractBugInjector {
         globalInitialDefinitions.applyAnalysis();
 
         return super.inject(program);
-    }
-
-    @Override
-    public void visit(ActorDefinition actor) {
-        super.visit(actor);
     }
 
     @Override
@@ -205,12 +200,21 @@ public class MissingInitializationInjector extends AbstractBugInjector {
      * Checks if any of the target definitions are defined elsewhere in the same script.
      * A later definition would serve as a backup initialization that the finder would detect.
      * This checks all statements in the script, including those nested in loops and conditionals.
+     * 
+     * Note: For statements inside loops, we don't filter by isInitialDefinitionStatement because
+     * the finder's may-analysis considers any definition path as valid, even if the definition
+     * also uses the variable (like IfOnEdgeBounce which uses rotation before defining it).
+     * For top-level statements, we apply the filter to avoid false positives from definitions
+     * that are side effects of other operations (like move steps defining position).
      */
     private boolean isDefinedLaterInScript(List<Stmt> statements, int currentIndex, Set<Definition> targets) {
         Stmt currentStmt = statements.get(currentIndex);
+        // Collect target Defineables for equals comparison
         Set<Defineable> targetDefineables = targets.stream()
                 .map(Definition::getDefinable)
                 .collect(Collectors.toSet());
+
+        ASTNode targetScript = targets.iterator().next().getDefinitionSource().getScriptOrProcedure();
 
         // Check all nodes in the global CFG for definitions of the same variables
         // that belong to the same script but are different statements
@@ -220,21 +224,43 @@ public class MissingInitializationInjector extends AbstractBugInjector {
                 continue;
             }
 
-            // Only consider initial definitions (those that would reach entry in backward analysis)
-            if (node.getASTNode() instanceof Stmt nodeStmt && !isInitialDefinitionStatement(nodeStmt)) {
-                continue;
+            // For top-level statements (not inside loops), apply isInitialDefinitionStatement filter
+            // For loop-nested statements, skip this filter since may-analysis considers them valid
+            if (node.getASTNode() instanceof Stmt nodeStmt) {
+                boolean isInsideLoop = isInsideLoop(nodeStmt);
+                if (!isInsideLoop && !isInitialDefinitionStatement(nodeStmt)) {
+                    continue;
+                }
             }
 
             // Check if this node defines any of the target variables
             for (Definition nodeDef : node.getDefinitions()) {
-                if (targetDefineables.contains(nodeDef.getDefinable())) {
+                Defineable nodeDefDefineable = nodeDef.getDefinable();
+
+                // Check by equals for same attribute type/name
+                if (targetDefineables.contains(nodeDefDefineable)) {
                     // Check if this definition is in the same script
-                    if (nodeDef.getDefinitionSource().getScriptOrProcedure()
-                            == targets.iterator().next().getDefinitionSource().getScriptOrProcedure()) {
+                    if (nodeDef.getDefinitionSource().getScriptOrProcedure() == targetScript) {
                         return true;
                     }
                 }
             }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if a statement is inside a loop (RepeatForever, Repeat, Until).
+     */
+    private boolean isInsideLoop(Stmt stmt) {
+        ASTNode parent = stmt.getParentNode();
+        while (parent != null) {
+            if (parent instanceof de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt
+                    || parent instanceof de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt
+                    || parent instanceof de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt) {
+                return true;
+            }
+            parent = parent.getParentNode();
         }
         return false;
     }

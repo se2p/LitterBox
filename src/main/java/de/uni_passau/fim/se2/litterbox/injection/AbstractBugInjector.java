@@ -86,7 +86,6 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     private int debugCandidatesFound = 0;
     private int debugPreconditionsFailed = 0;
     private int debugMutationsAttempted = 0;
-    private int debugTargetNodesInProgram = 0;
 
     @Override
     public List<InjectionResult> inject(Program program) {
@@ -94,12 +93,6 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
         debugCandidatesFound = 0;
         debugPreconditionsFailed = 0;
         debugMutationsAttempted = 0;
-        debugTargetNodesInProgram = 0;
-
-        // Count target nodes for debug output
-        if (DEBUG_ENABLED) {
-            debugTargetNodesInProgram = countTargetNodes(program);
-        }
 
         // Ensure parent pointers are set before visiting
         program.accept(new ParentVisitor());
@@ -116,25 +109,13 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     }
 
     /**
-     * Count the number of target nodes (e.g., Parameters, Variables) in the program.
-     * Subclasses can override to provide accurate counts for debugging.
-     *
-     * @param program The program to analyze
-     * @return The count of target nodes, or 0 if not implemented
-     */
-    protected int countTargetNodes(Program program) {
-        return 0; // Default: subclasses override for specific counts
-    }
-
-    /**
      * Log debug statistics after injection. Enable with -Dinjection.debug=true
      */
     private void logDebugStats(Program program) {
         String programName = program.getIdent().getName();
-        log.info(String.format("[DEBUG] %s | program=%s | targetNodes=%d | candidates=%d | preconditionsFailed=%d | mutationsAttempted=%d | mutationsProduced=%d",
+        log.info(String.format("[DEBUG] %s | program=%s | candidates=%d | preconditionsFailed=%d | mutationsAttempted=%d | mutationsProduced=%d",
                 getName(),
                 programName,
-                debugTargetNodesInProgram,
                 debugCandidatesFound,
                 debugPreconditionsFailed,
                 debugMutationsAttempted,

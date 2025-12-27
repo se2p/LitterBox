@@ -20,15 +20,11 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ComparingLiterals;
+import de.uni_passau.fim.se2.litterbox.ast.builder.ComparisonBuilder;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 /**
  * Injects the {@link ComparingLiterals} bug.
@@ -39,7 +35,7 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
  * <b>Injection Strategy:</b> Finds comparisons where one side is a literal and the other is not,
  * then replaces the non-literal with a matching literal type.
  */
-public class ComparingLiteralsInjector extends AbstractBugInjector {
+public class ComparingLiteralsInjector extends AbstractComparisonInjector {
 
     @Override
     public IssueFinder getIssueFinder() {
@@ -53,10 +49,16 @@ public class ComparingLiteralsInjector extends AbstractBugInjector {
 
         if (isLiteral(op1) && !isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op1);
-            replaceWith(node, n -> new Equals(n.getOperand1(), matchingLiteral, n.getMetadata()));
+            replaceWith(node, n -> new ComparisonBuilder()
+                    .from(n)
+                    .withOperand2(matchingLiteral)
+                    .buildEquals());
         } else if (!isLiteral(op1) && isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op2);
-            replaceWith(node, n -> new Equals(matchingLiteral, n.getOperand2(), n.getMetadata()));
+            replaceWith(node, n -> new ComparisonBuilder()
+                    .from(n)
+                    .withOperand1(matchingLiteral)
+                    .buildEquals());
         }
         super.visit(node);
     }
@@ -68,10 +70,16 @@ public class ComparingLiteralsInjector extends AbstractBugInjector {
 
         if (isLiteral(op1) && !isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op1);
-            replaceWith(node, n -> new LessThan(n.getOperand1(), matchingLiteral, n.getMetadata()));
+            replaceWith(node, n -> new ComparisonBuilder()
+                    .from(n)
+                    .withOperand2(matchingLiteral)
+                    .buildLessThan());
         } else if (!isLiteral(op1) && isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op2);
-            replaceWith(node, n -> new LessThan(matchingLiteral, n.getOperand2(), n.getMetadata()));
+            replaceWith(node, n -> new ComparisonBuilder()
+                    .from(n)
+                    .withOperand1(matchingLiteral)
+                    .buildLessThan());
         }
         super.visit(node);
     }
@@ -83,82 +91,17 @@ public class ComparingLiteralsInjector extends AbstractBugInjector {
 
         if (isLiteral(op1) && !isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op1);
-            replaceWith(node, n -> new BiggerThan(n.getOperand1(), matchingLiteral, n.getMetadata()));
+            replaceWith(node, n -> new ComparisonBuilder()
+                    .from(n)
+                    .withOperand2(matchingLiteral)
+                    .buildBiggerThan());
         } else if (!isLiteral(op1) && isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op2);
-            replaceWith(node, n -> new BiggerThan(matchingLiteral, n.getOperand2(), n.getMetadata()));
+            replaceWith(node, n -> new ComparisonBuilder()
+                    .from(n)
+                    .withOperand1(matchingLiteral)
+                    .buildBiggerThan());
         }
         super.visit(node);
     }
-
-    /**
-     * Checks if an expression is a literal value, including wrapped literals.
-     * Real Scratch projects often store numbers as AsNumber(StringLiteral("10")).
-     */
-    private boolean isLiteral(ComparableExpr expr) {
-        // Direct literals
-        if (expr instanceof NumberLiteral || expr instanceof StringLiteral) {
-            return true;
-        }
-        // AsNumber wrapping a literal (common in real Scratch JSON)
-        if (expr instanceof AsNumber asNum) {
-            if (asNum.getOperand1() instanceof NumberLiteral) {
-                return true;
-            }
-            if (asNum.getOperand1() instanceof StringLiteral sl) {
-                // Check if string parses as a number
-                try {
-                    Double.parseDouble(sl.getText());
-                    return true;
-                } catch (NumberFormatException e) {
-                    return false;
-                }
-            }
-        }
-        // AsString wrapping a literal
-        if (expr instanceof AsString asStr) {
-            return asStr.getOperand1() instanceof StringLiteral
-                    || asStr.getOperand1() instanceof NumberLiteral;
-        }
-        return false;
-    }
-
-    /**
-     * Creates a matching literal for the given reference expression.
-     * Handles both direct literals and wrapped literals.
-     */
-    private ComparableExpr createMatchingLiteral(ComparableExpr reference) {
-        // Direct literals
-        if (reference instanceof NumberLiteral num) {
-            return new NumberLiteral(num.getValue());
-        }
-        if (reference instanceof StringLiteral str) {
-            return new StringLiteral(str.getText());
-        }
-        // AsNumber wrapping a literal
-        if (reference instanceof AsNumber asNum) {
-            if (asNum.getOperand1() instanceof NumberLiteral num) {
-                return new NumberLiteral(num.getValue());
-            }
-            if (asNum.getOperand1() instanceof StringLiteral sl) {
-                try {
-                    double value = Double.parseDouble(sl.getText());
-                    return new NumberLiteral(value);
-                } catch (NumberFormatException e) {
-                    return new StringLiteral(sl.getText());
-                }
-            }
-        }
-        // AsString wrapping a literal
-        if (reference instanceof AsString asStr) {
-            if (asStr.getOperand1() instanceof StringLiteral sl) {
-                return new StringLiteral(sl.getText());
-            }
-            if (asStr.getOperand1() instanceof NumberLiteral num) {
-                return new StringLiteral(String.valueOf(num.getValue()));
-            }
-        }
-        return new NumberLiteral(0);
-    }
 }
-

@@ -109,7 +109,15 @@ public class MessageNeverSentInjector extends AbstractBugInjector {
             return;
         }
 
+        // The finder uses case-insensitive comparison, so we must ensure the typo
+        // differs from the original ignoring case
         String typoMsg = TypoGenerator.generateTypo(originalMsg);
+        int attempts = 0;
+        while (typoMsg.equalsIgnoreCase(originalMsg) && attempts < 10) {
+            typoMsg = TypoGenerator.generateTypo(originalMsg);
+            attempts++;
+        }
+
         List<Stmt> matchingBroadcasts = collectBroadcastsWithMessage(clonedProgram, originalMsg);
 
         for (Stmt broadcast : matchingBroadcasts) {

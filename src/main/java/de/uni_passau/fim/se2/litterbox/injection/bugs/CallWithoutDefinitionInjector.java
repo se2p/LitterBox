@@ -24,11 +24,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.injection.util.TypoGenerator;
@@ -47,7 +45,6 @@ import java.util.Set;
  */
 public class CallWithoutDefinitionInjector extends AbstractBugInjector {
 
-    private final Set<String> existingProcedures = new HashSet<>();
     private Program program;
 
     @Override
@@ -58,65 +55,25 @@ public class CallWithoutDefinitionInjector extends AbstractBugInjector {
     @Override
     public List<InjectionResult> inject(Program program) {
         this.program = program;
-
-        // Pre-populate existingProcedures with proccodes BEFORE the main traversal
-        existingProcedures.clear();
-        program.accept(new ProcedureCollector());
-
         return super.inject(program);
-    }
-
-    /**
-     * Visitor that collects all procedure proccodes in the program.
-     * Uses the procedure mapping to get the human-readable proccode.
-     */
-    private class ProcedureCollector implements ScratchVisitor {
-        @Override
-        public void visit(ProcedureDefinition node) {
-            String proccode = getProccode(node);
-            existingProcedures.add(proccode);
-            visitChildren(node);
-        }
-
-        private String getProccode(ProcedureDefinition proc) {
-            // For programs parsed from test strings, the ident name IS the proccode
-            // For programs loaded from JSON, we need to look up in the mapping
-            if (program.getProcedureMapping() == null) {
-                return proc.getIdent().getName();
-            }
-
-            // Try to find the proccode via the procedure mapping
-            var actorOpt = AstNodeUtil.findActor(proc);
-            if (actorOpt.isPresent()) {
-                ActorDefinition actor = actorOpt.get();
-                Map<LocalIdentifier, ProcedureInfo> actorProcs =
-                        program.getProcedureMapping().getProceduresForActor(actor.getIdent().getName());
-                if (actorProcs != null) {
-                    ProcedureInfo info = actorProcs.get(proc.getIdent());
-                    if (info != null) {
-                        return info.getName();
-                    }
-                }
-            }
-
-            // Fallback to ident name (test programs, or edge cases)
-            return proc.getIdent().getName();
-        }
     }
 
     @Override
     public void visit(CallStmt node) {
         String callName = node.getIdent().getName();
 
-        // Skip if this call is already orphaned (calling an undefined procedure)
+        // Skip if this call is already orphaned (calling an undefined procedure in THIS actor)
         // Only inject on calls that have a matching definition
-        if (!existingProcedures.contains(callName)) {
+        if (!isDefinedInCurrentActor(node, callName)) {
             super.visit(node);
             return;
         }
 
+        // Collect all existing procedure names for unique typo generation
+        Set<String> existingProcedures = collectAllProcedureNames();
+
         mutateClone(node, clonedCall -> {
-            String uniqueTypo = generateUniqueTypo(clonedCall.getIdent().getName());
+            String uniqueTypo = generateUniqueTypo(clonedCall.getIdent().getName(), existingProcedures);
             CallStmt newCall = new CallStmt(
                     new StrId(uniqueTypo),
                     clonedCall.getExpressions(),
@@ -127,7 +84,47 @@ public class CallWithoutDefinitionInjector extends AbstractBugInjector {
         super.visit(node);
     }
 
-    private String generateUniqueTypo(String originalName) {
+    /**
+     * Check if a procedure with the given name is defined in the actor containing the call.
+     */
+    private boolean isDefinedInCurrentActor(CallStmt node, String procName) {
+        var actorOpt = AstNodeUtil.findActor(node);
+        if (actorOpt.isEmpty() || program.getProcedureMapping() == null) {
+            return false;
+        }
+
+        ActorDefinition actor = actorOpt.get();
+        Map<LocalIdentifier, ProcedureInfo> actorProcs =
+                program.getProcedureMapping().getProceduresForActor(actor.getIdent().getName());
+        if (actorProcs == null) {
+            return false;
+        }
+
+        // Check if any procedure in this actor has this name
+        return actorProcs.values().stream()
+                .anyMatch(info -> info.getName().equals(procName));
+    }
+
+    /**
+     * Collect all procedure names from all actors for uniqueness checking.
+     */
+    private Set<String> collectAllProcedureNames() {
+        Set<String> names = new HashSet<>();
+        if (program.getProcedureMapping() != null) {
+            for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
+                Map<LocalIdentifier, ProcedureInfo> actorProcs =
+                        program.getProcedureMapping().getProceduresForActor(actor.getIdent().getName());
+                if (actorProcs != null) {
+                    for (ProcedureInfo info : actorProcs.values()) {
+                        names.add(info.getName());
+                    }
+                }
+            }
+        }
+        return names;
+    }
+
+    private String generateUniqueTypo(String originalName, Set<String> existingProcedures) {
         String typo = TypoGenerator.generateTypo(originalName);
         while (existingProcedures.contains(typo)) {
             typo = TypoGenerator.generateTypo(typo);
@@ -135,5 +132,3 @@ public class CallWithoutDefinitionInjector extends AbstractBugInjector {
         return typo;
     }
 }
-
-
