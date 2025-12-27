@@ -72,7 +72,7 @@ public class HideWithoutShowInjector extends AbstractBugInjector {
         // Only proceed if actor has Show + visible changes
         if (hasShow && hasVisibleChange) {
             // Use firstScript as context for mutateClone so it correctly captures ScratchBlocks for the CSV
-            mutateClone(firstScript, clonedScript -> {
+            modifyClonedNode(firstScript, clonedScript -> {
                 ActorDefinition clonedActor = findContainingActor(clonedScript);
                 if (clonedActor == null) {
                     return;

@@ -51,13 +51,13 @@ public class ComparingLiteralsInjector extends AbstractComparisonInjector {
 
         if (isLiteral(op1) && !isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op1);
-            replaceWith(node, n -> new ComparisonBuilder()
+            replaceNodeImmutably(node, n -> new ComparisonBuilder()
                     .from(n)
                     .withOperand2(matchingLiteral)
                     .buildEquals());
         } else if (!isLiteral(op1) && isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op2);
-            replaceWith(node, n -> new ComparisonBuilder()
+            replaceNodeImmutably(node, n -> new ComparisonBuilder()
                     .from(n)
                     .withOperand1(matchingLiteral)
                     .buildEquals());
@@ -71,13 +71,13 @@ public class ComparingLiteralsInjector extends AbstractComparisonInjector {
 
         if (isLiteral(op1) && !isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op1);
-            replaceWith(node, n -> new ComparisonBuilder()
+            replaceNodeImmutably(node, n -> new ComparisonBuilder()
                     .from(n)
                     .withOperand2(matchingLiteral)
                     .buildLessThan());
         } else if (!isLiteral(op1) && isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op2);
-            replaceWith(node, n -> new ComparisonBuilder()
+            replaceNodeImmutably(node, n -> new ComparisonBuilder()
                     .from(n)
                     .withOperand1(matchingLiteral)
                     .buildLessThan());
@@ -91,13 +91,13 @@ public class ComparingLiteralsInjector extends AbstractComparisonInjector {
 
         if (isLiteral(op1) && !isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op1);
-            replaceWith(node, n -> new ComparisonBuilder()
+            replaceNodeImmutably(node, n -> new ComparisonBuilder()
                     .from(n)
                     .withOperand2(matchingLiteral)
                     .buildBiggerThan());
         } else if (!isLiteral(op1) && isLiteral(op2)) {
             ComparableExpr matchingLiteral = createMatchingLiteral(op2);
-            replaceWith(node, n -> new ComparisonBuilder()
+            replaceNodeImmutably(node, n -> new ComparisonBuilder()
                     .from(n)
                     .withOperand1(matchingLiteral)
                     .buildBiggerThan());

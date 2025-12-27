@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingResource;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
@@ -29,8 +30,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundU
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+import de.uni_passau.fim.se2.litterbox.injection.util.ResourceValidator;
 
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 import static de.uni_passau.fim.se2.litterbox.injection.util.InjectionConstants.INVALID_COSTUME_NAME;
 import static de.uni_passau.fim.se2.litterbox.injection.util.InjectionConstants.INVALID_SOUND_NAME;
@@ -57,49 +60,49 @@ public class MissingResourceInjector extends AbstractBugInjector {
         // Clear state before visiting new actor
         this.currentActor = actor;
         super.visit(actor);
-        this.currentActor = null; 
+        this.currentActor = null;
     }
 
     @Override
     public void visit(SwitchCostumeTo node) {
-        if (node.getCostumeChoice() instanceof WithExpr withExpr
-                && withExpr.getExpression() instanceof StrId strId) {
-
-            String currentCostume = strId.getName();
-            if (currentActorHasCostume(currentCostume)) {
-                replaceWithInvalidResource(node, withExpr, INVALID_COSTUME_NAME,
-                        node.getMetadata(), SwitchCostumeTo::new);
-            }
-        }
+        handleResourceStmt(node, node.getCostumeChoice(),
+                name -> ResourceValidator.hasCostume(currentActor.getActorMetadata(), name),
+                SwitchCostumeTo::new,
+                INVALID_COSTUME_NAME);
         super.visit(node);
     }
 
     @Override
     public void visit(PlaySoundUntilDone node) {
-        if (node.getElementChoice() instanceof WithExpr withExpr
-                && withExpr.getExpression() instanceof StrId strId) {
-
-            String currentSound = strId.getName();
-            if (currentActorHasSound(currentSound)) {
-                replaceWithInvalidResource(node, withExpr, INVALID_SOUND_NAME,
-                        node.getMetadata(), PlaySoundUntilDone::new);
-            }
-        }
+        handleResourceStmt(node, node.getElementChoice(),
+                name -> ResourceValidator.hasSound(currentActor.getActorMetadata(), name),
+                PlaySoundUntilDone::new,
+                INVALID_SOUND_NAME);
         super.visit(node);
     }
 
     @Override
     public void visit(StartSound node) {
-        if (node.getElementChoice() instanceof WithExpr withExpr
-                && withExpr.getExpression() instanceof StrId strId) {
+        handleResourceStmt(node, node.getElementChoice(),
+                name -> ResourceValidator.hasSound(currentActor.getActorMetadata(), name),
+                StartSound::new,
+                INVALID_SOUND_NAME);
+        super.visit(node);
+    }
 
-            String currentSound = strId.getName();
-            if (currentActorHasSound(currentSound)) {
-                replaceWithInvalidResource(node, withExpr, INVALID_SOUND_NAME,
-                        node.getMetadata(), StartSound::new);
+    private <T extends Stmt> void handleResourceStmt(
+            T node,
+            ElementChoice choice,
+            Predicate<String> validator,
+            BiFunction<WithExpr, BlockMetadata, T> constructor,
+            String invalidName) {
+
+        if (choice instanceof WithExpr withExpr && withExpr.getExpression() instanceof StrId strId) {
+            String resourceName = strId.getName();
+            if (validator.test(resourceName)) {
+                replaceWithInvalidResource(node, withExpr, invalidName, node.getMetadata(), constructor);
             }
         }
-        super.visit(node);
     }
 
     // ==================== Helper Methods ====================
@@ -121,7 +124,7 @@ public class MissingResourceInjector extends AbstractBugInjector {
             BlockMetadata metadata,
             BiFunction<WithExpr, BlockMetadata, T> constructor) {
 
-        mutateClone(node, clonedNode -> {
+        modifyClonedNode(node, clonedNode -> {
             WithExpr newWithExpr = createInvalidWithExpr(originalWithExpr, invalidName);
             T newStmt = constructor.apply(newWithExpr, metadata);
             newWithExpr.setParentNode(newStmt);
@@ -137,49 +140,5 @@ public class MissingResourceInjector extends AbstractBugInjector {
         WithExpr newWithExpr = new WithExpr(invalidStrId, originalWithExpr.getMetadata());
         invalidStrId.setParentNode(newWithExpr);
         return newWithExpr;
-    }
-
-    // ==================== Resource Validation ====================
-
-    /**
-     * Checks if the current actor has a costume with the given name.
-     * Returns true if metadata is missing (allow injection) or if costume exists.
-     */
-    private boolean currentActorHasCostume(String costumeName) {
-        if (currentActor == null || currentActor.getActorMetadata() == null) {
-            return true;
-        }
-        var costumes = currentActor.getActorMetadata().getCostumes().getList();
-        if (costumes.isEmpty()) {
-            return true;
-        }
-        // Check if this is placeholder test metadata
-        boolean isPlaceholderMetadata = costumes.stream()
-                .allMatch(c -> c.getName().equals(c.getClass().getSimpleName()));
-        if (isPlaceholderMetadata) {
-            return true;
-        }
-        return costumes.stream().anyMatch(c -> c.getName().equals(costumeName));
-    }
-
-    /**
-     * Checks if the current actor has a sound with the given name.
-     * Returns true if metadata is missing (allow injection) or if sound exists.
-     */
-    private boolean currentActorHasSound(String soundName) {
-        if (currentActor == null || currentActor.getActorMetadata() == null) {
-            return true;
-        }
-        var sounds = currentActor.getActorMetadata().getSounds().getList();
-        if (sounds.isEmpty()) {
-            return true;
-        }
-        // Check if this is placeholder test metadata
-        boolean isPlaceholderMetadata = sounds.stream()
-                .allMatch(s -> s.getName().equals(s.getClass().getSimpleName()));
-        if (isPlaceholderMetadata) {
-            return true;
-        }
-        return sounds.stream().anyMatch(s -> s.getName().equals(soundName));
     }
 }

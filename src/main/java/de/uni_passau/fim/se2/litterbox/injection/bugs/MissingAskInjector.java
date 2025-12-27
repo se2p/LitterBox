@@ -94,7 +94,7 @@ public class MissingAskInjector extends AbstractBugInjector {
             return;
         }
 
-        mutateClone(node, clonedAsk -> {
+        modifyClonedNode(node, clonedAsk -> {
             ASTNode parent = clonedAsk.getParentNode();
             if (parent instanceof StmtList stmtList) {
                 List<Stmt> stmts = stmtList.getStmts();

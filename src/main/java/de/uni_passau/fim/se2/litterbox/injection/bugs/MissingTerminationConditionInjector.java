@@ -69,7 +69,7 @@ public class MissingTerminationConditionInjector extends AbstractBugInjector {
     }
 
     private void injectAtIndex(StmtList stmtList, int index) {
-        mutateClone(stmtList, clonedList -> {
+        modifyClonedNode(stmtList, clonedList -> {
             List<Stmt> stmts = clonedList.getStmts();
             if (index < stmts.size() && stmts.get(index) instanceof UntilStmt clonedUntil) {
                 UntilStmt newUntil = nodeFactory.createUntil()

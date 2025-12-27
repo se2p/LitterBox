@@ -118,7 +118,7 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
         LiteralReplacementVisitor visitor = new LiteralReplacementVisitor(targetLiteral, uniqueBroadcast.message());
         Program mutated = (Program) program.accept(visitor);
 
-        return singleResult(mutated);
+        return wrapAsSingleResult(mutated);
     }
 
     private String getMessageText(StringExpr expr) {
@@ -195,7 +195,16 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
         } // Avoid message literals
     }
 
-    private static class LiteralReplacementVisitor extends CloneVisitor {
+    /**
+     * Custom CloneVisitor that performs two operations in a single pass:
+     * 1. Replaces a StringLiteral with a message name
+     * 2. Removes the broadcast statement for that message
+     * <p>
+     * This requires a custom visitor because the standard mutation patterns
+     * ({@link #modifyClonedNode} and {@link #replaceNodeImmutably}) cannot perform
+     * both operations atomically in a single clone operation.
+     */
+    private class LiteralReplacementVisitor extends CloneVisitor {
         private final String messageToRemove;
         private final String originalText;
         private boolean removed = false;

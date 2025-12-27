@@ -84,7 +84,7 @@ public abstract class AbstractCustomBlockInjector extends AbstractBugInjector {
             if (currentActorCandidates.contains(proccode)) {
                 if (shouldMutate(def)) {
                     final String finalProccode = proccode;
-                    mutateClone(def, clonedDef -> applyMutation(clonedDef, finalProccode));
+                    modifyClonedNode(def, clonedDef -> applyMutation(clonedDef, finalProccode));
                 }
             }
         }

@@ -78,7 +78,7 @@ public class KeySetPositionInjector extends AbstractBugInjector {
     public List<InjectionResult> inject(Program program) {
         ExtractingCloneVisitor visitor = new ExtractingCloneVisitor();
         Program cloned = (Program) program.accept(visitor);
-        return visitor.extractedAny ? singleResult(cloned) : Collections.emptyList();
+        return visitor.extractedAny ? wrapAsSingleResult(cloned) : Collections.emptyList();
     }
 
     /**
@@ -122,7 +122,15 @@ public class KeySetPositionInjector extends AbstractBugInjector {
     }
 
     /**
-     * Clone visitor that extracts candidates from forever loops into event-driven scripts.
+     * Custom CloneVisitor that extracts key-polling patterns from forever loops into
+     * event-driven scripts.
+     * <p>
+     * This requires a custom visitor because the transformation involves:
+     * 1. Detecting patterns within forever loops
+     * 2. Creating new Script objects with KeyPressed events
+     * 3. Adding these new scripts to the ScriptList
+     * <p>
+     * The standard mutation patterns cannot create new top-level scripts during cloning.
      */
     private class ExtractingCloneVisitor extends CloneVisitor {
         private final List<Script> extraScripts = new ArrayList<>();

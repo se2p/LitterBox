@@ -81,7 +81,7 @@ public class MissingCloneInitializationInjector extends AbstractBugInjector {
                                 || script.getEvent() instanceof SpriteClicked);
 
                 if (hasCloneHandlers) {
-                    mutateClone(actor, MissingCloneInitializationInjector.this::removeCloneHandlers);
+                    modifyClonedNode(actor, MissingCloneInitializationInjector.this::removeCloneHandlers);
                 }
             }
         });

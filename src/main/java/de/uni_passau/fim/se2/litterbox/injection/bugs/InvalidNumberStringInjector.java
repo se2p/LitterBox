@@ -76,7 +76,7 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
             String text = sl.getText();
             if (isNumericString(text)) {
                 String invalidNum = makeInvalidNumberString(text);
-                replaceWith(node, n -> new AsNumber(new StringLiteral(invalidNum)));
+                replaceNodeImmutably(node, n -> new AsNumber(new StringLiteral(invalidNum)));
             }
         }
         super.visit(node);
@@ -197,7 +197,7 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
                 NumExpr replacement = createInvalidNumExpr(value);
                 var clonedIdent = cloner.apply(node.getIdentifier());
                 BlockMetadata clonedMeta = cloner.apply(node.getMetadata());
-                replaceWith(node, n -> new ChangeVariableBy(clonedIdent, replacement, clonedMeta));
+                replaceNodeImmutably(node, n -> new ChangeVariableBy(clonedIdent, replacement, clonedMeta));
             }
         }
         super.visit(node);
@@ -212,7 +212,7 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
                 NumExpr replacement = createInvalidNumExpr(value);
                 var clonedIdent = cloner.apply(node.getIdentifier());
                 BlockMetadata clonedMeta = cloner.apply(node.getMetadata());
-                replaceWith(node, n -> new SetVariableTo(clonedIdent, replacement, clonedMeta));
+                replaceNodeImmutably(node, n -> new SetVariableTo(clonedIdent, replacement, clonedMeta));
             }
         }
         super.visit(node);
@@ -240,13 +240,13 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
             NumExpr replacement = createInvalidNumExpr(numLit.getValue());
             NumExpr clonedOp2 = cloner.apply(operand2);
             BlockMetadata clonedMeta = cloner.apply(node.getMetadata());
-            replaceWith(node, n -> constructor.apply(replacement, clonedOp2, clonedMeta));
+            replaceNodeImmutably(node, n -> constructor.apply(replacement, clonedOp2, clonedMeta));
         }
         if (operand2 instanceof NumberLiteral numLit) {
             NumExpr replacement = createInvalidNumExpr(numLit.getValue());
             NumExpr clonedOp1 = cloner.apply(operand1);
             BlockMetadata clonedMeta = cloner.apply(node.getMetadata());
-            replaceWith(node, n -> constructor.apply(clonedOp1, replacement, clonedMeta));
+            replaceNodeImmutably(node, n -> constructor.apply(clonedOp1, replacement, clonedMeta));
         }
     }
 
@@ -274,12 +274,12 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
         if (operand1 instanceof NumberLiteral numLit) {
             NumExpr replacement = createInvalidNumExpr(numLit.getValue());
             ComparableExpr clonedOp2 = cloner.apply(operand2);
-            replaceWith(node, n -> constructor.apply(replacement, clonedOp2));
+            replaceNodeImmutably(node, n -> constructor.apply(replacement, clonedOp2));
         }
         if (operand2 instanceof NumberLiteral numLit) {
             NumExpr replacement = createInvalidNumExpr(numLit.getValue());
             ComparableExpr clonedOp1 = cloner.apply(operand1);
-            replaceWith(node, n -> constructor.apply(clonedOp1, replacement));
+            replaceNodeImmutably(node, n -> constructor.apply(clonedOp1, replacement));
         }
     }
 
@@ -298,7 +298,7 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
 
         if (numParam instanceof NumberLiteral numLit) {
             NumExpr replacement = createInvalidNumExpr(numLit.getValue());
-            replaceWith(node, n -> constructor.apply(replacement));
+            replaceNodeImmutably(node, n -> constructor.apply(replacement));
         }
     }
 

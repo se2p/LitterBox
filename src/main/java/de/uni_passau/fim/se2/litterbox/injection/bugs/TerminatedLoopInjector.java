@@ -71,7 +71,7 @@ public class TerminatedLoopInjector extends AbstractBugInjector {
             return;
         }
 
-        mutateClone(originalList, clonedList -> {
+        modifyClonedNode(originalList, clonedList -> {
             StopThisScript stop = new StopThisScript(NonDataBlockMetadata.emptyNonBlockMetadata());
             clonedList.getStmts().add(stop);
             stop.setParentNode(clonedList);

@@ -32,6 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -44,11 +45,23 @@ import static java.util.logging.Level.WARNING;
  * Base class for bug injectors that mutate Scratch programs to introduce detectable bugs.
  * <p>
  * Subclasses override {@code visit} methods to identify injection points, then call
- * {@link #addMutation} or {@link #addImmutableMutation} to create mutated program variants.
+ * one of the mutation methods to create mutated program variants.
  * <p>
- * This class provides:
+ * <h2>Mutation Pattern Guide</h2>
+ * <p>Choose the appropriate mutation method based on your needs:
  * <ul>
- *   <li>Mutation infrastructure via clone-and-modify pattern</li>
+ *   <li>{@link #replaceNodeImmutably} - Creates a NEW node instance to replace an existing one.
+ *       Use for immutable transformations like replacing {@code Equals(a, b)} with {@code Equals(a, newB)}.</li>
+ *   <li>{@link #modifyClonedNode} - Modifies the cloned AST IN-PLACE.
+ *       Use when you need to add/remove elements from collections (e.g., {@code StmtList.getStmts().remove(...)}).</li>
+ *   <li>{@link #modifyMultipleClonedNodes} - Applies the same modification to multiple nodes in one mutation.
+ *       Use for batch operations like removing all {@code PenUp} statements.</li>
+ *   <li>{@link #wrapAsSingleResult} - Wraps a custom-cloned program as a single result.
+ *       Use only with custom {@link CloneVisitor} implementations for complex multi-node transformations.</li>
+ * </ul>
+ * <p>
+ * This class also provides:
+ * <ul>
  *   <li>Shared utility methods for AST navigation and manipulation</li>
  *   <li>Context helpers for determining node position in AST</li>
  *   <li>Shared {@link CloneVisitor} instance for node cloning</li>
@@ -61,17 +74,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     /**
      * Shared CloneVisitor instance for cloning AST nodes. Stateless and thread-safe.
      */
-    protected static final CloneVisitor cloner = new CloneVisitor();
-
-    /**
-     * Maximum number of mutations to generate per injector to prevent memory exhaustion.
-     * <p>
-     * This limit bounds the number of mutated program variants created by a single injector
-     * for a single input program. Without this limit, programs with many potential injection
-     * points could consume excessive memory. The value of 50 was chosen empirically to
-     * balance coverage with resource usage.
-     */
-    protected static final int MAX_MUTATIONS_PER_INJECTOR = 50;
+    protected final CloneVisitor cloner = new CloneVisitor();
 
     /**
      * Factory for creating AST nodes with proper metadata.
@@ -80,6 +83,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
 
     private List<InjectionResult> injectionResults;
     private Program originalProgram;
+    private int maxMutations;
 
     // Debug statistics - enabled via -Dinjection.debug=true
     private static final boolean DEBUG_ENABLED = Boolean.getBoolean("injection.debug");
@@ -93,6 +97,13 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
         debugCandidatesFound = 0;
         debugPreconditionsFailed = 0;
         debugMutationsAttempted = 0;
+
+        // Initialize max mutations from property
+        try {
+            this.maxMutations = PropertyLoader.getSystemIntProperty("injection.max_mutations_per_injector");
+        } catch (IllegalArgumentException e) {
+            this.maxMutations = 50; // Default fallback
+        }
 
         // Ensure parent pointers are set before visiting
         program.accept(new ParentVisitor());
@@ -168,7 +179,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     }
 
     /**
-     * Mutates a cloned AST by applying a modifier to the cloned counterpart of the given node.
+     * Modifies a cloned AST by applying a modifier to the cloned counterpart of the given node.
      * <p>
      * Use this when you need to add/remove elements from collections (e.g., StmtList)
      * or modify the cloned structure in place.
@@ -178,7 +189,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      * @param <T>          The type of the AST node
      */
     @SuppressWarnings("unchecked")
-    protected <T extends ASTNode> void mutateClone(T originalNode, Consumer<T> mutator) {
+    protected <T extends ASTNode> void modifyClonedNode(T originalNode, Consumer<T> mutator) {
         if (reachesLimit()) {
             return;
         }
@@ -218,7 +229,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     }
 
     /**
-     * Mutates multiple nodes in a cloned AST using the same mutator.
+     * Modifies multiple nodes in a cloned AST using the same mutator.
      * Creates a single mutation that applies the mutator to all cloned counterparts of the given nodes.
      * <p>
      * Use this when you need to apply the same modification to multiple nodes in one mutation
@@ -229,7 +240,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      * @param <T>           The type of the AST nodes
      */
     @SuppressWarnings("unchecked")
-    protected <T extends ASTNode> void mutateMultipleClones(List<T> originalNodes, Consumer<T> mutator) {
+    protected <T extends ASTNode> void modifyMultipleClonedNodes(List<T> originalNodes, Consumer<T> mutator) {
         if (reachesLimit() || originalNodes.isEmpty()) {
             return;
         }
@@ -276,7 +287,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     }
 
     /**
-     * Replaces a node with a new instance during cloning.
+     * Replaces a node with a new instance during cloning (immutable transformation).
      * <p>
      * Use this when you need to create a new node instance (e.g., replacing an Add
      * with a new Add that has a different operand). This maintains AST immutability.
@@ -285,7 +296,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      * @param transformer  Function that returns the replacement node
      * @param <T>          The type of the AST node
      */
-    protected <T extends ASTNode> void replaceWith(T originalNode, Function<T, ASTNode> transformer) {
+    protected <T extends ASTNode> void replaceNodeImmutably(T originalNode, Function<T, ASTNode> transformer) {
         if (reachesLimit()) {
             return;
         }
@@ -321,7 +332,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     }
 
     private boolean reachesLimit() {
-        return injectionResults.size() >= MAX_MUTATIONS_PER_INJECTOR;
+        return injectionResults.size() >= this.maxMutations;
     }
 
     /**
@@ -382,14 +393,16 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     // ==================== Injection Result Helpers ====================
 
     /**
-     * Creates a single injection result with empty metadata.
+     * Wraps a custom-cloned program as a single injection result.
+     * <p>
      * Use this for injectors that use custom CloneVisitor approaches
-     * and don't track individual script changes.
+     * and don't track individual script changes. This is the escape hatch
+     * for complex multi-node transformations that don't fit the standard patterns.
      *
-     * @param mutatedProgram The mutated program
+     * @param mutatedProgram The mutated program from a custom CloneVisitor
      * @return A singleton list containing the injection result
      */
-    protected List<InjectionResult> singleResult(Program mutatedProgram) {
+    protected List<InjectionResult> wrapAsSingleResult(Program mutatedProgram) {
         return Collections.singletonList(new InjectionResult(mutatedProgram, "", "", ""));
     }
 

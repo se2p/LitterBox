@@ -69,7 +69,7 @@ public class NoWorkingScriptsInjector extends AbstractBugInjector {
      * Empties ALL scripts in the sprite and creates detached Never scripts for their bodies.
      */
     private void addSplitAllScriptsMutation(ScriptList scriptList) {
-        mutateClone(scriptList, clonedScriptList -> {
+        modifyClonedNode(scriptList, clonedScriptList -> {
             List<Script> newScripts = new ArrayList<>();
             List<Script> neverScripts = new ArrayList<>();
 

@@ -63,7 +63,7 @@ public class InterruptedLoopSensingInjector extends AbstractBugInjector {
         // Target outermost if statements inside a forever loop
         if (isInsideForever(node) && !isNestedInControl(node)
                 && shouldInject(node.getBoolExpr(), node.getThenStmts())) {
-            mutateClone(node, cloned -> injectWait(cloned.getThenStmts()));
+            modifyClonedNode(node, cloned -> injectWait(cloned.getThenStmts()));
         }
         super.visit(node);
     }
@@ -72,7 +72,7 @@ public class InterruptedLoopSensingInjector extends AbstractBugInjector {
     public void visit(IfElseStmt node) {
         // Target if-else statements inside a forever loop (potentially nested)
         if (isInsideForever(node) && shouldInject(node.getBoolExpr(), node.getThenStmts(), node.getElseStmts())) {
-            mutateClone(node, cloned -> {
+            modifyClonedNode(node, cloned -> {
                 injectWait(cloned.getThenStmts());
                 injectWait(cloned.getElseStmts());
             });
@@ -85,7 +85,7 @@ public class InterruptedLoopSensingInjector extends AbstractBugInjector {
         // Target until loops inside forever OR as top-level control structures
         if ((isInsideForever(node) || !isNestedInControl(node))
                 && shouldInject(node.getBoolExpr(), node.getStmtList())) {
-            mutateClone(node, cloned -> injectWait(cloned.getStmtList()));
+            modifyClonedNode(node, cloned -> injectWait(cloned.getStmtList()));
         }
         super.visit(node);
     }

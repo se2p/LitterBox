@@ -59,7 +59,7 @@ public class AmbiguousCustomBlockSignatureInjector extends AbstractBugInjector {
         if (!actor.getProcedureDefinitionList().getList().isEmpty()) {
             Set<String> calledProcedures = getCalledProcedureNames(actor);
 
-            mutateClone(actor, clonedActor -> {
+            modifyClonedNode(actor, clonedActor -> {
                 Program clonedProgram = findProgramRoot(clonedActor);
                 ProcedureDefinitionList clonedProcList = clonedActor.getProcedureDefinitionList();
                 List<ProcedureDefinition> clonedProcedures = clonedProcList.getList();

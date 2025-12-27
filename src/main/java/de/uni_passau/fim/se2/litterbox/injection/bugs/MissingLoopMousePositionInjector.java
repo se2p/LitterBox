@@ -118,7 +118,7 @@ public class MissingLoopMousePositionInjector extends AbstractBugInjector {
      * @param index    the index of the loop statement to unwrap
      */
     private void addUnwrapLoopMutation(StmtList stmtList, int index) {
-        mutateClone(stmtList, clonedList -> {
+        modifyClonedNode(stmtList, clonedList -> {
             if (index < clonedList.getStmts().size()
                     && clonedList.getStmts().get(index) instanceof LoopStmt clonedLoop) {
                 List<Stmt> bodyStmts = clonedLoop.getStmtList().getStmts();

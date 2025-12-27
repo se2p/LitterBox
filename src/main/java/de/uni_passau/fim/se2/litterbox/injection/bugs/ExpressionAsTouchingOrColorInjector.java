@@ -68,11 +68,21 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
         Program cloned = (Program) program.accept(visitor);
         if (visitor.isModified()) {
             cloned.accept(new ParentVisitor());
-            return singleResult(cloned);
+            return wrapAsSingleResult(cloned);
         }
         return Collections.emptyList();
     }
 
+    /**
+     * Custom CloneVisitor that replaces valid Touching/ColorTouchingColor operands
+     * with variable expressions during cloning.
+     * <p>
+     * This requires a custom visitor because we need to conditionally transform
+     * multiple node types (Touching, ColorTouchingColor, SpriteTouchingColor,
+     * SetPenColorToColorStmt) and the transformation is type-specific.
+     * Using {@link #replaceNodeImmutably} would require detecting all target nodes
+     * beforehand, which is less efficient than transforming during traversal.
+     */
     private static class CustomMappingCloneVisitor extends CloneVisitor {
         private boolean modified = false;
 

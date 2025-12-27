@@ -83,7 +83,7 @@ public class ImmediateStopAfterSayInjector extends AbstractBugInjector {
      * Injects StopAll after the statement at the given index.
      */
     private void injectStopAfterAtIndex(StmtList stmtList, int index) {
-        mutateClone(stmtList, clonedList -> {
+        modifyClonedNode(stmtList, clonedList -> {
             List<Stmt> stmts = clonedList.getStmts();
             if (index < stmts.size()) {
                 // Remove all statements after Say/Think (StopAll can't have successors)
@@ -103,7 +103,7 @@ public class ImmediateStopAfterSayInjector extends AbstractBugInjector {
      * Converts a timed Say/Think statement to its async version and adds StopAll.
      */
     private void convertTimedToAsyncWithStop(StmtList node, int index, boolean isSay) {
-        mutateClone(node, clonedList -> {
+        modifyClonedNode(node, clonedList -> {
             List<Stmt> stmts = clonedList.getStmts();
             if (index < stmts.size()) {
                 // Create async version

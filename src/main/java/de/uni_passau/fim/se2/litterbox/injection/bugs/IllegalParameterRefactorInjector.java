@@ -21,11 +21,13 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.IllegalParameterRefactor;
 import de.uni_passau.fim.se2.litterbox.ast.builder.ProcedureBuilder;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 import java.util.HashSet;
@@ -50,13 +52,13 @@ public class IllegalParameterRefactorInjector extends AbstractBugInjector {
     @Override
     public void visit(ProcedureDefinition node) {
         Set<String> usedAsBool = findParametersUsedAsBool(node);
-        
+
         // Check if we have any valid candidates before attempting mutation
         boolean hasCandidate = node.getParameterDefinitionList().getParameterDefinitions().stream()
                 .anyMatch(p -> p.getType() instanceof BooleanType && usedAsBool.contains(p.getIdent().getName()));
 
         if (hasCandidate) {
-            replaceWith(node, original -> {
+            replaceNodeImmutably(node, original -> {
                 List<ParameterDefinition> clonedParams = cloner.applyList(original.getParameterDefinitionList().getParameterDefinitions());
                 boolean mutated = false;
 
@@ -103,11 +105,11 @@ public class IllegalParameterRefactorInjector extends AbstractBugInjector {
      * A parameter wrapped in AsBool indicates boolean usage, which becomes
      * problematic if the parameter type is changed to String.
      */
-    private static class BoolParameterCollector implements de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor {
+    private static class BoolParameterCollector implements ScratchVisitor {
         private final Set<String> usedAsBool = new HashSet<>();
 
         @Override
-        public void visit(de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool asBool) {
+        public void visit(AsBool asBool) {
             if (asBool.getOperand1() instanceof Parameter param) {
                 usedAsBool.add(param.getName().getName());
             }

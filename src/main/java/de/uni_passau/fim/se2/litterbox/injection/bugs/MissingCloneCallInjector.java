@@ -71,7 +71,7 @@ public class MissingCloneCallInjector extends AbstractBugInjector {
         for (String actorName : actorsWithCloneHandlers) {
             List<CreateCloneOf> cloneCalls = clonesByTarget.get(actorName.toLowerCase());
             if (cloneCalls != null && !cloneCalls.isEmpty()) {
-                mutateClone(cloneCalls.getFirst(), cloned -> removeAllCloneCalls(cloned, actorName));
+                modifyClonedNode(cloneCalls.getFirst(), cloned -> removeAllCloneCalls(cloned, actorName));
             }
         }
     }

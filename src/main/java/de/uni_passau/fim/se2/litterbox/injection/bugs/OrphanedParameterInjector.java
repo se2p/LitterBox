@@ -84,7 +84,7 @@ public class OrphanedParameterInjector extends AbstractBugInjector {
         // Only inject if we found a used parameter name to remove
         if (targetParamName != null) {
             final String nameToRemove = targetParamName;
-            mutateClone(node, clonedNode -> {
+            modifyClonedNode(node, clonedNode -> {
                 // Remove ALL definition matches for this name
                 clonedNode.getParameterDefinitionList().getParameterDefinitions()
                         .removeIf(p -> p.getIdent().getName().equals(nameToRemove));

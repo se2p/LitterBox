@@ -20,31 +20,14 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Message;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.StringContains;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.LengthOfString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.LetterOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationIdentAsTypeStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.AddTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.InsertAt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ReplaceItem;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
+import de.uni_passau.fim.se2.litterbox.injection.util.StringContextAnalyzer;
 
 import java.util.HashSet;
 import java.util.List;
@@ -113,7 +96,7 @@ public abstract class AbstractAsLiteralInjector extends AbstractBugInjector {
             }
 
             debugMutationAttempted();
-            replaceWith(node, n -> new StringLiteral(literalName));
+            replaceNodeImmutably(node, n -> new StringLiteral(literalName));
         } else {
             debugPreconditionFailed();
         }
@@ -156,110 +139,8 @@ public abstract class AbstractAsLiteralInjector extends AbstractBugInjector {
     }
 
     protected boolean isInStringContext(ASTNode node) {
-        ASTNode current = node;
-        while (current != null) {
-            ASTNode parent = current.getParentNode();
-            if (parent == null) {
-                return false;
-            }
-
-            // Pass-through: AsString is a wrapper, continue checking its parent
-            if (parent instanceof AsString) {
-                current = parent;
-                continue;
-            }
-
-            // Check for excluded (strict type) contexts first
-            if (isExcludedContext(parent)) {
-                return false;
-            }
-
-            // Check if context accepts string
-            if (acceptsStringInPosition(parent, current)) {
-                return true;
-            }
-
-            current = parent;
-        }
-        return false;
+        return StringContextAnalyzer.isInStringContext(node);
     }
-
-    /**
-     * Checks if the parent node accepts a string in the position of the current node.
-     */
-    private boolean acceptsStringInPosition(ASTNode parent, ASTNode child) {
-        return isSpriteLookContext(parent)
-                || isStringOperatorContext(parent)
-                || isComparisonContext(parent)
-                || isListOperationContext(parent, child)
-                || isVariableAssignmentContext(parent, child);
-    }
-
-    /**
-     * Checks if parent is a SpriteLook statement that accepts strings.
-     */
-    private boolean isSpriteLookContext(ASTNode parent) {
-        return parent instanceof Say
-                || parent instanceof SayForSecs
-                || parent instanceof Think
-                || parent instanceof ThinkForSecs
-                || parent instanceof AskAndWait;
-    }
-
-    /**
-     * Checks if parent is a string operator or string function.
-     */
-    private boolean isStringOperatorContext(ASTNode parent) {
-        return parent instanceof Join
-                || parent instanceof LetterOf
-                || parent instanceof LengthOfString
-                || parent instanceof StringContains;
-    }
-
-    /**
-     * Checks if parent is a comparison operator (which accepts strings).
-     */
-    private boolean isComparisonContext(ASTNode parent) {
-        return parent instanceof Equals
-                || parent instanceof BiggerThan
-                || parent instanceof LessThan;
-    }
-
-    /**
-     * Checks if parent is a list operation with the node in a string-accepting position.
-     */
-    private boolean isListOperationContext(ASTNode parent, ASTNode current) {
-        if (parent instanceof AddTo addTo) {
-            return addTo.getString() == current;
-        }
-        if (parent instanceof InsertAt insertAt) {
-            return insertAt.getString() == current;
-        }
-        if (parent instanceof ReplaceItem replaceItem) {
-            return replaceItem.getString() == current;
-        }
-        return false;
-    }
-
-    /**
-     * Checks if parent is a variable assignment with the node in the value position.
-     */
-    private boolean isVariableAssignmentContext(ASTNode parent, ASTNode current) {
-        if (parent instanceof SetVariableTo setStmt) {
-            return setStmt.getExpr() == current;
-        }
-        return false;
-    }
-
-    /**
-     * Checks if parent requires a strict type (Variable/DataExpr) and would fail with StringLiteral.
-     */
-    private boolean isExcludedContext(ASTNode parent) {
-        return parent instanceof AttributeFromVariable
-                || parent instanceof Qualified
-                || parent instanceof DeclarationIdentAsTypeStmt;
-    }
-
 
     /**
      * Checks if the node is inside a Message node (used in broadcast blocks).
@@ -269,7 +150,7 @@ public abstract class AbstractAsLiteralInjector extends AbstractBugInjector {
     private boolean isInsideMessage(ASTNode node) {
         ASTNode current = node.getParentNode();
         while (current != null) {
-            if (current instanceof de.uni_passau.fim.se2.litterbox.ast.model.Message) {
+            if (current instanceof Message) {
                 return true;
             }
             current = current.getParentNode();

@@ -64,7 +64,7 @@ public class ForeverInsideIfInjector extends AbstractBugInjector {
 
         // Only inject if the then-block is suitable for wrapping
         if (isSuitableForWrapping(node.getThenStmts())) {
-            mutateClone(node, clonedNode -> {
+            modifyClonedNode(node, clonedNode -> {
                 wrapInForever(clonedNode.getThenStmts());
             });
         }
@@ -81,14 +81,14 @@ public class ForeverInsideIfInjector extends AbstractBugInjector {
 
         // Wrap then-block if suitable
         if (isSuitableForWrapping(node.getThenStmts())) {
-            mutateClone(node, clonedNode -> {
+            modifyClonedNode(node, clonedNode -> {
                 wrapInForever(clonedNode.getThenStmts());
             });
         }
 
         // Also consider wrapping else-block if suitable
         if (isSuitableForWrapping(node.getElseStmts())) {
-            mutateClone(node, clonedNode -> {
+            modifyClonedNode(node, clonedNode -> {
                 wrapInForever(clonedNode.getElseStmts());
             });
         }

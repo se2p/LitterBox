@@ -96,7 +96,7 @@ public class OverwrittenVisualEffectInjector extends AbstractBugInjector {
     }
 
     private void addDuplicateMutation(StmtList stmtList, int index) {
-        mutateClone(stmtList, clonedList -> {
+        modifyClonedNode(stmtList, clonedList -> {
             if (index < clonedList.getStmts().size()) {
                 Stmt original = clonedList.getStmts().get(index);
                 Stmt duplicate = createDuplicate(original);

@@ -169,7 +169,7 @@ public class MissingLoopSensingInjector extends AbstractBugInjector {
      * This creates a bug because the sensing check is no longer continuously evaluated.
      */
     private void addUnwrapLoopMutation(StmtList stmtList, int index) {
-        mutateClone(stmtList, clonedList -> {
+        modifyClonedNode(stmtList, clonedList -> {
             if (index < clonedList.getStmts().size()
                     && clonedList.getStmts().get(index) instanceof LoopStmt clonedLoop) {
 

@@ -125,37 +125,37 @@ public class ParameterOutOfScopeInjector extends AbstractBugInjector {
      */
     private void replaceNodeWith(ASTNode node, String paramName) {
         if (node instanceof MoveSteps moveSteps) {
-            replaceWith(moveSteps, original -> {
+            replaceNodeImmutably(moveSteps, original -> {
                 AsNumber paramAsNum = new AsNumber(createParameter(paramName));
                 return new MoveSteps(paramAsNum, original.getMetadata());
             });
         } else if (node instanceof Equals equals) {
-            replaceWith(equals, original -> {
+            replaceNodeImmutably(equals, original -> {
                 AsString paramAsStr = new AsString(createParameter(paramName));
                 return new Equals(paramAsStr, original.getOperand2(), original.getMetadata());
             });
         } else if (node instanceof BiggerThan biggerThan) {
-            replaceWith(biggerThan, original -> {
+            replaceNodeImmutably(biggerThan, original -> {
                 AsString paramAsStr = new AsString(createParameter(paramName));
                 return new BiggerThan(paramAsStr, original.getOperand2(), original.getMetadata());
             });
         } else if (node instanceof LessThan lessThan) {
-            replaceWith(lessThan, original -> {
+            replaceNodeImmutably(lessThan, original -> {
                 AsString paramAsStr = new AsString(createParameter(paramName));
                 return new LessThan(paramAsStr, original.getOperand2(), original.getMetadata());
             });
         } else if (node instanceof SetXTo setXTo) {
-            replaceWith(setXTo, original -> {
+            replaceNodeImmutably(setXTo, original -> {
                 AsNumber paramAsNum = new AsNumber(createParameter(paramName));
                 return new SetXTo(paramAsNum, original.getMetadata());
             });
         } else if (node instanceof SetYTo setYTo) {
-            replaceWith(setYTo, original -> {
+            replaceNodeImmutably(setYTo, original -> {
                 AsNumber paramAsNum = new AsNumber(createParameter(paramName));
                 return new SetYTo(paramAsNum, original.getMetadata());
             });
         } else if (node instanceof PointInDirection pointIn) {
-            replaceWith(pointIn, original -> {
+            replaceNodeImmutably(pointIn, original -> {
                 AsNumber paramAsNum = new AsNumber(createParameter(paramName));
                 return new PointInDirection(paramAsNum, original.getMetadata());
             });

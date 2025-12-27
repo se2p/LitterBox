@@ -98,7 +98,7 @@ public abstract class AbstractPenInjector extends AbstractBugInjector {
 
         if (!stmtListsWithTarget.isEmpty()) {
             // Create a SINGLE mutation that removes the target from ALL StmtLists
-            mutateMultipleClones(stmtListsWithTarget, (StmtList clonedList) -> {
+            modifyMultipleClonedNodes(stmtListsWithTarget, (StmtList clonedList) -> {
                 // Remove ALL occurrences of the target statement type from this StmtList
                 clonedList.getStmts().removeIf(targetType::isInstance);
             });

@@ -25,6 +25,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.cfg.Attribute;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
@@ -122,7 +125,7 @@ public class MissingInitializationInjector extends AbstractBugInjector {
 
             if (canRemoveInitialization(script, statements, i)) {
                 final int index = i;
-                mutateClone(script.getStmtList(), clonedStmtList ->
+                modifyClonedNode(script.getStmtList(), clonedStmtList ->
                         clonedStmtList.getStmts().remove(index)
                 );
             }
@@ -202,7 +205,7 @@ public class MissingInitializationInjector extends AbstractBugInjector {
      * Checks if any of the target definitions are defined elsewhere in the same script.
      * A later definition would serve as a backup initialization that the finder would detect.
      * This checks all statements in the script, including those nested in loops and conditionals.
-     * 
+     *
      * Note: For statements inside loops, we don't filter by isInitialDefinitionStatement because
      * the finder's may-analysis considers any definition path as valid, even if the definition
      * also uses the variable (like IfOnEdgeBounce which uses rotation before defining it).
@@ -257,9 +260,9 @@ public class MissingInitializationInjector extends AbstractBugInjector {
     private boolean isInsideLoop(Stmt stmt) {
         ASTNode parent = stmt.getParentNode();
         while (parent != null) {
-            if (parent instanceof de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt
-                    || parent instanceof de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt
-                    || parent instanceof de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt) {
+            if (parent instanceof RepeatForeverStmt
+                    || parent instanceof RepeatTimesStmt
+                    || parent instanceof UntilStmt) {
                 return true;
             }
             parent = parent.getParentNode();

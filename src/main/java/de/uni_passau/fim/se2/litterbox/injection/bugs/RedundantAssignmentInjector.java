@@ -222,7 +222,7 @@ public class RedundantAssignmentInjector extends AbstractBugInjector {
      * @param index    the index of the statement to duplicate
      */
     private void addDuplicateStatementMutation(StmtList stmtList, int index) {
-        mutateClone(stmtList, clonedList -> {
+        modifyClonedNode(stmtList, clonedList -> {
             if (index < clonedList.getStmts().size()) {
                 Stmt original = clonedList.getStmts().get(index);
 

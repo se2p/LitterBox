@@ -54,7 +54,7 @@ public class BlockingIfElseInjector extends AbstractBugInjector {
 
             // Only inject if at least one branch can be modified
             if (thenSuitable || elseSuitable) {
-                mutateClone(node, clonedIfElse -> {
+                modifyClonedNode(node, clonedIfElse -> {
                     if (thenSuitable) {
                         StopThisScript stopThen = new StopThisScript(NonDataBlockMetadata.emptyNonBlockMetadata());
                         clonedIfElse.getThenStmts().getStmts().add(stopThen);

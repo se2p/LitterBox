@@ -50,7 +50,7 @@ public class RecursiveCloningInjector extends AbstractBugInjector {
     public void visit(Script node) {
         // Only inject if it's a StartedAsClone event and doesn't already delete the clone
         if (node.getEvent() instanceof StartedAsClone && !containsDeleteClone(node)) {
-            mutateClone(node, clonedNode -> {
+            modifyClonedNode(node, clonedNode -> {
                 StmtList stmtList = clonedNode.getStmtList();
 
                 // create MySelf

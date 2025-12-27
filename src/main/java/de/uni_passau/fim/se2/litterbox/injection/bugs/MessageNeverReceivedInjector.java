@@ -71,7 +71,7 @@ public class MessageNeverReceivedInjector extends AbstractBugInjector {
         for (Map.Entry<String, List<ReceptionOfMessage>> entry : receptionsByMessage.entrySet()) {
             if (sentMessages.contains(entry.getKey())) {
                 List<ReceptionOfMessage> receptions = entry.getValue();
-                mutateClone(receptions.getFirst(), clonedFirst -> {
+                modifyClonedNode(receptions.getFirst(), clonedFirst -> {
                     applyTypoToAllReceptions(clonedFirst, receptions.size());
                 });
             }

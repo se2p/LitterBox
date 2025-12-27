@@ -180,7 +180,7 @@ public class FloatingPointComparisonInjector extends AbstractComparisonInjector 
         if (safe1 && safe2) {
             ComparableExpr unsafeReplacement = cloner.apply(foundUnsafeOperands.getFirst());
             // Replace one operand with an unsafe one
-            replaceWith(node, n -> new ComparisonBuilder()
+            replaceNodeImmutably(node, n -> new ComparisonBuilder()
                     .from(n)
                     .withOperand1(unsafeReplacement)
                     .buildEquals());
@@ -193,7 +193,7 @@ public class FloatingPointComparisonInjector extends AbstractComparisonInjector 
     @Override
     public void visit(LessThan node) {
         if (isInConditionContext(node) && isUnsafeComparison(node)) {
-            replaceWith(node, n -> new ComparisonBuilder()
+            replaceNodeImmutably(node, n -> new ComparisonBuilder()
                     .from(n)
                     .buildEquals());
         }
@@ -203,7 +203,7 @@ public class FloatingPointComparisonInjector extends AbstractComparisonInjector 
     @Override
     public void visit(BiggerThan node) {
         if (isInConditionContext(node) && isUnsafeComparison(node)) {
-            replaceWith(node, n -> new ComparisonBuilder()
+            replaceNodeImmutably(node, n -> new ComparisonBuilder()
                     .from(n)
                     .buildEquals());
         }

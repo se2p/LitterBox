@@ -99,7 +99,7 @@ public class InappropriateHandlerDeleteCloneInjector extends AbstractBugInjector
                 return;
             }
 
-            mutateClone(node, clonedScript -> {
+            modifyClonedNode(node, clonedScript -> {
                 StmtList stmtList = clonedScript.getStmtList();
                 insertDeleteClone(stmtList);
             });

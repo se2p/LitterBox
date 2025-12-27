@@ -185,7 +185,7 @@ public class TypeErrorInjector extends AbstractComparisonInjector {
             Function<NumExpr, T> constructor) {
 
         if (!isBuggy(node) && (operand1 instanceof NumberLiteral || operand1 instanceof StringLiteral)) {
-            replaceWith(node, n -> constructor.apply(getBoolAsNumReplacement()));
+            replaceNodeImmutably(node, n -> constructor.apply(getBoolAsNumReplacement()));
         }
     }
 
@@ -198,7 +198,7 @@ public class TypeErrorInjector extends AbstractComparisonInjector {
      */
     private <T extends ASTNode> void injectIntoNumericParam(T node, Function<T, ASTNode> constructor) {
         if (!isBuggy(node)) {
-            replaceWith(node, constructor);
+            replaceNodeImmutably(node, constructor);
         }
     }
 
