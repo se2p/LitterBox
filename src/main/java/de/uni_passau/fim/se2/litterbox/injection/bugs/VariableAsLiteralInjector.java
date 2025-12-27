@@ -32,9 +32,11 @@ import java.util.Optional;
  */
 public class VariableAsLiteralInjector extends AbstractAsLiteralInjector {
 
+    private final IssueFinder issueFinder = new VariableAsLiteral();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new VariableAsLiteral();
+        return issueFinder;
     }
 
     @Override

@@ -41,9 +41,11 @@ import java.util.List;
  */
 public class MissingTerminationConditionInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new MissingTerminationCondition();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new MissingTerminationCondition();
+        return issueFinder;
     }
 
     @Override

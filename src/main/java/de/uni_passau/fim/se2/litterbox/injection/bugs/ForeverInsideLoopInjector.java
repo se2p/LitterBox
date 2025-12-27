@@ -36,9 +36,11 @@ import java.util.List;
  */
 public class ForeverInsideLoopInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new ForeverInsideLoop();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new ForeverInsideLoop();
+        return issueFinder;
     }
 
     private void inject(LoopStmt originalLoop) {

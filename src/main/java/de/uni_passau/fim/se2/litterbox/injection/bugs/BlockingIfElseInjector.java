@@ -34,9 +34,11 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
  */
 public class BlockingIfElseInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new BlockingIfElse();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new BlockingIfElse();
+        return issueFinder;
     }
 
     @Override

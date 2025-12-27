@@ -47,9 +47,11 @@ import java.util.Set;
  */
 public class AmbiguousCustomBlockSignatureInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new AmbiguousCustomBlockSignature();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new AmbiguousCustomBlockSignature();
+        return issueFinder;
     }
 
     @Override

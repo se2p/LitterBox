@@ -45,11 +45,12 @@ import java.util.Set;
  */
 public class CallWithoutDefinitionInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new CallWithoutDefinition();
     private Program program;
 
     @Override
     public IssueFinder getIssueFinder() {
-        return new CallWithoutDefinition();
+        return issueFinder;
     }
 
     @Override

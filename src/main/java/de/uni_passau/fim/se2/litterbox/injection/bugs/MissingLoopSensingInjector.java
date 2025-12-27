@@ -46,9 +46,11 @@ public class MissingLoopSensingInjector extends AbstractBugInjector {
 
     private boolean inValidScript = false;
 
+    private final IssueFinder issueFinder = new MissingLoopSensing();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new MissingLoopSensing();
+        return issueFinder;
     }
 
     @Override

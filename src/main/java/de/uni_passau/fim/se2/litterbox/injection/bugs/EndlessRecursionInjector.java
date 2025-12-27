@@ -35,9 +35,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
  */
 public class EndlessRecursionInjector extends AbstractCustomBlockInjector {
 
+    private final IssueFinder issueFinder = new EndlessRecursion();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new EndlessRecursion();
+        return issueFinder;
     }
 
     @Override

@@ -55,9 +55,11 @@ import java.util.UUID;
  */
 public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new ExpressionAsTouchingOrColor();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new ExpressionAsTouchingOrColor();
+        return issueFinder;
     }
 
     @Override

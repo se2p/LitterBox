@@ -35,9 +35,11 @@ import java.util.List;
  */
 public class CustomBlockWithTerminationInjector extends AbstractCustomBlockInjector {
 
+    private final IssueFinder issueFinder = new CustomBlockWithTermination();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new CustomBlockWithTermination();
+        return issueFinder;
     }
 
     @Override

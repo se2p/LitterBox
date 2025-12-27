@@ -52,9 +52,11 @@ import java.util.UUID;
  */
 public class MissingCloneInitializationInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new MissingCloneInitialization();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new MissingCloneInitialization();
+        return issueFinder;
     }
 
     @Override

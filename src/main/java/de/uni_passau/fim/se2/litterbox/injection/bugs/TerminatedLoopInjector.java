@@ -39,9 +39,11 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
  */
 public class TerminatedLoopInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new TerminatedLoop();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new TerminatedLoop();
+        return issueFinder;
     }
 
     /**

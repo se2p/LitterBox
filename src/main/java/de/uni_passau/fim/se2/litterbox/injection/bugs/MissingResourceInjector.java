@@ -45,9 +45,11 @@ public class MissingResourceInjector extends AbstractBugInjector {
 
     private ActorDefinition currentActor;
 
+    private final IssueFinder issueFinder = new MissingResource();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new MissingResource();
+        return issueFinder;
     }
 
     @Override

@@ -56,9 +56,11 @@ import java.util.function.Function;
  */
 public class InvalidNumberStringInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new InvalidNumberString();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new InvalidNumberString();
+        return issueFinder;
     }
 
     // ==================== Primary Injection Point ====================

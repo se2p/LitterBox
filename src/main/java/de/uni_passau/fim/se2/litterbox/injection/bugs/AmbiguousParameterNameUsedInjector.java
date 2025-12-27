@@ -46,9 +46,11 @@ import static de.uni_passau.fim.se2.litterbox.injection.util.InjectionConstants.
  */
 public class AmbiguousParameterNameUsedInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new AmbiguousParameterNameUsed();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new AmbiguousParameterNameUsed();
+        return issueFinder;
     }
 
     @Override

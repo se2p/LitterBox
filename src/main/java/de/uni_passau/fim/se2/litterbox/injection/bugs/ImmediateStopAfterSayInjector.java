@@ -46,9 +46,11 @@ import java.util.List;
  */
 public class ImmediateStopAfterSayInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new ImmediateStopAfterSay();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new ImmediateStopAfterSay();
+        return issueFinder;
     }
 
     @Override

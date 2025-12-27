@@ -46,12 +46,14 @@ import java.util.List;
  */
 public class ImmediateDeleteCloneAfterBroadcastInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new ImmediateDeleteCloneAfterBroadcast();
+
     private boolean hasCreateClone = false;
     private boolean hasStartedAsClone = false;
 
     @Override
     public IssueFinder getIssueFinder() {
-        return new ImmediateDeleteCloneAfterBroadcast();
+        return issueFinder;
     }
 
     @Override

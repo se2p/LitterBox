@@ -69,9 +69,11 @@ import java.util.List;
  */
 public class ParameterOutOfScopeInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new ParameterOutOfScope();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new ParameterOutOfScope();
+        return issueFinder;
     }
 
     @Override

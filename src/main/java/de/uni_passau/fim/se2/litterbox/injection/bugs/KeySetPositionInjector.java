@@ -67,9 +67,11 @@ import java.util.stream.Collectors;
  */
 public class KeySetPositionInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new KeySetPosition();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new KeySetPosition();
+        return issueFinder;
     }
 
     @Override

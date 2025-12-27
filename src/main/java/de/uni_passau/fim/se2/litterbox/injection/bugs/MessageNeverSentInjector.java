@@ -44,9 +44,11 @@ import java.util.*;
  */
 public class MessageNeverSentInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new MessageNeverSent();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new MessageNeverSent();
+        return issueFinder;
     }
 
     @Override

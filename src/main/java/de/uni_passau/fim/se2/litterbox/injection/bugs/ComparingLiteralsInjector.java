@@ -37,13 +37,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
  */
 public class ComparingLiteralsInjector extends AbstractComparisonInjector {
 
+    private final IssueFinder issueFinder = new ComparingLiterals();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new ComparingLiterals();
+        return issueFinder;
     }
 
     @Override
-    public void visit(Equals node) {
+    protected void injectIntoEquals(Equals node) {
         ComparableExpr op1 = node.getOperand1();
         ComparableExpr op2 = node.getOperand2();
 
@@ -60,11 +62,10 @@ public class ComparingLiteralsInjector extends AbstractComparisonInjector {
                     .withOperand1(matchingLiteral)
                     .buildEquals());
         }
-        super.visit(node);
     }
 
     @Override
-    public void visit(LessThan node) {
+    protected void injectIntoLessThan(LessThan node) {
         ComparableExpr op1 = node.getOperand1();
         ComparableExpr op2 = node.getOperand2();
 
@@ -81,11 +82,10 @@ public class ComparingLiteralsInjector extends AbstractComparisonInjector {
                     .withOperand1(matchingLiteral)
                     .buildLessThan());
         }
-        super.visit(node);
     }
 
     @Override
-    public void visit(BiggerThan node) {
+    protected void injectIntoBiggerThan(BiggerThan node) {
         ComparableExpr op1 = node.getOperand1();
         ComparableExpr op2 = node.getOperand2();
 
@@ -102,6 +102,5 @@ public class ComparingLiteralsInjector extends AbstractComparisonInjector {
                     .withOperand1(matchingLiteral)
                     .buildBiggerThan());
         }
-        super.visit(node);
     }
 }

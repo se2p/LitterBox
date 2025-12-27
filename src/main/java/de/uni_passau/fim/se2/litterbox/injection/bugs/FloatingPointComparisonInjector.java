@@ -57,6 +57,8 @@ import java.util.Set;
  */
 public class FloatingPointComparisonInjector extends AbstractComparisonInjector {
 
+    private final IssueFinder issueFinder = new FloatingPointComparison();
+
     /**
      * Expression types that produce floating-point values (unsafe for exact comparison).
      */
@@ -80,7 +82,7 @@ public class FloatingPointComparisonInjector extends AbstractComparisonInjector 
 
     @Override
     public IssueFinder getIssueFinder() {
-        return new FloatingPointComparison();
+        return issueFinder;
     }
 
     @Override

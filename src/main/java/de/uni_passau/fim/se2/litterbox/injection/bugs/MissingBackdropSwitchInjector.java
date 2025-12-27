@@ -54,9 +54,11 @@ import java.util.Set;
  */
 public class MissingBackdropSwitchInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new MissingBackdropSwitch();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new MissingBackdropSwitch();
+        return issueFinder;
     }
 
     @Override

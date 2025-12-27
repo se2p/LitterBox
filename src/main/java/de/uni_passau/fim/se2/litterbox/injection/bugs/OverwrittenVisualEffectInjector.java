@@ -72,9 +72,11 @@ public class OverwrittenVisualEffectInjector extends AbstractBugInjector {
             SetGraphicEffectTo.class, ClearGraphicEffects.class
     );
 
+    private final IssueFinder issueFinder = new OverwrittenVisualEffect();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new OverwrittenVisualEffect();
+        return issueFinder;
     }
 
     @Override

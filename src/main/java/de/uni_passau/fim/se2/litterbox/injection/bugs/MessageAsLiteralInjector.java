@@ -75,9 +75,11 @@ import java.util.stream.Collectors;
  */
 public class MessageAsLiteralInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new MessageAsLiteral();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new MessageAsLiteral();
+        return issueFinder;
     }
 
     @Override

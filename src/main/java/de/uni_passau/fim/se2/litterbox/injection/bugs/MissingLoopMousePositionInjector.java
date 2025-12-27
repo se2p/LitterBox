@@ -55,9 +55,11 @@ public class MissingLoopMousePositionInjector extends AbstractBugInjector {
     private boolean inValidScript = false;
     private boolean insideLoop = false;  // Track if we're inside a loop
 
+    private final IssueFinder issueFinder = new MissingLoopMousePosition();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new MissingLoopMousePosition();
+        return issueFinder;
     }
 
     @Override

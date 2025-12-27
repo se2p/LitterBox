@@ -37,9 +37,11 @@ import java.util.List;
  */
 public class CustomBlockWithForeverInjector extends AbstractCustomBlockInjector {
 
+    private final IssueFinder issueFinder = new CustomBlockWithForever();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new CustomBlockWithForever();
+        return issueFinder;
     }
 
     @Override

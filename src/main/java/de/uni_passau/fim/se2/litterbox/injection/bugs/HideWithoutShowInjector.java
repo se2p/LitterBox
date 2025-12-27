@@ -46,6 +46,8 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
  */
 public class HideWithoutShowInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new HideWithoutShow();
+
     private boolean hasShow;
     private boolean hasHide;
     private boolean hasVisibleChange;
@@ -53,7 +55,7 @@ public class HideWithoutShowInjector extends AbstractBugInjector {
 
     @Override
     public IssueFinder getIssueFinder() {
-        return new HideWithoutShow();
+        return issueFinder;
     }
 
     @Override

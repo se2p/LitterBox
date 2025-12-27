@@ -36,9 +36,11 @@ import java.util.Optional;
  */
 public class ParameterAsLiteralInjector extends AbstractAsLiteralInjector {
 
+    private final IssueFinder issueFinder = new ParameterAsLiteral();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new ParameterAsLiteral();
+        return issueFinder;
     }
 
     /**

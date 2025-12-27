@@ -38,9 +38,11 @@ import java.util.Set;
  */
 public class OrphanedParameterInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new OrphanedParameter();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new OrphanedParameter();
+        return issueFinder;
     }
 
     @Override

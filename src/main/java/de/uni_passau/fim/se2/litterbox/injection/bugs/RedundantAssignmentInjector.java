@@ -77,9 +77,11 @@ public class RedundantAssignmentInjector extends AbstractBugInjector {
 
     private ActorDefinition currentActor;
 
+    private final IssueFinder issueFinder = new RedundantAssignment();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new RedundantAssignment();
+        return issueFinder;
     }
 
     @Override

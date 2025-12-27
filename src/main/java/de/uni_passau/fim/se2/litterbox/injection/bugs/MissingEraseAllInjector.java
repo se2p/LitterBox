@@ -37,9 +37,11 @@ import java.util.List;
  */
 public class MissingEraseAllInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new MissingEraseAll();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new MissingEraseAll();
+        return issueFinder;
     }
 
     @Override

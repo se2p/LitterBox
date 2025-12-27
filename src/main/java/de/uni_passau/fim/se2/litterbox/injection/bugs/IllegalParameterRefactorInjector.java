@@ -40,9 +40,11 @@ import java.util.Set;
  */
 public class IllegalParameterRefactorInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new IllegalParameterRefactor();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new IllegalParameterRefactor();
+        return issueFinder;
     }
 
     @Override
@@ -91,16 +93,29 @@ public class IllegalParameterRefactorInjector extends AbstractBugInjector {
     }
 
     private Set<String> findParametersUsedAsBool(ProcedureDefinition node) {
-        Set<String> usedAsBool = new HashSet<>();
-        node.getStmtList().accept(new de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor() {
-            @Override
-            public void visit(de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool asBool) {
-                if (asBool.getOperand1() instanceof Parameter param) {
-                    usedAsBool.add(param.getName().getName());
-                }
-                visitChildren(asBool);
+        BoolParameterCollector collector = new BoolParameterCollector();
+        node.getStmtList().accept(collector);
+        return collector.getParametersUsedAsBool();
+    }
+
+    /**
+     * Visitor that collects parameter names used within AsBool expressions.
+     * A parameter wrapped in AsBool indicates boolean usage, which becomes
+     * problematic if the parameter type is changed to String.
+     */
+    private static class BoolParameterCollector implements de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor {
+        private final Set<String> usedAsBool = new HashSet<>();
+
+        @Override
+        public void visit(de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool asBool) {
+            if (asBool.getOperand1() instanceof Parameter param) {
+                usedAsBool.add(param.getName().getName());
             }
-        });
-        return usedAsBool;
+            visitChildren(asBool);
+        }
+
+        public Set<String> getParametersUsedAsBool() {
+            return usedAsBool;
+        }
     }
 }

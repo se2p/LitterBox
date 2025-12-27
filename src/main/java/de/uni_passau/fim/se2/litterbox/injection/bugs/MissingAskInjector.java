@@ -48,9 +48,11 @@ public class MissingAskInjector extends AbstractBugInjector {
 
     private boolean canInject;
 
+    private final IssueFinder issueFinder = new MissingAsk();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new MissingAsk();
+        return issueFinder;
     }
 
     @Override

@@ -28,9 +28,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
  */
 public class MissingPenUpInjector extends AbstractPenInjector {
 
+    private final IssueFinder issueFinder = new MissingPenUp();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new MissingPenUp();
+        return issueFinder;
     }
 
     @Override

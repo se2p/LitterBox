@@ -47,9 +47,11 @@ import java.util.Set;
  */
 public class ForeverInsideIfInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new ForeverInsideIf();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new ForeverInsideIf();
+        return issueFinder;
     }
 
     @Override

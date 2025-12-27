@@ -71,9 +71,11 @@ public class MissingInitializationInjector extends AbstractBugInjector {
     private final InitialDefinitionTransferFunction initialDefinitionTransferFunction =
             new InitialDefinitionTransferFunction();
 
+    private final IssueFinder issueFinder = new MissingInitialization();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new MissingInitialization();
+        return issueFinder;
     }
 
     @Override

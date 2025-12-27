@@ -39,9 +39,11 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
  */
 public class RecursiveCloningInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new RecursiveCloning();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new RecursiveCloning();
+        return issueFinder;
     }
 
     @Override

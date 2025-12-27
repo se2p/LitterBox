@@ -42,9 +42,11 @@ import java.util.*;
  */
 public class MessageNeverReceivedInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new MessageNeverReceived();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new MessageNeverReceived();
+        return issueFinder;
     }
 
     @Override

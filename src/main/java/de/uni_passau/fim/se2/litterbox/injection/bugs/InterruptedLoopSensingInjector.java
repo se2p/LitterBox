@@ -51,9 +51,11 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
  */
 public class InterruptedLoopSensingInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new InterruptedLoopSensing();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new InterruptedLoopSensing();
+        return issueFinder;
     }
 
     @Override

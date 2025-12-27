@@ -46,9 +46,11 @@ import java.util.List;
  */
 public class NoWorkingScriptsInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new NoWorkingScripts();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new NoWorkingScripts();
+        return issueFinder;
     }
 
     @Override

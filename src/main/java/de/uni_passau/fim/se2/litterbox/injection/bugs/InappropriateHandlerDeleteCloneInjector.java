@@ -52,9 +52,11 @@ public class InappropriateHandlerDeleteCloneInjector extends AbstractBugInjector
     private boolean hasCreateClone;
     private boolean hasStartedAsClone;
 
+    private final IssueFinder issueFinder = new InappropriateHandlerDeleteClone();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new InappropriateHandlerDeleteClone();
+        return issueFinder;
     }
 
     @Override

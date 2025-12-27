@@ -48,9 +48,11 @@ import java.util.*;
  */
 public class MissingCloneCallInjector extends AbstractBugInjector {
 
+    private final IssueFinder issueFinder = new MissingCloneCall();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new MissingCloneCall();
+        return issueFinder;
     }
 
     @Override

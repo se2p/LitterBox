@@ -67,14 +67,11 @@ import java.util.function.Function;
 public class TypeErrorInjector extends AbstractComparisonInjector {
 
     /**
-     * Lazy holder for fallback boolean expression.
-     * Uses holder pattern to defer initialization and avoid static init issues.
+     * Fallback boolean expression to use when no boolean expressions are found in the program.
      */
-    private static class FallbackHolder {
-        static final NumExpr FALLBACK_BOOL_AS_NUM = new AsNumber(
-                new IsMouseDown(NonDataBlockMetadata.emptyNonBlockMetadata())
-        );
-    }
+    private static final NumExpr FALLBACK_BOOL_AS_NUM = new AsNumber(
+            new IsMouseDown(NonDataBlockMetadata.emptyNonBlockMetadata())
+    );
 
     private final List<BoolExpr> collectedBoolExprs = new ArrayList<>();
     private final Set<ASTNode> buggyNodes = new HashSet<>();
@@ -99,16 +96,18 @@ public class TypeErrorInjector extends AbstractComparisonInjector {
             BoolExpr cloned = cloner.apply(collectedBoolExprs.getFirst());
             boolAsNumReplacement = new AsNumber(cloned);
         } else {
-            boolAsNumReplacement = FallbackHolder.FALLBACK_BOOL_AS_NUM;
+            boolAsNumReplacement = FALLBACK_BOOL_AS_NUM;
         }
 
         // Second pass: inject bugs
         return super.inject(program);
     }
 
+    private final IssueFinder issueFinder = new TypeError();
+
     @Override
     public IssueFinder getIssueFinder() {
-        return new TypeError();
+        return issueFinder;
     }
 
     // ==================== Strategy 1: Comparison Type Errors ====================
