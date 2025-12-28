@@ -111,7 +111,11 @@ public class MissingCloneCallInjector extends AbstractBugInjector {
             return currentActorName;
         } else if (node.getCloneChoice() instanceof WithCloneExpr expr) {
             if (expr.getExpression() instanceof StrId strId) {
-                return strId.getName();
+                String name = strId.getName();
+                if ("myself".equalsIgnoreCase(name)) {
+                    return currentActorName;
+                }
+                return name;
             }
         }
         return null;
@@ -137,5 +141,16 @@ public class MissingCloneCallInjector extends AbstractBugInjector {
                 visitChildren(node);
             }
         });
+    }
+
+    @Override
+    protected de.uni_passau.fim.se2.litterbox.ast.model.ASTNode findContextNode(de.uni_passau.fim.se2.litterbox.ast.model.ASTNode node) {
+        // Force ActorDefinition context to show full scope of changes (which might be cross-script)
+        // and to avoid issues with empty scripts.
+        de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition actor = findContainingActor(node);
+        if (actor != null) {
+            return actor;
+        }
+        return super.findContextNode(node);
     }
 }

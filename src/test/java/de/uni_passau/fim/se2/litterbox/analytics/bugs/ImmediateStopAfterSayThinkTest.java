@@ -33,27 +33,27 @@ import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class ImmediateStopAfterSayTest implements FinderTest, JsonTest {
+public class ImmediateStopAfterSayThinkTest implements FinderTest, JsonTest {
 
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
-        assertThatFinderReports(0, new ImmediateStopAfterSay(), "./src/test/fixtures/emptyProject.json");
+        assertThatFinderReports(0, new ImmediateStopAfterSayThink(), "./src/test/fixtures/emptyProject.json");
     }
 
     @Test
     public void testImmediateStop() throws IOException, ParsingException {
-        assertThatFinderReports(2, new ImmediateStopAfterSay(), "./src/test/fixtures/bugs/immediateStop.json");
+        assertThatFinderReports(2, new ImmediateStopAfterSayThink(), "./src/test/fixtures/bugs/immediateStop.json");
     }
 
     @Test
     public void testImmediateStopMultiple() throws IOException, ParsingException {
         Program program = JsonTest.parseProgram("./src/test/fixtures/bugs/immediateStopAfterSayMultiple.json");
-        ImmediateStopAfterSay issueFinder = new ImmediateStopAfterSay();
+        ImmediateStopAfterSayThink issueFinder = new ImmediateStopAfterSayThink();
         Set<Issue> reports = issueFinder.check(program);
         assertThat(reports).hasSize(1);
         Issue theIssue = reports.iterator().next();
 
-        Hint expectedHint = Hint.fromKey(ImmediateStopAfterSay.HINT_MULTIPLE);
+        Hint expectedHint = Hint.fromKey(ImmediateStopAfterSayThink.HINT_MULTIPLE);
         expectedHint.setParameter(Hint.HINT_SAY_THINK, "say");
         assertThat(theIssue.getHintText(translator)).isEqualTo(expectedHint.getHintText(translator));
 

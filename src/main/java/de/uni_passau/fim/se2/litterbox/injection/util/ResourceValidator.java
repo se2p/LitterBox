@@ -38,12 +38,14 @@ public class ResourceValidator {
      * Checks if a costume with the given name exists in the actor metadata.
      * Returns true if metadata is missing (safe default) or if costume is found.
      *
-     * @param metadata The actor metadata
+     * @param metadata    The actor metadata
      * @param costumeName The name of the costume to check
      * @return true if valid or unknown, false if definitely missing
      */
     public static boolean hasCostume(ActorMetadata metadata, String costumeName) {
-        if (metadata == null) return true;
+        if (metadata == null) {
+            return true;
+        }
         return checkResourceExists(metadata.getCostumes().getList(), ImageMetadata::getName, costumeName);
     }
 
@@ -51,12 +53,14 @@ public class ResourceValidator {
      * Checks if a sound with the given name exists in the actor metadata.
      * Returns true if metadata is missing (safe default) or if sound is found.
      *
-     * @param metadata The actor metadata
+     * @param metadata  The actor metadata
      * @param soundName The name of the sound to check
      * @return true if valid or unknown, false if definitely missing
      */
     public static boolean hasSound(ActorMetadata metadata, String soundName) {
-        if (metadata == null) return true;
+        if (metadata == null) {
+            return true;
+        }
         return checkResourceExists(metadata.getSounds().getList(), SoundMetadata::getName, soundName);
     }
 
@@ -75,7 +79,7 @@ public class ResourceValidator {
                     String name = nameExtractor.apply(r);
                     return name.equals(r.getClass().getSimpleName());
                 });
-        
+
         if (isPlaceholderMetadata) {
             return true;
         }

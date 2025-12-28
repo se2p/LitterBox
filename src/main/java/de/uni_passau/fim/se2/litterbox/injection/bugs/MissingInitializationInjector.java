@@ -20,22 +20,15 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingInitialization;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.cfg.Attribute;
-import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
-import de.uni_passau.fim.se2.litterbox.cfg.Defineable;
-import de.uni_passau.fim.se2.litterbox.cfg.Definition;
-import de.uni_passau.fim.se2.litterbox.cfg.Use;
-import de.uni_passau.fim.se2.litterbox.cfg.Variable;
+import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysis;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysisBuilder;
 import de.uni_passau.fim.se2.litterbox.dataflow.InitialDefinitionTransferFunction;
@@ -205,7 +198,7 @@ public class MissingInitializationInjector extends AbstractBugInjector {
      * Checks if any of the target definitions are defined elsewhere in the same script.
      * A later definition would serve as a backup initialization that the finder would detect.
      * This checks all statements in the script, including those nested in loops and conditionals.
-     *
+     * <p>
      * Note: For statements inside loops, we don't filter by isInitialDefinitionStatement because
      * the finder's may-analysis considers any definition path as valid, even if the definition
      * also uses the variable (like IfOnEdgeBounce which uses rotation before defining it).

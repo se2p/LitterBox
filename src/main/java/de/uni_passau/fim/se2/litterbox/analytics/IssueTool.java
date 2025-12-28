@@ -61,7 +61,7 @@ public class IssueTool {
             registerBugFinder(new HideWithoutShow(), bugFinders);
             registerBugFinder(new IllegalParameterRefactor(), bugFinders);
             registerBugFinder(new ImmediateDeleteCloneAfterBroadcast(), bugFinders);
-            registerBugFinder(new ImmediateStopAfterSay(), bugFinders);
+            registerBugFinder(new ImmediateStopAfterSayThink(), bugFinders);
             registerBugFinder(new InappropriateHandlerDeleteClone(), bugFinders);
             registerBugFinder(new InterruptedLoopSensing(), bugFinders);
             registerBugFinder(new InvalidNumberString(), bugFinders);
@@ -144,7 +144,7 @@ public class IssueTool {
         registerBugFinder(new ForeverInsideLoop(), bugFinders);
         registerBugFinder(new IllegalParameterRefactor(), bugFinders);
         registerBugFinder(new ImmediateDeleteCloneAfterBroadcast(), bugFinders);
-        registerBugFinder(new ImmediateStopAfterSay(), bugFinders);
+        registerBugFinder(new ImmediateStopAfterSayThink(), bugFinders);
         registerBugFinder(new InappropriateHandlerDeleteClone(), bugFinders);
         registerBugFinder(new InterruptedLoopSensing(), bugFinders);
         registerBugFinder(new InvalidNumberString(), bugFinders);

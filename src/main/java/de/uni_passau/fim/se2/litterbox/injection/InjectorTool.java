@@ -44,6 +44,7 @@ public class InjectorTool {
         registerInjector(new TerminatedLoopInjector(), injectors);
         registerInjector(new BlockingIfElseInjector(), injectors);
         registerInjector(new MissingTerminationConditionInjector(), injectors);
+        registerInjector(new MissingWaitUntilConditionInjector(), injectors);
         registerInjector(new InterruptedLoopSensingInjector(), injectors);
 
         // Custom block bugs
@@ -97,7 +98,7 @@ public class InjectorTool {
         // Looks/effects bugs
         registerInjector(new HideWithoutShowInjector(), injectors);
         registerInjector(new OverwrittenVisualEffectInjector(), injectors);
-        registerInjector(new ImmediateStopAfterSayInjector(), injectors);
+        registerInjector(new ImmediateStopAfterSayThinkInjector(), injectors);
 
         // Expression bugs
         registerInjector(new ExpressionAsTouchingOrColorInjector(), injectors);

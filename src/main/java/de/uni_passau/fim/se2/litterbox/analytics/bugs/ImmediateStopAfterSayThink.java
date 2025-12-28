@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ImmediateStopAfterSay extends AbstractIssueFinder {
+public class ImmediateStopAfterSayThink extends AbstractIssueFinder {
     public static final String NAME = "immediate_stop_after_say_think";
     public static final String HINT_MULTIPLE = "immediate_stop_after_say_think_multiple";
     public boolean hasMultipleActorsWithCode;

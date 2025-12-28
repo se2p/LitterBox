@@ -20,13 +20,17 @@ package de.uni_passau.fim.se2.litterbox.ast;
 
 import de.uni_passau.fim.se2.litterbox.ast.builder.IfStmtBuilder;
 import de.uni_passau.fim.se2.litterbox.ast.builder.UntilStmtBuilder;
+import de.uni_passau.fim.se2.litterbox.ast.builder.WaitUntilBuilder;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 
 import java.util.List;
 
@@ -45,10 +49,14 @@ public class ScratchNodeFactory {
         return new UntilStmtBuilder();
     }
 
-    public de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt createForever(StmtList stmtList) {
-        return new de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt(
-            stmtList, 
-            de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata.emptyNonBlockMetadata()
+    public WaitUntilBuilder createWaitUntil() {
+        return new WaitUntilBuilder();
+    }
+
+    public RepeatForeverStmt createForever(StmtList stmtList) {
+        return new RepeatForeverStmt(
+            stmtList,
+            NonDataBlockMetadata.emptyNonBlockMetadata()
         );
     }
 
@@ -58,10 +66,10 @@ public class ScratchNodeFactory {
         return new NumberLiteral(val);
     }
 
-    public de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds createWaitSeconds(double seconds) {
-        return new de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds(
+    public WaitSeconds createWaitSeconds(double seconds) {
+        return new WaitSeconds(
             literal(seconds),
-            de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata.emptyNonBlockMetadata()
+            NonDataBlockMetadata.emptyNonBlockMetadata()
         );
     }
 

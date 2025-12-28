@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageAsLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
@@ -118,10 +119,49 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
         LiteralReplacementVisitor visitor = new LiteralReplacementVisitor(targetLiteral, uniqueBroadcast.message());
         Program mutated = (Program) program.accept(visitor);
 
-        return wrapAsSingleResult(mutated);
+        // Fix for empty script output: Calculate context strings explicitly
+        String originalScript = "";
+        String mutatedScript = "";
+
+        if (visitor.firstModifiedOriginal != null && visitor.firstModifiedReplacement != null) {
+            // Establish parent links in the new tree
+            mutated.accept(new de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor());
+
+            originalScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedOriginal));
+            mutatedScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedReplacement));
+        }
+
+        return Collections.singletonList(new InjectionResult(mutated, "", originalScript, mutatedScript));
     }
 
-    private String getMessageText(StringExpr expr) {
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Overridden to handle variable initializations in SetStmtList by returning
+     * the containing Stmt for better context in ScratchBlocks rendering.
+     */
+    @Override
+    protected ASTNode findContextNode(ASTNode node) {
+        if (node == null) {
+            return null;
+        }
+        // For nodes in SetStmtList (variable initialization context), use the containing Stmt
+        SetStmtList setStmtList = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.findParent(node, SetStmtList.class);
+        if (setStmtList != null) {
+            Stmt stmt = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.findParent(node, Stmt.class);
+            if (stmt != null) {
+                return stmt;
+            }
+            return setStmtList;
+        }
+        // Default to ActorDefinition for broader context
+        return findContainingActor(node);
+    }
+
+    private String getMessageText(de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression expr) {
+        if (expr instanceof AsString asString) {
+            return getMessageText(asString.getOperand1());
+        }
         if (expr instanceof StringLiteral lit) {
             return lit.getText();
         }
@@ -210,6 +250,10 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
         private boolean removed = false;
         private boolean replaced = false;
 
+        // Track nodes to identify context for CSV output
+        ASTNode firstModifiedOriginal = null;
+        ASTNode firstModifiedReplacement = null;
+
         LiteralReplacementVisitor(StringLiteral literal, String newText) {
             this.messageToRemove = newText;
             this.originalText = literal.getText();
@@ -248,6 +292,8 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
                 removed = true;
                 return true;
             }
+            // Add fallback for unwrapping AsString if needed here too, though Broadcast visitor logic likely covers it
+            // but `node.getMessage().getMessage()` is passed here.
             return false;
         }
 
@@ -255,7 +301,10 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
         public ASTNode visit(StringLiteral node) {
             if (!replaced && node.getText().equals(originalText)) {
                 replaced = true;
-                return new StringLiteral(messageToRemove);
+                StringLiteral replacement = new StringLiteral(messageToRemove);
+                firstModifiedOriginal = node;
+                firstModifiedReplacement = replacement;
+                return replacement;
             }
             return super.visit(node);
         }

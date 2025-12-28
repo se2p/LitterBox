@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.ImmediateStopAfterSay;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ImmediateStopAfterSayThink;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -44,9 +44,9 @@ import java.util.List;
  * Note: This implementation uses index-based access to avoid issues with indexOf() when
  * multiple structurally-equal statements exist (since equals() compares by structure).
  */
-public class ImmediateStopAfterSayInjector extends AbstractBugInjector {
+public class ImmediateStopAfterSayThinkInjector extends AbstractBugInjector {
 
-    private final IssueFinder issueFinder = new ImmediateStopAfterSay();
+    private final IssueFinder issueFinder = new ImmediateStopAfterSayThink();
 
     @Override
     public IssueFinder getIssueFinder() {

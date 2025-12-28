@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.ImmediateStopAfterSay;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ImmediateStopAfterSayThink;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-public class ImmediateStopAfterSayInjectorTest implements JsonTest {
+public class ImmediateStopAfterSayThinkInjectorTest implements JsonTest {
 
     @Test
     public void testImmediateStopAfterSayInjector() throws IOException, ParsingException {
@@ -44,13 +44,13 @@ public class ImmediateStopAfterSayInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
 
-        ImmediateStopAfterSayInjector injector = new ImmediateStopAfterSayInjector();
+        ImmediateStopAfterSayThinkInjector injector = new ImmediateStopAfterSayThinkInjector();
         List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         // Verification: Check detector finds the issue
-        ImmediateStopAfterSay detector = new ImmediateStopAfterSay();
+        ImmediateStopAfterSayThink detector = new ImmediateStopAfterSayThink();
         for (InjectionResult result : injected) {
             Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
@@ -69,13 +69,13 @@ public class ImmediateStopAfterSayInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
 
-        ImmediateStopAfterSayInjector injector = new ImmediateStopAfterSayInjector();
+        ImmediateStopAfterSayThinkInjector injector = new ImmediateStopAfterSayThinkInjector();
         List<InjectionResult> injected = injector.inject(program);
 
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
 
         // Verification: Check detector finds the issue
-        ImmediateStopAfterSay detector = new ImmediateStopAfterSay();
+        ImmediateStopAfterSayThink detector = new ImmediateStopAfterSayThink();
         for (InjectionResult result : injected) {
             Program mutated = result.mutatedProgram();
             Set<Issue> issues = detector.check(mutated);
@@ -94,14 +94,14 @@ public class ImmediateStopAfterSayInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
 
-        ImmediateStopAfterSayInjector injector = new ImmediateStopAfterSayInjector();
+        ImmediateStopAfterSayThinkInjector injector = new ImmediateStopAfterSayThinkInjector();
         List<InjectionResult> injected = injector.inject(program);
 
         // Should convert SayForSecs at end to Say + StopAll
         Assertions.assertEquals(1, injected.size(), "Should inject via fallback");
 
         // Verify detection
-        ImmediateStopAfterSay detector = new ImmediateStopAfterSay();
+        ImmediateStopAfterSayThink detector = new ImmediateStopAfterSayThink();
         Assertions.assertFalse(detector.check(injected.getFirst().mutatedProgram()).isEmpty(),
                 "Detector should find the bug");
     }
@@ -119,14 +119,14 @@ public class ImmediateStopAfterSayInjectorTest implements JsonTest {
 
         Program program = parseScratchBlocks(script);
 
-        ImmediateStopAfterSayInjector injector = new ImmediateStopAfterSayInjector();
+        ImmediateStopAfterSayThinkInjector injector = new ImmediateStopAfterSayThinkInjector();
         List<InjectionResult> injected = injector.inject(program);
 
         // Should inject 2 mutations (one for each Say statement)
         Assertions.assertEquals(2, injected.size(), "Should inject 2 bug programs (one per Say)");
 
         // Verify each mutation is detected
-        ImmediateStopAfterSay detector = new ImmediateStopAfterSay();
+        ImmediateStopAfterSayThink detector = new ImmediateStopAfterSayThink();
         for (int i = 0; i < injected.size(); i++) {
             Set<Issue> issues = detector.check(injected.get(i).mutatedProgram());
             Assertions.assertFalse(issues.isEmpty(),

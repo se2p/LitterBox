@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ExpressionAsTouchingOrColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
@@ -49,9 +50,6 @@ import java.util.UUID;
 /**
  * Injects ExpressionAsTouchingOrColor bug by replacing a Touching or ColorTouchingColor
  * expression's operand with an expression (variable) instead of a literal touchable/color.
- * <p>
- * Note: This injector uses a custom CloneVisitor approach because the Touching and
- * ColorTouchingColor nodes have immutable fields and cannot be modified in-place.
  */
 public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
 
@@ -68,36 +66,56 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
         Program cloned = (Program) program.accept(visitor);
         if (visitor.isModified()) {
             cloned.accept(new ParentVisitor());
-            return wrapAsSingleResult(cloned);
+
+            // Generate script strings for CSV output using first modified location
+            String originalScript = "";
+            String mutatedScript = "";
+
+            if (visitor.firstModifiedNode != null) {
+                originalScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedNode));
+            }
+            if (visitor.firstModifiedNodeReplacement != null) {
+                mutatedScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedNodeReplacement));
+            }
+
+            return Collections.singletonList(new InjectionResult(cloned, "", originalScript, mutatedScript));
         }
         return Collections.emptyList();
     }
 
-    /**
-     * Custom CloneVisitor that replaces valid Touching/ColorTouchingColor operands
-     * with variable expressions during cloning.
-     * <p>
-     * This requires a custom visitor because we need to conditionally transform
-     * multiple node types (Touching, ColorTouchingColor, SpriteTouchingColor,
-     * SetPenColorToColorStmt) and the transformation is type-specific.
-     * Using {@link #replaceNodeImmutably} would require detecting all target nodes
-     * beforehand, which is less efficient than transforming during traversal.
-     */
+    @Override
+    protected ASTNode findContextNode(ASTNode node) {
+        // Force ActorDefinition context to show full scope of changes and avoid empty scripts
+        ActorDefinition actor = findContainingActor(node);
+        if (actor != null) {
+            return actor;
+        }
+        return super.findContextNode(node);
+    }
+
     private static class CustomMappingCloneVisitor extends CloneVisitor {
         private boolean modified = false;
+        ASTNode firstModifiedNode = null;
+        ASTNode firstModifiedNodeReplacement = null;
 
         public boolean isModified() {
             return modified;
         }
 
+        private void markModified(ASTNode original, ASTNode replacement) {
+            if (!modified) {
+                modified = true;
+                firstModifiedNode = original;
+                firstModifiedNodeReplacement = replacement;
+            }
+        }
+
         @Override
         public ASTNode visit(Touching node) {
-            // Only inject if the touchable is currently valid (not already buggy)
             if (node.getTouchable() instanceof MousePointer
                     || node.getTouchable() instanceof Edge
                     || node.getTouchable() instanceof SpriteTouchable) {
-                modified = true;
-                return new Touching(
+                Touching replacement = new Touching(
                         new AsTouchable(
                                 new Variable(
                                         new StrId(new StringLiteral("var_" + UUID.randomUUID())),
@@ -106,17 +124,16 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
                         ),
                         apply(node.getMetadata())
                 );
+                markModified(node, replacement);
+                return replacement;
             }
-            // Already buggy, just clone normally
             return super.visit(node);
         }
 
         @Override
         public ASTNode visit(ColorTouchingColor node) {
-            // Only inject if operand1 is a valid ColorLiteral
             if (node.getOperand1() instanceof ColorLiteral) {
-                modified = true;
-                return new ColorTouchingColor(
+                ColorTouchingColor replacement = new ColorTouchingColor(
                         new FromNumber(
                                 new AsNumber(
                                         new Variable(
@@ -125,20 +142,19 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
                                         )
                                 )
                         ),
-                        apply(node.getOperand2()), // Clone the second color
+                        apply(node.getOperand2()),
                         apply(node.getMetadata())
                 );
+                markModified(node, replacement);
+                return replacement;
             }
-            // Already buggy, just clone normally
             return super.visit(node);
         }
 
         @Override
         public ASTNode visit(SpriteTouchingColor node) {
-            // Only inject if color is a valid ColorLiteral
             if (node.getColor() instanceof ColorLiteral) {
-                modified = true;
-                return new SpriteTouchingColor(
+                SpriteTouchingColor replacement = new SpriteTouchingColor(
                         new FromNumber(
                                 new AsNumber(
                                         new Variable(
@@ -149,17 +165,16 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
                         ),
                         apply(node.getMetadata())
                 );
+                markModified(node, replacement);
+                return replacement;
             }
-            // Already buggy, just clone normally
             return super.visit(node);
         }
 
         @Override
         public ASTNode visit(SetPenColorToColorStmt node) {
-            // Only inject if colorExpr is a valid ColorLiteral
             if (node.getColorExpr() instanceof ColorLiteral) {
-                modified = true;
-                return new SetPenColorToColorStmt(
+                SetPenColorToColorStmt replacement = new SetPenColorToColorStmt(
                         new FromNumber(
                                 new AsNumber(
                                         new Variable(
@@ -170,8 +185,9 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
                         ),
                         apply(node.getMetadata())
                 );
+                markModified(node, replacement);
+                return replacement;
             }
-            // Already buggy, just clone normally
             return super.visit(node);
         }
     }

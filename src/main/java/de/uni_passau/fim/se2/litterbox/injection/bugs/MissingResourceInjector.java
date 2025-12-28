@@ -110,12 +110,12 @@ public class MissingResourceInjector extends AbstractBugInjector {
     /**
      * Generic method to replace a resource reference with an invalid one.
      *
-     * @param node            The original statement to replace
+     * @param node             The original statement to replace
      * @param originalWithExpr The original WithExpr containing the valid resource
-     * @param invalidName     The invalid resource name to use
-     * @param metadata        The metadata to preserve
-     * @param constructor     Constructor for the replacement statement
-     * @param <T>             The statement type
+     * @param invalidName      The invalid resource name to use
+     * @param metadata         The metadata to preserve
+     * @param constructor      Constructor for the replacement statement
+     * @param <T>              The statement type
      */
     private <T extends Stmt> void replaceWithInvalidResource(
             T node,

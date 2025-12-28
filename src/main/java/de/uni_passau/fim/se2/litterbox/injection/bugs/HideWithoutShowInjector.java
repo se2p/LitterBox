@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.HideWithoutShow;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
@@ -71,13 +70,8 @@ public class HideWithoutShowInjector extends AbstractBugInjector {
 
         // Only proceed if actor has Show + visible changes
         if (hasShow && hasVisibleChange) {
-            // Use firstScript as context for mutateClone so it correctly captures ScratchBlocks for the CSV
-            modifyClonedNode(firstScript, clonedScript -> {
-                ActorDefinition clonedActor = findContainingActor(clonedScript);
-                if (clonedActor == null) {
-                    return;
-                }
-
+            // Use ActorDefinition as context to capture all changes (Show removals across scripts)
+            modifyClonedNode(node, clonedActor -> {
                 // Remove ALL Show statements from ALL scripts in this actor
                 clonedActor.accept(new ScratchVisitor() {
                     @Override
@@ -88,8 +82,8 @@ public class HideWithoutShowInjector extends AbstractBugInjector {
                 });
 
                 // If no Hide existed in the original actor, add one at start of first script
-                if (!hasHide && firstScript != null) {
-                    // Find the first script in the cloned actor
+                if (!hasHide) {
+                    // Find the first non-empty script in the cloned actor
                     clonedActor.accept(new ScratchVisitor() {
                         private boolean found = false;
 
@@ -150,17 +144,6 @@ public class HideWithoutShowInjector extends AbstractBugInjector {
                 hasVisibleChange = true;
             }
         });
-    }
-
-    private ActorDefinition findContainingActor(ASTNode node) {
-        ASTNode current = node;
-        while (current != null) {
-            if (current instanceof ActorDefinition actor) {
-                return actor;
-            }
-            current = current.getParentNode();
-        }
-        return null;
     }
 }
 

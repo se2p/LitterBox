@@ -78,20 +78,45 @@ public class KeySetPositionInjector extends AbstractBugInjector {
     public List<InjectionResult> inject(Program program) {
         ExtractingCloneVisitor visitor = new ExtractingCloneVisitor();
         Program cloned = (Program) program.accept(visitor);
-        return visitor.extractedAny ? wrapAsSingleResult(cloned) : Collections.emptyList();
+
+        if (!visitor.extractedAny) {
+            return Collections.emptyList();
+        }
+
+        // Fix for empty script output: Calculate context strings explicitly
+        String originalScript = "";
+        String mutatedScript = "";
+
+        if (visitor.firstModifiedOriginal != null && visitor.firstModifiedReplacement != null) {
+            // Establish parent links in the new tree
+            cloned.accept(new de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor());
+
+            originalScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedOriginal));
+            mutatedScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedReplacement));
+        }
+
+        return Collections.singletonList(new InjectionResult(cloned, "", originalScript, mutatedScript));
     }
 
     /**
      * Identifies "If [supported key] Pressed then [motion]" statements.
      */
     private boolean isCandidate(Stmt stmt) {
-        if (!(stmt instanceof IfThenStmt ifStmt)) return false;
+        if (!(stmt instanceof IfThenStmt ifStmt)) {
+            return false;
+        }
 
         BoolExpr cond = ifStmt.getBoolExpr();
-        if (cond instanceof AsBool asBool) cond = (BoolExpr) asBool.getOperand1();
+        if (cond instanceof AsBool asBool) {
+            cond = (BoolExpr) asBool.getOperand1();
+        }
 
-        if (!(cond instanceof IsKeyPressed keyPressed)) return false;
-        if (!isSupportedKey(keyPressed)) return false;
+        if (!(cond instanceof IsKeyPressed keyPressed)) {
+            return false;
+        }
+        if (!isSupportedKey(keyPressed)) {
+            return false;
+        }
 
         // The finder typically checks the first 1-2 statements
         List<Stmt> body = ifStmt.getThenStmts().getStmts();
@@ -105,7 +130,9 @@ public class KeySetPositionInjector extends AbstractBugInjector {
 
     private boolean isSupportedKey(IsKeyPressed node) {
         ASTNode expr = node.getKey().getKey();
-        if (expr instanceof AsNumber asNumber) expr = asNumber.getOperand1();
+        if (expr instanceof AsNumber asNumber) {
+            expr = asNumber.getOperand1();
+        }
 
         if (expr instanceof NumberLiteral num) {
             int key = (int) num.getValue();
@@ -136,6 +163,17 @@ public class KeySetPositionInjector extends AbstractBugInjector {
         private final List<Script> extraScripts = new ArrayList<>();
         private boolean extractedAny = false;
 
+        // Track nodes for CSV output
+        ASTNode firstModifiedOriginal = null;
+        ASTNode firstModifiedReplacement = null;
+        Script currentOriginalScript = null;
+
+        @Override
+        public ASTNode visit(Script node) {
+            currentOriginalScript = node;
+            return super.visit(node);
+        }
+
         @Override
         public ASTNode visit(ScriptList node) {
             extraScripts.clear();
@@ -160,11 +198,19 @@ public class KeySetPositionInjector extends AbstractBugInjector {
 
         private void extractToEvent(IfThenStmt ifStmt) {
             BoolExpr cond = ifStmt.getBoolExpr();
-            if (cond instanceof AsBool asBool) cond = (BoolExpr) asBool.getOperand1();
+            if (cond instanceof AsBool asBool) {
+                cond = (BoolExpr) asBool.getOperand1();
+            }
 
             IsKeyPressed keyPressed = (IsKeyPressed) cond;
             KeyPressed event = new KeyPressed(apply(keyPressed.getKey()), TopNonDataBlockMetadata.emptyTopNonBlockMetadata());
-            extraScripts.add(new Script(event, apply(ifStmt.getThenStmts())));
+            Script newScript = new Script(event, apply(ifStmt.getThenStmts()));
+            extraScripts.add(newScript);
+
+            if (!extractedAny) {
+                firstModifiedOriginal = currentOriginalScript;
+                firstModifiedReplacement = newScript;
+            }
             extractedAny = true;
         }
     }

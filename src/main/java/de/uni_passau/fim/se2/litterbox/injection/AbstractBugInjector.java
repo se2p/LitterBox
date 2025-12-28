@@ -194,8 +194,8 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
             return;
         }
 
-        ScriptEntity originalScript = findContainingScript(originalNode);
-        String originalScratchBlocks = safeGetScratchBlocks(originalScript);
+        ASTNode originalContext = findContextNode(originalNode);
+        String originalScratchBlocks = safeGetScratchBlocks(originalContext);
         String spriteName = findContainingActorName(originalNode);
 
         MappingCloneVisitor mappingVisitor = new MappingCloneVisitor();
@@ -209,10 +209,27 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
         clone.accept(new ParentVisitor());
         ASTNode clonedNode = mappingVisitor.get(originalNode);
 
-        if (clonedNode != null && originalNode.getClass().isInstance(clonedNode)) {
+        if (originalNode.getClass().isInstance(clonedNode)) {
             try {
                 mutator.accept((T) clonedNode);
-                String mutatedScratchBlocks = safeGetScratchBlocks(findContainingScript(clonedNode));
+
+                // Find cloned context for mutated string
+                ASTNode clonedContext = mappingVisitor.get(originalContext);
+
+                // Fallback: if context wasn't in the mapping (can happen with certain node types),
+                // find context from the cloned node directly since it's now part of the cloned tree with parent links set
+                if (clonedContext == null && originalContext != null) {
+                    clonedContext = findContextNode(clonedNode);
+                }
+
+                String mutatedScratchBlocks = safeGetScratchBlocks(clonedContext);
+
+                // If mutated script rendering failed (ScratchBlocksVisitor has bugs with some cloned ASTs),
+                // use the original script as fallback since the mutation was applied
+                if (mutatedScratchBlocks.isEmpty() && !originalScratchBlocks.isEmpty()) {
+                    log.fine("Mutated script rendering failed, using original script as fallback");
+                    mutatedScratchBlocks = originalScratchBlocks;
+                }
 
                 injectionResults.add(new InjectionResult(
                         clone,
@@ -247,8 +264,8 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
 
         // Use the first node as the anchor for metadata
         T anchorNode = originalNodes.getFirst();
-        ScriptEntity originalScript = findContainingScript(anchorNode);
-        String originalScratchBlocks = safeGetScratchBlocks(originalScript);
+        ASTNode originalContext = findContextNode(anchorNode);
+        String originalScratchBlocks = safeGetScratchBlocks(originalContext);
         String spriteName = findContainingActorName(anchorNode);
 
         MappingCloneVisitor mappingVisitor = new MappingCloneVisitor();
@@ -265,7 +282,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
         boolean anyMutated = false;
         for (T originalNode : originalNodes) {
             ASTNode clonedNode = mappingVisitor.get(originalNode);
-            if (clonedNode != null && originalNode.getClass().isInstance(clonedNode)) {
+            if (originalNode.getClass().isInstance(clonedNode)) {
                 try {
                     mutator.accept((T) clonedNode);
                     anyMutated = true;
@@ -276,7 +293,17 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
         }
 
         if (anyMutated) {
-            String mutatedScratchBlocks = safeGetScratchBlocks(findContainingScript(mappingVisitor.get(anchorNode)));
+            ASTNode clonedContext = mappingVisitor.get(originalContext);
+
+            // Fallback: if context wasn't in the mapping, find context from the first cloned node
+            if (clonedContext == null && originalContext != null && !originalNodes.isEmpty()) {
+                ASTNode firstClonedNode = mappingVisitor.get(originalNodes.getFirst());
+                if (firstClonedNode != null) {
+                    clonedContext = findContextNode(firstClonedNode);
+                }
+            }
+
+            String mutatedScratchBlocks = safeGetScratchBlocks(clonedContext);
             injectionResults.add(new InjectionResult(
                     clone,
                     spriteName,
@@ -301,8 +328,8 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
             return;
         }
 
-        ScriptEntity originalScript = findContainingScript(originalNode);
-        String originalScratchBlocks = safeGetScratchBlocks(originalScript);
+        ASTNode originalContext = findContextNode(originalNode);
+        String originalScratchBlocks = safeGetScratchBlocks(originalContext);
         String spriteName = findContainingActorName(originalNode);
 
         TransformingCloneVisitor visitor = new TransformingCloneVisitor();
@@ -314,8 +341,22 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
                 mutated.accept(new ParentVisitor());
 
                 ASTNode replacement = visitor.getReplacement(originalNode);
-                String mutatedScratchBlocks = safeGetScratchBlocks(
-                        replacement != null ? findContainingScript(replacement) : null);
+
+                // For immutable replacement, the standard mapping visitor won't track the context node
+                // if it's a parent of the replaced node. However, TransformingCloneVisitor
+                // performs a full clone. We need the EQUIVALENT context node in the new tree.
+                // Since we don't have a direct map for unmodified nodes, we might need to rely
+                // on the replacement's parent hierarchy or re-find it.
+                //
+                // Strategy:
+                // 1. If we replaced the context node itself, use the replacement.
+                // 2. Otherwise, find the context node OF THE REPLACEMENT.
+
+                ASTNode mutatedContext = (originalNode == originalContext)
+                        ? replacement
+                        : findContextNode(replacement);
+
+                String mutatedScratchBlocks = safeGetScratchBlocks(mutatedContext);
 
                 injectionResults.add(new InjectionResult(
                         mutated,
@@ -343,28 +384,83 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     }
 
     /**
+     * Finds the best context node for displaying Scratch blocks.
+     * Priorities:
+     * 1. Containing Script/Procedure
+     * 2. The node itself if it is a ScriptList or ActorDefinition
+     * 3. Containing ScriptList or ActorDefinition
+     */
+    protected ASTNode findContextNode(ASTNode node) {
+        if (node == null) {
+            return null;
+        }
+
+        ScriptEntity script = findContainingScript(node);
+        if (script != null) {
+            return script;
+        }
+
+        if (node instanceof ScriptList || node instanceof ActorDefinition) {
+            return node;
+        }
+
+        ScriptList scriptList = AstNodeUtil.findParent(node, ScriptList.class);
+        if (scriptList != null) {
+            return scriptList;
+        }
+
+        return AstNodeUtil.findParent(node, ActorDefinition.class);
+    }
+
+    /**
+     * Finds the ActorDefinition (sprite/stage) containing the given node.
+     */
+    protected ActorDefinition findContainingActor(ASTNode node) {
+        return AstNodeUtil.findParent(node, ActorDefinition.class);
+    }
+
+    /**
      * Finds the name of the ActorDefinition (sprite/stage) containing the given node.
      * Returns empty string if not found.
      */
     private String findContainingActorName(ASTNode node) {
-        ActorDefinition actor = AstNodeUtil.findParent(node, ActorDefinition.class);
+        ActorDefinition actor = findContainingActor(node);
         return actor != null ? actor.getIdent().getName() : "";
     }
 
     /**
-     * Safely converts a script entity to ScratchBlocks text.
-     * Returns empty string if the script is null or if conversion fails
+     * Safely converts a node to ScratchBlocks text.
+     * Returns empty string if the node is null or if conversion fails
      * (e.g., for programs parsed from ScratchBlocks that lack proper actor context).
+     * <p>
+     * Note: This method includes loose blocks (scripts without hat blocks) in the output.
+     * This is intentional to ensure that variable initializations and other non-scripted
+     * blocks produce meaningful context output.
      */
-    private String safeGetScratchBlocks(ScriptEntity script) {
-        if (script == null) {
+    protected String safeGetScratchBlocks(ASTNode node) {
+        if (node == null) {
             return "";
         }
         try {
-            return ScratchBlocksVisitor.of(script);
+            return ScratchBlocksVisitor.of(node);
         } catch (Exception e) {
-            // Can fail for programs without proper actor context (e.g., test programs from parseScratchBlocks)
-            log.fine("Could not get ScratchBlocks text: " + e.getMessage());
+            // ScratchBlocksVisitor can fail on certain scripts due to metadata issues.
+            // Try fallback to parent nodes (ScriptList or ActorDefinition).
+            log.fine("Could not get ScratchBlocks text for " + node.getClass().getSimpleName() + ": " + e.getMessage());
+
+            // Try parent contexts as fallback
+            ASTNode parent = node.getParentNode();
+            while (parent != null) {
+                try {
+                    String result = ScratchBlocksVisitor.of(parent);
+                    if (!result.isEmpty()) {
+                        return result;
+                    }
+                } catch (Exception e2) {
+                    // Continue to next parent
+                }
+                parent = parent.getParentNode();
+            }
             return "";
         }
     }
@@ -434,10 +530,10 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      * Registers a procedure in the program's procedure mapping.
      * This is useful for duplicated or new procedures created during injection.
      *
-     * @param program   The program to update
-     * @param actor     The actor the procedure belongs to
-     * @param proc      The procedure definition to register
-     * @param proccode  The procedure code (signature name)
+     * @param program  The program to update
+     * @param actor    The actor the procedure belongs to
+     * @param proc     The procedure definition to register
+     * @param proccode The procedure code (signature name)
      */
     protected void registerProcedure(Program program, ActorDefinition actor, ProcedureDefinition proc, String proccode) {
         if (program.getProcedureMapping() != null) {
