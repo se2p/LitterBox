@@ -56,8 +56,6 @@ import static java.util.logging.Level.WARNING;
  *       Use when you need to add/remove elements from collections (e.g., {@code StmtList.getStmts().remove(...)}).</li>
  *   <li>{@link #modifyMultipleClonedNodes} - Applies the same modification to multiple nodes in one mutation.
  *       Use for batch operations like removing all {@code PenUp} statements.</li>
- *   <li>{@link #wrapAsSingleResult} - Wraps a custom-cloned program as a single result.
- *       Use only with custom {@link CloneVisitor} implementations for complex multi-node transformations.</li>
  * </ul>
  * <p>
  * This class also provides:
@@ -174,9 +172,11 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
                     mutatedScratchBlocks = originalScratchBlocks;
                 }
 
+                String scriptId = findContainingScriptId(originalNode);
                 injectionResults.add(new InjectionResult(
                         clone,
                         spriteName,
+                        scriptId,
                         originalScratchBlocks,
                         mutatedScratchBlocks
                 ));
@@ -247,9 +247,11 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
             }
 
             String mutatedScratchBlocks = safeGetScratchBlocks(clonedContext);
+            String scriptId = findContainingScriptId(anchorNode);
             injectionResults.add(new InjectionResult(
                     clone,
                     spriteName,
+                    scriptId,
                     originalScratchBlocks,
                     mutatedScratchBlocks
             ));
@@ -301,9 +303,11 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
 
                 String mutatedScratchBlocks = safeGetScratchBlocks(mutatedContext);
 
+                String scriptId = findContainingScriptId(originalNode);
                 injectionResults.add(new InjectionResult(
                         mutated,
                         spriteName,
+                        scriptId,
                         originalScratchBlocks,
                         mutatedScratchBlocks
                 ));
@@ -366,9 +370,22 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      * Finds the name of the ActorDefinition (sprite/stage) containing the given node.
      * Returns empty string if not found.
      */
-    private String findContainingActorName(ASTNode node) {
+    protected String findContainingActorName(ASTNode node) {
         ActorDefinition actor = findContainingActor(node);
         return actor != null ? actor.getIdent().getName() : "";
+    }
+
+    /**
+     * Finds the block ID of the Script or ProcedureDefinition containing the given node.
+     * Returns empty string if not found.
+     */
+    protected String findContainingScriptId(ASTNode node) {
+        ScriptEntity script = findContainingScript(node);
+        if (script != null) {
+            String blockId = AstNodeUtil.getBlockId(script);
+            return blockId != null ? blockId : "";
+        }
+        return "";
     }
 
     /**
@@ -427,22 +444,6 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
         public ASTNode get(ASTNode original) {
             return mapping.get(original);
         }
-    }
-
-    // ==================== Injection Result Helpers ====================
-
-    /**
-     * Wraps a custom-cloned program as a single injection result.
-     * <p>
-     * Use this for injectors that use custom CloneVisitor approaches
-     * and don't track individual script changes. This is the escape hatch
-     * for complex multi-node transformations that don't fit the standard patterns.
-     *
-     * @param mutatedProgram The mutated program from a custom CloneVisitor
-     * @return A singleton list containing the injection result
-     */
-    protected List<InjectionResult> wrapAsSingleResult(Program mutatedProgram) {
-        return Collections.singletonList(new InjectionResult(mutatedProgram, "", "", ""));
     }
 
     // ==================== Shared Utility Methods ====================

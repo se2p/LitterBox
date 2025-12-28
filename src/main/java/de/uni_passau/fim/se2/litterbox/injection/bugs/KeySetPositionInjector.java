@@ -34,6 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForever
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
@@ -86,16 +87,20 @@ public class KeySetPositionInjector extends AbstractBugInjector {
         // Fix for empty script output: Calculate context strings explicitly
         String originalScript = "";
         String mutatedScript = "";
+        String spriteName = "";
+        String scriptId = "";
 
         if (visitor.firstModifiedOriginal != null && visitor.firstModifiedReplacement != null) {
             // Establish parent links in the new tree
-            cloned.accept(new de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor());
+            cloned.accept(new ParentVisitor());
 
+            spriteName = findContainingActorName(visitor.firstModifiedOriginal);
+            scriptId = findContainingScriptId(visitor.firstModifiedOriginal);
             originalScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedOriginal));
             mutatedScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedReplacement));
         }
 
-        return Collections.singletonList(new InjectionResult(cloned, "", originalScript, mutatedScript));
+        return Collections.singletonList(new InjectionResult(cloned, spriteName, scriptId, originalScript, mutatedScript));
     }
 
     /**

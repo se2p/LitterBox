@@ -70,15 +70,19 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
             // Generate script strings for CSV output using first modified location
             String originalScript = "";
             String mutatedScript = "";
+            String spriteName = "";
+            String scriptId = "";
 
             if (visitor.firstModifiedNode != null) {
+                spriteName = findContainingActorName(visitor.firstModifiedNode);
+                scriptId = findContainingScriptId(visitor.firstModifiedNode);
                 originalScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedNode));
             }
             if (visitor.firstModifiedNodeReplacement != null) {
                 mutatedScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedNodeReplacement));
             }
 
-            return Collections.singletonList(new InjectionResult(cloned, "", originalScript, mutatedScript));
+            return Collections.singletonList(new InjectionResult(cloned, spriteName, scriptId, originalScript, mutatedScript));
         }
         return Collections.emptyList();
     }

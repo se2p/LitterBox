@@ -43,6 +43,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
@@ -122,16 +123,20 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
         // Fix for empty script output: Calculate context strings explicitly
         String originalScript = "";
         String mutatedScript = "";
+        String spriteName = "";
+        String scriptId = "";
 
         if (visitor.firstModifiedOriginal != null && visitor.firstModifiedReplacement != null) {
             // Establish parent links in the new tree
-            mutated.accept(new de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor());
+            mutated.accept(new ParentVisitor());
 
+            spriteName = findContainingActorName(visitor.firstModifiedOriginal);
+            scriptId = findContainingScriptId(visitor.firstModifiedOriginal);
             originalScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedOriginal));
             mutatedScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedReplacement));
         }
 
-        return Collections.singletonList(new InjectionResult(mutated, "", originalScript, mutatedScript));
+        return Collections.singletonList(new InjectionResult(mutated, spriteName, scriptId, originalScript, mutatedScript));
     }
 
     /**
