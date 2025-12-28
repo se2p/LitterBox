@@ -76,6 +76,11 @@ public class AstNodeUtil {
             return ((NonDataBlockMetadata) procedure.getDefinition()).getBlockId();
         } else if (node instanceof Script script) {
             if (script.getEvent() instanceof Never) {
+                // Scripts with Never events use the first statement's block ID
+                // Return null if the statement list is empty
+                if (!script.getStmtList().hasStatements()) {
+                    return null;
+                }
                 return getBlockId(script.getStmtList().getStatement(0));
             } else {
                 return getBlockId(script.getEvent());
