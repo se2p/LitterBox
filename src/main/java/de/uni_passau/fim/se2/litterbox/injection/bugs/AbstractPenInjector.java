@@ -44,8 +44,14 @@ import java.util.List;
  */
 public abstract class AbstractPenInjector extends AbstractBugInjector {
 
-    private boolean hasPenUp = false;
-    private boolean hasPenDown = false;
+    /**
+     * Result of checking for pen statement presence.
+     */
+    private record PenStatementPresence(boolean hasPenUp, boolean hasPenDown) {
+        boolean hasBoth() {
+            return hasPenUp && hasPenDown;
+        }
+    }
 
     /**
      * Returns the class of the pen statement type to remove.
@@ -56,12 +62,10 @@ public abstract class AbstractPenInjector extends AbstractBugInjector {
 
     @Override
     public List<InjectionResult> inject(Program program) {
-        // Check precondition: both PenUp and PenDown must exist
-        hasPenUp = false;
-        hasPenDown = false;
-        checkPenStatements(program);
+        // Check precondition: both PenUp and PenDown must exist in the program
+        PenStatementPresence programPresence = checkPenStatements(program);
 
-        if (!hasPenUp || !hasPenDown) {
+        if (!programPresence.hasBoth()) {
             // Bug already exists or no pen statements - skip injection
             return List.of();
         }
@@ -69,18 +73,34 @@ public abstract class AbstractPenInjector extends AbstractBugInjector {
         return super.inject(program);
     }
 
-    private void checkPenStatements(Program program) {
-        checkNode(program);
+    /**
+     * Checks for the presence of PenUp and PenDown statements in the given node subtree.
+     * Uses short-circuit evaluation to stop early when both are found.
+     *
+     * @param root The root node to check
+     * @return A record containing the presence of each pen statement type
+     */
+    private PenStatementPresence checkPenStatements(ASTNode root) {
+        boolean[] result = {false, false}; // [hasPenUp, hasPenDown]
+        checkPenStatementsHelper(root, result);
+        return new PenStatementPresence(result[0], result[1]);
     }
 
-    private void checkNode(ASTNode node) {
+    private void checkPenStatementsHelper(ASTNode node, boolean[] result) {
         if (node instanceof PenUpStmt) {
-            hasPenUp = true;
+            result[0] = true;
         } else if (node instanceof PenDownStmt) {
-            hasPenDown = true;
+            result[1] = true;
+        }
+        // Short-circuit if both found
+        if (result[0] && result[1]) {
+            return;
         }
         for (var child : node.getChildren()) {
-            checkNode(child);
+            checkPenStatementsHelper(child, result);
+            if (result[0] && result[1]) {
+                return;
+            }
         }
     }
 
@@ -88,7 +108,8 @@ public abstract class AbstractPenInjector extends AbstractBugInjector {
     public void visit(ActorDefinition actor) {
         // Actor-level check: only inject if this actor has BOTH PenUp and PenDown
         // This matches the finder's actor-level detection logic
-        if (!actorHasBothPenStatements(actor)) {
+        PenStatementPresence actorPresence = checkPenStatements(actor);
+        if (!actorPresence.hasBoth()) {
             return;
         }
 
@@ -109,35 +130,6 @@ public abstract class AbstractPenInjector extends AbstractBugInjector {
         // Don't call super.visit() - we handle the entire actor in one mutation
     }
 
-    /**
-     * Checks if the actor has both PenUp and PenDown statements.
-     * The finder only reports an issue at actor level, so we must inject
-     * only in actors that have both statement types.
-     */
-    private boolean actorHasBothPenStatements(ActorDefinition actor) {
-        boolean[] result = {false, false}; // [hasPenUp, hasPenDown]
-        checkActorPenStatements(actor, result);
-        return result[0] && result[1];
-    }
-
-    private void checkActorPenStatements(ASTNode node, boolean[] result) {
-        if (node instanceof PenUpStmt) {
-            result[0] = true;
-        } else if (node instanceof PenDownStmt) {
-            result[1] = true;
-        }
-        // Short-circuit if both found
-        if (result[0] && result[1]) {
-            return;
-        }
-        for (var child : node.getChildren()) {
-            checkActorPenStatements(child, result);
-            if (result[0] && result[1]) {
-                return;
-            }
-        }
-    }
-
     private void collectStmtListsWithTarget(ASTNode node, Class<? extends Stmt> targetType,
                                             List<StmtList> result) {
         if (node instanceof StmtList stmtList) {
@@ -153,4 +145,3 @@ public abstract class AbstractPenInjector extends AbstractBugInjector {
         }
     }
 }
-

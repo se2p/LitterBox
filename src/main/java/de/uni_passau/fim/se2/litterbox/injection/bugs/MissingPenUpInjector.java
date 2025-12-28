@@ -40,5 +40,3 @@ public class MissingPenUpInjector extends AbstractPenInjector {
         return PenUpStmt.class;
     }
 }
-
-

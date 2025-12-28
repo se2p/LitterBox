@@ -117,4 +117,3 @@ public abstract class AbstractComparisonInjector extends AbstractBugInjector {
         super.visit(node);
     }
 }
-

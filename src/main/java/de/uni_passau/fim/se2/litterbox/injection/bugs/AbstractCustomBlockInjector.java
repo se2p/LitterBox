@@ -133,4 +133,3 @@ public abstract class AbstractCustomBlockInjector extends AbstractBugInjector {
         super.visit(node);
     }
 }
-

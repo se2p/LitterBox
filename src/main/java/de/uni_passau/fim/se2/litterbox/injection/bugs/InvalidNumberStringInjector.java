@@ -225,7 +225,6 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
      * @param constructor Function to construct the replacement node
      * @param <T>         The node type
      */
-    @SuppressWarnings("null")
     private <T extends ASTNode> void injectIntoBinaryNumericOp(
             T node,
             NumExpr operand1,
@@ -261,7 +260,6 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
      * @param constructor Function to construct the replacement node
      * @param <T>         The node type
      */
-    @SuppressWarnings("null")
     private <T extends ASTNode> void injectIntoComparisonOp(
             T node,
             ComparableExpr operand1,

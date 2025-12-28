@@ -83,19 +83,24 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      */
     protected final ScratchNodeFactory nodeFactory = new ScratchNodeFactory();
 
+    /**
+     * Maximum mutations per injector, loaded once from configuration.
+     */
+    private static final int MAX_MUTATIONS = loadMaxMutations();
+
+    private static int loadMaxMutations() {
+        try {
+            return PropertyLoader.getSystemIntProperty("injection.max_mutations_per_injector");
+        } catch (IllegalArgumentException e) {
+            return 50; // Default fallback
+        }
+    }
+
     private List<InjectionResult> injectionResults;
     private Program originalProgram;
-    private int maxMutations;
 
     @Override
     public List<InjectionResult> inject(Program program) {
-        // Initialize max mutations from property
-        try {
-            this.maxMutations = PropertyLoader.getSystemIntProperty("injection.max_mutations_per_injector");
-        } catch (IllegalArgumentException e) {
-            this.maxMutations = 50; // Default fallback
-        }
-
         // Ensure parent pointers are set before visiting
         program.accept(new ParentVisitor());
         this.originalProgram = program;
@@ -133,7 +138,6 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      * @param mutator      Logic to apply to the cloned node
      * @param <T>          The type of the AST node
      */
-    @SuppressWarnings("unchecked")
     protected <T extends ASTNode> void modifyClonedNode(T originalNode, Consumer<T> mutator) {
         modifyClonedNode(originalNode, mutator, findContainingScriptId(originalNode));
     }
@@ -340,7 +344,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     }
 
     private boolean reachesLimit() {
-        return injectionResults.size() >= this.maxMutations;
+        return injectionResults.size() >= MAX_MUTATIONS;
     }
 
     /**
