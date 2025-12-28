@@ -35,10 +35,10 @@ import java.util.*;
 /**
  * Injects the MissingCloneCall bug by removing ALL CreateCloneOf statements
  * for actors that have StartedAsClone event handlers.
- * 
+ *
  * <p>
  * <b>Bug Pattern:</b> An actor has a "when I start as a clone" handler but is never cloned.
- * 
+ *
  * <p>
  * <b>Injection Strategy:</b>
  * <ol>
@@ -109,14 +109,13 @@ public class MissingCloneCallInjector extends AbstractBugInjector {
     private String getCloneTargetName(CreateCloneOf node, String currentActorName) {
         if (node.getCloneChoice() instanceof Myself) {
             return currentActorName;
-        } else if (node.getCloneChoice() instanceof WithCloneExpr expr) {
-            if (expr.getExpression() instanceof StrId strId) {
-                String name = strId.getName();
-                if ("myself".equalsIgnoreCase(name)) {
-                    return currentActorName;
-                }
-                return name;
+        } else if (node.getCloneChoice() instanceof WithCloneExpr expr
+                && expr.getExpression() instanceof StrId strId) {
+            String name = strId.getName();
+            if ("myself".equalsIgnoreCase(name)) {
+                return currentActorName;
             }
+            return name;
         }
         return null;
     }

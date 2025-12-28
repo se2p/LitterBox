@@ -72,7 +72,7 @@ public class MessageNeverReceivedInjector extends AbstractBugInjector {
             if (sentMessages.contains(entry.getKey())) {
                 List<ReceptionOfMessage> receptions = entry.getValue();
                 modifyClonedNode(receptions.getFirst(), clonedFirst -> {
-                    applyTypoToAllReceptions(clonedFirst, receptions.size());
+                    applyTypoToAllReceptions(clonedFirst);
                 });
             }
         }
@@ -105,7 +105,7 @@ public class MessageNeverReceivedInjector extends AbstractBugInjector {
      * Applies a typo to the first cloned reception, then finds and updates
      * all other reception blocks in the cloned program that listen for the same message.
      */
-    private void applyTypoToAllReceptions(ReceptionOfMessage clonedFirst, int expectedCount) {
+    private void applyTypoToAllReceptions(ReceptionOfMessage clonedFirst) {
         // Get the original message text from the cloned node
         if (!(clonedFirst.getMsg().getMessage() instanceof StringLiteral literal)) {
             return;

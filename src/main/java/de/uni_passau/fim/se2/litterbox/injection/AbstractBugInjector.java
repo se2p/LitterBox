@@ -34,7 +34,10 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.logging.Logger;
@@ -132,6 +135,23 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      */
     @SuppressWarnings("unchecked")
     protected <T extends ASTNode> void modifyClonedNode(T originalNode, Consumer<T> mutator) {
+        modifyClonedNode(originalNode, mutator, findContainingScriptId(originalNode));
+    }
+
+    /**
+     * Modifies a cloned AST by applying a modifier to the cloned counterpart of the given node,
+     * specifying an explicit script ID.
+     *
+     * <p>Use this when you need to provide a specific script ID that cannot be automatically inferred
+     * from the original node (e.g., when mutating an ActorDefinition but wanting to point to a specific Script).
+     *
+     * @param originalNode The node in the original AST that triggered the injection
+     * @param mutator      Logic to apply to the cloned node
+     * @param scriptId     The script ID to associate with this injection
+     * @param <T>          The type of the AST node
+     */
+    @SuppressWarnings("unchecked")
+    protected <T extends ASTNode> void modifyClonedNode(T originalNode, Consumer<T> mutator, String scriptId) {
         if (reachesLimit()) {
             return;
         }
@@ -173,7 +193,6 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
                     mutatedScratchBlocks = originalScratchBlocks;
                 }
 
-                String scriptId = findContainingScriptId(originalNode);
                 injectionResults.add(new InjectionResult(
                         clone,
                         spriteName,
@@ -417,7 +436,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
                     if (!result.isEmpty()) {
                         return result;
                     }
-                } catch (Exception e2) {
+                } catch (Exception ignored) {
                     // Continue to next parent
                 }
                 parent = parent.getParentNode();

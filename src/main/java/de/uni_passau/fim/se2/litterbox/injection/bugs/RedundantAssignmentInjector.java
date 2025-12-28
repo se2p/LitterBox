@@ -52,24 +52,24 @@ import java.util.Set;
 
 /**
  * Injects the {@link RedundantAssignment} bug.
- * 
+ *
  * <p>
  * This injector inserts a duplicate assignment/set statement immediately after
  * an existing one. This makes the original assignment redundant since it's
  * immediately overwritten.
- * 
+ *
  * <p>
  * Supports: SetVariableTo, SetXTo, SetYTo, GoToPosXY, PointInDirection,
  * SetSizeTo, SetGraphicEffectTo, SetSoundEffectTo, SetVolumeTo, SwitchCostumeTo,
  * SwitchBackdrop, SwitchBackdropAndWait, GoToPos, PointTowards.
- * 
+ *
  * <p>
  * Preconditions:
  * <ul>
  *   <li>The statement list is not inside a loop (finder treats loops as halting)</li>
  *   <li>The previous statement is not a halting statement (finder marks all vars as live after halts)</li>
  * </ul>
- * 
+ *
  * <p>
  * Transformation:
  * <pre>

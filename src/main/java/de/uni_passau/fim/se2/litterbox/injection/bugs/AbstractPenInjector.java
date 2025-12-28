@@ -33,11 +33,11 @@ import java.util.List;
 
 /**
  * Abstract base class for pen-related bug injectors that remove pen statements.
- * 
+ *
  * <p>
  * Precondition: The program must have BOTH PenUp and PenDown statements.
  * Subclasses specify which statement type to remove.
- * 
+ *
  * <p>
  * Creates a single mutation per actor that removes ALL target statements
  * from all scripts in the actor. This matches the finder's actor-level detection.

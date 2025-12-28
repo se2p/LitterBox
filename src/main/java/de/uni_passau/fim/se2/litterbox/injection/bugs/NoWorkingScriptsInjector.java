@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 import java.util.ArrayList;
@@ -31,14 +32,14 @@ import java.util.List;
 
 /**
  * Injects the {@link NoWorkingScripts} bug by emptying all event scripts and creating detached code.
- * 
+ *
  * <p>
  * The bug pattern requires:
  * <ol>
  *   <li>All event handlers have <b>empty</b> bodies</li>
  *   <li>Dead code (script with Never event) with a <b>non-empty</b> body</li>
  * </ol>
- * 
+ *
  * <p>
  * Transformation (for entire sprite):
  * <pre>
@@ -71,6 +72,18 @@ public class NoWorkingScriptsInjector extends AbstractBugInjector {
      * Empties ALL scripts in the sprite and creates detached Never scripts for their bodies.
      */
     private void addSplitAllScriptsMutation(ScriptList scriptList) {
+        // Find best blame script (first non-empty, non-never script)
+        String scriptId = "";
+        for (Script s : scriptList.getScriptList()) {
+            if (!(s.getEvent() instanceof Never) && !s.getStmtList().getStmts().isEmpty()) {
+                String id = AstNodeUtil.getBlockId(s);
+                if (id != null) {
+                    scriptId = id;
+                    break;
+                }
+            }
+        }
+
         modifyClonedNode(scriptList, clonedScriptList -> {
             List<Script> newScripts = new ArrayList<>();
             List<Script> neverScripts = new ArrayList<>();
@@ -105,7 +118,9 @@ public class NoWorkingScriptsInjector extends AbstractBugInjector {
             clonedScriptList.getScriptList().clear();
             clonedScriptList.getScriptList().addAll(newScripts);
             clonedScriptList.getScriptList().addAll(neverScripts);
-        });
+            clonedScriptList.getScriptList().addAll(newScripts);
+            clonedScriptList.getScriptList().addAll(neverScripts);
+        }, scriptId);
     }
 }
 

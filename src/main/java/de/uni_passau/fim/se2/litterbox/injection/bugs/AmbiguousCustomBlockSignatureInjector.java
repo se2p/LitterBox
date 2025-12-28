@@ -28,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
@@ -37,12 +38,12 @@ import java.util.Set;
 
 /**
  * Injector for the {@link AmbiguousCustomBlockSignature} bug.
- * 
+ *
  * <p>
  * This injector finds a {@link ProcedureDefinition} and duplicates it with the same name/signature
  * but a different (destructive) body. This creates two procedures with the same signature,
  * which the detector flags as ambiguous.
- * 
+ *
  * <p>
  * The duplicate procedure contains a single {@code StopAll} statement, making it a realistic
  * but destructive variant.
@@ -60,6 +61,15 @@ public class AmbiguousCustomBlockSignatureInjector extends AbstractBugInjector {
     public void visit(ActorDefinition actor) {
         if (!actor.getProcedureDefinitionList().getList().isEmpty()) {
             Set<String> calledProcedures = getCalledProcedureNames(actor);
+
+            ProcedureDefinition originalTargetProc = findTargetProcedure(actor.getProcedureDefinitionList().getList(), calledProcedures);
+            String scriptId = "";
+            if (originalTargetProc != null) {
+                String id = AstNodeUtil.getBlockId(originalTargetProc);
+                if (id != null) {
+                    scriptId = id;
+                }
+            }
 
             modifyClonedNode(actor, clonedActor -> {
                 Program clonedProgram = findProgramRoot(clonedActor);
@@ -79,7 +89,7 @@ public class AmbiguousCustomBlockSignatureInjector extends AbstractBugInjector {
                         registerProcedure(clonedProgram, clonedActor, duplicate, proccode);
                     }
                 }
-            });
+            }, scriptId);
         }
 
         super.visit(actor);

@@ -28,7 +28,7 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 /**
  * Injects the BlockingIfElse bug by appending StopThisScript to both branches.
- * 
+ *
  * <p>
  * Skips branches that already end with blocking statements (stop, delete clone, forever loop)
  * since appending a stop block would have no effect.

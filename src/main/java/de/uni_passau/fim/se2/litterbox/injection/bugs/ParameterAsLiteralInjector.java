@@ -29,7 +29,7 @@ import java.util.Optional;
 
 /**
  * Injects the ParameterAsLiteral bug by replacing Parameter references with string literals of their names.
- * 
+ *
  * <p>
  * Unlike VariableAsLiteralInjector, this injector does NOT check for string context because
  * the ParameterAsLiteral finder detects StringLiterals matching parameter names regardless of
@@ -60,10 +60,8 @@ public class ParameterAsLiteralInjector extends AbstractAsLiteralInjector {
             return Optional.of(new StringLiteral(parameter.getName().getName()));
         }
         // Check for Qualified Parameter
-        if (expr instanceof Qualified qualified) {
-            if (qualified.getSecond() instanceof Parameter parameter) {
-                return Optional.of(new StringLiteral(parameter.getName().getName()));
-            }
+        if (expr instanceof Qualified qualified && qualified.getSecond() instanceof Parameter parameter) {
+            return Optional.of(new StringLiteral(parameter.getName().getName()));
         }
         return Optional.empty();
     }

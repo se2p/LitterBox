@@ -28,11 +28,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
 
 /**
  * Injects the {@link ComparingLiterals} bug.
- * 
+ *
  * <p>
  * <b>Bug Pattern:</b> A comparison where both operands are literals is likely a mistake,
  * since the result is always constant.
- * 
+ *
  * <p>
  * <b>Injection Strategy:</b> Finds comparisons where one side is a literal and the other is not,
  * then replaces the non-literal with a matching literal type.

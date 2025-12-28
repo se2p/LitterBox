@@ -43,18 +43,18 @@ import java.util.Set;
 
 /**
  * Injects FloatingPointComparison bug in two ways:
- * 
+ *
  * <p>
  * <b>Bug Pattern:</b> Comparing floating-point values with exact equality can fail due to
  * precision issues.
- * 
+ *
  * <p>
  * <b>Injection Strategies:</b>
  * <ol>
  *   <li>For Equals comparisons with safe operands: Replace operands with unsafe ones found in the program</li>
  *   <li>For LessThan/BiggerThan with BOTH unsafe operands: Replace with Equals comparison</li>
  * </ol>
- * 
+ *
  * <p>
  * Only modifies comparisons inside conditions (if, until, wait until).
  */
@@ -220,20 +220,16 @@ public class FloatingPointComparisonInjector extends AbstractComparisonInjector 
         if (UNSAFE_OPERAND_TYPES.contains(operand.getClass())) {
             return false;
         }
-        if (operand instanceof AttributeOf attributeOf) {
-            if (attributeOf.getAttribute() instanceof AttributeFromFixed attrFixed) {
-                if (UNSAFE_ATTRIBUTE_TYPES.contains(attrFixed.getAttribute().getType())) {
-                    return false;
-                }
-            }
+        if (operand instanceof AttributeOf attributeOf
+                && attributeOf.getAttribute() instanceof AttributeFromFixed attrFixed
+                && UNSAFE_ATTRIBUTE_TYPES.contains(attrFixed.getAttribute().getType())) {
+            return false;
         }
 
         // Recursively check children for unsafeness (e.g., Timer inside Add)
         for (ASTNode child : operand.getChildren()) {
-            if (child instanceof ComparableExpr comparableChild) {
-                if (!isSafeOperand(comparableChild)) {
-                    return false;
-                }
+            if (child instanceof ComparableExpr comparableChild && !isSafeOperand(comparableChild)) {
+                return false;
             }
         }
 

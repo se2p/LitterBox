@@ -36,7 +36,7 @@ import java.util.Set;
 
 /**
  * Injects IllegalParameterRefactor bug by changing a Boolean parameter type to String.
- * 
+ *
  * <p>
  * Note: Uses a custom CloneVisitor because ProcedureDefinition has immutable fields
  * and requires rebuilding with modified parameters.

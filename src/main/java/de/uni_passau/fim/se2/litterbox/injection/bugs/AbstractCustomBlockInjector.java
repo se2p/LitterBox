@@ -35,7 +35,7 @@ import java.util.*;
 /**
  * Abstract base class for custom block bug injectors that target procedures
  * called in non-tail position.
- * 
+ *
  * <p>
  * This base class handles:
  * <ul>
@@ -43,10 +43,10 @@ import java.util.*;
  *   <li>Identifying procedures called in non-tail position (candidates)</li>
  *   <li>Filtering candidates before applying mutations</li>
  * </ul>
- * 
+ *
  * <p>
  * Subclasses implement the specific mutation to apply to candidate procedures.
- * 
+ *
  * <p>
  * IMPORTANT: Both calls and definitions must be on the same actor for the bug
  * to be detectable, since the finder checks per-actor.
@@ -84,11 +84,9 @@ public abstract class AbstractCustomBlockInjector extends AbstractBugInjector {
             ProcedureDefinition def = entry.getValue();
 
             // Only mutate if this procedure is called in non-tail position within this actor
-            if (currentActorCandidates.contains(proccode)) {
-                if (shouldMutate(def)) {
-                    final String finalProccode = proccode;
-                    modifyClonedNode(def, clonedDef -> applyMutation(clonedDef, finalProccode));
-                }
+            if (currentActorCandidates.contains(proccode) && shouldMutate(def)) {
+                final String finalProccode = proccode;
+                modifyClonedNode(def, clonedDef -> applyMutation(clonedDef, finalProccode));
             }
         }
     }

@@ -34,15 +34,15 @@ import java.util.List;
 
 /**
  * Injects ImmediateStopAfterSay bug by inserting StopAll after Say/Think statements.
- * 
+ *
  * <p>
  * The bug is: Say/Think immediately followed by StopAll as the last two statements.
  * StopAll cannot have successors, so statements after it are removed.
- * 
+ *
  * <p>
  * Strategy: Visit StmtList nodes, find async Say/Think statements, and inject StopAll after them.
  * If no async versions exist, convert SayForSecs/ThinkForSecs at the end of statement lists.
- * 
+ *
  * <p>
  * Note: This implementation uses index-based access to avoid issues with indexOf() when
  * multiple structurally-equal statements exist (since equals() compares by structure).

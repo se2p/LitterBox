@@ -26,7 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
  * @param mutatedProgram              The program with the injected bug.
  * @param spriteName                  The name of the sprite in which the bug was injected.
  * @param scriptId                    The block ID of the script containing the injected bug
- *                                     (for targeting with --script).
+ *                                    (for targeting with --script).
  * @param originalScriptScratchBlocks The ScratchBlocks text of the original script that was mutated.
  * @param mutatedScriptScratchBlocks  The ScratchBlocks text of the script after mutation.
  */

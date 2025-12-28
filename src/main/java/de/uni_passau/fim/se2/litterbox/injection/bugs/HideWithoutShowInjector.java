@@ -29,15 +29,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 /**
  * Injects HideWithoutShow bug by removing Show statements and adding Hide if needed.
- * 
+ *
  * <p>
  * Prerequisite: Actor has Show + visible change blocks (motion, look, etc.)
- * 
+ *
  * <p>
  * Transformation:
  * <ul>
@@ -73,6 +74,14 @@ public class HideWithoutShowInjector extends AbstractBugInjector {
         // Only proceed if actor has Show + visible changes
         if (hasShow && hasVisibleChange) {
             // Use ActorDefinition as context to capture all changes (Show removals across scripts)
+            String scriptId = "";
+            if (firstScript != null) {
+                scriptId = AstNodeUtil.getBlockId(firstScript);
+                if (scriptId == null) {
+                    scriptId = "";
+                }
+            }
+
             modifyClonedNode(node, clonedActor -> {
                 // Remove ALL Show statements from ALL scripts in this actor
                 clonedActor.accept(new ScratchVisitor() {
@@ -99,7 +108,7 @@ public class HideWithoutShowInjector extends AbstractBugInjector {
                         }
                     });
                 }
-            });
+            }, scriptId);
         }
     }
 

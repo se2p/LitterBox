@@ -37,7 +37,7 @@ import java.util.Set;
 /**
  * Injects ForeverInsideIf bug by wrapping the contents of an if-statement's
  * then-block (or else-block) in a forever loop.
- * 
+ *
  * <p>
  * Conditions for injection:
  * - The if-statement must have successor statements OR be inside a loop

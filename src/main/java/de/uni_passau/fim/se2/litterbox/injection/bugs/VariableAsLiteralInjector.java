@@ -46,10 +46,8 @@ public class VariableAsLiteralInjector extends AbstractAsLiteralInjector {
             return Optional.of(new StringLiteral(variable.getName().getName()));
         }
         // Check for Qualified Variable
-        if (expr instanceof Qualified qualified) {
-            if (qualified.getSecond() instanceof Variable variable) {
-                return Optional.of(new StringLiteral(variable.getName().getName()));
-            }
+        if (expr instanceof Qualified qualified && qualified.getSecond() instanceof Variable variable) {
+            return Optional.of(new StringLiteral(variable.getName().getName()));
         }
         return Optional.empty();
     }

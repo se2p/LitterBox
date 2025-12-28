@@ -33,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
@@ -44,11 +45,11 @@ import java.util.UUID;
 /**
  * Injects the MissingCloneInitialization bug by removing StartedAsClone and SpriteClicked
  * handlers from sprites that are cloned.
- * 
+ *
  * <p>
  * The MissingCloneInitialization bug occurs when a sprite is cloned but has no
  * StartedAsClone or SpriteClicked event handlers to initialize the clone.
- * 
+ *
  * <p>
  * Precondition: The sprite must actually be cloned (have a CreateCloneOf targeting it).
  */
@@ -83,7 +84,18 @@ public class MissingCloneInitializationInjector extends AbstractBugInjector {
                                 || script.getEvent() instanceof SpriteClicked);
 
                 if (hasCloneHandlers) {
-                    modifyClonedNode(actor, MissingCloneInitializationInjector.this::removeCloneHandlers);
+                    // Find first clone handler script to blame
+                    String blameScriptId = "";
+                    for (Script s : actor.getScripts().getScriptList()) {
+                        if (s.getEvent() instanceof StartedAsClone || s.getEvent() instanceof SpriteClicked) {
+                            String id = AstNodeUtil.getBlockId(s);
+                            if (id != null) {
+                                blameScriptId = id;
+                                break;
+                            }
+                        }
+                    }
+                    modifyClonedNode(actor, MissingCloneInitializationInjector.this::removeCloneHandlers, blameScriptId);
                 }
             }
         });

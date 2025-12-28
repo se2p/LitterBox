@@ -45,11 +45,11 @@ import java.util.stream.Collectors;
 /**
  * Injects the {@link MissingInitialization} bug by removing initialization statements
  * from the start of GreenFlag scripts.
- * 
+ *
  * <p>
  * <b>Bug Pattern:</b> A sprite/stage lacks proper initialization at the start of the program,
  * causing state to persist between runs.
- * 
+ *
  * <p>
  * <b>Preconditions for injection:</b>
  * <ol>
@@ -200,8 +200,8 @@ public class MissingInitializationInjector extends AbstractBugInjector {
      * Checks if any of the target definitions are defined elsewhere in the same script.
      * A later definition would serve as a backup initialization that the finder would detect.
      * This checks all statements in the script, including those nested in loops and conditionals.
-     * 
- * <p>
+     *
+     * <p>
      * Note: For statements inside loops, we don't filter by isInitialDefinitionStatement because
      * the finder's may-analysis considers any definition path as valid, even if the definition
      * also uses the variable (like IfOnEdgeBounce which uses rotation before defining it).
@@ -239,11 +239,9 @@ public class MissingInitializationInjector extends AbstractBugInjector {
                 Defineable nodeDefDefineable = nodeDef.getDefinable();
 
                 // Check by equals for same attribute type/name
-                if (targetDefineables.contains(nodeDefDefineable)) {
-                    // Check if this definition is in the same script
-                    if (nodeDef.getDefinitionSource().getScriptOrProcedure() == targetScript) {
-                        return true;
-                    }
+                if (targetDefineables.contains(nodeDefDefineable)
+                        && nodeDef.getDefinitionSource().getScriptOrProcedure() == targetScript) {
+                    return true;
                 }
             }
         }

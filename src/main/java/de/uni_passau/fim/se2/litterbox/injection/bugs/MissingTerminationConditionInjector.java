@@ -30,14 +30,14 @@ import java.util.List;
 
 /**
  * Injects the MissingTerminationCondition bug by replacing UntilStmt conditions with false.
- * 
+ *
  * <p>
  * Preconditions:
  * <ul>
  *   <li>The condition is not already unspecified/false</li>
  *   <li>The loop body is non-empty (otherwise no meaningful code would loop infinitely)</li>
  * </ul>
- * 
+ *
  * <p>
  * Note: Uses index-based access to avoid indexOf() issues with multiple structurally-equal nodes.
  */

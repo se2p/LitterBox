@@ -140,8 +140,8 @@ public class AmbiguousParameterNameUsedInjector extends AbstractBugInjector {
 
     /**
      * Helper CloneVisitor that renames all Parameter references from oldName to newName.
-     * 
- * <p>
+     *
+     * <p>
      * This is used in conjunction with {@link #modifyClonedNode} to deep-rename parameters
      * within the procedure body. We use the standard modifyClonedNode for the outer mutation,
      * but need this helper for the nested renaming operation.

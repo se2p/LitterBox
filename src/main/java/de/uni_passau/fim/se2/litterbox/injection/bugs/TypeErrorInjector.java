@@ -45,19 +45,19 @@ import java.util.function.Function;
 
 /**
  * Injects the {@link TypeError} bug using two strategies:
- * 
+ *
  * <p>
  * <b>Strategy 1: Comparison Type Error</b><br>
  * Replaces one operand in comparisons (Equals, LessThan, BiggerThan) with a boolean.
- * 
+ *
  * <p>
  * <b>Strategy 2: Number-to-Boolean Injection</b><br>
  * Replaces NUMBER parameters (in MoveSteps, SetXTo, WaitSeconds, etc.) with a boolean expression.
- * 
+ *
  * <p>
  * For realistic bugs, this injector collects boolean expressions from the program
  * (like {@code Touching}, {@code IsMouseDown}, etc.) and uses them as replacement values.
- * 
+ *
  * <p>
  * This injector uses {@link #replaceWith} for immutable transformations.
  */

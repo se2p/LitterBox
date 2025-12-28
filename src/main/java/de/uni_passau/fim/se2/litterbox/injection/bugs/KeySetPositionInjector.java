@@ -157,14 +157,14 @@ public class KeySetPositionInjector extends AbstractBugInjector {
     /**
      * Custom CloneVisitor that extracts key-polling patterns from forever loops into
      * event-driven scripts.
-     * 
- * <p>
+     *
+     * <p>
      * This requires a custom visitor because the transformation involves:
      * 1. Detecting patterns within forever loops
      * 2. Creating new Script objects with KeyPressed events
      * 3. Adding these new scripts to the ScriptList
-     * 
- * <p>
+     *
+     * <p>
      * The standard mutation patterns cannot create new top-level scripts during cloning.
      */
     private class ExtractingCloneVisitor extends CloneVisitor {

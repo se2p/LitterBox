@@ -134,6 +134,10 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
 
             spriteName = findContainingActorName(visitor.firstModifiedOriginal);
             scriptId = findContainingScriptId(visitor.firstModifiedOriginal);
+            if (scriptId.isEmpty() && uniqueBroadcast.stmt() != null) {
+                // Fallback to the broadcast script if the literal is not in a script (e.g. in variable init)
+                scriptId = findContainingScriptId(uniqueBroadcast.stmt());
+            }
             originalScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedOriginal));
             mutatedScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedReplacement));
         }
@@ -144,8 +148,8 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
 
     /**
      * {@inheritDoc}
-     * 
- * <p>
+     *
+     * <p>
      * Overridden to handle variable initializations in SetStmtList by returning
      * the containing Stmt for better context in ScratchBlocks rendering.
      */
@@ -249,8 +253,8 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
      * Custom CloneVisitor that performs two operations in a single pass:
      * 1. Replaces a StringLiteral with a message name
      * 2. Removes the broadcast statement for that message
-     * 
- * <p>
+     *
+     * <p>
      * This requires a custom visitor because the standard mutation patterns
      * ({@link #modifyClonedNode} and {@link #replaceNodeImmutably}) cannot perform
      * both operations atomically in a single clone operation.

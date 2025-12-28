@@ -37,7 +37,7 @@ import java.util.List;
 
 /**
  * Injector for the {@link MissingLoopSensing} bug.
- * 
+ *
  * <p>
  * The MissingLoopSensing bug occurs when an if-condition checks an event (like key pressed,
  * touching, etc.) without being embedded in a loop. This injector finds if-statements with
