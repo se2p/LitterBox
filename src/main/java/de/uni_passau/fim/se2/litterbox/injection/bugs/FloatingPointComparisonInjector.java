@@ -43,15 +43,18 @@ import java.util.Set;
 
 /**
  * Injects FloatingPointComparison bug in two ways:
+ * 
  * <p>
  * <b>Bug Pattern:</b> Comparing floating-point values with exact equality can fail due to
  * precision issues.
+ * 
  * <p>
  * <b>Injection Strategies:</b>
  * <ol>
  *   <li>For Equals comparisons with safe operands: Replace operands with unsafe ones found in the program</li>
  *   <li>For LessThan/BiggerThan with BOTH unsafe operands: Replace with Equals comparison</li>
  * </ol>
+ * 
  * <p>
  * Only modifies comparisons inside conditions (if, until, wait until).
  */

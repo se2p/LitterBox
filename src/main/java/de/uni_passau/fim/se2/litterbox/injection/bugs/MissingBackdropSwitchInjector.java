@@ -42,12 +42,15 @@ import java.util.Set;
 
 /**
  * Injector for the {@link MissingBackdropSwitch} bug.
+ * 
  * <p>
  * The MissingBackdropSwitch bug occurs when a "when backdrop switches to" event handler
  * exists, but no SwitchBackdrop/SwitchBackdropAndWait statement switches to that backdrop.
+ * 
  * <p>
  * This injector removes SwitchBackdrop/SwitchBackdropAndWait statements that switch to
  * backdrops for which BackdropSwitchTo event handlers exist, creating a dead handler.
+ * 
  * <p>
  * Precondition: The bug is only detected if there are no NextBackdrop, Previous, or Random
  * backdrop blocks in the program (since those could potentially trigger any backdrop).

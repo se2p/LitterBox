@@ -68,7 +68,8 @@ public class ResourceValidator {
      * Generic helper to check for resource existence in a list.
      * Handles null checks, empty lists, and placeholder metadata logic.
      */
-    private static <T> boolean checkResourceExists(List<T> resources, Function<T, String> nameExtractor, String targetName) {
+    private static <T> boolean checkResourceExists(
+            List<T> resources, Function<T, String> nameExtractor, String targetName) {
         if (resources == null || resources.isEmpty()) {
             return true;
         }

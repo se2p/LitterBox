@@ -25,12 +25,12 @@ import java.util.List;
 
 /**
  * Interface for bug injectors that mutate Scratch programs to introduce specific bug patterns.
- * <p>
- * Implementations of this interface create modified versions of programs that contain
+ *
+ * <p>Implementations of this interface create modified versions of programs that contain
  * bugs detectable by the associated {@link IssueFinder}. This is primarily used for
  * generating test cases, mutation testing, and validating bug detection capabilities.
- * <p>
- * Each injector is associated with a specific bug finder via {@link #getIssueFinder()},
+ *
+ * <p>Each injector is associated with a specific bug finder via {@link #getIssueFinder()},
  * ensuring that injected bugs are always detectable by the corresponding analysis.
  *
  * @see AbstractBugInjector
@@ -48,11 +48,15 @@ public interface BugInjector {
     List<InjectionResult> inject(Program program);
 
     /**
+     * Returns the canonical name of the bug injector.
+     *
      * @return The canonical name of the bug injector.
      */
     String getName();
 
     /**
+     * Returns the IssueFinder associated with this bug injector.
+     *
      * @return The IssueFinder associated with this bug injector.
      */
     IssueFinder getIssueFinder();

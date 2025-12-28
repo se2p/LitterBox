@@ -33,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 /**
  * Injects the {@link TerminatedLoop} bug by adding a stop block at the end of a loop.
+ * 
  * <p>
  * Only injects if the loop doesn't already end with a terminating statement
  * (forever loop, stop block, or delete clone).

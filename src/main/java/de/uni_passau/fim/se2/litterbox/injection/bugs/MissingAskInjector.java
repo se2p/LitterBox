@@ -35,10 +35,12 @@ import java.util.List;
 
 /**
  * Injects MissingAsk bug by replacing AskAndWait with Say.
+ * 
  * <p>
  * The detector finds programs where Answer is used without any AskAndWait.
  * This injector replaces AskAndWait with Say (same question text), leaving
  * any Answer usages orphaned.
+ * 
  * <p>
  * Only injects if:
  * - Answer is actually used in the program
@@ -83,6 +85,7 @@ public class MissingAskInjector extends AbstractBugInjector {
                 ScratchVisitor.super.visit(node);
             }
         }
+
         UsageChecker checker = new UsageChecker();
         program.accept(checker);
         return checker.answerUsed && checker.askCount == 1;

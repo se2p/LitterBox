@@ -39,9 +39,11 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 /**
  * Injects the InterruptedLoopSensing bug by inserting a WaitSeconds(1) block into a control
  * structure (if/until) that contains sensing in its condition.
+ * 
  * <p>
  * The bug is injected inside the control structure's body (not at loop level), matching
  * what the InterruptedLoopSensing finder detects.
+ * 
  * <p>
  * Preconditions:
  * <ul>

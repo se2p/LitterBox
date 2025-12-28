@@ -37,10 +37,12 @@ import java.util.Set;
 
 /**
  * Injector for the {@link AmbiguousCustomBlockSignature} bug.
+ * 
  * <p>
  * This injector finds a {@link ProcedureDefinition} and duplicates it with the same name/signature
  * but a different (destructive) body. This creates two procedures with the same signature,
  * which the detector flags as ambiguous.
+ * 
  * <p>
  * The duplicate procedure contains a single {@code StopAll} statement, making it a realistic
  * but destructive variant.
@@ -94,11 +96,12 @@ public class AmbiguousCustomBlockSignatureInjector extends AbstractBugInjector {
         return calledProcedureNames;
     }
 
-    private ProcedureDefinition findTargetProcedure(List<ProcedureDefinition> procedures, Set<String> calledProcedures) {
+    private ProcedureDefinition findTargetProcedure(
+            List<ProcedureDefinition> procedures, Set<String> calledProcedures) {
         // 1. Find the first procedure that is called AND has statements
         for (ProcedureDefinition proc : procedures) {
-            if (calledProcedures.contains(proc.getIdent().getName()) &&
-                    proc.getStmtList().hasStatements()) {
+            if (calledProcedures.contains(proc.getIdent().getName())
+                    && proc.getStmtList().hasStatements()) {
                 return proc;
             }
         }

@@ -89,11 +89,13 @@ public class TypoGenerator {
             case 4: // Transpose characters (swap with next)
                 if (len > 1) {
                     int idx = ThreadLocalRandom.current().nextInt(len - 1);
-                    return original.substring(0, idx) +
-                            original.charAt(idx + 1) +
-                            original.charAt(idx) +
-                            original.substring(idx + 2);
+                    return original.substring(0, idx)
+                            + original.charAt(idx + 1)
+                            + original.charAt(idx)
+                            + original.substring(idx + 2);
                 }
+                break;
+            default:
                 break;
         }
         return original;

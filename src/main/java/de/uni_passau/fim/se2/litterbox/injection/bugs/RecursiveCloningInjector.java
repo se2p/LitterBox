@@ -33,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 /**
  * Injects the RecursiveCloning bug by adding a "create clone of myself" block
  * at the start of "when I start as a clone" scripts.
+ * 
  * <p>
  * Only applies to scripts that do NOT already contain a "delete this clone" block,
  * since the finder ignores scripts with DeleteClone (no infinite recursion possible).

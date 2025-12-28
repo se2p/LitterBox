@@ -40,6 +40,7 @@ import static de.uni_passau.fim.se2.litterbox.injection.util.InjectionConstants.
 
 /**
  * Injects MissingResource bug by replacing valid costume/sound names with invalid ones.
+ * 
  * <p>
  * The detector checks if costume or sound names referenced in blocks exist in the
  * actor's metadata. This injector replaces valid names with invalid ones to trigger detection.

@@ -37,12 +37,15 @@ import java.util.Set;
 
 /**
  * Injects the {@link OverwrittenVisualEffect} bug.
+ * 
  * <p>
  * <b>Bug Pattern:</b> A visual effect is set and then immediately overwritten before
  * it can take effect.
+ * 
  * <p>
  * <b>Injection Strategy:</b> Inserts a duplicate visual effect statement immediately
  * after an existing one, making the first one redundant.
+ * 
  * <p>
  * <b>Supported Statement Types:</b>
  * <ul>

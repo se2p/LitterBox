@@ -71,7 +71,8 @@ public class AmbiguousParameterNameUsedInjector extends AbstractBugInjector {
                 String nameToReplace = usedParams.get(1).getIdent().getName();
                 int indexToModify = params.indexOf(usedParams.get(1));
 
-                modifyClonedNode(node, clonedDef -> applyParameterRename(clonedDef, indexToModify, nameToReplace, nameToKeep));
+                modifyClonedNode(node, clonedDef -> applyParameterRename(
+                        clonedDef, indexToModify, nameToReplace, nameToKeep));
             }
         }
         super.visit(node);
@@ -139,7 +140,8 @@ public class AmbiguousParameterNameUsedInjector extends AbstractBugInjector {
 
     /**
      * Helper CloneVisitor that renames all Parameter references from oldName to newName.
-     * <p>
+     * 
+ * <p>
      * This is used in conjunction with {@link #modifyClonedNode} to deep-rename parameters
      * within the procedure body. We use the standard modifyClonedNode for the outer mutation,
      * but need this helper for the nested renaming operation.

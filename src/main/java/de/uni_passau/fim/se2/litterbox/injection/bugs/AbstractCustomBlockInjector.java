@@ -35,6 +35,7 @@ import java.util.*;
 /**
  * Abstract base class for custom block bug injectors that target procedures
  * called in non-tail position.
+ * 
  * <p>
  * This base class handles:
  * <ul>
@@ -42,8 +43,10 @@ import java.util.*;
  *   <li>Identifying procedures called in non-tail position (candidates)</li>
  *   <li>Filtering candidates before applying mutations</li>
  * </ul>
+ * 
  * <p>
  * Subclasses implement the specific mutation to apply to candidate procedures.
+ * 
  * <p>
  * IMPORTANT: Both calls and definitions must be on the same actor for the bug
  * to be detectable, since the finder checks per-actor.

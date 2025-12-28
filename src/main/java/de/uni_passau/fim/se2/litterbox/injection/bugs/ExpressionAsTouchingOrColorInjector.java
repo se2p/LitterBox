@@ -82,7 +82,8 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
                 mutatedScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedNodeReplacement));
             }
 
-            return Collections.singletonList(new InjectionResult(cloned, spriteName, scriptId, originalScript, mutatedScript));
+            return Collections.singletonList(
+                    new InjectionResult(cloned, spriteName, scriptId, originalScript, mutatedScript));
         }
         return Collections.emptyList();
     }

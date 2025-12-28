@@ -32,6 +32,7 @@ import java.util.List;
 
 /**
  * Injects the MissingEraseAll bug by removing ALL PenClearStmt (erase all) blocks.
+ * 
  * <p>
  * Precondition: The program must have a PenDown statement for the bug to be meaningful.
  */

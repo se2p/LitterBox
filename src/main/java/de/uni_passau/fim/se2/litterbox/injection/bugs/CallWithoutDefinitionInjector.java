@@ -38,6 +38,7 @@ import java.util.Set;
 
 /**
  * Injector for the {@link CallWithoutDefinition} bug.
+ * 
  * <p>
  * This injector finds {@link CallStmt} nodes and introduces a typo into the procedure name,
  * resulting in a call to a procedure that does not exist. The typo is generated using

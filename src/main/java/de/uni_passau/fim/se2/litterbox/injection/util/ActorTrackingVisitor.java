@@ -23,10 +23,12 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 /**
  * Base visitor that tracks the current actor name while traversing the AST.
+ * 
  * <p>
  * Subclasses can access {@link #getCurrentActorName()} to get the name of the actor
  * currently being visited. This is useful for operations that need to know which
  * sprite/stage context they are operating in.
+ * 
  * <p>
  * Example usage:
  * <pre>

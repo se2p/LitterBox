@@ -45,6 +45,7 @@ import java.util.Set;
 
 /**
  * Injector for the {@link MissingLoopMousePosition} bug.
+ * 
  * <p>
  * This injector finds loops containing motion statements that depend on mouse position
  * (MouseX, MouseY, or MousePos) and removes the loop wrapper, "freezing" the mouse tracking.
@@ -110,7 +111,8 @@ public class MissingLoopMousePositionInjector extends AbstractBugInjector {
 
     /**
      * Adds a mutation that unwraps a loop by replacing it with its body statements.
-     * <p>
+     * 
+ * <p>
      * Before: [stmt1, LOOP { bodyA, bodyB }, stmt2]
      * After:  [stmt1, bodyA, bodyB, stmt2]
      *

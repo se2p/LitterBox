@@ -44,6 +44,7 @@ import java.util.function.Function;
 
 /**
  * Injects InvalidNumberString bug by replacing numeric parameters with invalid number strings.
+ * 
  * <p>
  * Creates invalid numbers by inserting extra decimal points into the original number.
  * Uses immutable transformations to maintain AST immutability.
@@ -339,7 +340,8 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
 
     /**
      * Creates an invalid number string by inserting extra decimal points.
-     * <p>
+     * 
+ * <p>
      * Examples:
      * <ul>
      *   <li>"10" → "1.0." (add two dots)</li>

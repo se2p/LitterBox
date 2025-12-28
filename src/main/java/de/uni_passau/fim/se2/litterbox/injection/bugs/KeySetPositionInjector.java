@@ -100,7 +100,8 @@ public class KeySetPositionInjector extends AbstractBugInjector {
             mutatedScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedReplacement));
         }
 
-        return Collections.singletonList(new InjectionResult(cloned, spriteName, scriptId, originalScript, mutatedScript));
+        return Collections.singletonList(
+                new InjectionResult(cloned, spriteName, scriptId, originalScript, mutatedScript));
     }
 
     /**
@@ -156,12 +157,14 @@ public class KeySetPositionInjector extends AbstractBugInjector {
     /**
      * Custom CloneVisitor that extracts key-polling patterns from forever loops into
      * event-driven scripts.
-     * <p>
+     * 
+ * <p>
      * This requires a custom visitor because the transformation involves:
      * 1. Detecting patterns within forever loops
      * 2. Creating new Script objects with KeyPressed events
      * 3. Adding these new scripts to the ScriptList
-     * <p>
+     * 
+ * <p>
      * The standard mutation patterns cannot create new top-level scripts during cloning.
      */
     private class ExtractingCloneVisitor extends CloneVisitor {
@@ -208,7 +211,8 @@ public class KeySetPositionInjector extends AbstractBugInjector {
             }
 
             IsKeyPressed keyPressed = (IsKeyPressed) cond;
-            KeyPressed event = new KeyPressed(apply(keyPressed.getKey()), TopNonDataBlockMetadata.emptyTopNonBlockMetadata());
+            KeyPressed event = new KeyPressed(
+                    apply(keyPressed.getKey()), TopNonDataBlockMetadata.emptyTopNonBlockMetadata());
             Script newScript = new Script(event, apply(ifStmt.getThenStmts()));
             extraScripts.add(newScript);
 

@@ -37,10 +37,12 @@ import java.util.List;
 
 /**
  * Injects ImmediateDeleteCloneAfterBroadcast bug by inserting DeleteClone after Broadcast.
+ * 
  * <p>
  * Prerequisites:
  * - Program must have at least one CreateCloneOf statement
  * - Program must have at least one "when I start as a clone" hat block
+ * 
  * <p>
  * DeleteClone cannot have successor nodes, so statements after it are removed.
  */

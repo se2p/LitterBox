@@ -138,12 +138,14 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
             mutatedScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedReplacement));
         }
 
-        return Collections.singletonList(new InjectionResult(mutated, spriteName, scriptId, originalScript, mutatedScript));
+        return Collections.singletonList(
+                new InjectionResult(mutated, spriteName, scriptId, originalScript, mutatedScript));
     }
 
     /**
      * {@inheritDoc}
-     * <p>
+     * 
+ * <p>
      * Overridden to handle variable initializations in SetStmtList by returning
      * the containing Stmt for better context in ScratchBlocks rendering.
      */
@@ -186,7 +188,8 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
         private final List<StringLiteral> highPriority;
         private final List<StringLiteral> lowPriority;
 
-        CollectorVisitor(List<BroadcastInfo> broadcasts, List<StringLiteral> highPriority, List<StringLiteral> lowPriority) {
+        CollectorVisitor(
+                List<BroadcastInfo> broadcasts, List<StringLiteral> highPriority, List<StringLiteral> lowPriority) {
             this.broadcasts = broadcasts;
             this.highPriority = highPriority;
             this.lowPriority = lowPriority;
@@ -246,7 +249,8 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
      * Custom CloneVisitor that performs two operations in a single pass:
      * 1. Replaces a StringLiteral with a message name
      * 2. Removes the broadcast statement for that message
-     * <p>
+     * 
+ * <p>
      * This requires a custom visitor because the standard mutation patterns
      * ({@link #modifyClonedNode} and {@link #replaceNodeImmutably}) cannot perform
      * both operations atomically in a single clone operation.

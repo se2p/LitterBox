@@ -44,9 +44,11 @@ import java.util.UUID;
 /**
  * Injects the MissingCloneInitialization bug by removing StartedAsClone and SpriteClicked
  * handlers from sprites that are cloned.
+ * 
  * <p>
  * The MissingCloneInitialization bug occurs when a sprite is cloned but has no
  * StartedAsClone or SpriteClicked event handlers to initialize the clone.
+ * 
  * <p>
  * Precondition: The sprite must actually be cloned (have a CreateCloneOf targeting it).
  */

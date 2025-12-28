@@ -32,6 +32,7 @@ import java.util.Set;
 
 /**
  * Injector for the {@link OrphanedParameter} bug.
+ * 
  * <p>
  * This injector finds procedure definitions with parameters that are used in the body,
  * and removes one such used parameter from the signature, creating an orphaned parameter reference.

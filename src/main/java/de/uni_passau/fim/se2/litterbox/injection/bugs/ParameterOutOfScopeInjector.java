@@ -46,11 +46,13 @@ import java.util.List;
 
 /**
  * Injects the {@link ParameterOutOfScope} bug.
+ * 
  * <p>
  * This injector finds statements/expressions in scripts that accept expressions
  * (like MoveSteps or comparisons), and replaces an expression with a
  * parameter reference from a procedure, causing the parameter to be used out
  * of its defining scope.
+ * 
  * <p>
  * Transformation examples:
  * <pre>

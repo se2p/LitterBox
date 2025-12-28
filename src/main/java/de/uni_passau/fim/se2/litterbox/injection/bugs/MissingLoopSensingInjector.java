@@ -37,6 +37,7 @@ import java.util.List;
 
 /**
  * Injector for the {@link MissingLoopSensing} bug.
+ * 
  * <p>
  * The MissingLoopSensing bug occurs when an if-condition checks an event (like key pressed,
  * touching, etc.) without being embedded in a loop. This injector finds if-statements with
@@ -113,8 +114,8 @@ public class MissingLoopSensingInjector extends AbstractBugInjector {
      * Finds an if-statement that is a direct child of the loop and has a sensing condition.
      * Only direct children are checked to avoid removing loops that contain nested loops or
      * ifs with sensing inside other ifs.
-     * <p>
-     * Additionally, we skip loops that contain WaitUntil or AskAndWait statements before
+     *
+     * <p>Additionally, we skip loops that contain WaitUntil or AskAndWait statements before
      * the sensing if-statement, because the finder won't flag sensing conditions after these.
      */
     private IfStmt findIfWithSensingCondition(LoopStmt loopStmt) {
@@ -162,11 +163,11 @@ public class MissingLoopSensingInjector extends AbstractBugInjector {
 
     /**
      * Adds a mutation that removes the loop and keeps all body statements.
-     * <p>
-     * Before: [forever { if <key pressed?> { ... }, stmt2, ... }]
-     * After:  [if <key pressed?> { ... }, stmt2, ...]
-     * <p>
-     * This creates a bug because the sensing check is no longer continuously evaluated.
+     *
+     * <p>Before: [forever { if &lt;key pressed?&gt; { ... }, stmt2, ... }]
+     * After:  [if &lt;key pressed?&gt; { ... }, stmt2, ...]
+     *
+     * <p>This creates a bug because the sensing check is no longer continuously evaluated.
      */
     private void addUnwrapLoopMutation(StmtList stmtList, int index) {
         modifyClonedNode(stmtList, clonedList -> {

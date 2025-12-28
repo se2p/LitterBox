@@ -36,6 +36,7 @@ import java.util.Set;
 
 /**
  * Injects IllegalParameterRefactor bug by changing a Boolean parameter type to String.
+ * 
  * <p>
  * Note: Uses a custom CloneVisitor because ProcedureDefinition has immutable fields
  * and requires rebuilding with modified parameters.
@@ -59,7 +60,8 @@ public class IllegalParameterRefactorInjector extends AbstractBugInjector {
 
         if (hasCandidate) {
             replaceNodeImmutably(node, original -> {
-                List<ParameterDefinition> clonedParams = cloner.applyList(original.getParameterDefinitionList().getParameterDefinitions());
+                List<ParameterDefinition> clonedParams = cloner.applyList(
+                        original.getParameterDefinitionList().getParameterDefinitions());
                 boolean mutated = false;
 
                 for (int i = 0; i < clonedParams.size(); i++) {

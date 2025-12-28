@@ -31,12 +31,14 @@ import java.util.List;
 
 /**
  * Injects the {@link NoWorkingScripts} bug by emptying all event scripts and creating detached code.
+ * 
  * <p>
  * The bug pattern requires:
  * <ol>
  *   <li>All event handlers have <b>empty</b> bodies</li>
  *   <li>Dead code (script with Never event) with a <b>non-empty</b> body</li>
  * </ol>
+ * 
  * <p>
  * Transformation (for entire sprite):
  * <pre>

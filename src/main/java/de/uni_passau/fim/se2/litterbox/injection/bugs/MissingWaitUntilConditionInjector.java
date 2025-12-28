@@ -30,11 +30,13 @@ import java.util.List;
 
 /**
  * Injects the MissingWaitUntilCondition bug by replacing WaitUntil conditions with unspecified.
+ * 
  * <p>
  * Preconditions:
  * <ul>
  *   <li>The condition is not already unspecified</li>
  * </ul>
+ * 
  * <p>
  * Note: Uses index-based access to avoid indexOf() issues with multiple structurally-equal nodes.
  */

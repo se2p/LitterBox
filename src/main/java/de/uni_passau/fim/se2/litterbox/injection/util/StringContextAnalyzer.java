@@ -46,6 +46,7 @@ import java.util.function.BiPredicate;
 
 /**
  * Utility class to determine if an AST node is in a context where a String value is valid.
+ * 
  * <p>
  * This class uses a table-driven approach with four categories:
  * <ul>

@@ -68,11 +68,18 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
         this(output, delete, injectors, csvPath, false, null);
     }
 
-    public InjectorAnalyzer(Path output, boolean delete, List<BugInjector> injectors, Path csvPath, boolean skipAnalyzed) {
+    public InjectorAnalyzer(
+            Path output, boolean delete, List<BugInjector> injectors, Path csvPath, boolean skipAnalyzed) {
         this(output, delete, injectors, csvPath, skipAnalyzed, null);
     }
 
-    public InjectorAnalyzer(Path output, boolean delete, List<BugInjector> injectors, Path csvPath, boolean skipAnalyzed, IssueTranslator translator) {
+    public InjectorAnalyzer(
+            Path output,
+            boolean delete,
+            List<BugInjector> injectors,
+            Path csvPath,
+            boolean skipAnalyzed,
+            IssueTranslator translator) {
         super(new InjectorProgramAnalyzer(injectors), output, delete, skipAnalyzed);
         this.csvPath = csvPath;
         this.translator = translator;
@@ -95,7 +102,9 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
     }
 
     @Override
-    protected void writeResultToFile(Path projectFile, Program program, Map<BugInjector, List<InjectionResult>> result) throws IOException {
+    protected void writeResultToFile(
+            Path projectFile, Program program, Map<BugInjector, List<InjectionResult>> result
+    ) throws IOException {
         String originalExt = FilenameUtils.getExtension(projectFile.toString());
         String originalProjectName = program.getIdent().getName();
 
@@ -261,7 +270,8 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
                         result.put(injector, injected);
                     }
                 } catch (Exception e) {
-                    log.log(Level.SEVERE, "Injector " + injector.getName() + " failed on project " + program.getIdent().getName(), e);
+                    log.log(Level.SEVERE, "Injector " + injector.getName()
+                            + " failed on project " + program.getIdent().getName(), e);
                 }
             }
             return result;

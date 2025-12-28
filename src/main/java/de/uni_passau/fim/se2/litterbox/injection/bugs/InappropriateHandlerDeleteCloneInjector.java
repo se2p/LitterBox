@@ -39,9 +39,11 @@ import java.util.List;
 
 /**
  * Injects InappropriateHandlerDeleteClone bug by adding DeleteClone to GreenFlag scripts.
+ * 
  * <p>
  * Only applies to programs that have both CreateCloneOf blocks and StartedAsClone event handlers,
  * ensuring the injected bug is meaningful in the context of clone management.
+ * 
  * <p>
  * DeleteClone cannot have successors, so it's inserted at a valid position:
  * - If the StmtList ends with a termination statement, replace it

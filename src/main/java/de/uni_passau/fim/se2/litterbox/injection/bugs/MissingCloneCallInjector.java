@@ -35,8 +35,10 @@ import java.util.*;
 /**
  * Injects the MissingCloneCall bug by removing ALL CreateCloneOf statements
  * for actors that have StartedAsClone event handlers.
+ * 
  * <p>
  * <b>Bug Pattern:</b> An actor has a "when I start as a clone" handler but is never cloned.
+ * 
  * <p>
  * <b>Injection Strategy:</b>
  * <ol>

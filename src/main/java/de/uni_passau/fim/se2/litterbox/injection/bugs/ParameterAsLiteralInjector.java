@@ -29,6 +29,7 @@ import java.util.Optional;
 
 /**
  * Injects the ParameterAsLiteral bug by replacing Parameter references with string literals of their names.
+ * 
  * <p>
  * Unlike VariableAsLiteralInjector, this injector does NOT check for string context because
  * the ParameterAsLiteral finder detects StringLiterals matching parameter names regardless of

@@ -31,6 +31,7 @@ import java.util.List;
 /**
  * Injects the CustomBlockWithForever bug by wrapping a statement in a forever loop.
  * Only targets procedures that are called in non-tail position.
+ * 
  * <p>
  * Strategy: Wrap the last statement of the procedure body in a forever loop.
  * This creates a realistic bug where the forever loop contains actual code,

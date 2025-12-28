@@ -34,8 +34,10 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 /**
  * Injects HideWithoutShow bug by removing Show statements and adding Hide if needed.
+ * 
  * <p>
  * Prerequisite: Actor has Show + visible change blocks (motion, look, etc.)
+ * 
  * <p>
  * Transformation:
  * <ul>

@@ -27,11 +27,11 @@ import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 /**
  * Base class for bug injectors that work with comparison operators (Equals, LessThan, BiggerThan).
- * <p>
- * Provides convenience methods for literal detection and matching literal creation,
+ *
+ * <p>Provides convenience methods for literal detection and matching literal creation,
  * delegating to {@link ComparisonBuilder} static utilities.
- * <p>
- * Subclasses can override the template methods {@link #injectIntoEquals}, {@link #injectIntoLessThan},
+ *
+ * <p>Subclasses can override the template methods {@link #injectIntoEquals}, {@link #injectIntoLessThan},
  * or {@link #injectIntoBiggerThan} to inject bugs at specific comparison node types without
  * duplicating the visit pattern.
  */

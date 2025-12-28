@@ -26,9 +26,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 
 /**
  * Injector for the {@link EndlessRecursion} bug.
+ * 
  * <p>
  * This injector inserts a recursive call at the start of a procedure's body,
  * creating an endless recursion (infinite loop through self-call).
+ * 
  * <p>
  * Only procedures called in non-tail position are targeted, ensuring the
  * endless recursion has observable effects during execution.

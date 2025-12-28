@@ -43,11 +43,12 @@ import static java.util.logging.Level.WARNING;
 
 /**
  * Base class for bug injectors that mutate Scratch programs to introduce detectable bugs.
- * <p>
- * Subclasses override {@code visit} methods to identify injection points, then call
+ *
+ * <p>Subclasses override {@code visit} methods to identify injection points, then call
  * one of the mutation methods to create mutated program variants.
- * <p>
+ *
  * <h2>Mutation Pattern Guide</h2>
+ *
  * <p>Choose the appropriate mutation method based on your needs:
  * <ul>
  *   <li>{@link #replaceNodeImmutably} - Creates a NEW node instance to replace an existing one.
@@ -57,8 +58,8 @@ import static java.util.logging.Level.WARNING;
  *   <li>{@link #modifyMultipleClonedNodes} - Applies the same modification to multiple nodes in one mutation.
  *       Use for batch operations like removing all {@code PenUp} statements.</li>
  * </ul>
- * <p>
- * This class also provides:
+ *
+ * <p>This class also provides:
  * <ul>
  *   <li>Shared utility methods for AST navigation and manipulation</li>
  *   <li>Context helpers for determining node position in AST</li>
@@ -121,8 +122,8 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
 
     /**
      * Modifies a cloned AST by applying a modifier to the cloned counterpart of the given node.
-     * <p>
-     * Use this when you need to add/remove elements from collections (e.g., StmtList)
+     *
+     * <p>Use this when you need to add/remove elements from collections (e.g., StmtList)
      * or modify the cloned structure in place.
      *
      * @param originalNode The node in the original AST that triggered the injection
@@ -158,7 +159,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
                 ASTNode clonedContext = mappingVisitor.get(originalContext);
 
                 // Fallback: if context wasn't in the mapping (can happen with certain node types),
-                // find context from the cloned node directly since it's now part of the cloned tree with parent links set
+                // find context from the cloned node directly since it's now part of the cloned tree
                 if (clonedContext == null && originalContext != null) {
                     clonedContext = findContextNode(clonedNode);
                 }
@@ -191,8 +192,8 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     /**
      * Modifies multiple nodes in a cloned AST using the same mutator.
      * Creates a single mutation that applies the mutator to all cloned counterparts of the given nodes.
-     * <p>
-     * Use this when you need to apply the same modification to multiple nodes in one mutation
+     *
+     * <p>Use this when you need to apply the same modification to multiple nodes in one mutation
      * (e.g., removing all PenUp statements from all scripts in an actor).
      *
      * @param originalNodes The nodes in the original AST to mutate
@@ -260,8 +261,8 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
 
     /**
      * Replaces a node with a new instance during cloning (immutable transformation).
-     * <p>
-     * Use this when you need to create a new node instance (e.g., replacing an Add
+     *
+     * <p>Use this when you need to create a new node instance (e.g., replacing an Add
      * with a new Add that has a different operand). This maintains AST immutability.
      *
      * @param originalNode The node to be replaced
@@ -392,8 +393,8 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      * Safely converts a node to ScratchBlocks text.
      * Returns empty string if the node is null or if conversion fails
      * (e.g., for programs parsed from ScratchBlocks that lack proper actor context).
-     * <p>
-     * Note: This method includes loose blocks (scripts without hat blocks) in the output.
+     *
+     * <p>Note: This method includes loose blocks (scripts without hat blocks) in the output.
      * This is intentional to ensure that variable initializations and other non-scripted
      * blocks produce meaningful context output.
      */
@@ -479,7 +480,8 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      * @param proc     The procedure definition to register
      * @param proccode The procedure code (signature name)
      */
-    protected void registerProcedure(Program program, ActorDefinition actor, ProcedureDefinition proc, String proccode) {
+    protected void registerProcedure(
+            Program program, ActorDefinition actor, ProcedureDefinition proc, String proccode) {
         if (program.getProcedureMapping() != null) {
             program.getProcedureMapping().addProcedure(
                     proc.getIdent(),
