@@ -65,22 +65,17 @@ public abstract class AbstractAsLiteralInjector extends AbstractBugInjector {
      * Subclasses should call this method in their visit(Variable) or visit(Parameter) implementations.
      */
     protected void checkAndInject(Expression node) {
-        debugFoundCandidate();
-
         // Check string context unless subclass opts out (e.g., ParameterAsLiteralInjector)
         if (shouldCheckStringContext() && !isInStringContext(node)) {
-            debugPreconditionFailed();
             return;
         }
 
         // Skip nodes inside Message (broadcast messages) - finder doesn't descend into those
         if (isInsideMessage(node)) {
-            debugPreconditionFailed();
             return;
         }
 
         if (injectedNodes.contains(node)) {
-            debugPreconditionFailed();
             return;
         }
         injectedNodes.add(node);
@@ -91,14 +86,10 @@ public abstract class AbstractAsLiteralInjector extends AbstractBugInjector {
 
             // Skip if the bug already exists for this name (precondition)
             if (existingIssueNames.contains(literalName)) {
-                debugPreconditionFailed();
                 return;
             }
 
-            debugMutationAttempted();
             replaceNodeImmutably(node, n -> new StringLiteral(literalName));
-        } else {
-            debugPreconditionFailed();
         }
     }
 

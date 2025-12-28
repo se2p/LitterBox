@@ -85,19 +85,8 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     private Program originalProgram;
     private int maxMutations;
 
-    // Debug statistics - enabled via -Dinjection.debug=true
-    private static final boolean DEBUG_ENABLED = Boolean.getBoolean("injection.debug");
-    private int debugCandidatesFound = 0;
-    private int debugPreconditionsFailed = 0;
-    private int debugMutationsAttempted = 0;
-
     @Override
     public List<InjectionResult> inject(Program program) {
-        // Reset debug stats
-        debugCandidatesFound = 0;
-        debugPreconditionsFailed = 0;
-        debugMutationsAttempted = 0;
-
         // Initialize max mutations from property
         try {
             this.maxMutations = PropertyLoader.getSystemIntProperty("injection.max_mutations_per_injector");
@@ -111,53 +100,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
         this.injectionResults = new ArrayList<>();
         program.accept(this);
 
-        // Log debug stats if enabled
-        if (DEBUG_ENABLED) {
-            logDebugStats(program);
-        }
-
         return injectionResults;
-    }
-
-    /**
-     * Log debug statistics after injection. Enable with -Dinjection.debug=true
-     */
-    private void logDebugStats(Program program) {
-        String programName = program.getIdent().getName();
-        log.info(String.format("[DEBUG] %s | program=%s | candidates=%d | preconditionsFailed=%d | mutationsAttempted=%d | mutationsProduced=%d",
-                getName(),
-                programName,
-                debugCandidatesFound,
-                debugPreconditionsFailed,
-                debugMutationsAttempted,
-                injectionResults.size()));
-    }
-
-    /**
-     * Increment candidate count for debug tracking. Call when finding a potential injection point.
-     */
-    protected void debugFoundCandidate() {
-        if (DEBUG_ENABLED) {
-            debugCandidatesFound++;
-        }
-    }
-
-    /**
-     * Increment precondition failure count for debug tracking. Call when skipping due to precondition.
-     */
-    protected void debugPreconditionFailed() {
-        if (DEBUG_ENABLED) {
-            debugPreconditionsFailed++;
-        }
-    }
-
-    /**
-     * Increment mutation attempt count for debug tracking. Call when attempting a mutation.
-     */
-    protected void debugMutationAttempted() {
-        if (DEBUG_ENABLED) {
-            debugMutationsAttempted++;
-        }
     }
 
     @Override

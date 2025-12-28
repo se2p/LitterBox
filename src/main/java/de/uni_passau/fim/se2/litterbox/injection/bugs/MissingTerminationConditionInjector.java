@@ -54,14 +54,8 @@ public class MissingTerminationConditionInjector extends AbstractBugInjector {
 
         for (int i = 0; i < statements.size(); i++) {
             Stmt stmt = statements.get(i);
-            if (stmt instanceof UntilStmt untilStmt) {
-                debugFoundCandidate();
-                if (shouldInject(untilStmt)) {
-                    debugMutationAttempted();
-                    injectAtIndex(node, i);
-                } else {
-                    debugPreconditionFailed();
-                }
+            if (stmt instanceof UntilStmt untilStmt && shouldInject(untilStmt)) {
+                injectAtIndex(node, i);
             }
         }
 
