@@ -23,17 +23,16 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
 import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,24 +51,31 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
             "script_id",
             "original_bug_count",
             "mutated_bug_count",
+            "hint",
             "original_script",
             "mutated_script"
     );
 
     private final Path csvPath;
+    private final IssueTranslator translator;
     private CSVPrinter csvPrinter;
 
     public InjectorAnalyzer(Path output, boolean delete, List<BugInjector> injectors) {
-        this(output, delete, injectors, null, false);
+        this(output, delete, injectors, null, false, null);
     }
 
     public InjectorAnalyzer(Path output, boolean delete, List<BugInjector> injectors, Path csvPath) {
-        this(output, delete, injectors, csvPath, false);
+        this(output, delete, injectors, csvPath, false, null);
     }
 
     public InjectorAnalyzer(Path output, boolean delete, List<BugInjector> injectors, Path csvPath, boolean skipAnalyzed) {
+        this(output, delete, injectors, csvPath, skipAnalyzed, null);
+    }
+
+    public InjectorAnalyzer(Path output, boolean delete, List<BugInjector> injectors, Path csvPath, boolean skipAnalyzed, IssueTranslator translator) {
         super(new InjectorProgramAnalyzer(injectors), output, delete, skipAnalyzed);
         this.csvPath = csvPath;
+        this.translator = translator;
     }
 
     @Override
@@ -98,10 +104,10 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
             BugInjector injector = entry.getKey();
             List<InjectionResult> injectionResults = entry.getValue();
 
-            // Cache original issue count - avoid recomputing for every mutation
-            int originalIssueCount = -1;
+            // Cache original issues - we need both count and the issues for hint comparison
+            Set<Issue> originalIssues = null;
             if (csvPrinter != null) {
-                originalIssueCount = injector.getIssueFinder().check(program).size();
+                originalIssues = injector.getIssueFinder().check(program);
             }
 
             int index = 0;
@@ -119,7 +125,7 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
 
                 // Write to CSV if enabled
                 if (csvPrinter != null) {
-                    writeCSVRow(program, mutated, injector, mutatedProjectName, injectionResult, originalIssueCount);
+                    writeCSVRow(program, mutated, injector, mutatedProjectName, injectionResult, originalIssues);
                 }
 
                 index++;
@@ -135,13 +141,16 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
             BugInjector injector,
             String mutatedProjectName,
             InjectionResult injectionResult,
-            int originalIssueCount
+            Set<Issue> originalIssues
     ) throws IOException {
         IssueFinder finder = injector.getIssueFinder();
         String originalProjectName = original.getIdent().getName();
 
-        // Only count mutated issues - original count is cached
+        // Get mutated issues
         Set<Issue> mutatedIssues = finder.check(mutated);
+
+        // Find the hint for NEW issues only (issues that don't exist in the original)
+        String hintText = getHintForNewIssue(originalIssues, mutatedIssues, injectionResult.scriptId());
 
         csvPrinter.printRecord(
                 originalProjectName,
@@ -149,12 +158,92 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
                 mutatedProjectName,
                 injectionResult.spriteName(),
                 injectionResult.scriptId(),
-                originalIssueCount,
+                originalIssues.size(),
                 mutatedIssues.size(),
+                hintText,
                 injectionResult.originalScriptScratchBlocks(),
                 injectionResult.mutatedScriptScratchBlocks()
         );
         csvPrinter.flush();
+    }
+
+    /**
+     * Finds the hint text for a NEW issue (one that exists in mutated but not in original).
+     * Prioritizes issues in the target script, then falls back to any new issue.
+     */
+    private String getHintForNewIssue(Set<Issue> originalIssues, Set<Issue> mutatedIssues, String scriptId) {
+        if (mutatedIssues.isEmpty()) {
+            return "";
+        }
+
+        // Collect hint texts from original issues for comparison
+        Set<String> originalHints = new HashSet<>();
+        for (Issue issue : originalIssues) {
+            originalHints.add(getHintText(issue));
+        }
+
+        // Find NEW issues (hints that don't exist in original)
+        List<Issue> newIssues = new ArrayList<>();
+        for (Issue issue : mutatedIssues) {
+            String hint = getHintText(issue);
+            if (!hint.isEmpty() && !originalHints.contains(hint)) {
+                newIssues.add(issue);
+            }
+        }
+
+        if (newIssues.isEmpty()) {
+            // No truly new issues found - fall back to any issue in target script
+            return getHintForScript(mutatedIssues, scriptId);
+        }
+
+        // Prefer new issue in the target script
+        if (scriptId != null && !scriptId.isEmpty()) {
+            for (Issue issue : newIssues) {
+                if (issue.getScriptOrProcedureDefinition() != null) {
+                    String issueScriptId = AstNodeUtil.getBlockId(issue.getScriptOrProcedureDefinition());
+                    if (scriptId.equals(issueScriptId)) {
+                        return getHintText(issue);
+                    }
+                }
+            }
+        }
+
+        // Return first new issue's hint
+        return getHintText(newIssues.get(0));
+    }
+
+    /**
+     * Fallback: Finds the hint text for the issue whose script matches the given scriptId.
+     */
+    private String getHintForScript(Set<Issue> issues, String scriptId) {
+        if (issues.isEmpty()) {
+            return "";
+        }
+
+        // Try to find issue matching the scriptId
+        if (scriptId != null && !scriptId.isEmpty()) {
+            for (Issue issue : issues) {
+                if (issue.getScriptOrProcedureDefinition() != null) {
+                    String issueScriptId = AstNodeUtil.getBlockId(issue.getScriptOrProcedureDefinition());
+                    if (scriptId.equals(issueScriptId)) {
+                        return getHintText(issue);
+                    }
+                }
+            }
+        }
+
+        // Fallback to first issue
+        return getHintText(issues.iterator().next());
+    }
+
+    private String getHintText(Issue issue) {
+        if (translator != null && issue.getHint() != null) {
+            return issue.getHintText(translator);
+        } else if (issue.getHint() != null) {
+            // No translator - return the hint key as fallback
+            return issue.getFinder().getName();
+        }
+        return "";
     }
 
     private record InjectorProgramAnalyzer(

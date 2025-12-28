@@ -312,6 +312,13 @@ public class Main implements Callable<Integer> {
         )
         boolean skipAnalyzed;
 
+        @CommandLine.Option(
+                names = {"-l", "--language"},
+                description = "Language for hint text in CSV output (e.g., 'en', 'de').",
+                defaultValue = "en"
+        )
+        String language;
+
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
@@ -320,12 +327,14 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected InjectorAnalyzer getAnalyzer() {
+            IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.of(language));
             return new InjectorAnalyzer(
                     commonOptions.outputPath,
                     commonOptions.deleteProject,
                     InjectorTool.getInjectors(injectors),
                     csvPath,
-                    skipAnalyzed
+                    skipAnalyzed,
+                    translator
             );
         }
     }
