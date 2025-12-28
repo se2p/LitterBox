@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.builder;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
@@ -49,8 +50,8 @@ public class WaitUntilBuilder {
 
     public WaitUntil build() {
         WaitUntil stmt = new WaitUntil(boolExpr, metadata);
-        if (boolExpr instanceof de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode) {
-            ((de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode) boolExpr).setParentNode(stmt);
+        if (boolExpr instanceof AbstractNode) {
+            boolExpr.setParentNode(stmt);
         }
         return stmt;
     }

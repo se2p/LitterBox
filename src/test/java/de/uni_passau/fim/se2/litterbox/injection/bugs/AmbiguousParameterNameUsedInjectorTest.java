@@ -116,7 +116,7 @@ public class AmbiguousParameterNameUsedInjectorTest implements JsonTest {
         Assertions.assertEquals(1, injected.size(), "Should inject exactly 1 bug program");
         Program mutated = injected.getFirst().mutatedProgram();
 
-        String result = de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor.of(mutated);
+        String result = ScratchBlocksVisitor.of(mutated);
 
         Assertions.assertTrue(result.contains("define my block [param1] [param2] [param1]"), "Definition should have ambiguous param1 and param1 (originally param3)");
         Assertions.assertTrue(result.contains("say (param1)"), "Original param1 usage");

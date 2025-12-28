@@ -20,9 +20,7 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingCloneCall;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
@@ -144,10 +142,10 @@ public class MissingCloneCallInjector extends AbstractBugInjector {
     }
 
     @Override
-    protected de.uni_passau.fim.se2.litterbox.ast.model.ASTNode findContextNode(de.uni_passau.fim.se2.litterbox.ast.model.ASTNode node) {
+    protected ASTNode findContextNode(ASTNode node) {
         // Force ActorDefinition context to show full scope of changes (which might be cross-script)
         // and to avoid issues with empty scripts.
-        de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition actor = findContainingActor(node);
+        ActorDefinition actor = findContainingActor(node);
         if (actor != null) {
             return actor;
         }

@@ -199,7 +199,7 @@ public class RedundantAssignmentInjector extends AbstractBugInjector {
     /**
      * Set of statement types that can be duplicated to create redundant assignments.
      */
-    private static final java.util.Set<Class<? extends Stmt>> DUPLICATABLE_TYPES = java.util.Set.of(
+    private static final Set<Class<? extends Stmt>> DUPLICATABLE_TYPES = Set.of(
             SetVariableTo.class, SetXTo.class, SetYTo.class,
             GoToPosXY.class, PointInDirection.class, SetSizeTo.class,
             SetGraphicEffectTo.class, SetSoundEffectTo.class, SetVolumeTo.class,

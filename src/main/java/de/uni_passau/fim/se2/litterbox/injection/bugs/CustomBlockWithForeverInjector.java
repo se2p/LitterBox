@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,7 +66,7 @@ public class CustomBlockWithForeverInjector extends AbstractCustomBlockInjector 
         int lastIndex = clonedStmts.size() - 1;
         Stmt lastStmt = clonedStmts.remove(lastIndex);
 
-        List<Stmt> loopBodyStmts = new java.util.ArrayList<>();
+        List<Stmt> loopBodyStmts = new ArrayList<>();
         loopBodyStmts.add(lastStmt);
         StmtList loopBody = new StmtList(loopBodyStmts);
         lastStmt.setParentNode(loopBody);

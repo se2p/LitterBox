@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingEraseAll;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
@@ -133,7 +134,7 @@ public class MissingEraseAllInjectorTest implements JsonTest {
         return found.get();
     }
 
-    private void checkForPenClear(de.uni_passau.fim.se2.litterbox.ast.model.ASTNode node, AtomicBoolean found) {
+    private void checkForPenClear(ASTNode node, AtomicBoolean found) {
         if (found.get()) {
             return;
         }

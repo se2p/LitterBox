@@ -25,6 +25,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class ForeverInsideIfTest implements JsonTest {
 
     @Test
@@ -53,7 +55,7 @@ public class ForeverInsideIfTest implements JsonTest {
                     end
                 end""";
         Program program = parseScratchBlocks(script);
-        de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideIf detector = new ForeverInsideIf();
-        org.junit.jupiter.api.Assertions.assertEquals(1, detector.check(program).size());
+        ForeverInsideIf detector = new ForeverInsideIf();
+        assertEquals(1, detector.check(program).size());
     }
 }

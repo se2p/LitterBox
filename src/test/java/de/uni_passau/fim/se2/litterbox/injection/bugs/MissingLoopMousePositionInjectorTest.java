@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopMousePosition;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -123,7 +124,7 @@ public class MissingLoopMousePositionInjectorTest implements JsonTest {
         Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify the loop was unwrapped - statements should be outside the loop now
-        String result = de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor.of(mutated);
+        String result = ScratchBlocksVisitor.of(mutated);
         Assertions.assertTrue(result.contains("set x to (mouse x)"), "Should have set x statement");
         Assertions.assertTrue(result.contains("set y to (mouse y)"), "Should have set y statement");
         Assertions.assertTrue(result.contains("say [following mouse]"), "Should have say statement");

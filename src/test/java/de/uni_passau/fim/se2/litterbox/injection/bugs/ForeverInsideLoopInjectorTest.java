@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideLoop;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -73,7 +74,7 @@ public class ForeverInsideLoopInjectorTest implements JsonTest {
         Program mutated = injected.getFirst().mutatedProgram();
 
         // Verify: forever loop should be inserted inside the repeat loop
-        String result = de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor.of(mutated);
+        String result = ScratchBlocksVisitor.of(mutated);
         Assertions.assertTrue(result.contains("repeat (10)" + System.lineSeparator() + "forever"),
                 "Forever loop should be inserted inside repeat loop. Got:\n" + result);
     }

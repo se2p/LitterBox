@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.builder;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
@@ -123,10 +124,10 @@ public class ComparisonBuilder {
 
     private void setParentNodes(Object parent) {
         if (operand1 != null) {
-            operand1.setParentNode((de.uni_passau.fim.se2.litterbox.ast.model.ASTNode) parent);
+            operand1.setParentNode((ASTNode) parent);
         }
         if (operand2 != null) {
-            operand2.setParentNode((de.uni_passau.fim.se2.litterbox.ast.model.ASTNode) parent);
+            operand2.setParentNode((ASTNode) parent);
         }
     }
 

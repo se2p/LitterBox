@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.builder;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
@@ -68,8 +69,8 @@ public class UntilStmtBuilder {
 
     public UntilStmt build() {
         UntilStmt stmt = new UntilStmt(boolExpr, stmtList, metadata);
-        if (boolExpr instanceof de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode) {
-            ((de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode) boolExpr).setParentNode(stmt);
+        if (boolExpr instanceof AbstractNode) {
+            boolExpr.setParentNode(stmt);
         }
         if (stmtList != null) {
             stmtList.setParentNode(stmt);

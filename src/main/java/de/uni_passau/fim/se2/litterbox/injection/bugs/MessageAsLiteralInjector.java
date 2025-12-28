@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
@@ -42,6 +43,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -151,9 +153,9 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
             return null;
         }
         // For nodes in SetStmtList (variable initialization context), use the containing Stmt
-        SetStmtList setStmtList = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.findParent(node, SetStmtList.class);
+        SetStmtList setStmtList = AstNodeUtil.findParent(node, SetStmtList.class);
         if (setStmtList != null) {
-            Stmt stmt = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.findParent(node, Stmt.class);
+            Stmt stmt = AstNodeUtil.findParent(node, Stmt.class);
             if (stmt != null) {
                 return stmt;
             }
@@ -163,7 +165,7 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
         return findContainingActor(node);
     }
 
-    private String getMessageText(de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression expr) {
+    private String getMessageText(Expression expr) {
         if (expr instanceof AsString asString) {
             return getMessageText(asString.getOperand1());
         }

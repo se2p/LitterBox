@@ -359,7 +359,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
         }
     }
 
-    private static class ReachingDefinitionState implements de.uni_passau.fim.se2.litterbox.cfg.DataflowFact {
+    private static class ReachingDefinitionState implements DataflowFact {
         private final Definition definition;
         private final boolean isUsed;
 

@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import java.util.Objects;
+
 public class Use implements DataflowFact {
 
     private final CFGNode target;
@@ -46,12 +48,12 @@ public class Use implements DataflowFact {
             return false;
         }
         Use use = (Use) o;
-        return java.util.Objects.equals(target, use.target) && java.util.Objects.equals(defineable, use.defineable);
+        return Objects.equals(target, use.target) && Objects.equals(defineable, use.defineable);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(target, defineable);
+        return Objects.hash(target, defineable);
     }
 
     @Override

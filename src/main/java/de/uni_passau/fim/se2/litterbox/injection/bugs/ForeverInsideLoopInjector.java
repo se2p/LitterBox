@@ -28,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesSt
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -57,7 +58,7 @@ public class ForeverInsideLoopInjector extends AbstractBugInjector {
                 int lastIndex = stmts.size() - 1;
                 Stmt lastStmt = stmts.remove(lastIndex);
 
-                List<Stmt> foreverBodyStmts = new java.util.ArrayList<>();
+                List<Stmt> foreverBodyStmts = new ArrayList<>();
                 foreverBodyStmts.add(lastStmt);
                 StmtList foreverBody = new StmtList(foreverBodyStmts);
                 lastStmt.setParentNode(foreverBody);
