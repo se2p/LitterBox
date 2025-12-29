@@ -65,9 +65,8 @@ public class ForeverInsideIf extends AbstractIssueFinder {
                 if (i < listSize - 1) {
                     ifFollowingCounter++;
                     incrementedBy++;
-                }
-                // If it IS the last one, check if we are in a loop (implicit successor)
-                else if (inLoop) {
+                } else if (inLoop) {
+                    // If it IS the last one, check if we are in a loop (implicit successor)
                     ifFollowingCounter++;
                     incrementedBy++;
                 }

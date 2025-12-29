@@ -62,7 +62,8 @@ public class AmbiguousCustomBlockSignatureInjector extends AbstractBugInjector {
         if (!actor.getProcedureDefinitionList().getList().isEmpty()) {
             Set<String> calledProcedures = getCalledProcedureNames(actor);
 
-            ProcedureDefinition originalTargetProc = findTargetProcedure(actor.getProcedureDefinitionList().getList(), calledProcedures);
+            ProcedureDefinition originalTargetProc = findTargetProcedure(
+                    actor.getProcedureDefinitionList().getList(), calledProcedures);
             String scriptId = "";
             if (originalTargetProc != null) {
                 String id = AstNodeUtil.getBlockId(originalTargetProc);

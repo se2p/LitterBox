@@ -129,8 +129,10 @@ public class FloatingPointComparison extends AbstractIssueFinder {
         }
 
         if (other.getFinder() instanceof TypeError) {
-            //need parent if 'distance to' is the subsumed node, because PEC has the boolean node as affected node and TypeError the distance node
-            if (theIssue.getCodeLocation().equals(other.getCodeLocation()) || theIssue.getCodeLocation().equals(other.getCodeLocation().getParentNode())) {
+            // need parent if 'distance to' is the subsumed node, because PEC has the boolean
+            // node as affected node and TypeError the distance node
+            if (theIssue.getCodeLocation().equals(other.getCodeLocation())
+                    || theIssue.getCodeLocation().equals(other.getCodeLocation().getParentNode())) {
                 return true;
             }
         }

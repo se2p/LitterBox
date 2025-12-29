@@ -44,9 +44,11 @@ public class ProcedureJSONCreator {
 
     /**
      * Updates type placeholders in the procedure signature to match actual parameter types.
+     *
      * <p>
      * Scratch proccode strings contain type placeholders: %b (boolean), %n (number), %s (string/other).
      * This method ensures the placeholders match the actual parameter types in the definition.
+     *
      * <p>
      * If there are fewer parameters than placeholders, extra placeholders are preserved
      * to support OrphanedParameter bug injection.

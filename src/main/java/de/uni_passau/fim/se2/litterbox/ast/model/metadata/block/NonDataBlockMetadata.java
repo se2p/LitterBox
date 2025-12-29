@@ -78,7 +78,8 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
     }
 
     /**
-     * Creates artificial metadata suitable for {@link de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt} nodes.
+     * Creates artificial metadata suitable for
+     * {@link de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt} nodes.
      * CallStmt requires ProcedureMutationMetadata, not NoMutationMetadata.
      *
      * @param warp whether the procedure call should run without screen refresh

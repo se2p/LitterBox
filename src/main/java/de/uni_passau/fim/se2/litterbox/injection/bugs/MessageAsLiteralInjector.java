@@ -146,7 +146,8 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
         }
 
         return Collections.singletonList(
-                new InjectionResult(mutated, spriteName, originalScriptId, mutatedScriptId, originalScript, mutatedScript));
+                new InjectionResult(mutated, spriteName, originalScriptId, mutatedScriptId, originalScript,
+                        mutatedScript));
     }
 
     /**

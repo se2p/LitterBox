@@ -124,6 +124,7 @@ public class ProcedureBuilder {
 
     /**
      * Creates a CallStmt that calls the given procedure with empty string arguments.
+     *
      * <p>
      * Warning: This method uses the procedure's internal identifier, which may not match
      * what bug finders expect. For injectors that need detection by finders, use
@@ -136,6 +137,7 @@ public class ProcedureBuilder {
     /**
      * Creates a CallStmt that calls the given procedure with empty string arguments,
      * using the specified proccode as the identifier.
+     *
      * <p>
      * This is the preferred method for injectors as it ensures the CallStmt identifier
      * matches what bug finders expect (the human-readable proccode like "foo" or "write %s").
@@ -172,7 +174,8 @@ public class ProcedureBuilder {
      *
      * @return true if replacement was successful
      */
-    public static boolean replaceIn(ProcedureDefinitionList list, ProcedureDefinition old, ProcedureDefinition replacement) {
+    public static boolean replaceIn(ProcedureDefinitionList list, ProcedureDefinition old,
+                                    ProcedureDefinition replacement) {
         List<ProcedureDefinition> procedures = list.getList();
         int index = procedures.indexOf(old);
         if (index != -1) {

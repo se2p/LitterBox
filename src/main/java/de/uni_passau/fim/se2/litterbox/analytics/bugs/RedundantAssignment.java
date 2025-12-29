@@ -352,22 +352,22 @@ public class RedundantAssignment extends AbstractIssueFinder {
     private record ReachingDefinitionState(Definition definition, boolean isUsed) implements DataflowFact {
 
         @Override
-            public boolean equals(Object o) {
-                if (this == o) {
-                    return true;
-                }
-                if (o == null || getClass() != o.getClass()) {
-                    return false;
-                }
-                ReachingDefinitionState that = (ReachingDefinitionState) o;
-                return isUsed == that.isUsed && definition.equals(that.definition);
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
             }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            ReachingDefinitionState that = (ReachingDefinitionState) o;
+            return isUsed == that.isUsed && definition.equals(that.definition);
+        }
 
         @Override
-            public String toString() {
-                return definition.toString() + (isUsed ? "(USED)" : "(UNUSED)");
-            }
+        public String toString() {
+            return definition.toString() + (isUsed ? "(USED)" : "(UNUSED)");
         }
+    }
 
     // deleted getHaltingUses
 

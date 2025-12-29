@@ -95,7 +95,8 @@ public class MissingCloneInitializationInjector extends AbstractBugInjector {
                             }
                         }
                     }
-                    modifyClonedNode(actor, MissingCloneInitializationInjector.this::removeCloneHandlers, blameScriptId);
+                    modifyClonedNode(actor, MissingCloneInitializationInjector.this::removeCloneHandlers,
+                            blameScriptId);
                 }
             }
         });

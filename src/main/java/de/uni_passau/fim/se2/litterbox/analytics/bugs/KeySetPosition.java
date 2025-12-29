@@ -191,7 +191,9 @@ public class KeySetPosition extends AbstractIssueFinder {
     }
 
     @Override
-    public void visit(ProcedureDefinition node) { /* NOP */ }
+    public void visit(ProcedureDefinition node) {
+        // NOP
+    }
 
     @Override
     public String getName() {

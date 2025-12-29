@@ -86,7 +86,8 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
             }
 
             return Collections.singletonList(
-                    new InjectionResult(cloned, spriteName, originalScriptId, mutatedScriptId, originalScript, mutatedScript));
+                    new InjectionResult(cloned, spriteName, originalScriptId, mutatedScriptId, originalScript,
+                            mutatedScript));
         }
         return Collections.emptyList();
     }

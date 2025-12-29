@@ -104,7 +104,8 @@ public class KeySetPositionInjector extends AbstractBugInjector {
         }
 
         return Collections.singletonList(
-                new InjectionResult(cloned, spriteName, originalScriptId, mutatedScriptId, originalScript, mutatedScript));
+                new InjectionResult(cloned, spriteName, originalScriptId, mutatedScriptId, originalScript,
+                        mutatedScript));
     }
 
     /**

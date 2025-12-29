@@ -45,10 +45,12 @@ import java.util.function.Function;
 
 /**
  * A CloneVisitor that can apply transformations to specific nodes during cloning.
+ *
  * <p>
  * Unlike using setter methods (which break immutability), this visitor creates
  * new node instances with transformed children, maintaining the immutability
  * of the original AST.
+ *
  * <p>
  * Usage:
  * <pre>

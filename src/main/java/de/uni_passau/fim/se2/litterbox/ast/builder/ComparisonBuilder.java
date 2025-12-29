@@ -32,8 +32,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 
 /**
  * Fluent builder for constructing comparison nodes (Equals, LessThan, BiggerThan).
+ *
  * <p>
  * Simplifies comparison creation and modification in bug injectors.
+ *
  * <p>
  * Example usage:
  * <pre>{@code
