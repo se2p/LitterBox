@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.visitor;
+package de.uni_passau.fim.se2.litterbox.export.scratchblocks;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
@@ -105,6 +105,11 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.util.KeyValueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.MBlockVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PrintVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
