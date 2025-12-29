@@ -48,7 +48,8 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
             "bug_finder",
             "mutated_project",
             "sprite_name",
-            "script_id",
+            "original_script_id",
+            "mutated_script_id",
             "original_bug_count",
             "mutated_bug_count",
             "hint",
@@ -159,14 +160,16 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
         Set<Issue> mutatedIssues = finder.check(mutated);
 
         // Find the hint for NEW issues only (issues that don't exist in the original)
-        String hintText = getHintForNewIssue(originalIssues, mutatedIssues, injectionResult.scriptId());
+        // Use mutatedScriptId for hint matching since that's the ID in the mutated issue's AST
+        String hintText = getHintForNewIssue(originalIssues, mutatedIssues, injectionResult.mutatedScriptId());
 
         csvPrinter.printRecord(
                 originalProjectName,
                 finder.getName(),
                 mutatedProjectName,
                 injectionResult.spriteName(),
-                injectionResult.scriptId(),
+                injectionResult.originalScriptId(),
+                injectionResult.mutatedScriptId(),
                 originalIssues.size(),
                 mutatedIssues.size(),
                 hintText,

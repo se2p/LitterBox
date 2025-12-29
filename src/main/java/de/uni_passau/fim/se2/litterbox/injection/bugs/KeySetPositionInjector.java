@@ -88,20 +88,23 @@ public class KeySetPositionInjector extends AbstractBugInjector {
         String originalScript = "";
         String mutatedScript = "";
         String spriteName = "";
-        String scriptId = "";
+        String originalScriptId = "";
+        String mutatedScriptId = "";
 
         if (visitor.firstModifiedOriginal != null && visitor.firstModifiedReplacement != null) {
             // Establish parent links in the new tree
             cloned.accept(new ParentVisitor());
 
             spriteName = findContainingActorName(visitor.firstModifiedOriginal);
-            scriptId = findContainingScriptId(visitor.firstModifiedOriginal);
+            originalScriptId = findContainingScriptId(visitor.firstModifiedOriginal);
             originalScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedOriginal));
-            mutatedScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedReplacement));
+            ASTNode mutatedContext = findContextNode(visitor.firstModifiedReplacement);
+            mutatedScript = safeGetScratchBlocks(mutatedContext);
+            mutatedScriptId = findContainingScriptId(visitor.firstModifiedReplacement);
         }
 
         return Collections.singletonList(
-                new InjectionResult(cloned, spriteName, scriptId, originalScript, mutatedScript));
+                new InjectionResult(cloned, spriteName, originalScriptId, mutatedScriptId, originalScript, mutatedScript));
     }
 
     /**

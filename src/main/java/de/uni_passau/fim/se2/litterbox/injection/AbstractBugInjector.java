@@ -155,7 +155,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      * @param <T>          The type of the AST node
      */
     @SuppressWarnings("unchecked")
-    protected <T extends ASTNode> void modifyClonedNode(T originalNode, Consumer<T> mutator, String scriptId) {
+    protected <T extends ASTNode> void modifyClonedNode(T originalNode, Consumer<T> mutator, String originalScriptId) {
         if (reachesLimit()) {
             return;
         }
@@ -197,10 +197,12 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
                     mutatedScratchBlocks = originalScratchBlocks;
                 }
 
+                String mutatedScriptId = findScriptIdFromContext(clonedContext);
                 injectionResults.add(new InjectionResult(
                         clone,
                         spriteName,
-                        scriptId,
+                        originalScriptId,
+                        mutatedScriptId,
                         originalScratchBlocks,
                         mutatedScratchBlocks
                 ));
@@ -271,11 +273,13 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
             }
 
             String mutatedScratchBlocks = safeGetScratchBlocks(clonedContext);
-            String scriptId = findContainingScriptId(anchorNode);
+            String originalScriptId = findContainingScriptId(anchorNode);
+            String mutatedScriptId = findScriptIdFromContext(clonedContext);
             injectionResults.add(new InjectionResult(
                     clone,
                     spriteName,
-                    scriptId,
+                    originalScriptId,
+                    mutatedScriptId,
                     originalScratchBlocks,
                     mutatedScratchBlocks
             ));
@@ -327,11 +331,13 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
 
                 String mutatedScratchBlocks = safeGetScratchBlocks(mutatedContext);
 
-                String scriptId = findContainingScriptId(originalNode);
+                String originalScriptId = findContainingScriptId(originalNode);
+                String mutatedScriptId = findScriptIdFromContext(mutatedContext);
                 injectionResults.add(new InjectionResult(
                         mutated,
                         spriteName,
-                        scriptId,
+                        originalScriptId,
+                        mutatedScriptId,
                         originalScratchBlocks,
                         mutatedScratchBlocks
                 ));
@@ -405,6 +411,27 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      */
     protected String findContainingScriptId(ASTNode node) {
         ScriptEntity script = findContainingScript(node);
+        if (script != null) {
+            String blockId = AstNodeUtil.getBlockId(script);
+            return blockId != null ? blockId : "";
+        }
+        return "";
+    }
+
+    /**
+     * Finds the script ID from a context node (which may be in a cloned/mutated tree).
+     * This is used to get the script ID that will exist in the saved file.
+     * Returns empty string if not found.
+     */
+    private String findScriptIdFromContext(ASTNode contextNode) {
+        if (contextNode == null) {
+            return "";
+        }
+        if (contextNode instanceof ScriptEntity script) {
+            String blockId = AstNodeUtil.getBlockId(script);
+            return blockId != null ? blockId : "";
+        }
+        ScriptEntity script = AstNodeUtil.findParent(contextNode, ScriptEntity.class);
         if (script != null) {
             String blockId = AstNodeUtil.getBlockId(script);
             return blockId != null ? blockId : "";

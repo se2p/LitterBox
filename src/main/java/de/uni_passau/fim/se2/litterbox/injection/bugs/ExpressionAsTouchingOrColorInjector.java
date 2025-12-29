@@ -71,19 +71,22 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
             String originalScript = "";
             String mutatedScript = "";
             String spriteName = "";
-            String scriptId = "";
+            String originalScriptId = "";
+            String mutatedScriptId = "";
 
             if (visitor.firstModifiedNode != null) {
                 spriteName = findContainingActorName(visitor.firstModifiedNode);
-                scriptId = findContainingScriptId(visitor.firstModifiedNode);
+                originalScriptId = findContainingScriptId(visitor.firstModifiedNode);
                 originalScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedNode));
             }
             if (visitor.firstModifiedNodeReplacement != null) {
-                mutatedScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedNodeReplacement));
+                ASTNode mutatedContext = findContextNode(visitor.firstModifiedNodeReplacement);
+                mutatedScript = safeGetScratchBlocks(mutatedContext);
+                mutatedScriptId = findContainingScriptId(visitor.firstModifiedNodeReplacement);
             }
 
             return Collections.singletonList(
-                    new InjectionResult(cloned, spriteName, scriptId, originalScript, mutatedScript));
+                    new InjectionResult(cloned, spriteName, originalScriptId, mutatedScriptId, originalScript, mutatedScript));
         }
         return Collections.emptyList();
     }

@@ -126,24 +126,27 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
         String originalScript = "";
         String mutatedScript = "";
         String spriteName = "";
-        String scriptId = "";
+        String originalScriptId = "";
+        String mutatedScriptId = "";
 
         if (visitor.firstModifiedOriginal != null && visitor.firstModifiedReplacement != null) {
             // Establish parent links in the new tree
             mutated.accept(new ParentVisitor());
 
             spriteName = findContainingActorName(visitor.firstModifiedOriginal);
-            scriptId = findContainingScriptId(visitor.firstModifiedOriginal);
-            if (scriptId.isEmpty() && uniqueBroadcast.stmt() != null) {
+            originalScriptId = findContainingScriptId(visitor.firstModifiedOriginal);
+            if (originalScriptId.isEmpty() && uniqueBroadcast.stmt() != null) {
                 // Fallback to the broadcast script if the literal is not in a script (e.g. in variable init)
-                scriptId = findContainingScriptId(uniqueBroadcast.stmt());
+                originalScriptId = findContainingScriptId(uniqueBroadcast.stmt());
             }
             originalScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedOriginal));
-            mutatedScript = safeGetScratchBlocks(findContextNode(visitor.firstModifiedReplacement));
+            ASTNode mutatedContext = findContextNode(visitor.firstModifiedReplacement);
+            mutatedScript = safeGetScratchBlocks(mutatedContext);
+            mutatedScriptId = findContainingScriptId(visitor.firstModifiedReplacement);
         }
 
         return Collections.singletonList(
-                new InjectionResult(mutated, spriteName, scriptId, originalScript, mutatedScript));
+                new InjectionResult(mutated, spriteName, originalScriptId, mutatedScriptId, originalScript, mutatedScript));
     }
 
     /**
