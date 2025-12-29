@@ -286,49 +286,32 @@
 
     <dependencies>
         <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>3.0.3</version>
+            <!-- Jackson 2.x (com.fasterxml) is needed by langchain4j,
+                 and can coexist with Jackson 3.x (tools.jackson) used by this project.
+                 However, importing 3.x first avoids dependency issues. -->
+        </dependency>
+        <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j</artifactId>
             <version>${langchain.version}</version>
-            <exclusions>
-                <!-- Exclude older Jackson 2.x to avoid conflicts with tools.jackson.core 3.x -->
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-open-ai</artifactId>
             <version>${langchain.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-ollama</artifactId>
             <version>${langchain.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-google-ai-gemini</artifactId>
             <version>${langchain.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -339,11 +322,6 @@
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
             <version>4.7.7</version>
-        </dependency>
-        <dependency>
-            <groupId>tools.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>3.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
