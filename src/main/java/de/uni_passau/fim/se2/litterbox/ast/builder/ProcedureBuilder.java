@@ -140,7 +140,7 @@ public class ProcedureBuilder {
      * This is the preferred method for injectors as it ensures the CallStmt identifier
      * matches what bug finders expect (the human-readable proccode like "foo" or "write %s").
      *
-     * @param proc The procedure definition to call
+     * @param proc     The procedure definition to call
      * @param proccode The procedure code/name (e.g., "my procedure %s") from procMap
      * @return A CallStmt with the proccode as identifier
      */
@@ -169,7 +169,7 @@ public class ProcedureBuilder {
     /**
      * Replaces a procedure in a ProcedureDefinitionList.
      * Also sets the parent node of the replacement.
-     * 
+     *
      * @return true if replacement was successful
      */
     public static boolean replaceIn(ProcedureDefinitionList list, ProcedureDefinition old, ProcedureDefinition replacement) {

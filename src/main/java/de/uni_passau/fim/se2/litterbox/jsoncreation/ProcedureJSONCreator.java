@@ -28,11 +28,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutatio
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
-import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,7 +136,7 @@ public class ProcedureJSONCreator {
         for (ParameterDefinition parameterDefinition : parameterDefinitions) {
             if (!(parameterDefinition.getMetadata() instanceof NoBlockMetadata)) {
                 parameterInfos.add(createParameters(jsonString, protoId, parameterDefinition));
-                String argumentId = procInfo.getName().replace(" ","_") + "_argument_" + i;
+                String argumentId = procInfo.getName().replace(" ", "_") + "_argument_" + i;
                 argumentIds.add(argumentId);
                 jsonString.append(",");
                 inputs.add(createReferenceInput(argumentId,

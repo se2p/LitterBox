@@ -48,7 +48,9 @@ public class KeySetPosition extends AbstractIssueFinder {
 
     @Override
     public void visit(Script node) {
-        if (ignoreLooseBlocks && node.getEvent() instanceof Never) return;
+        if (ignoreLooseBlocks && node.getEvent() instanceof Never) {
+            return;
+        }
 
         if (node.getEvent() instanceof GreenFlag || node.getEvent() instanceof StartedAsClone) {
             inCondition = false;
@@ -83,7 +85,9 @@ public class KeySetPosition extends AbstractIssueFinder {
     private void checkStmts(List<Stmt> stmts, int key) {
         // Finder matches only the first 2 statements of a script/then-branch
         for (int i = 0; i < Math.min(stmts.size(), 2); i++) {
-            if (reportIfBuggy(stmts.get(i), key)) break;
+            if (reportIfBuggy(stmts.get(i), key)) {
+                break;
+            }
         }
     }
 
@@ -128,23 +132,37 @@ public class KeySetPosition extends AbstractIssueFinder {
     }
 
     private String getVerticalKeyLabel(int key) {
-        if (key == KeyCode.UP_ARROW.getKeycode()) return "up arrow";
-        if (key == KeyCode.DOWN_ARROW.getKeycode()) return "down arrow";
+        if (key == KeyCode.UP_ARROW.getKeycode()) {
+            return "up arrow";
+        }
+        if (key == KeyCode.DOWN_ARROW.getKeycode()) {
+            return "down arrow";
+        }
         return String.valueOf((char) key).toLowerCase();
     }
 
     private String getHorizontalKeyLabel(int key) {
-        if (key == KeyCode.LEFT_ARROW.getKeycode()) return "left arrow";
-        if (key == KeyCode.RIGHT_ARROW.getKeycode()) return "right arrow";
+        if (key == KeyCode.LEFT_ARROW.getKeycode()) {
+            return "left arrow";
+        }
+        if (key == KeyCode.RIGHT_ARROW.getKeycode()) {
+            return "right arrow";
+        }
         return String.valueOf((char) key).toLowerCase();
     }
 
     private int resolveKey(Key keyNode) {
         ASTNode expr = keyNode.getKey();
-        if (expr instanceof AsNumber asNumber) expr = asNumber.getOperand1();
+        if (expr instanceof AsNumber asNumber) {
+            expr = asNumber.getOperand1();
+        }
 
-        if (expr instanceof NumberLiteral num) return (int) num.getValue();
-        if (expr instanceof StringLiteral str) return getKeyCodeFromName(str.getText());
+        if (expr instanceof NumberLiteral num) {
+            return (int) num.getValue();
+        }
+        if (expr instanceof StringLiteral str) {
+            return getKeyCodeFromName(str.getText());
+        }
         return -1;
     }
 
@@ -176,14 +194,20 @@ public class KeySetPosition extends AbstractIssueFinder {
     public void visit(ProcedureDefinition node) { /* NOP */ }
 
     @Override
-    public String getName() { return NAME; }
+    public String getName() {
+        return NAME;
+    }
 
     @Override
-    public IssueType getIssueType() { return IssueType.BUG; }
+    public IssueType getIssueType() {
+        return IssueType.BUG;
+    }
 
     @Override
     public boolean isSubsumedBy(Issue first, Issue other) {
-        if (first.getFinder() != this) return super.isSubsumedBy(first, other);
+        if (first.getFinder() != this) {
+            return super.isSubsumedBy(first, other);
+        }
 
         if (other.getFinder() instanceof MissingLoopSensing) {
             ASTNode node = first.getCodeLocation().getParentNode().getParentNode();

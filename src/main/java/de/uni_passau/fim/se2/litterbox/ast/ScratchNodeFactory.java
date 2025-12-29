@@ -55,8 +55,8 @@ public class ScratchNodeFactory {
 
     public RepeatForeverStmt createForever(StmtList stmtList) {
         return new RepeatForeverStmt(
-            stmtList,
-            NonDataBlockMetadata.emptyNonBlockMetadata()
+                stmtList,
+                NonDataBlockMetadata.emptyNonBlockMetadata()
         );
     }
 
@@ -68,8 +68,8 @@ public class ScratchNodeFactory {
 
     public WaitSeconds createWaitSeconds(double seconds) {
         return new WaitSeconds(
-            literal(seconds),
-            NonDataBlockMetadata.emptyNonBlockMetadata()
+                literal(seconds),
+                NonDataBlockMetadata.emptyNonBlockMetadata()
         );
     }
 

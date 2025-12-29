@@ -68,9 +68,9 @@ public class TransformingCloneVisitor extends CloneVisitor {
      * When this node is visited during cloning, the transformation function
      * will be applied instead of the standard cloning.
      *
-     * @param target The original node to transform
+     * @param target         The original node to transform
      * @param transformation Function that takes the original node and returns the replacement
-     * @param <T> Type of the node
+     * @param <T>            Type of the node
      */
     public <T extends ASTNode> void register(T target, Function<T, ASTNode> transformation) {
         @SuppressWarnings("unchecked")
@@ -124,8 +124,6 @@ public class TransformingCloneVisitor extends CloneVisitor {
         // Otherwise, use the default behavior
         return super.apply(node);
     }
-
-
 
     // --- Motion Blocks ---
 
@@ -270,6 +268,7 @@ public class TransformingCloneVisitor extends CloneVisitor {
         }
         return super.visit(node);
     }
+
     @Override
     public ASTNode visit(Variable node) {
         if (hasTransformation(node)) {

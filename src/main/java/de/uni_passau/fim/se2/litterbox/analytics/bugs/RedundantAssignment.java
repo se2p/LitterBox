@@ -18,19 +18,15 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugs;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
@@ -40,7 +36,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
@@ -51,12 +46,7 @@ import de.uni_passau.fim.se2.litterbox.dataflow.ForwardFlowDirection;
 import de.uni_passau.fim.se2.litterbox.dataflow.TransferFunction;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public class RedundantAssignment extends AbstractIssueFinder {
 
@@ -165,7 +155,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
             if (state.isUsed()) {
                 continue; // We only care about unused definitions
             }
-            Definition reached = state.getDefinition();
+            Definition reached = state.definition();
 
             if (alwaysRedundantDefs.contains(reached)) {
                 continue;
@@ -332,15 +322,15 @@ public class RedundantAssignment extends AbstractIssueFinder {
             // Process IN facts
             for (ReachingDefinitionState state : inFacts) {
                 // Kill if redefined
-                if (definedVariables.contains(state.getDefinition().getDefinable())) {
+                if (definedVariables.contains(state.definition().getDefinable())) {
                     continue;
                 }
 
                 // Gen Use: If variable used, mark as used
-                if (usedVariables.contains(state.getDefinition().getDefinable())) {
-                    outFacts.add(new ReachingDefinitionState(state.getDefinition(), true));
+                if (usedVariables.contains(state.definition().getDefinable())) {
+                    outFacts.add(new ReachingDefinitionState(state.definition(), true));
                 } else if (isHaltingNode(node)) {
-                    outFacts.add(new ReachingDefinitionState(state.getDefinition(), true));
+                    outFacts.add(new ReachingDefinitionState(state.definition(), true));
                 } else {
                     outFacts.add(state);
                 }
@@ -359,45 +349,25 @@ public class RedundantAssignment extends AbstractIssueFinder {
         }
     }
 
-    private static class ReachingDefinitionState implements DataflowFact {
-        private final Definition definition;
-        private final boolean isUsed;
-
-        public ReachingDefinitionState(Definition definition, boolean isUsed) {
-            this.definition = definition;
-            this.isUsed = isUsed;
-        }
-
-        public Definition getDefinition() {
-            return definition;
-        }
-
-        public boolean isUsed() {
-            return isUsed;
-        }
+    private record ReachingDefinitionState(Definition definition, boolean isUsed) implements DataflowFact {
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
+            public boolean equals(Object o) {
+                if (this == o) {
+                    return true;
+                }
+                if (o == null || getClass() != o.getClass()) {
+                    return false;
+                }
+                ReachingDefinitionState that = (ReachingDefinitionState) o;
+                return isUsed == that.isUsed && definition.equals(that.definition);
             }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
+
+        @Override
+            public String toString() {
+                return definition.toString() + (isUsed ? "(USED)" : "(UNUSED)");
             }
-            ReachingDefinitionState that = (ReachingDefinitionState) o;
-            return isUsed == that.isUsed && definition.equals(that.definition);
         }
-
-        @Override
-        public int hashCode() {
-            return 31 * definition.hashCode() + (isUsed ? 1 : 0);
-        }
-
-        @Override
-        public String toString() {
-            return definition.toString() + (isUsed ? "(USED)" : "(UNUSED)");
-        }
-    }
 
     // deleted getHaltingUses
 
@@ -414,8 +384,6 @@ public class RedundantAssignment extends AbstractIssueFinder {
         }
         return false;
     }
-
-
 
     private static boolean isHalting(Stmt stmt) {
         return stmt instanceof AskAndWait

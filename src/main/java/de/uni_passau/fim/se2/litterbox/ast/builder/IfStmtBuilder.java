@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.builder;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
@@ -30,7 +29,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 
 import java.util.ArrayList;
-
 import java.util.List;
 
 public class IfStmtBuilder {

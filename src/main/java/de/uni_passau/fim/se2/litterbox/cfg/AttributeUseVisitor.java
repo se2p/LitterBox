@@ -111,7 +111,6 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         visitChildren(node);
     }
 
-
     @Override
     public void visit(ChangeXBy node) {
         uses.add(Attribute.positionXOf(currentActor.getIdent()));
@@ -227,7 +226,6 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         uses.add(Attribute.volumeOf(currentActor.getIdent()));
     }
 
-
     //---------------------------------------------------------------
     // Costume
     @Override
@@ -252,7 +250,6 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
     }
 
-
     @Override
     public void visit(Backdrop node) {
         uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
@@ -264,7 +261,6 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     public void visit(ChangeLayerBy node) {
         uses.add(Attribute.layerOf(currentActor.getIdent()));
     }
-
 
     //---------------------------------------------------------------
     // Size
@@ -278,7 +274,6 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     public void visit(Size node) {
         uses.add(Attribute.sizeOf(currentActor.getIdent()));
     }
-
 
     @Override
     public void visit(AttributeOf node) {
@@ -307,7 +302,8 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
                 case COSTUME_NUMBER, COSTUME_NAME -> uses.add(Attribute.costumeOf(targetId));
                 case VOLUME -> uses.add(Attribute.volumeOf(targetId));
                 case BACKDROP_NAME, BACKDROP_NUMBER ->
-                            uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+                        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+                default -> throw new IllegalStateException("Unexpected value: " + at.getType());
             }
         }
     }
