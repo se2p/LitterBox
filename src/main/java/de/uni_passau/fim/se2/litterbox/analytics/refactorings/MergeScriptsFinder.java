@@ -22,6 +22,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeScripts;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MergeScriptsFinder extends AbstractDependencyRefactoringFinder {
 
@@ -61,6 +65,28 @@ public class MergeScriptsFinder extends AbstractDependencyRefactoringFinder {
         return hasDependencies(script1, script2, merged);
     }
 
+
+
+    @Override
+    protected boolean hasDependencies(Script script1, Script script2, Script mergedScript) {
+        ControlFlowGraph cfg = getControlFlowGraphForScript(mergedScript);
+
+        List<Stmt> stmtScript1 = new ArrayList<>(
+                mergedScript.getStmtList().getStmts().subList(0, script1.getStmtList().getNumberOfStatements())
+        );
+        List<Stmt> stmtScript2 = new ArrayList<>(
+                mergedScript.getStmtList().getStmts().subList(
+                        script1.getStmtList().getNumberOfStatements(),
+                        mergedScript.getStmtList().getNumberOfStatements()
+                )
+        );
+
+        // We deliberately ignore wouldCreateDataDependency here to allow merging scripts
+        // where the order might change semantic behavior (e.g. resolving a race condition).
+        return hasControlDependency(cfg, stmtScript1, stmtScript2)
+                || hasDataDependency(cfg, stmtScript1, stmtScript2)
+                || hasTimeDependency(cfg, stmtScript1, stmtScript2);
+    }
 
     @Override
     public String getName() {
