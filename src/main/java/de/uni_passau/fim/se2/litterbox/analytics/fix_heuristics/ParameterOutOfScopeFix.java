@@ -1,0 +1,68 @@
+/*
+ * Copyright (C) 2019-2025 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
+package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
+
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+
+/**
+ * Fix heuristic for the ParameterOutOfScope bug.
+ *
+ * <p>The bug is reported when a Parameter is used inside a Script instead of a Procedure.
+ * The bug is fixed if the Parameter is now inside a Procedure.
+ */
+public class ParameterOutOfScopeFix extends AbstractFixHeuristic {
+    public static final String NAME = "parameter_out_of_scope_fix";
+
+    private boolean insideScript;
+
+    public ParameterOutOfScopeFix(String bugLocationBlockId) {
+        super(bugLocationBlockId);
+    }
+
+    @Override
+    public void visit(Script node) {
+        insideScript = true;
+        super.visit(node);
+        insideScript = false;
+    }
+
+    @Override
+    public void visit(ProcedureDefinition node) {
+        // Parameters are safe inside procedures
+        super.visit(node);
+    }
+
+    @Override
+    public void visit(Parameter node) {
+        if (matchesBugLocation(node)) {
+            // Fix: NOT inside Script (moved to Procedure)
+            if (!insideScript) {
+                addIssue(node, node.getMetadata());
+            }
+        }
+        super.visit(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+}

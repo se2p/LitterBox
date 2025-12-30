@@ -474,14 +474,56 @@ public class IssueTool {
 
     static List<String> generateFixHeuristicsNames() {
         List<String> fixHeuristicsNames = new ArrayList<>();
+        fixHeuristicsNames.add(AmbiguousCustomBlockSignatureFix.NAME);
+        fixHeuristicsNames.add(AmbiguousParameterNameUsedFix.NAME);
+        fixHeuristicsNames.add(BlockingIfElseFix.NAME);
+        fixHeuristicsNames.add(CallWithoutDefinitionFix.NAME);
         fixHeuristicsNames.add(ComparingLiteralsFix.NAME);
+        fixHeuristicsNames.add(CustomBlockWithForeverFix.NAME);
+        fixHeuristicsNames.add(CustomBlockWithTerminationFix.NAME);
+        fixHeuristicsNames.add(EndlessRecursionFix.NAME);
+        fixHeuristicsNames.add(ExpressionAsTouchingOrColorFix.NAME);
+        fixHeuristicsNames.add(FloatingPointComparisonFix.NAME);
+        fixHeuristicsNames.add(ForeverInsideIfFix.NAME);
         fixHeuristicsNames.add(ForeverInsideLoopFix.NAME);
+        fixHeuristicsNames.add(HideWithoutShowFix.NAME);
+        fixHeuristicsNames.add(IllegalParameterRefactorFix.NAME);
+        fixHeuristicsNames.add(ImmediateDeleteCloneAfterBroadcastFix.NAME);
+        fixHeuristicsNames.add(ImmediateStopAfterSayFix.NAME);
+        fixHeuristicsNames.add(InappropriateHandlerDeleteCloneFix.NAME);
+        fixHeuristicsNames.add(InterruptedLoopSensingFix.NAME);
+        fixHeuristicsNames.add(InvalidNumberStringFix.NAME);
+        fixHeuristicsNames.add(KeySetPositionFix.NAME);
+        fixHeuristicsNames.add(MessageAsLiteralFix.NAME);
         fixHeuristicsNames.add(MessageNeverReceivedFix.NAME);
         fixHeuristicsNames.add(MessageNeverSentFix.NAME);
+        fixHeuristicsNames.add(MissingAskFix.NAME);
+        fixHeuristicsNames.add(MissingBackdropSwitchFix.NAME);
+        fixHeuristicsNames.add(MissingCloneCallFix.NAME);
         fixHeuristicsNames.add(MissingCloneInitializationFix.NAME);
+        fixHeuristicsNames.add(MissingEraseAllFix.NAME);
+        fixHeuristicsNames.add(MissingInitializationFix.NAME);
+        fixHeuristicsNames.add(MissingLoopMousePositionFix.NAME);
+        fixHeuristicsNames.add(MissingLoopSensingFix.NAME);
+        fixHeuristicsNames.add(MissingPenDownFix.NAME);
+        fixHeuristicsNames.add(MissingPenUpFix.NAME);
+        fixHeuristicsNames.add(MissingResourceFix.NAME);
+        fixHeuristicsNames.add(MissingTerminationConditionFix.NAME);
+        fixHeuristicsNames.add(MissingWaitUntilConditionFix.NAME);
+        fixHeuristicsNames.add(NoWorkingScriptsFix.NAME);
+        fixHeuristicsNames.add(OrphanedParameterFix.NAME);
+        fixHeuristicsNames.add(OverwrittenVisualEffectFix.NAME);
+        fixHeuristicsNames.add(ParameterAsLiteralFix.NAME);
+        fixHeuristicsNames.add(ParameterOutOfScopeFix.NAME);
+        fixHeuristicsNames.add(RecursiveCloningFix.NAME);
+        fixHeuristicsNames.add(RedundantAssignmentFix.NAME);
+        fixHeuristicsNames.add(TerminatedLoopFix.NAME);
+        fixHeuristicsNames.add(TypeErrorFix.NAME);
+        fixHeuristicsNames.add(VariableAsLiteralFix.NAME);
+        fixHeuristicsNames.add(StutteringMovementFix.NAME);
         fixHeuristicsNames.add(MissingLoopSensingLoopFix.NAME);
         fixHeuristicsNames.add(MissingLoopSensingWaitFix.NAME);
-        fixHeuristicsNames.add(StutteringMovementFix.NAME);
+
         return fixHeuristicsNames;
     }
 

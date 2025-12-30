@@ -18,119 +18,95 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.SpriteClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-public class MissingCloneInitializationFix extends AbstractIssueFinder {
+/**
+ * Fix heuristic for the MissingCloneInitialization bug.
+ *
+ * <p>The bug is reported when CreateCloneOf is used but no initialization handler exists.
+ * The bug is fixed if the cloned actor now has a StartedAsClone or SpriteClicked handler.
+ */
+public class MissingCloneInitializationFix extends AbstractFixHeuristic {
     public static final String NAME = "missing_clone_initialization_fix";
-    private final String bugLocationBlockId;
-    private String clonedActor;
-    private Map<String, Map<ActorDefinition, List<Script>>> actorScriptsPerActorName;
+
+    private Set<String> whenStartsAsCloneActors;
+    private List<ASTNode> bugLocators;
 
     public MissingCloneInitializationFix(String bugLocationBlockId) {
-        this.bugLocationBlockId = bugLocationBlockId;
-    }
-
-    @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        this.program = program;
-        issues = new LinkedHashSet<>();
-        actorScriptsPerActorName = new LinkedHashMap<>();
-        program.accept(this);
-        if (clonedActor != null) {
-            Map<ActorDefinition, List<Script>> actorEvents = actorScriptsPerActorName.get(clonedActor);
-            if (actorEvents != null) {
-                Map.Entry<ActorDefinition, List<Script>> entry = actorEvents.entrySet().iterator().next();
-                ActorDefinition actor = entry.getKey();
-                List<Script> scripts = entry.getValue();
-                currentActor = actor;
-                Script script = scripts.getFirst();
-                currentScript = script;
-                addIssue(script.getEvent(), script.getEvent().getMetadata());
-            }
-        }
-        return Collections.unmodifiableSet(issues);
-    }
-
-    @Override
-    public void visit(CreateCloneOf node) {
-        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
-            visitChildren(node);
-        }
-    }
-
-    @Override
-    public void visit(Myself node) {
-        clonedActor = currentActor.getIdent().getName();
-    }
-
-    @Override
-    public void visit(WithCloneExpr node) {
-        if (node.getExpression() instanceof StrId strId) {
-            clonedActor = strId.getName();
-        }
+        super(bugLocationBlockId);
     }
 
     @Override
     public void visit(StartedAsClone node) {
-        if (scriptNotEmpty(node.getParentNode())) {
-            addScriptToMap();
-        }
-    }
-
-    private void addScriptToMap() {
-        if (actorScriptsPerActorName.containsKey(currentActor.getIdent().getName())) {
-            String actorName = currentActor.getIdent().getName();
-            Map<ActorDefinition, List<Script>> actorScripts = actorScriptsPerActorName.get(actorName);
-            if (actorScripts.containsKey(currentActor)) {
-                actorScripts.get(currentActor).add(currentScript);
-            } else {
-                List<Script> scripts = new ArrayList<>();
-                scripts.add(currentScript);
-                actorScripts.put(currentActor, scripts);
-            }
-        } else {
-            List<Script> scripts = new ArrayList<>();
-            scripts.add(currentScript);
-            Map<ActorDefinition, List<Script>> actorScripts = new LinkedHashMap<>();
-            actorScripts.put(currentActor, scripts);
-            actorScriptsPerActorName.put(currentActor.getIdent().getName(), actorScripts);
-        }
+        whenStartsAsCloneActors.add(currentActor.getIdent().getName());
+        super.visit(node);
     }
 
     @Override
     public void visit(SpriteClicked node) {
-        addScriptToMap();
+        whenStartsAsCloneActors.add(currentActor.getIdent().getName());
+        super.visit(node);
     }
 
-    private boolean scriptNotEmpty(ASTNode parentNode) {
-        assert (parentNode instanceof Script);
-        return ((Script) parentNode).getStmtList().hasStatements();
+    @Override
+    public void visit(Myself node) {
+        if (AstNodeUtil.hasBlockId(node.getParentNode(), bugLocationBlockId)) {
+            bugLocators.add(node);
+        }
+    }
+
+    @Override
+    public void visit(WithCloneExpr node) {
+        if (AstNodeUtil.hasBlockId(node.getParentNode(), bugLocationBlockId)) {
+            bugLocators.add(node);
+        }
+    }
+
+    @Override
+    public Set<Issue> check(Program program) {
+        whenStartsAsCloneActors = new HashSet<>();
+        bugLocators = new ArrayList<>();
+        super.check(program);
+
+        for (ASTNode bugNode : bugLocators) {
+            ActorDefinition actor = AstNodeUtil.findParent(bugNode, ActorDefinition.class);
+
+            if (actor != null) {
+                String targetSprite = actor.getIdent().getName();
+                if (bugNode instanceof WithCloneExpr withClone) {
+                    if (withClone.getExpression() instanceof StrId strId) {
+                        targetSprite = strId.getName();
+                    } else if (withClone.getExpression() instanceof StringLiteral strLit) {
+                        targetSprite = strLit.getText();
+                    }
+                }
+
+                if (whenStartsAsCloneActors.contains(targetSprite)) {
+                    addIssue(bugNode, bugNode.getMetadata());
+                }
+            }
+        }
+
+        return issues;
     }
 
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public IssueType getIssueType() {
-        return IssueType.FIX;
     }
 }

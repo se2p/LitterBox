@@ -18,9 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
@@ -33,14 +31,19 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
 
-public class MessageNeverSentFix extends AbstractIssueFinder {
+/**
+ * Fix heuristic for the MessageNeverSent bug.
+ *
+ * <p>The bug is reported when a message handler exists but the message is never sent.
+ * The bug is fixed if the message is now sent.
+ */
+public class MessageNeverSentFix extends AbstractFixHeuristic {
     public static final String NAME = "message_never_sent_fix";
-    private final String bugLocationBlockId;
     private String message = null;
     private Map<String, Map<ActorDefinition, Map<ScriptEntity, List<ASTNode>>>> broadcastsScriptsActorPerMessage;
 
     public MessageNeverSentFix(String bugLocationBlockId) {
-        this.bugLocationBlockId = bugLocationBlockId;
+        super(bugLocationBlockId);
     }
 
     @Override
@@ -75,7 +78,7 @@ public class MessageNeverSentFix extends AbstractIssueFinder {
 
     @Override
     public void visit(ReceptionOfMessage node) {
-        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
+        if (matchesBugLocation(node)) {
             if (scriptNotEmpty(node.getParentNode())) {
                 if (node.getMsg().getMessage() instanceof StringLiteral text) {
                     message = text.getText();
@@ -152,17 +155,14 @@ public class MessageNeverSentFix extends AbstractIssueFinder {
     }
 
     private boolean scriptNotEmpty(ASTNode parentNode) {
-        assert (parentNode instanceof Script);
-        return ((Script) parentNode).getStmtList().hasStatements();
+        if (!(parentNode instanceof Script script)) {
+            return false;
+        }
+        return script.getStmtList().hasStatements();
     }
 
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public IssueType getIssueType() {
-        return IssueType.FIX;
     }
 }

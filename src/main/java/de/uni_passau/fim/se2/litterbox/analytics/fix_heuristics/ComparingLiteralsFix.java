@@ -18,66 +18,71 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
-public class ComparingLiteralsFix extends AbstractIssueFinder {
+/**
+ * Fix heuristic for the ComparingLiterals bug.
+ *
+ * <p>The bug is reported when a comparison operator compares two literals
+ * (string or number), which always evaluates to the same result.
+ *
+ * <p>The bug is fixed if at least one operand is no longer a literal.
+ */
+public class ComparingLiteralsFix extends AbstractFixHeuristic {
     public static final String NAME = "comparing_literals_fix";
-    private final String bugLocationBlockId;
 
     public ComparingLiteralsFix(String bugLocationBlockId) {
-        this.bugLocationBlockId = bugLocationBlockId;
+        super(bugLocationBlockId);
     }
 
     @Override
     public void visit(BiggerThan node) {
-        if (
-                AstNodeUtil.hasBlockId(node, bugLocationBlockId)
-                        && checkNotStatic(node.getOperand1(), node.getOperand2())
-        ) {
-            addIssue(node, node.getMetadata());
-        }
+        checkComparisonFix(node, node.getOperand1(), node.getOperand2());
+        super.visit(node);
     }
 
     @Override
     public void visit(LessThan node) {
-        if (
-                AstNodeUtil.hasBlockId(node, bugLocationBlockId)
-                        && checkNotStatic(node.getOperand1(), node.getOperand2())
-        ) {
-            addIssue(node, node.getMetadata());
-        }
+        checkComparisonFix(node, node.getOperand1(), node.getOperand2());
+        super.visit(node);
     }
 
     @Override
     public void visit(Equals node) {
-        if (
-                AstNodeUtil.hasBlockId(node, bugLocationBlockId)
-                        && checkNotStatic(node.getOperand1(), node.getOperand2())
-        ) {
+        checkComparisonFix(node, node.getOperand1(), node.getOperand2());
+        super.visit(node);
+    }
+
+    /**
+     * Check if a comparison operation has been fixed.
+     *
+     * @param node the comparison node
+     * @param op1 first operand
+     * @param op2 second operand
+     */
+    private void checkComparisonFix(ASTNode node, ComparableExpr op1, ComparableExpr op2) {
+        if (matchesBugLocation(node) && isNotStatic(op1, op2)) {
             addIssue(node, node.getMetadata());
         }
     }
 
-    private boolean checkNotStatic(ComparableExpr operand1, ComparableExpr operand2) {
-        return !((operand1 instanceof StringLiteral || operand1 instanceof NumberLiteral)
-                && (operand2 instanceof StringLiteral || operand2 instanceof NumberLiteral));
+    /**
+     * Returns true if at least one operand is NOT a literal (meaning the bug is fixed).
+     */
+    private boolean isNotStatic(ComparableExpr op1, ComparableExpr op2) {
+        boolean op1IsLiteral = op1 instanceof StringLiteral || op1 instanceof NumberLiteral;
+        boolean op2IsLiteral = op2 instanceof StringLiteral || op2 instanceof NumberLiteral;
+        return !(op1IsLiteral && op2IsLiteral);
     }
 
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public IssueType getIssueType() {
-        return IssueType.FIX;
     }
 }

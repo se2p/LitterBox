@@ -18,8 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
@@ -29,20 +27,30 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
-public class StutteringMovementFix extends AbstractIssueFinder {
+/**
+ * Fix heuristic for the StutteringMovement bug.
+ *
+ * <p>The bug is reported when movement blocks are used in response to key presses
+ * outside of a loop, causing stuttering movement.
+ *
+ * <p>The bug is fixed if the movement is now inside a loop.
+ */
+public class StutteringMovementFix extends AbstractFixHeuristic {
     public static final String NAME = "stuttering_movement_fix";
-    private final String bugLocationBlockId;
 
     public StutteringMovementFix(String bugLocationBlockId) {
-        this.bugLocationBlockId = bugLocationBlockId;
+        super(bugLocationBlockId);
     }
 
     private void checkIfFixed(ASTNode node) {
-        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
+        if (matchesBugLocation(node)) {
             IfStmt ifStmt = AstNodeUtil.findParent(node, IfStmt.class);
             if (ifStmt != null && ifStmt.getBoolExpr() instanceof IsKeyPressed) {
                 StmtList stmtList = AstNodeUtil.findParent(ifStmt, StmtList.class);
-                assert stmtList != null;
+                if (stmtList == null) {
+                    // StmtList not found - can't determine loop context
+                    return;
+                }
 
                 if (
                         stmtList.getParentNode() instanceof UntilStmt
@@ -84,10 +92,5 @@ public class StutteringMovementFix extends AbstractIssueFinder {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public IssueType getIssueType() {
-        return IssueType.FIX;
     }
 }

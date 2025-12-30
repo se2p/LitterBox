@@ -1,0 +1,102 @@
+/*
+ * Copyright (C) 2019-2025 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
+package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
+
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Fix heuristic for the MissingCloneCall bug.
+ *
+ * <p>The bug is reported when StartedAsClone event exists but CreateCloneOf is never called.
+ * The bug is fixed if the actor is now cloned.
+ */
+public class MissingCloneCallFix extends AbstractFixHeuristic {
+    public static final String NAME = "missing_clone_call_fix";
+
+    private Set<String> clonedActors;
+    private StartedAsClone targetEvent;
+    private ActorDefinition foundActor;
+    private Script foundScript;
+
+    public MissingCloneCallFix(String bugLocationBlockId) {
+        super(bugLocationBlockId);
+    }
+
+    @Override
+    public void visit(Myself node) {
+        clonedActors.add(currentActor.getIdent().getName());
+        super.visit(node);
+    }
+
+    @Override
+    public void visit(WithCloneExpr node) {
+        if (node.getExpression() instanceof StrId strId) {
+            clonedActors.add(strId.getName());
+        } else if (node.getExpression() instanceof StringLiteral stringLiteral) {
+            clonedActors.add(stringLiteral.getText());
+        }
+        super.visit(node);
+    }
+
+    @Override
+    public void visit(StartedAsClone node) {
+        if (matchesBugLocation(node)) {
+            targetEvent = node;
+            foundActor = currentActor;
+            foundScript = currentScript;
+        }
+        super.visit(node);
+    }
+
+    @Override
+    public Set<Issue> check(Program program) {
+        clonedActors = new HashSet<>();
+        targetEvent = null;
+        foundActor = null;
+        foundScript = null;
+        super.check(program);
+
+        if (targetEvent != null) {
+            if (foundActor != null && clonedActors.contains(foundActor.getIdent().getName())) {
+                this.currentActor = foundActor;
+                this.currentScript = foundScript;
+                addIssue(targetEvent, targetEvent.getMetadata());
+            }
+        }
+
+        return issues;
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+}

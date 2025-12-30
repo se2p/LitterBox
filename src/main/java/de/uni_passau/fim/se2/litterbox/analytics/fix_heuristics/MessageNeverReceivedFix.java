@@ -18,27 +18,29 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
 
-public class MessageNeverReceivedFix extends AbstractIssueFinder {
+/**
+ * Fix heuristic for the MessageNeverReceived bug.
+ *
+ * <p>The bug is reported when a broadcast is sent but never received.
+ * The bug is fixed if the message is now received.
+ */
+public class MessageNeverReceivedFix extends AbstractFixHeuristic {
     public static final String NAME = "message_never_received_fix";
-    private final String bugLocationBlockId;
     private String message = null;
     private Map<String, Map<ActorDefinition, List<Script>>> actorScriptsPerMessage;
 
     public MessageNeverReceivedFix(String bugLocationBlockId) {
-        this.bugLocationBlockId = bugLocationBlockId;
+        super(bugLocationBlockId);
     }
 
     @Override
@@ -66,7 +68,7 @@ public class MessageNeverReceivedFix extends AbstractIssueFinder {
 
     @Override
     public void visit(Broadcast node) {
-        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
+        if (matchesBugLocation(node)) {
             if (node.getMessage().getMessage() instanceof StringLiteral text) {
                 message = text.getText();
             }
@@ -77,7 +79,7 @@ public class MessageNeverReceivedFix extends AbstractIssueFinder {
 
     @Override
     public void visit(BroadcastAndWait node) {
-        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
+        if (matchesBugLocation(node)) {
             if (node.getMessage().getMessage() instanceof StringLiteral text) {
                 message = text.getText();
             }
@@ -88,7 +90,6 @@ public class MessageNeverReceivedFix extends AbstractIssueFinder {
 
     @Override
     public void visit(ReceptionOfMessage node) {
-
         if (node.getMsg().getMessage() instanceof StringLiteral text) {
             if (scriptNotEmpty(node.getParentNode())) {
                 if (actorScriptsPerMessage.containsKey(text.getText())) {
@@ -114,17 +115,14 @@ public class MessageNeverReceivedFix extends AbstractIssueFinder {
     }
 
     private boolean scriptNotEmpty(ASTNode parentNode) {
-        assert (parentNode instanceof Script);
-        return ((Script) parentNode).getStmtList().hasStatements();
+        if (!(parentNode instanceof Script script)) {
+            return false;
+        }
+        return script.getStmtList().hasStatements();
     }
 
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public IssueType getIssueType() {
-        return IssueType.FIX;
     }
 }

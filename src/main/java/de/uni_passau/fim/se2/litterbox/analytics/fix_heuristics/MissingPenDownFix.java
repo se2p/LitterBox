@@ -1,0 +1,78 @@
+/*
+ * Copyright (C) 2019-2025 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
+package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
+
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
+
+/**
+ * Fix heuristic for the MissingPenDown bug.
+ *
+ * <p>The bug is reported when an actor uses PenUp but never PenDown.
+ * The bug is fixed if the actor now also has a PenDown statement.
+ */
+public class MissingPenDownFix extends AbstractFixHeuristic implements PenExtensionVisitor {
+    public static final String NAME = "missing_pen_down_fix";
+
+    private boolean penDownSet;
+    private PenUpStmt targetPenUp;
+    private Script foundScript;
+
+    public MissingPenDownFix(String bugLocationBlockId) {
+        super(bugLocationBlockId);
+    }
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        penDownSet = false;
+        targetPenUp = null;
+        foundScript = null;
+        super.visit(actor);
+
+        if (targetPenUp != null && penDownSet) {
+            // Fix: PenDown is present in the actor.
+            this.currentActor = actor;
+            this.currentScript = foundScript;
+            addIssue(targetPenUp, targetPenUp.getMetadata());
+        }
+    }
+
+    @Override
+    public void visit(PenUpStmt node) {
+        if (matchesBugLocation(node)) {
+            targetPenUp = node;
+            foundScript = currentScript;
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(PenDownStmt node) {
+        penDownSet = true;
+        visitChildren(node);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
+}
