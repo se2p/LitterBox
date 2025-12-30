@@ -49,4 +49,34 @@ public class CallWithoutDefinitionFixTest extends AbstractFixHeuristicTest {
         CallWithoutDefinitionFix finder = new CallWithoutDefinitionFix(blockId);
         assertFixFound(finder, program);
     }
+
+    @Test
+    public void testNoFixFound_ProcedureStillUndefined() throws IOException, ParsingException {
+        // Procedure definition still missing
+        String code = """
+                when green flag clicked
+                myProc
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, CallStmt.class);
+
+        CallWithoutDefinitionFix finder = new CallWithoutDefinitionFix(blockId);
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the call is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        CallWithoutDefinitionFix finder = new CallWithoutDefinitionFix(blockId);
+        assertNoFixFound(finder, program);
+    }
 }

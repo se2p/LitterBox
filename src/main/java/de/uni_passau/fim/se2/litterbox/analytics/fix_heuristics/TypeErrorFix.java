@@ -59,12 +59,16 @@ public class TypeErrorFix extends AbstractFixHeuristic {
         Optional<BlockIdNodeFinder.NodeContext> contextOpt =
                 BlockIdNodeFinder.find(program, bugLocationBlockId);
 
+        if (contextOpt.isEmpty()) {
+            return issues;
+        }
+
         contextOpt.ifPresent(context -> {
             ASTNode foundNode = context.node();
             boolean bugPersists = false;
 
             for (Issue issue : foundIssues) {
-                if (issue.getCodeLocation() == foundNode) {
+                if (isSelfOrDescendant(issue.getCodeLocation(), foundNode)) {
                     bugPersists = true;
                     break;
                 }
@@ -81,9 +85,23 @@ public class TypeErrorFix extends AbstractFixHeuristic {
 
                 if (context.script() != null) {
                     builder.withScript(context.script());
+                } else if (context.procedure() == null) {
+                    // Fallback: try to find script parent manually
+                    de.uni_passau.fim.se2.litterbox.ast.model.Script script = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.findParent(foundNode, de.uni_passau.fim.se2.litterbox.ast.model.Script.class);
+                    if (script != null) {
+                        builder.withScript(script);
+                    }
                 }
+
                 if (context.procedure() != null) {
                     builder.withProcedure(context.procedure());
+                } else {
+                    // Fallback: try to find procedure parent manually if script is also missing (or even if script found, procedure might be parent?)
+                    // Actually, if procedure is found, script is usually null.
+                    de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition proc = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.findParent(foundNode, de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition.class);
+                    if (proc != null) {
+                        builder.withProcedure(proc);
+                    }
                 }
 
                 issues.add(builder.build());
@@ -91,5 +109,16 @@ public class TypeErrorFix extends AbstractFixHeuristic {
         });
 
         return issues;
+    }
+
+    private boolean isSelfOrDescendant(ASTNode node, ASTNode potentialParent) {
+        ASTNode curr = node;
+        while (curr != null) {
+            if (curr == potentialParent) {
+                return true;
+            }
+            curr = curr.getParentNode();
+        }
+        return false;
     }
 }

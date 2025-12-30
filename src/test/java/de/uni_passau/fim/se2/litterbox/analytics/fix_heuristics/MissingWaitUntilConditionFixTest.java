@@ -47,4 +47,35 @@ public class MissingWaitUntilConditionFixTest extends AbstractFixHeuristicTest {
         MissingWaitUntilConditionFix finder = new MissingWaitUntilConditionFix(blockId);
         assertFixFound(finder, program);
     }
+
+    @Test
+    public void testNoFixFound_ConditionStillMissing() throws IOException, ParsingException {
+        // WaitUntil still missing condition
+        String code = """
+                when green flag clicked
+                wait until <>
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, WaitUntil.class);
+
+        MissingWaitUntilConditionFix finder = new MissingWaitUntilConditionFix(blockId);
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        MissingWaitUntilConditionFix finder = new MissingWaitUntilConditionFix(blockId);
+        assertNoFixFound(finder, program);
+    }
 }

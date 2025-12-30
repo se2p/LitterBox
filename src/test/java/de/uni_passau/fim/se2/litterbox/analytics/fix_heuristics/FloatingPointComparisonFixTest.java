@@ -57,4 +57,19 @@ public class FloatingPointComparisonFixTest extends AbstractFixHeuristicTest {
         FloatingPointComparisonFix heuristic = new FloatingPointComparisonFix(bugLocationBlockId);
         assertNoFixFound(heuristic, program);
     }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        FloatingPointComparisonFix heuristic = new FloatingPointComparisonFix(blockId);
+        assertNoFixFound(heuristic, program);
+    }
 }

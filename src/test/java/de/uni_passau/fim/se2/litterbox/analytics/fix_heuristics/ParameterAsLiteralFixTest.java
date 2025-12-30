@@ -47,4 +47,35 @@ public class ParameterAsLiteralFixTest extends AbstractFixHeuristicTest {
         ParameterAsLiteralFix finder = new ParameterAsLiteralFix(blockId);
         assertFixFound(finder, program);
     }
+
+    @Test
+    public void testNoFixFound_LiteralStillMatches() throws IOException, ParsingException {
+        // Literal "x" still matches parameter "x"
+        String code = """
+                define myBlock (x)
+                say [x]
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, StringLiteral.class,
+                lit -> "x".equals(lit.getText()));
+
+        ParameterAsLiteralFix finder = new ParameterAsLiteralFix(blockId);
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        ParameterAsLiteralFix finder = new ParameterAsLiteralFix(blockId);
+        assertNoFixFound(finder, program);
+    }
 }

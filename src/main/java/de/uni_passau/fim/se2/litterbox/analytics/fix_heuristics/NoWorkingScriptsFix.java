@@ -79,7 +79,6 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
                         .withSeverity(IssueSeverity.HIGH)
                         .withProgram(program)
                         .withActor(actor)
-                        .withCurrentNode(actor)
                         .withMetadata(actor.getActorMetadata())
                         .withHint(Hint.fromKey(getName()))
                         .build());

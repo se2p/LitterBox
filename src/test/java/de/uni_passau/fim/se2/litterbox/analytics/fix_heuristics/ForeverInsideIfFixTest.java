@@ -48,4 +48,39 @@ public class ForeverInsideIfFixTest extends AbstractFixHeuristicTest {
         ForeverInsideIfFix finder = new ForeverInsideIfFix(blockId);
         assertFixFound(finder, program);
     }
+
+    @Test
+    public void testNoFixFound_ForeverStillInsideIf() throws IOException, ParsingException {
+        // RepeatForever still inside If
+        String code = """
+                when green flag clicked
+                if <key (space v) pressed?> then
+                    forever
+                        move (10) steps
+                    end
+                end
+                say [Hello]
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, RepeatForeverStmt.class);
+
+        ForeverInsideIfFix finder = new ForeverInsideIfFix(blockId);
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        ForeverInsideIfFix finder = new ForeverInsideIfFix(blockId);
+        assertNoFixFound(finder, program);
+    }
 }

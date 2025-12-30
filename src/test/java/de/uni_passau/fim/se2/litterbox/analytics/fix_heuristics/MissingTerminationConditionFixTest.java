@@ -48,4 +48,36 @@ public class MissingTerminationConditionFixTest extends AbstractFixHeuristicTest
         MissingTerminationConditionFix finder = new MissingTerminationConditionFix(blockId);
         assertFixFound(finder, program);
     }
+
+    @Test
+    public void testNoFixFound_ConditionStillMissing() throws IOException, ParsingException {
+        // UntilStmt still missing condition (implicitly false/empty)
+        String code = """
+                when green flag clicked
+                repeat until <>
+                    move (10) steps
+                end
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, UntilStmt.class);
+
+        MissingTerminationConditionFix finder = new MissingTerminationConditionFix(blockId);
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        MissingTerminationConditionFix finder = new MissingTerminationConditionFix(blockId);
+        assertNoFixFound(finder, program);
+    }
 }

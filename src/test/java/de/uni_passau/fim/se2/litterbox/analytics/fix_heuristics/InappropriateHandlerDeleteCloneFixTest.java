@@ -62,4 +62,19 @@ public class InappropriateHandlerDeleteCloneFixTest extends AbstractFixHeuristic
         InappropriateHandlerDeleteCloneFix finder = new InappropriateHandlerDeleteCloneFix(blockId);
         assertNoFixFound(finder, program);
     }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        InappropriateHandlerDeleteCloneFix finder = new InappropriateHandlerDeleteCloneFix(blockId);
+        assertNoFixFound(finder, program);
+    }
 }

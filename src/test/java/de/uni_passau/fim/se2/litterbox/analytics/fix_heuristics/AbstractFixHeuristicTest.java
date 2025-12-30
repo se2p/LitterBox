@@ -57,7 +57,9 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
     protected Program parseProgram(String scratchBlocksCode) throws IOException, ParsingException {
         Program baseProject = getAST(EMPTY_PROJECT);
         ScratchBlocksParser parser = new ScratchBlocksParser();
-        return parser.extendProject(baseProject, DEFAULT_SPRITE, scratchBlocksCode);
+        Program program = parser.extendProject(baseProject, DEFAULT_SPRITE, scratchBlocksCode);
+        AstNodeUtil.linkParents(program);
+        return program;
     }
 
     /**
@@ -66,7 +68,9 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
     protected Program parseProgram(String scratchBlocksCode, String spriteName) throws IOException, ParsingException {
         Program baseProject = getAST(EMPTY_PROJECT);
         ScratchBlocksParser parser = new ScratchBlocksParser();
-        return parser.extendProject(baseProject, spriteName, scratchBlocksCode);
+        Program program = parser.extendProject(baseProject, spriteName, scratchBlocksCode);
+        AstNodeUtil.linkParents(program);
+        return program;
     }
 
     /**

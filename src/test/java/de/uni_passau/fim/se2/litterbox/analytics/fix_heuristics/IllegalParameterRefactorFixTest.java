@@ -46,4 +46,19 @@ public class IllegalParameterRefactorFixTest extends AbstractFixHeuristicTest {
         IllegalParameterRefactorFix heuristic = new IllegalParameterRefactorFix(bugLocationBlockId);
         assertNoFixFound(heuristic, program);
     }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        IllegalParameterRefactorFix heuristic = new IllegalParameterRefactorFix(blockId);
+        assertNoFixFound(heuristic, program);
+    }
 }

@@ -1,126 +1,112 @@
+/*
+ * Copyright (C) 2019-2025 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoMutationMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseX;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
+import java.io.IOException;
 
-public class ImmediateStopAfterSayFixTest {
-
-    private NonDataBlockMetadata createMetadata(String blockId) {
-        return new NonDataBlockMetadata("", blockId, false, new NoMutationMetadata());
-    }
-    
-    // Subclass to expose results
-    private static class TestableImmediateStopAfterSayFix extends ImmediateStopAfterSayFix {
-        public TestableImmediateStopAfterSayFix(String bugLocationBlockId) {
-            super(bugLocationBlockId);
-        }
-
-        public Set<Issue> getFoundIssues() {
-            return this.issues;
-        }
-    }
-
-    private Script createScript(StmtList stmts) {
-        NonDataBlockMetadata emptyMeta = createMetadata(null);
-        StartedAsClone event = new StartedAsClone(emptyMeta);
-        Script script = new Script(event, stmts);
-        event.setParentNode(script);
-        stmts.setParentNode(script);
-        return script;
-    }
+/**
+ * Tests for ImmediateStopAfterSayFix.
+ * Bug: Say/Think block followed immediately by StopAll.
+ * Fix: StopAll removed or intermediate block added.
+ */
+public class ImmediateStopAfterSayFixTest extends AbstractFixHeuristicTest {
 
     @Test
-    public void testFixFoundNoNextStmt() {
+    public void testFixFound_NoNextStmt() throws IOException, ParsingException {
         // Fix: Say is last statement (No subsequent StopAll)
-        
-        TestableImmediateStopAfterSayFix heuristic = new TestableImmediateStopAfterSayFix("buggy");
-        NonDataBlockMetadata buggyMeta = createMetadata("buggy");
-        
-        Say say = new Say(new StringLiteral("Hello"), buggyMeta);
-        StmtList stmts = new StmtList(say);
-        say.setParentNode(stmts);
-        
-        Script script = createScript(stmts);
-        
-        // Traverse script to find Say and check environment
-        heuristic.visit(script);
+        String code = """
+                when green flag clicked
+                say [Hello]
+                """;
 
-        Assertions.assertEquals(1, heuristic.getFoundIssues().size(), "Should find fix if Say is last statement");
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, Say.class);
+
+        ImmediateStopAfterSayFix heuristic = new ImmediateStopAfterSayFix(blockId);
+        assertFixFound(heuristic, program);
     }
 
     @Test
-    public void testFixFoundNextStmtNotStopAll() {
+    public void testFixFound_NextStmtNotStopAll() throws IOException, ParsingException {
         // Fix: Next statement is MoveSteps (NOT StopAll)
-        
-        TestableImmediateStopAfterSayFix heuristic = new TestableImmediateStopAfterSayFix("buggy");
-        NonDataBlockMetadata buggyMeta = createMetadata("buggy");
-        NonDataBlockMetadata emptyMeta = createMetadata(null);
-        
-        Say say = new Say(new StringLiteral("Hello"), buggyMeta);
-        MoveSteps move = new MoveSteps(new MouseX(emptyMeta), emptyMeta);
-        
-        StmtList stmts = new StmtList(say, move);
-        say.setParentNode(stmts);
-        move.setParentNode(stmts);
-        
-        Script script = createScript(stmts);
-        
-        heuristic.visit(script);
+        String code = """
+                when green flag clicked
+                say [Hello]
+                move (10) steps
+                """;
 
-        Assertions.assertEquals(1, heuristic.getFoundIssues().size(), "Should find fix if next statement is not StopAll");
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, Say.class);
+
+        ImmediateStopAfterSayFix heuristic = new ImmediateStopAfterSayFix(blockId);
+        assertFixFound(heuristic, program);
     }
 
     @Test
-    public void testNoFixSayFollowedByStopAll() {
+    public void testNoFix_SayFollowedByStopAll() throws IOException, ParsingException {
         // No Fix: Next statement *IS* StopAll
-        
-        TestableImmediateStopAfterSayFix heuristic = new TestableImmediateStopAfterSayFix("buggy");
-        NonDataBlockMetadata buggyMeta = createMetadata("buggy");
-        NonDataBlockMetadata emptyMeta = createMetadata(null);
-        
-        Say say = new Say(new StringLiteral("Hello"), buggyMeta);
-        StopAll stop = new StopAll(emptyMeta);
-        
-        StmtList stmts = new StmtList(say, stop);
-        say.setParentNode(stmts);
-        stop.setParentNode(stmts);
-        
-        Script script = createScript(stmts);
-        
-        heuristic.visit(script);
+        String code = """
+                when green flag clicked
+                say [Hello]
+                stop [all v]
+                """;
 
-        Assertions.assertTrue(heuristic.getFoundIssues().isEmpty(), "Should NOT find fix if next statement is StopAll");
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, Say.class);
+
+        ImmediateStopAfterSayFix heuristic = new ImmediateStopAfterSayFix(blockId);
+        assertNoFixFound(heuristic, program);
     }
 
     @Test
-    public void testFixFoundThinkNoNextStmt() {
+    public void testFixFound_ThinkNoNextStmt() throws IOException, ParsingException {
         // Fix: Think is last statement
-        
-        TestableImmediateStopAfterSayFix heuristic = new TestableImmediateStopAfterSayFix("buggy");
-        NonDataBlockMetadata buggyMeta = createMetadata("buggy");
-        
-        Think think = new Think(new StringLiteral("Hmm"), buggyMeta);
-        StmtList stmts = new StmtList(think);
-        think.setParentNode(stmts);
-        
-        Script script = createScript(stmts);
-        
-        heuristic.visit(script);
+        String code = """
+                when green flag clicked
+                think [Hmm]
+                """;
 
-        Assertions.assertEquals(1, heuristic.getFoundIssues().size(), "Should find fix if Think is last statement");
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, Think.class);
+
+        ImmediateStopAfterSayFix heuristic = new ImmediateStopAfterSayFix(blockId);
+        assertFixFound(heuristic, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        ImmediateStopAfterSayFix heuristic = new ImmediateStopAfterSayFix(blockId);
+        assertNoFixFound(heuristic, program);
     }
 }

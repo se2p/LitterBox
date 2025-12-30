@@ -62,13 +62,17 @@ public class MissingCloneInitializationFix extends AbstractFixHeuristic {
 
     @Override
     public void visit(StartedAsClone node) {
-        whenStartsAsCloneActors.add(currentActor.getIdent().getName());
+        if (currentActor != null) {
+            whenStartsAsCloneActors.add(currentActor.getIdent().getName());
+        }
         super.visit(node);
     }
 
     @Override
     public void visit(SpriteClicked node) {
-        whenStartsAsCloneActors.add(currentActor.getIdent().getName());
+        if (currentActor != null) {
+            whenStartsAsCloneActors.add(currentActor.getIdent().getName());
+        }
         super.visit(node);
     }
 
@@ -93,10 +97,11 @@ public class MissingCloneInitializationFix extends AbstractFixHeuristic {
         super.check(program);
 
         for (ASTNode bugNode : bugLocators) {
-            ActorDefinition actor = AstNodeUtil.findParent(bugNode, ActorDefinition.class);
+            ActorDefinition actor = AstNodeUtil.findActor(bugNode).orElse(null);
 
             if (actor != null) {
                 String targetSprite = actor.getIdent().getName();
+                
                 if (bugNode instanceof WithCloneExpr withClone) {
                     if (withClone.getExpression() instanceof StrId strId) {
                         targetSprite = strId.getName();
@@ -104,7 +109,7 @@ public class MissingCloneInitializationFix extends AbstractFixHeuristic {
                         targetSprite = strLit.getText();
                     }
                 }
-
+                
                 if (whenStartsAsCloneActors.contains(targetSprite)) {
                     addIssue(bugNode, bugNode.getMetadata());
                 }

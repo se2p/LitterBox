@@ -50,4 +50,40 @@ public class CustomBlockWithForeverFixTest extends AbstractFixHeuristicTest {
         CustomBlockWithForeverFix finder = new CustomBlockWithForeverFix(blockId);
         assertFixFound(finder, program);
     }
+
+    @Test
+    public void testNoFixFound_ForeverStillInProcedure() throws IOException, ParsingException {
+        // Procedure still contains forever loop
+        String code = """
+                define myProc
+                forever
+                    move (10) steps
+                end
+                
+                when green flag clicked
+                myProc
+                say [Hello]
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, CallStmt.class);
+
+        CustomBlockWithForeverFix finder = new CustomBlockWithForeverFix(blockId);
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the call is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        CustomBlockWithForeverFix finder = new CustomBlockWithForeverFix(blockId);
+        assertNoFixFound(finder, program);
+    }
 }

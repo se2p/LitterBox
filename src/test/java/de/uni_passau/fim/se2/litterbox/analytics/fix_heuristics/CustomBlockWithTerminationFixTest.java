@@ -51,4 +51,38 @@ public class CustomBlockWithTerminationFixTest extends AbstractFixHeuristicTest 
         CustomBlockWithTerminationFix finder = new CustomBlockWithTerminationFix(blockId);
         assertFixFound(finder, program);
     }
+
+    @Test
+    public void testNoFixFound_StopStillInProcedure() throws IOException, ParsingException {
+        // Procedure still contains stop statement
+        String code = """
+                define myProc
+                stop [all v]
+                
+                when green flag clicked
+                myProc
+                say [Done!]
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, CallStmt.class);
+
+        CustomBlockWithTerminationFix finder = new CustomBlockWithTerminationFix(blockId);
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the call is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        CustomBlockWithTerminationFix finder = new CustomBlockWithTerminationFix(blockId);
+        assertNoFixFound(finder, program);
+    }
 }

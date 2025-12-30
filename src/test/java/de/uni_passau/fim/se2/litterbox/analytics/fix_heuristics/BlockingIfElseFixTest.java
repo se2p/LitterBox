@@ -50,4 +50,41 @@ public class BlockingIfElseFixTest extends AbstractFixHeuristicTest {
         BlockingIfElseFix finder = new BlockingIfElseFix(blockId);
         assertFixFound(finder, program);
     }
+
+    @Test
+    public void testNoFixFound_BugStillPresent() throws IOException, ParsingException {
+        // Forever still present in branch
+        String code = """
+                when green flag clicked
+                if <key (space v) pressed?> then
+                    forever
+                        move (10) steps
+                    end
+                else
+                    stop [all v]
+                end
+                say (hello)
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, IfElseStmt.class);
+
+        BlockingIfElseFix finder = new BlockingIfElseFix(blockId);
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        BlockingIfElseFix finder = new BlockingIfElseFix(blockId);
+        assertNoFixFound(finder, program);
+    }
 }

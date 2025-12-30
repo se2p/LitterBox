@@ -66,15 +66,21 @@ public class RedundantAssignmentFix extends AbstractFixHeuristic {
 
             if (!bugPersists) {
                 // Fixed! The block exists but is no longer redundant.
-                issues.add(new IssueBuilder()
+                IssueBuilder builder = new IssueBuilder()
                         .withFinder(this)
                         .withCurrentNode(context.node())
                         .withActor(context.actor())
-                        .withScript(context.script())
-                        .withProcedure(context.procedure())
                         .withProgram(program)
                         .withMetadata(context.node().getMetadata())
-                        .build());
+                        .withHint(de.uni_passau.fim.se2.litterbox.analytics.Hint.fromKey(getName()));
+                
+                if (context.script() != null) {
+                    builder.withScript(context.script());
+                } else if (context.procedure() != null) {
+                    builder.withProcedure(context.procedure());
+                }
+                
+                issues.add(builder.build());
             }
         });
 

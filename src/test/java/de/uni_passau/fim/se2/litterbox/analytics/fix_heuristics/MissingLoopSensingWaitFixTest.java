@@ -18,21 +18,65 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class MissingLoopSensingWaitFixTest implements JsonTest {
+/**
+ * Tests for MissingLoopSensingWaitFix.
+ * Bug: Loop without sensing/wait block.
+ * Fix: Wait block added to loop.
+ */
+public class MissingLoopSensingWaitFixTest extends AbstractFixHeuristicTest {
 
     @Test
-    public void testLoopSensingFix() throws IOException, ParsingException {
-        assertThatFinderReports(1, new MissingLoopSensingWaitFix("NG5_c]Sc%NFgdLaV]%Cq"), "./src/test/fixtures/fix_heuristics/missingLoopSensingStopWait.json");
+    public void testFixFound_WaitAdded() throws IOException, ParsingException {
+        // Fix: Sensing block is now inside WaitUntil (followed by StopAll or end of script)
+        String code = """
+                when green flag clicked
+                wait until <key (space v) pressed?>
+                stop [all v]
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed.class);
+
+        MissingLoopSensingWaitFix finder = new MissingLoopSensingWaitFix(blockId);
+        assertFixFound(finder, program);
     }
 
     @Test
-    public void testLoopSensingWithoutStopFix() throws IOException, ParsingException {
-        assertThatFinderReports(1, new MissingLoopSensingWaitFix("9/_j,gpuA,GxfN~R%y_z"), "./src/test/fixtures/fix_heuristics/missingLoopSensingFixWithoutStop.json");
+    public void testNoFixFound_WaitStillMissing() throws IOException, ParsingException {
+        // No Fix: Sensing block is NOT in WaitUntil (e.g. just if)
+        String code = """
+                when green flag clicked
+                if <key (space v) pressed?> then
+                end
+                stop [all v]
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed.class);
+
+        MissingLoopSensingWaitFix finder = new MissingLoopSensingWaitFix(blockId);
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        MissingLoopSensingWaitFix finder = new MissingLoopSensingWaitFix(blockId);
+        assertNoFixFound(finder, program);
     }
 }

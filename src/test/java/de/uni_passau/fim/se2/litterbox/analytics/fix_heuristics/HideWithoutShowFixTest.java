@@ -47,4 +47,35 @@ public class HideWithoutShowFixTest extends AbstractFixHeuristicTest {
         HideWithoutShowFix finder = new HideWithoutShowFix(blockId);
         assertFixFound(finder, program);
     }
+
+    @Test
+    public void testNoFixFound_ShowStillMissing() throws IOException, ParsingException {
+        // Actor has Hide but Show is still missing
+        String code = """
+                when green flag clicked
+                hide
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, Hide.class);
+
+        HideWithoutShowFix finder = new HideWithoutShowFix(blockId);
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        HideWithoutShowFix finder = new HideWithoutShowFix(blockId);
+        assertNoFixFound(finder, program);
+    }
 }

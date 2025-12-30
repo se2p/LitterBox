@@ -48,4 +48,34 @@ public class EndlessRecursionFixTest extends AbstractFixHeuristicTest {
         EndlessRecursionFix finder = new EndlessRecursionFix(blockId);
         assertFixFound(finder, program);
     }
+
+    @Test
+    public void testNoFixFound_BugStillPresent() throws IOException, ParsingException {
+        // Recursive call is still unconditional
+        String code = """
+                define recurse
+                recurse
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, CallStmt.class);
+
+        EndlessRecursionFix finder = new EndlessRecursionFix(blockId);
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                define other
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        EndlessRecursionFix finder = new EndlessRecursionFix(blockId);
+        assertNoFixFound(finder, program);
+    }
 }

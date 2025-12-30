@@ -48,4 +48,35 @@ public class OverwrittenVisualEffectFixTest extends AbstractFixHeuristicTest {
         OverwrittenVisualEffectFix finder = new OverwrittenVisualEffectFix(blockId);
         assertFixFound(finder, program);
     }
+
+    @Test
+    public void testNoFixFound_EffectOverwritten() throws IOException, ParsingException {
+        // Effect overwritten immediately
+        String code = """
+                when green flag clicked
+                set [ghost v] effect to (50)
+                set [ghost v] effect to (100)
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, SetGraphicEffectTo.class);
+
+        OverwrittenVisualEffectFix finder = new OverwrittenVisualEffectFix(blockId);
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        OverwrittenVisualEffectFix finder = new OverwrittenVisualEffectFix(blockId);
+        assertNoFixFound(finder, program);
+    }
 }

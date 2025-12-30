@@ -82,6 +82,11 @@ public class VariableAsLiteralFix extends AbstractFixHeuristic {
     @Override
     public void visit(StringLiteral node) {
         if (matchesBugLocation(node)) {
+            // Check if parent is StrId (identifier context), ignore if so
+            if (node.getParentNode() instanceof de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId) {
+                super.visit(node);
+                return;
+            }
             // Bug finder only checks when inside script or procedure context
             // Only report fix if we're in a valid context AND the text no longer matches
             if ((currentScript != null || currentProcedure != null)

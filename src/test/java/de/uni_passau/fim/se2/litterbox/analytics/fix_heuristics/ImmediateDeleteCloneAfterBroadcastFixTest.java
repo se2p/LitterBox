@@ -71,4 +71,19 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
         ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(bugLocationBlockId);
         assertFixFound(heuristic, program);
     }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(blockId);
+        assertNoFixFound(heuristic, program);
+    }
 }

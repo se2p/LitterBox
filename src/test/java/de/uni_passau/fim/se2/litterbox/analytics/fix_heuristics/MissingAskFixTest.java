@@ -47,4 +47,34 @@ public class MissingAskFixTest extends AbstractFixHeuristicTest {
         MissingAskFix finder = new MissingAskFix(blockId);
         assertFixFound(finder, program);
     }
+
+    @Test
+    public void testNoFixFound_AskStillMissing() throws IOException, ParsingException {
+        // Answer is used but Ask is still missing
+        String code = """
+                when green flag clicked
+                say (answer)
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, Answer.class);
+
+        MissingAskFix finder = new MissingAskFix(blockId);
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        MissingAskFix finder = new MissingAskFix(blockId);
+        assertNoFixFound(finder, program);
+    }
 }

@@ -47,4 +47,37 @@ public class TerminatedLoopFixTest extends AbstractFixHeuristicTest {
         TerminatedLoopFix finder = new TerminatedLoopFix(blockId);
         assertFixFound(finder, program);
     }
+
+    @Test
+    public void testNoFixFound_StopStillInLoop() throws IOException, ParsingException {
+        // StopAll is still last statement in loop
+        String code = """
+                when green flag clicked
+                forever
+                    move (10) steps
+                    stop [all v]
+                end
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, StopAll.class);
+
+        TerminatedLoopFix finder = new TerminatedLoopFix(blockId);
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        TerminatedLoopFix finder = new TerminatedLoopFix(blockId);
+        assertNoFixFound(finder, program);
+    }
 }

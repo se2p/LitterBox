@@ -46,4 +46,34 @@ public class TypeErrorFixTest extends AbstractFixHeuristicTest {
         TypeErrorFix finder = new TypeErrorFix(blockId);
         assertFixFound(finder, program);
     }
+
+    @Test
+    public void testNoFixFound_TypesMismatch() throws IOException, ParsingException {
+        // Types still mismatch (SetXTo expects number, got string)
+        String code = """
+                when green flag clicked
+                set x to [hello]
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo.class);
+
+        TypeErrorFix finder = new TypeErrorFix(blockId);
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        TypeErrorFix finder = new TypeErrorFix(blockId);
+        assertNoFixFound(finder, program);
+    }
 }

@@ -40,4 +40,19 @@ public class ExpressionAsTouchingOrColorFixTest extends AbstractFixHeuristicTest
         ExpressionAsTouchingOrColorFix heuristic = new ExpressionAsTouchingOrColorFix(bugLocationBlockId);
         assertNoFixFound(heuristic, program);
     }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        ExpressionAsTouchingOrColorFix heuristic = new ExpressionAsTouchingOrColorFix(blockId);
+        assertNoFixFound(heuristic, program);
+    }
 }

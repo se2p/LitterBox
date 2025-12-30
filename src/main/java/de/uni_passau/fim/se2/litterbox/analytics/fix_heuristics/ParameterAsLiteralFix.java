@@ -62,11 +62,19 @@ public class ParameterAsLiteralFix extends AbstractFixHeuristic {
     @Override
     public void visit(StringLiteral node) {
         if (matchesBugLocation(node)) {
+            // Check if parent is StrId (identifier context), ignore if so
+            if (node.getParentNode() instanceof de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId) {
+                return;
+            }
             // Only report fix if inside a procedure AND text no longer matches parameter
             // If not in procedure scope, don't report (the code was moved/deleted, not fixed)
-            if (parametersInScope != null && !parametersInScope.contains(node.getText())) {
-                addIssue(node, node.getMetadata());
+            if (parametersInScope != null) {
+                if (!parametersInScope.contains(node.getText())) {
+                    addIssue(node, node.getMetadata());
+                }
             }
+        } else {
+             // System.out.println("Node mismatch: " + node + " ID: " + node.getMetadata().getBlockId() + " Expected: " + bugLocationBlockId);
         }
     }
 }

@@ -69,4 +69,19 @@ public class MissingLoopSensingFixTest extends AbstractFixHeuristicTest {
         MissingLoopSensingFix finder = new MissingLoopSensingFix(blockId);
         assertFixFound(finder, program);
     }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        MissingLoopSensingFix finder = new MissingLoopSensingFix(blockId);
+        assertNoFixFound(finder, program);
+    }
 }

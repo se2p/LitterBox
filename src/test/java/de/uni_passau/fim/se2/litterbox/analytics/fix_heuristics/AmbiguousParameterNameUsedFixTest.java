@@ -44,4 +44,19 @@ public class AmbiguousParameterNameUsedFixTest extends AbstractFixHeuristicTest 
         AmbiguousParameterNameUsedFix heuristic = new AmbiguousParameterNameUsedFix(bugLocationBlockId);
         assertNoFixFound(heuristic, program);
     }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        AmbiguousParameterNameUsedFix heuristic = new AmbiguousParameterNameUsedFix(blockId);
+        assertNoFixFound(heuristic, program);
+    }
 }

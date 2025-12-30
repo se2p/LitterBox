@@ -47,4 +47,36 @@ public class VariableAsLiteralFixTest extends AbstractFixHeuristicTest {
         VariableAsLiteralFix finder = new VariableAsLiteralFix(blockId);
         assertFixFound(finder, program);
     }
+
+    @Test
+    public void testNoFixFound_LiteralMatchesVariable() throws IOException, ParsingException {
+        // Literal "hello" matches variable name
+        String code = """
+                when green flag clicked
+                set [hello v] to (0)
+                say [hello]
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, StringLiteral.class,
+                lit -> "hello".equals(lit.getText()));
+
+        VariableAsLiteralFix finder = new VariableAsLiteralFix(blockId);
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        VariableAsLiteralFix finder = new VariableAsLiteralFix(blockId);
+        assertNoFixFound(finder, program);
+    }
 }

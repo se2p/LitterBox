@@ -18,14 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.BlockingIfElse;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-
-import java.util.List;
 
 /**
  * Fix heuristic for the BlockingIfElse bug.
@@ -51,8 +46,8 @@ public class BlockingIfElseFix extends AbstractFixHeuristic {
     @Override
     public void visit(IfElseStmt ifElse) {
         if (matchesBugLocation(ifElse)) {
-            boolean stopsThen = searchSubStmtsForStop(ifElse.getThenStmts().getStmts());
-            boolean stopsElse = searchSubStmtsForStop(ifElse.getElseStmts().getStmts());
+            boolean stopsThen = BlockingIfElse.isBlocking(ifElse.getThenStmts().getStmts());
+            boolean stopsElse = BlockingIfElse.isBlocking(ifElse.getElseStmts().getStmts());
 
             // Fixed if NOT (stops in then AND stops in else)
             if (!(stopsThen && stopsElse)) {
@@ -60,23 +55,5 @@ public class BlockingIfElseFix extends AbstractFixHeuristic {
             }
         }
         super.visit(ifElse);
-    }
-
-    private boolean searchSubStmtsForStop(List<Stmt> subStmts) {
-        if (subStmts.isEmpty()) {
-            return false;
-        }
-        if (subStmts.getLast() instanceof StopAll || subStmts.getLast() instanceof StopThisScript) {
-            return true;
-        }
-        for (Stmt subStmt : subStmts) {
-            if (subStmt instanceof IfElseStmt ifElseStmt) {
-                if (searchSubStmtsForStop(ifElseStmt.getThenStmts().getStmts())
-                        && searchSubStmtsForStop(ifElseStmt.getElseStmts().getStmts())) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }

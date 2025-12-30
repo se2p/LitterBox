@@ -254,6 +254,33 @@ public class AstNodeUtil {
         return Objects.equals(getBlockId(node), blockId);
     }
 
+    /**
+     * Links all nodes in the AST to their parent nodes.
+     *
+     * @param root The root of the tree.
+     */
+    public static void linkParents(final ASTNode root) {
+        final ParentLinkingVisitor visitor = new ParentLinkingVisitor();
+        root.accept(visitor);
+    }
+
+    private static class ParentLinkingVisitor implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor,
+            TextToSpeechExtensionVisitor, TranslateExtensionVisitor {
+        
+        private ParentLinkingVisitor() {
+        }
+
+        @Override
+        public void visit(final ASTNode node) {
+            for (ASTNode child : node.getChildren()) {
+                if (child != null) {
+                    child.setParentNode(node);
+                    child.accept(this);
+                }
+            }
+        }
+    }
+
     private static class BlockMapVisitor implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor,
             TextToSpeechExtensionVisitor, TranslateExtensionVisitor {
         private final Map<String, ASTNode> blockMap = new LinkedHashMap<>();

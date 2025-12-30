@@ -18,16 +18,65 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class MissingCloneInitializationFixTest implements JsonTest {
+/**
+ * Tests for MissingCloneInitializationFix.
+ * Bug: Create clone without "when I start as a clone" handler.
+ * Fix: Handler now exists.
+ */
+public class MissingCloneInitializationFixTest extends AbstractFixHeuristicTest {
 
     @Test
-    public void testMissingCloneInitializationFix() throws IOException, ParsingException {
-        assertThatFinderReports(1, new MissingCloneInitializationFix("PP59Od09q/ZEc+$8VH_B"), "./src/test/fixtures/fix_heuristics/missingCloneInitializationFix.json");
+    public void testFixFound_HandlerAdded() throws IOException, ParsingException {
+        // Clone created and handler exists - fixed
+        String code = """
+                when green flag clicked
+                create clone of (myself v)
+                
+                when I start as a clone
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf.class);
+
+        MissingCloneInitializationFix finder = new MissingCloneInitializationFix(blockId);
+        assertFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_HandlerStillMissing() throws IOException, ParsingException {
+        // Clone created but handler still missing
+        String code = """
+                when green flag clicked
+                create clone of (myself v)
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf.class);
+
+        MissingCloneInitializationFix finder = new MissingCloneInitializationFix(blockId);
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing create clone is gone
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = "non-existent-id";
+
+        MissingCloneInitializationFix finder = new MissingCloneInitializationFix(blockId);
+        assertNoFixFound(finder, program);
     }
 }

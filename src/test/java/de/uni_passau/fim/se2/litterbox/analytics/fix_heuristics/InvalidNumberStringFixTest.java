@@ -131,4 +131,16 @@ public class InvalidNumberStringFixTest {
 
         Assertions.assertTrue(heuristic.getFoundIssues().isEmpty(), "Should NOT find fix if string is invalid number format (12..34)");
     }
+    @Test
+    public void testNoFixFound_ScriptDeleted() {
+        // Script containing the bug is gone
+        TestableInvalidNumberStringFix heuristic = new TestableInvalidNumberStringFix("non-existent-id");
+        
+        StmtList stmts = new StmtList(new MoveSteps(new de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseX(createMetadata(null)), createMetadata(null)));
+        Script script = createScript(stmts);
+        
+        heuristic.visit(script);
+
+        Assertions.assertTrue(heuristic.getFoundIssues().isEmpty(), "Should be silent if block ID mismatch/missing");
+    }
 }
