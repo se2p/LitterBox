@@ -23,6 +23,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.VariableAsLiteral;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.Map;
 import java.util.Set;
@@ -35,15 +37,22 @@ import java.util.stream.Collectors;
  * The bug is fixed if the literal no longer matches any variable name in scope.
  */
 public class VariableAsLiteralFix extends AbstractFixHeuristic {
-    public static final String NAME = "variable_as_literal_fix";
 
     private Map<String, VariableInfo> varMap;
     private Map<String, ExpressionListInfo> listMap;
     private Set<String> variablesInScope;
 
+    private final IssueFinder relatedBugFinder = new VariableAsLiteral();
+
     public VariableAsLiteralFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(Program program) {
@@ -82,10 +91,5 @@ public class VariableAsLiteralFix extends AbstractFixHeuristic {
             }
         }
         super.visit(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

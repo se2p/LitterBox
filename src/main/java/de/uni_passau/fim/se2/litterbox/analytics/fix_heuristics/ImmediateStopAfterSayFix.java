@@ -24,6 +24,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ImmediateStopAfterSayThink;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.List;
 
@@ -34,11 +36,18 @@ import java.util.List;
  * The bug is fixed if the next statement is no longer StopAll.
  */
 public class ImmediateStopAfterSayFix extends AbstractFixHeuristic {
-    public static final String NAME = "immediate_stop_after_say_fix";
+
+    private final IssueFinder relatedBugFinder = new ImmediateStopAfterSayThink();
 
     public ImmediateStopAfterSayFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(Say node) {
@@ -70,10 +79,5 @@ public class ImmediateStopAfterSayFix extends AbstractFixHeuristic {
                 }
             }
         }
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

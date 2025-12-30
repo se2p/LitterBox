@@ -21,6 +21,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.OrphanedParameter;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.List;
 
@@ -31,13 +33,20 @@ import java.util.List;
  * The bug is fixed if the parameter is now in the signature.
  */
 public class OrphanedParameterFix extends AbstractFixHeuristic {
-    public static final String NAME = "orphaned_parameter_fix";
 
     private List<ParameterDefinition> currentParameterDefinitions;
+
+    private final IssueFinder relatedBugFinder = new OrphanedParameter();
 
     public OrphanedParameterFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(ProcedureDefinition node) {
@@ -65,10 +74,5 @@ public class OrphanedParameterFix extends AbstractFixHeuristic {
             }
         }
         super.visit(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

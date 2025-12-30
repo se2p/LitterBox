@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ParameterAsLiteral;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,13 +33,20 @@ import java.util.stream.Collectors;
  * The bug is fixed if the literal no longer matches any parameter name.
  */
 public class ParameterAsLiteralFix extends AbstractFixHeuristic {
-    public static final String NAME = "parameter_as_literal_fix";
 
     private Set<String> parametersInScope;
+
+    private final IssueFinder relatedBugFinder = new ParameterAsLiteral();
 
     public ParameterAsLiteralFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(ProcedureDefinition node) {
@@ -59,10 +68,5 @@ public class ParameterAsLiteralFix extends AbstractFixHeuristic {
                 addIssue(node, node.getMetadata());
             }
         }
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

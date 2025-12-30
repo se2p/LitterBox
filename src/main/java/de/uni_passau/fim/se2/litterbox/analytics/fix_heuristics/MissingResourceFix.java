@@ -29,6 +29,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackd
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingResource;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.List;
 import java.util.Set;
@@ -41,15 +43,22 @@ import java.util.stream.Collectors;
  * The bug is fixed if the resource now exists.
  */
 public class MissingResourceFix extends AbstractFixHeuristic {
-    public static final String NAME = "missing_resource_fix";
 
     private Set<String> images;
     private Set<String> backdrops;
     private Set<String> sounds;
 
+    private final IssueFinder relatedBugFinder = new MissingResource();
+
     public MissingResourceFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(Program node) {
@@ -146,10 +155,5 @@ public class MissingResourceFix extends AbstractFixHeuristic {
                 && withExpr.getExpression() instanceof StrId strId) {
             check(node, strId.getName(), sounds);
         }
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

@@ -28,6 +28,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.KeySetPosition;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.List;
 
@@ -44,15 +46,22 @@ import java.util.List;
  * </ul>
  */
 public class KeySetPositionFix extends AbstractFixHeuristic {
-    public static final String NAME = "key_set_position_fix";
 
     // Context tracking
     private int currentArrowKey = -1;
     private boolean inKeyContext = false;
 
+    private final IssueFinder relatedBugFinder = new KeySetPosition();
+
     public KeySetPositionFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(Script node) {
@@ -177,10 +186,5 @@ public class KeySetPositionFix extends AbstractFixHeuristic {
                 || key == KeyCode.DOWN_ARROW.getKeycode()
                 || key == KeyCode.LEFT_ARROW.getKeycode()
                 || key == KeyCode.RIGHT_ARROW.getKeycode();
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

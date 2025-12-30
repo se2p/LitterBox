@@ -28,6 +28,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.IllegalParameterRefactor;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the IllegalParameterRefactor bug.
@@ -36,14 +38,21 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
  * The bug is fixed if the parameter is now properly typed.
  */
 public class IllegalParameterRefactorFix extends AbstractFixHeuristic {
-    public static final String NAME = "illegal_parameter_refactor_fix";
 
     private ArgumentInfo[] currentArguments;
     private boolean insideProcedure;
 
+    private final IssueFinder relatedBugFinder = new IllegalParameterRefactor();
+
     public IllegalParameterRefactorFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(ProcedureDefinition node) {
@@ -131,10 +140,5 @@ public class IllegalParameterRefactorFix extends AbstractFixHeuristic {
             checkBool(node.getOperand2());
         }
         super.visit(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

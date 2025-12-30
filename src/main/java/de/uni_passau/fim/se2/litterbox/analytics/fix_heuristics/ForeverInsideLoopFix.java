@@ -25,6 +25,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideLoop;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the ForeverInsideLoop bug.
@@ -36,13 +38,20 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  * nested inside another loop while still being inside a working script.
  */
 public class ForeverInsideLoopFix extends AbstractFixHeuristic {
-    public static final String NAME = "forever_inside_loop_fix";
     private boolean insideScript = false;
     private int loopDepth = 0;
+
+    private final IssueFinder relatedBugFinder = new ForeverInsideLoop();
 
     public ForeverInsideLoopFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(ProcedureDefinition node) {
@@ -93,10 +102,5 @@ public class ForeverInsideLoopFix extends AbstractFixHeuristic {
             // The loop exists, is inside a working script, and is NOT nested
             addIssue(node, node.getMetadata());
         }
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

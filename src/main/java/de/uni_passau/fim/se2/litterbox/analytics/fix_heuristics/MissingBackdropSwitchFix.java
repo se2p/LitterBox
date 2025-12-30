@@ -31,6 +31,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingBackdropSwitch;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -42,7 +44,6 @@ import java.util.Set;
  * The bug is fixed if the backdrop is now switched to.
  */
 public class MissingBackdropSwitchFix extends AbstractFixHeuristic {
-    public static final String NAME = "missing_backdrop_switch_fix";
 
     private boolean nextRandPrev;
     private Set<String> switchedBackdrops;
@@ -50,9 +51,17 @@ public class MissingBackdropSwitchFix extends AbstractFixHeuristic {
     private ActorDefinition foundActor;
     private Script foundScript;
 
+    private final IssueFinder relatedBugFinder = new MissingBackdropSwitch();
+
     public MissingBackdropSwitchFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(SwitchBackdrop node) {
@@ -121,10 +130,5 @@ public class MissingBackdropSwitchFix extends AbstractFixHeuristic {
         }
 
         return issues;
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

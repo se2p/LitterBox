@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.AmbiguousCustomBlockSignature;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +33,18 @@ import java.util.List;
  * The bug is fixed if the procedure no longer has duplicates with the same name.
  */
 public class AmbiguousCustomBlockSignatureFix extends AbstractFixHeuristic {
-    public static final String NAME = "ambiguous_custom_block_signature_fix";
+
+    private final IssueFinder relatedBugFinder = new AmbiguousCustomBlockSignature();
 
     public AmbiguousCustomBlockSignatureFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(ProcedureDefinition node) {
@@ -66,10 +75,5 @@ public class AmbiguousCustomBlockSignatureFix extends AbstractFixHeuristic {
         if (!duplicateFound) {
             addIssue(node, node.getMetadata());
         }
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

@@ -27,6 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ExpressionAsTouchingOrColor;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the ExpressionAsTouchingOrColor bug.
@@ -35,11 +37,18 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
  * The bug is fixed if the expression is now a proper value (literal, sprite, etc).
  */
 public class ExpressionAsTouchingOrColorFix extends AbstractFixHeuristic implements PenExtensionVisitor {
-    public static final String NAME = "expression_as_touching_or_color_fix";
+
+    private final IssueFinder relatedBugFinder = new ExpressionAsTouchingOrColor();
 
     public ExpressionAsTouchingOrColorFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(ColorTouchingColor node) {
@@ -80,10 +89,5 @@ public class ExpressionAsTouchingOrColorFix extends AbstractFixHeuristic impleme
             }
         }
         PenExtensionVisitor.super.visit(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

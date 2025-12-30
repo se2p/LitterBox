@@ -44,6 +44,7 @@ import java.util.concurrent.Callable;
                 Main.CheckProgramsSubcommand.class,
                 Main.InjectSubcommand.class,
                 LlmSubcommand.class,
+                DiffSubcommand.class,
                 Main.DetectorsSubcommand.class,
                 Main.FeatureSubcommand.class,
                 Main.LeilaSubcommand.class,
@@ -243,12 +244,6 @@ public class Main implements Callable<Integer> {
         )
         boolean outputPerScript;
 
-        @CommandLine.Option(
-                names = {"-r", "--report_prior"},
-                description = "Path to prior analyser results, which should be compared to new analysis."
-        )
-        Path priorResultPath;
-
         @Override
         protected BugAnalyzer getAnalyzer() throws IOException {
             translator = IssueTranslatorFactory.getIssueTranslator(Locale.of(language));
@@ -258,27 +253,14 @@ public class Main implements Callable<Integer> {
             }
 
             final String detector = String.join(",", detectors);
-            final BugAnalyzer analyzer;
-            if (priorResultPath == null) {
-                analyzer = new BugAnalyzer(
-                        translator,
-                        commonOptions.outputPath,
-                        detector,
-                        ignoreLooseBlocks,
-                        commonOptions.deleteProject,
-                        outputPerScript
-                );
-            } else {
-                analyzer = new BugAnalyzer(
-                        translator,
-                        commonOptions.outputPath,
-                        detector,
-                        ignoreLooseBlocks,
-                        commonOptions.deleteProject,
-                        outputPerScript,
-                        priorResultPath
-                );
-            }
+            final BugAnalyzer analyzer = new BugAnalyzer(
+                    translator,
+                    commonOptions.outputPath,
+                    detector,
+                    ignoreLooseBlocks,
+                    commonOptions.deleteProject,
+                    outputPerScript
+            );
             if (annotationPath != null) {
                 analyzer.setAnnotationOutput(annotationPath);
             }

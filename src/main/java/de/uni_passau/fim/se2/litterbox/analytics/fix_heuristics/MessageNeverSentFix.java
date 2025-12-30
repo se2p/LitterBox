@@ -28,6 +28,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageNeverSent;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.*;
 
@@ -38,13 +40,20 @@ import java.util.*;
  * The bug is fixed if the message is now sent.
  */
 public class MessageNeverSentFix extends AbstractFixHeuristic {
-    public static final String NAME = "message_never_sent_fix";
     private String message = null;
     private Map<String, Map<ActorDefinition, Map<ScriptEntity, List<ASTNode>>>> broadcastsScriptsActorPerMessage;
+
+    private final IssueFinder relatedBugFinder = new MessageNeverSent();
 
     public MessageNeverSentFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public Set<Issue> check(Program program) {
@@ -159,10 +168,5 @@ public class MessageNeverSentFix extends AbstractFixHeuristic {
             return false;
         }
         return script.getStmtList().hasStatements();
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

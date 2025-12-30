@@ -23,6 +23,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingPenUp;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the MissingPenUp bug.
@@ -31,15 +33,22 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
  * The bug is fixed if the actor now also has a PenUp statement.
  */
 public class MissingPenUpFix extends AbstractFixHeuristic implements PenExtensionVisitor {
-    public static final String NAME = "missing_pen_up_fix";
 
     private boolean penUpSet;
     private PenDownStmt targetPenDown;
     private Script foundScript;
 
+    private final IssueFinder relatedBugFinder = new MissingPenUp();
+
     public MissingPenUpFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -69,10 +78,5 @@ public class MissingPenUpFix extends AbstractFixHeuristic implements PenExtensio
     public void visit(PenUpStmt node) {
         penUpSet = true;
         visitChildren(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

@@ -28,6 +28,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.OverwrittenVisualEffect;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,11 +41,18 @@ import java.util.Map;
  * The bug is fixed if the sequence is broken by a halt or the effect is removed.
  */
 public class OverwrittenVisualEffectFix extends AbstractFixHeuristic {
-    public static final String NAME = "overwritten_visual_effect_fix";
+
+    private final IssueFinder relatedBugFinder = new OverwrittenVisualEffect();
 
     public OverwrittenVisualEffectFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(StmtList node) {
@@ -150,10 +159,5 @@ public class OverwrittenVisualEffectFix extends AbstractFixHeuristic {
                 || stmt instanceof PlaySoundUntilDone
                 || stmt instanceof AskAndWait
                 || stmt instanceof Speak;
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

@@ -29,6 +29,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.FloatingPointComparison;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the FloatingPointComparison bug.
@@ -37,13 +39,20 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  * The bug is fixed if the comparison is no longer in a condition or uses safe operands.
  */
 public class FloatingPointComparisonFix extends AbstractFixHeuristic {
-    public static final String NAME = "floating_point_comparison_fix";
 
     private boolean inCondition;
+
+    private final IssueFinder relatedBugFinder = new FloatingPointComparison();
 
     public FloatingPointComparisonFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(Script node) {
@@ -112,10 +121,5 @@ public class FloatingPointComparisonFix extends AbstractFixHeuristic {
                     && type != FixedAttribute.FixedAttributeType.VOLUME;
         }
         return true;
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

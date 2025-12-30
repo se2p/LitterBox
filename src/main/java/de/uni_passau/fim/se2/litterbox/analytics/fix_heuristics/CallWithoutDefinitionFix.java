@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.CallWithoutDefinition;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,16 +35,23 @@ import java.util.Set;
  * The bug is fixed if a definition for the procedure now exists.
  */
 public class CallWithoutDefinitionFix extends AbstractFixHeuristic {
-    public static final String NAME = "call_without_definition_fix";
 
     private Set<String> proceduresDef;
     private CallStmt targetCall;
     private Script foundScript;
     private ProcedureDefinition foundProcedure;
 
+    private final IssueFinder relatedBugFinder = new CallWithoutDefinition();
+
     public CallWithoutDefinitionFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -80,10 +89,5 @@ public class CallWithoutDefinitionFix extends AbstractFixHeuristic {
             foundProcedure = currentProcedure;
         }
         super.visit(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

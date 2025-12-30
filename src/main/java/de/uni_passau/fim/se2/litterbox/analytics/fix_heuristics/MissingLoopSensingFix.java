@@ -27,6 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopSensing;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.Stack;
 
@@ -37,7 +39,8 @@ import java.util.Stack;
  * The bug is fixed if they're now inside a loop or after a wait/ask.
  */
 public class MissingLoopSensingFix extends AbstractFixHeuristic {
-    public static final String NAME = "missing_loop_sensing_fix";
+
+    private final IssueFinder relatedBugFinder = new MissingLoopSensing();
 
     private Stack<LoopStmt> loopStack;
     private boolean afterWaitUntil;
@@ -46,6 +49,11 @@ public class MissingLoopSensingFix extends AbstractFixHeuristic {
     public MissingLoopSensingFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
         loopStack = new Stack<>();
+    }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
     }
 
     @Override
@@ -126,12 +134,5 @@ public class MissingLoopSensingFix extends AbstractFixHeuristic {
     public void visit(DistanceTo node) {
         check(node);
         super.visit(node);
-    }
-
-
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

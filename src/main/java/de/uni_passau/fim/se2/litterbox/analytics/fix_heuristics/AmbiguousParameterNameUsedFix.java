@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.AmbiguousParameterNameUsed;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the AmbiguousParameterNameUsed bug.
@@ -28,11 +30,18 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
  * The bug is fixed if all parameter names are now unique.
  */
 public class AmbiguousParameterNameUsedFix extends AbstractFixHeuristic {
-    public static final String NAME = "ambiguous_parameter_name_used_fix";
+
+    private final IssueFinder relatedBugFinder = new AmbiguousParameterNameUsed();
 
     public AmbiguousParameterNameUsedFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(ProcedureDefinition node) {
@@ -65,10 +74,5 @@ public class AmbiguousParameterNameUsedFix extends AbstractFixHeuristic {
         if (!ambiguousFound) {
             addIssue(node, node.getMetadata());
         }
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

@@ -25,6 +25,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSec
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.InterruptedLoopSensing;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the InterruptedLoopSensing bug.
@@ -33,11 +35,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSe
  * but the bug finder doesn't report it, it's considered fixed.
  */
 public class InterruptedLoopSensingFix extends AbstractFixHeuristic {
-    public static final String NAME = "interrupted_loop_sensing_fix";
+
+    private final IssueFinder relatedBugFinder = new InterruptedLoopSensing();
 
     public InterruptedLoopSensingFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     private void check(ASTNode node) {
         if (matchesBugLocation(node)) {
@@ -79,10 +88,5 @@ public class InterruptedLoopSensingFix extends AbstractFixHeuristic {
     public void visit(SayForSecs node) {
         check(node);
         super.visit(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

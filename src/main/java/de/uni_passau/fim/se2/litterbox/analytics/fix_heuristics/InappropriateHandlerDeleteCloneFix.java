@@ -21,6 +21,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.InappropriateHandlerDeleteClone;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the InappropriateHandlerDeleteClone bug.
@@ -30,13 +32,20 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
  * The bug is fixed if DeleteClone is no longer inside a GreenFlag script.
  */
 public class InappropriateHandlerDeleteCloneFix extends AbstractFixHeuristic {
-    public static final String NAME = "inappropriate_handler_delete_clone_fix";
 
     private boolean insideGreenFlag;
+
+    private final IssueFinder relatedBugFinder = new InappropriateHandlerDeleteClone();
 
     public InappropriateHandlerDeleteCloneFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(Script node) {
@@ -57,10 +66,5 @@ public class InappropriateHandlerDeleteCloneFix extends AbstractFixHeuristic {
             }
         }
         super.visit(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

@@ -23,6 +23,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingEraseAll;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the MissingEraseAll bug.
@@ -31,15 +33,22 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
  * The bug is fixed if the actor now also has an EraseAll statement.
  */
 public class MissingEraseAllFix extends AbstractFixHeuristic implements PenExtensionVisitor {
-    public static final String NAME = "missing_erase_all_fix";
 
     private boolean penClearSet;
     private PenDownStmt targetPenDown;
     private Script foundScript;
 
+    private final IssueFinder relatedBugFinder = new MissingEraseAll();
+
     public MissingEraseAllFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -69,10 +78,5 @@ public class MissingEraseAllFix extends AbstractFixHeuristic implements PenExten
     public void visit(PenClearStmt node) {
         penClearSet = true;
         visitChildren(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

@@ -25,6 +25,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageNeverReceived;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.*;
 
@@ -35,13 +37,20 @@ import java.util.*;
  * The bug is fixed if the message is now received.
  */
 public class MessageNeverReceivedFix extends AbstractFixHeuristic {
-    public static final String NAME = "message_never_received_fix";
     private String message = null;
     private Map<String, Map<ActorDefinition, List<Script>>> actorScriptsPerMessage;
+
+    private final IssueFinder relatedBugFinder = new MessageNeverReceived();
 
     public MessageNeverReceivedFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public Set<Issue> check(Program program) {
@@ -119,10 +128,5 @@ public class MessageNeverReceivedFix extends AbstractFixHeuristic {
             return false;
         }
         return script.getStmtList().hasStatements();
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

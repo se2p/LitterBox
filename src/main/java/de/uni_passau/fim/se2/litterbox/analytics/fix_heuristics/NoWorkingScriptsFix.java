@@ -25,6 +25,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.NoWorkingScripts;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the NoWorkingScripts bug.
@@ -38,16 +40,23 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
  * <p>The bug is fixed if the actor no longer has both conditions simultaneously.
  */
 public class NoWorkingScriptsFix extends AbstractFixHeuristic {
-    public static final String NAME = "no_working_scripts_fix";
 
     private boolean stillFullfilledEmptyScript;
     private boolean deadCodeFound;
     private boolean foundEvent;
     private ActorDefinition targetActor;
 
+    private final IssueFinder relatedBugFinder = new NoWorkingScripts();
+
     public NoWorkingScriptsFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -124,10 +133,5 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
             }
         }
         return false;
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

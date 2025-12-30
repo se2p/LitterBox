@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.RecursiveCloning;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the RecursiveCloning bug.
@@ -30,14 +32,21 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
  * The bug is fixed if DeleteClone is present before the recursive clone creation.
  */
 public class RecursiveCloningFix extends AbstractFixHeuristic {
-    public static final String NAME = "recursive_cloning_fix";
 
     private boolean secondVisit;
     private boolean foundDelete;
 
+    private final IssueFinder relatedBugFinder = new RecursiveCloning();
+
     public RecursiveCloningFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(Script node) {
@@ -73,10 +82,5 @@ public class RecursiveCloningFix extends AbstractFixHeuristic {
             foundDelete = true;
         }
         visitChildren(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

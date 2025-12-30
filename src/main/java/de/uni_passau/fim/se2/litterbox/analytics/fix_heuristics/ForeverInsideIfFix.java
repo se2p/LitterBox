@@ -21,6 +21,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideIf;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the ForeverInsideIf bug.
@@ -29,14 +31,21 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForever
  * The bug is fixed if no longer inside an If OR no statements follow the If.
  */
 public class ForeverInsideIfFix extends AbstractFixHeuristic {
-    public static final String NAME = "forever_inside_if_fix";
 
     private boolean insideIf;
     private int ifFollowingCounter;
 
+    private final IssueFinder relatedBugFinder = new ForeverInsideIf();
+
     public ForeverInsideIfFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(StmtList node) {
@@ -73,10 +82,5 @@ public class ForeverInsideIfFix extends AbstractFixHeuristic {
             }
         }
         visitChildren(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

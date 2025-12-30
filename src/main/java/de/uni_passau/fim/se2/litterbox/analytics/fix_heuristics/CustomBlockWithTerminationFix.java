@@ -26,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.CustomBlockWithTermination;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +41,6 @@ import java.util.Set;
  * The bug is fixed if the procedure no longer terminates, or the call is now last.
  */
 public class CustomBlockWithTerminationFix extends AbstractFixHeuristic {
-    public static final String NAME = "custom_block_with_termination_fix";
 
     private String currentProcedureName;
     private Set<String> proceduresWithTermination;
@@ -49,9 +50,17 @@ public class CustomBlockWithTerminationFix extends AbstractFixHeuristic {
     private Script foundScript;
     private ProcedureDefinition foundProcedure;
 
+    private final IssueFinder relatedBugFinder = new CustomBlockWithTermination();
+
     public CustomBlockWithTerminationFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -110,10 +119,5 @@ public class CustomBlockWithTerminationFix extends AbstractFixHeuristic {
             }
         }
         super.visit(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

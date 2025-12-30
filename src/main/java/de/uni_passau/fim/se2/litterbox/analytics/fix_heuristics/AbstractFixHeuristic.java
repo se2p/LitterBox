@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
@@ -30,6 +31,9 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
  * <p>Fix heuristics work by looking for a specific block (identified by its block ID)
  * and checking if the buggy condition no longer applies. If the condition is resolved,
  * the heuristic reports a FIX issue.
+ *
+ * <p>Each fix heuristic is associated with a specific bug finder. The heuristic's name
+ * is derived from the related bug finder's name (following the injector pattern).
  */
 public abstract class AbstractFixHeuristic extends AbstractIssueFinder {
 
@@ -43,6 +47,21 @@ public abstract class AbstractFixHeuristic extends AbstractIssueFinder {
      */
     protected AbstractFixHeuristic(String bugLocationBlockId) {
         this.bugLocationBlockId = bugLocationBlockId;
+    }
+
+    /**
+     * Returns the bug finder that this fix heuristic is associated with.
+     *
+     * <p>This follows the injector pattern: each fix heuristic knows which bug
+     * it is designed to verify as fixed.
+     *
+     * @return the related bug finder instance
+     */
+    protected abstract IssueFinder getRelatedBugFinder();
+
+    @Override
+    public String getName() {
+        return getRelatedBugFinder().getName();
     }
 
     @Override
@@ -60,3 +79,4 @@ public abstract class AbstractFixHeuristic extends AbstractIssueFinder {
         return AstNodeUtil.hasBlockId(node, bugLocationBlockId);
     }
 }
+

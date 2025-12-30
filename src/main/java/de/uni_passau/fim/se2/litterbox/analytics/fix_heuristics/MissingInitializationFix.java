@@ -25,6 +25,8 @@ import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.dataflow.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingInitialization;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.Optional;
 import java.util.Set;
@@ -37,11 +39,18 @@ import java.util.Set;
  * <p>The bug is fixed if the variable use is now properly initialized before use.
  */
 public class MissingInitializationFix extends AbstractFixHeuristic {
-    public static final String NAME = "missing_initialization_fix";
+
+    private final IssueFinder relatedBugFinder = new MissingInitialization();
 
     public MissingInitializationFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public Set<Issue> check(Program program) {
@@ -124,10 +133,5 @@ public class MissingInitializationFix extends AbstractFixHeuristic {
         });
 
         return issues;
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

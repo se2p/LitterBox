@@ -26,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForever
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.analytics.smells.StutteringMovement;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the StutteringMovement bug.
@@ -36,11 +38,18 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
  * <p>The bug is fixed if the movement is now inside a loop.
  */
 public class StutteringMovementFix extends AbstractFixHeuristic {
-    public static final String NAME = "stuttering_movement_fix";
+
+    private final IssueFinder relatedBugFinder = new StutteringMovement();
 
     public StutteringMovementFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     private void checkIfFixed(ASTNode node) {
         if (matchesBugLocation(node)) {
@@ -87,10 +96,5 @@ public class StutteringMovementFix extends AbstractFixHeuristic {
     @Override
     public void visit(TurnLeft node) {
         checkIfFixed(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

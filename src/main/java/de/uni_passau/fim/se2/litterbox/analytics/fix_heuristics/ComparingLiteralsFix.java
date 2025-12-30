@@ -25,6 +25,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ComparingLiterals;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the ComparingLiterals bug.
@@ -35,11 +37,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
  * <p>The bug is fixed if at least one operand is no longer a literal.
  */
 public class ComparingLiteralsFix extends AbstractFixHeuristic {
-    public static final String NAME = "comparing_literals_fix";
+
+    private final IssueFinder relatedBugFinder = new ComparingLiterals();
 
     public ComparingLiteralsFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(BiggerThan node) {
@@ -79,10 +88,5 @@ public class ComparingLiteralsFix extends AbstractFixHeuristic {
         boolean op1IsLiteral = op1 instanceof StringLiteral || op1 instanceof NumberLiteral;
         boolean op2IsLiteral = op2 instanceof StringLiteral || op2 instanceof NumberLiteral;
         return !(op1IsLiteral && op2IsLiteral);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

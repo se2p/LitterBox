@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingWaitUntilCondition;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the MissingWaitUntilCondition bug.
@@ -28,11 +30,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
  * The bug is fixed if the condition is now specified.
  */
 public class MissingWaitUntilConditionFix extends AbstractFixHeuristic {
-    public static final String NAME = "missing_wait_until_condition_fix";
+
+    private final IssueFinder relatedBugFinder = new MissingWaitUntilCondition();
 
     public MissingWaitUntilConditionFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(WaitUntil node) {
@@ -43,10 +52,5 @@ public class MissingWaitUntilConditionFix extends AbstractFixHeuristic {
             }
         }
         super.visit(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

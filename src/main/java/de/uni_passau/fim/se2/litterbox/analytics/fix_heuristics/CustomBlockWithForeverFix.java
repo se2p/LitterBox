@@ -25,6 +25,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.CustomBlockWithForever;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.HashSet;
 import java.util.List;
@@ -38,7 +40,6 @@ import java.util.Set;
  * The bug is fixed if the procedure no longer contains forever, or the call is now last.
  */
 public class CustomBlockWithForeverFix extends AbstractFixHeuristic {
-    public static final String NAME = "custom_block_with_forever_fix";
 
     private String currentProcedureName;
     private Set<String> proceduresWithForever;
@@ -48,9 +49,17 @@ public class CustomBlockWithForeverFix extends AbstractFixHeuristic {
     private Script foundScript;
     private ProcedureDefinition foundProcedure;
 
+    private final IssueFinder relatedBugFinder = new CustomBlockWithForever();
+
     public CustomBlockWithForeverFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -102,10 +111,5 @@ public class CustomBlockWithForeverFix extends AbstractFixHeuristic {
             }
         }
         super.visit(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

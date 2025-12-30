@@ -18,8 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopSensing;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
@@ -28,24 +28,31 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForever
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
-public class MissingLoopSensingLoopFix extends AbstractIssueFinder {
-    public static final String NAME = "missing_loop_sensing_fix";
-    private final String bugLocationBlockId;
+/**
+ * Fix heuristic for MissingLoopSensing that checks if the sensing block
+ * is now wrapped in a loop.
+ */
+public class MissingLoopSensingLoopFix extends AbstractFixHeuristic {
+
+    private final IssueFinder relatedBugFinder = new MissingLoopSensing();
 
     public MissingLoopSensingLoopFix(String bugLocationBlockId) {
-        this.bugLocationBlockId = bugLocationBlockId;
+        super(bugLocationBlockId);
+    }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
     }
 
     private void checkIfFixed(ASTNode node) {
-        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
+        if (matchesBugLocation(node)) {
             StmtList stmtList = AstNodeUtil.findParent(node, StmtList.class);
-            assert stmtList != null;
-
-            if (
-                    stmtList.getParentNode() instanceof UntilStmt
-                            || stmtList.getParentNode() instanceof RepeatForeverStmt
-            ) {
-                addIssue(node, node.getMetadata());
+            if (stmtList != null) {
+                if (stmtList.getParentNode() instanceof UntilStmt
+                        || stmtList.getParentNode() instanceof RepeatForeverStmt) {
+                    addIssue(node, node.getMetadata());
+                }
             }
         } else {
             visitChildren(node);
@@ -80,20 +87,5 @@ public class MissingLoopSensingLoopFix extends AbstractIssueFinder {
     @Override
     public void visit(DistanceTo node) {
         checkIfFixed(node);
-    }
-
-    @Override
-    public void visit(Equals node) {
-        checkIfFixed(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    public IssueType getIssueType() {
-        return IssueType.FIX;
     }
 }

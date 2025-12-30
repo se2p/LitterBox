@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.InvalidNumberString;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.regex.Pattern;
 
@@ -31,14 +33,21 @@ import java.util.regex.Pattern;
  * The bug is fixed if the string is now a valid number or no longer looks like one.
  */
 public class InvalidNumberStringFix extends AbstractFixHeuristic {
-    public static final String NAME = "invalid_number_string_fix";
     private static final Pattern ALLOWED_CHARS = Pattern.compile("^[0-9eE.+\\-]+$");
     private static final Pattern VALID_NUMBER =
             Pattern.compile("^[+-]?(\\d+(\\.\\d*)?|\\.\\d+)([eE][+-]?\\d+)?$");
 
+    private final IssueFinder relatedBugFinder = new InvalidNumberString();
+
     public InvalidNumberStringFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(AsNumber node) {
@@ -58,10 +67,5 @@ public class InvalidNumberStringFix extends AbstractFixHeuristic {
             }
         }
         super.visit(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

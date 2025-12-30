@@ -26,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesSt
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.TerminatedLoop;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.List;
 
@@ -43,11 +45,18 @@ import java.util.List;
  * </ul>
  */
 public class TerminatedLoopFix extends AbstractFixHeuristic {
-    public static final String NAME = "terminated_loop_fix";
+
+    private final IssueFinder relatedBugFinder = new TerminatedLoop();
 
     public TerminatedLoopFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(StopAll node) {
@@ -92,10 +101,5 @@ public class TerminatedLoopFix extends AbstractFixHeuristic {
             addIssue(node, node.getMetadata());
         }
         // Otherwise, still buggy - don't report a fix
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

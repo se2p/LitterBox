@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.RedundantAssignment;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.Set;
 
@@ -36,11 +37,18 @@ import java.util.Set;
  * now used before being overwritten, or the overwriting assignment was removed).
  */
 public class RedundantAssignmentFix extends AbstractFixHeuristic {
-    public static final String NAME = "redundant_assignment_fix";
+
+    private final IssueFinder relatedBugFinder = new RedundantAssignment();
 
     public RedundantAssignmentFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public Set<Issue> check(Program program) {
@@ -71,10 +79,5 @@ public class RedundantAssignmentFix extends AbstractFixHeuristic {
         });
 
         return issues;
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

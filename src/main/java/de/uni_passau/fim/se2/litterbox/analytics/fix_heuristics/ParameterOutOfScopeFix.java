@@ -21,6 +21,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ParameterOutOfScope;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the ParameterOutOfScope bug.
@@ -29,13 +31,20 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
  * The bug is fixed if the Parameter is now inside a Procedure.
  */
 public class ParameterOutOfScopeFix extends AbstractFixHeuristic {
-    public static final String NAME = "parameter_out_of_scope_fix";
 
     private boolean insideScript;
+
+    private final IssueFinder relatedBugFinder = new ParameterOutOfScope();
 
     public ParameterOutOfScopeFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(Script node) {
@@ -59,10 +68,5 @@ public class ParameterOutOfScopeFix extends AbstractFixHeuristic {
             }
         }
         super.visit(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

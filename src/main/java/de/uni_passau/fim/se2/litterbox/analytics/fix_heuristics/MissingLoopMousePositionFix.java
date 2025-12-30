@@ -26,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopMousePosition;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the MissingLoopMousePosition bug.
@@ -34,13 +36,20 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
  * The bug is fixed if it's now inside a loop.
  */
 public class MissingLoopMousePositionFix extends AbstractFixHeuristic {
-    public static final String NAME = "missing_loop_mouse_position_fix";
 
     private boolean insideLoop;
+
+    private final IssueFinder relatedBugFinder = new MissingLoopMousePosition();
 
     public MissingLoopMousePositionFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(RepeatForeverStmt node) {
@@ -101,10 +110,5 @@ public class MissingLoopMousePositionFix extends AbstractFixHeuristic {
     @Override
     public void visit(MouseY node) {
         check(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

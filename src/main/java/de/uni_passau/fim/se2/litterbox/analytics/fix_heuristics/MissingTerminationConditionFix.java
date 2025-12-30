@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingTerminationCondition;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the MissingTerminationCondition bug.
@@ -28,11 +30,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  * The bug is fixed if the condition is now specified.
  */
 public class MissingTerminationConditionFix extends AbstractFixHeuristic {
-    public static final String NAME = "missing_termination_fix";
+
+    private final IssueFinder relatedBugFinder = new MissingTerminationCondition();
 
     public MissingTerminationConditionFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(UntilStmt node) {
@@ -43,10 +52,5 @@ public class MissingTerminationConditionFix extends AbstractFixHeuristic {
             }
         }
         super.visit(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

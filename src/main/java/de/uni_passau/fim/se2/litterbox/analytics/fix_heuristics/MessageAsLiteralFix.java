@@ -24,6 +24,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageAsLiteral;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -35,14 +37,21 @@ import java.util.Set;
  * The bug is fixed if the message is now properly sent or the literal changed.
  */
 public class MessageAsLiteralFix extends AbstractFixHeuristic {
-    public static final String NAME = "message_as_literal_fix";
 
     private Set<String> sentMessages;
     private StringLiteral foundLiteral;
 
+    private final IssueFinder relatedBugFinder = new MessageAsLiteral();
+
     public MessageAsLiteralFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(Broadcast node) {
@@ -98,10 +107,5 @@ public class MessageAsLiteralFix extends AbstractFixHeuristic {
             return getMetadata(node.getParentNode());
         }
         return null;
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

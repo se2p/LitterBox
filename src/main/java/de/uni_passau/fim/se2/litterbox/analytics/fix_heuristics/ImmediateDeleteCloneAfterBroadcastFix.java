@@ -24,6 +24,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ImmediateDeleteCloneAfterBroadcast;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.List;
 
@@ -34,11 +36,18 @@ import java.util.List;
  * The bug is fixed if the next statement is no longer DeleteClone.
  */
 public class ImmediateDeleteCloneAfterBroadcastFix extends AbstractFixHeuristic {
-    public static final String NAME = "immediate_delete_clone_after_broadcast_fix";
+
+    private final IssueFinder relatedBugFinder = new ImmediateDeleteCloneAfterBroadcast();
 
     public ImmediateDeleteCloneAfterBroadcastFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(Broadcast node) {
@@ -69,10 +78,5 @@ public class ImmediateDeleteCloneAfterBroadcastFix extends AbstractFixHeuristic 
             addIssue(node, node.getMetadata());
         }
         super.visit(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

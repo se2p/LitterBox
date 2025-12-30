@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.EndlessRecursion;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the EndlessRecursion bug.
@@ -30,15 +32,22 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
  * The bug is fixed if the recursive call is now guarded by a conditional.
  */
 public class EndlessRecursionFix extends AbstractFixHeuristic {
-    public static final String NAME = "endless_recursion_fix";
 
     private int loopIfCounter;
     private String currentProcedureName;
     private boolean insideProcedure;
 
+    private final IssueFinder relatedBugFinder = new EndlessRecursion();
+
     public EndlessRecursionFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(ProcedureDefinition node) {
@@ -83,10 +92,5 @@ public class EndlessRecursionFix extends AbstractFixHeuristic {
         loopIfCounter++;
         super.visit(node);
         loopIfCounter--;
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

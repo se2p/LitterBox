@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.BlockingIfElse;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.List;
 
@@ -33,11 +35,18 @@ import java.util.List;
  * The bug is fixed if at least one branch no longer ends with a stop.
  */
 public class BlockingIfElseFix extends AbstractFixHeuristic {
-    public static final String NAME = "blocking_if_else_fix";
+
+    private final IssueFinder relatedBugFinder = new BlockingIfElse();
 
     public BlockingIfElseFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(IfElseStmt ifElse) {
@@ -69,10 +78,5 @@ public class BlockingIfElseFix extends AbstractFixHeuristic {
             }
         }
         return false;
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

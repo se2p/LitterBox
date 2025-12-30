@@ -29,6 +29,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingCloneInitialization;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,14 +44,21 @@ import java.util.Set;
  * The bug is fixed if the cloned actor now has a StartedAsClone or SpriteClicked handler.
  */
 public class MissingCloneInitializationFix extends AbstractFixHeuristic {
-    public static final String NAME = "missing_clone_initialization_fix";
 
     private Set<String> whenStartsAsCloneActors;
     private List<ASTNode> bugLocators;
 
+    private final IssueFinder relatedBugFinder = new MissingCloneInitialization();
+
     public MissingCloneInitializationFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(StartedAsClone node) {
@@ -103,10 +112,5 @@ public class MissingCloneInitializationFix extends AbstractFixHeuristic {
         }
 
         return issues;
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugs.TypeError;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.Optional;
 import java.util.Set;
@@ -36,13 +37,17 @@ import java.util.Set;
  * The bug is fixed if the node exists but TypeError no longer reports it.
  */
 public class TypeErrorFix extends AbstractFixHeuristic {
-    public static final String NAME = "type_error_fix";
 
     private final TypeError typeErrorFinder;
 
     public TypeErrorFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
         this.typeErrorFinder = new TypeError();
+    }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return typeErrorFinder;
     }
 
     @Override
@@ -86,10 +91,5 @@ public class TypeErrorFix extends AbstractFixHeuristic {
         });
 
         return issues;
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

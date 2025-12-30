@@ -28,6 +28,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingCloneCall;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,16 +41,23 @@ import java.util.Set;
  * The bug is fixed if the actor is now cloned.
  */
 public class MissingCloneCallFix extends AbstractFixHeuristic {
-    public static final String NAME = "missing_clone_call_fix";
 
     private Set<String> clonedActors;
     private StartedAsClone targetEvent;
     private ActorDefinition foundActor;
     private Script foundScript;
 
+    private final IssueFinder relatedBugFinder = new MissingCloneCall();
+
     public MissingCloneCallFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(Myself node) {
@@ -93,10 +102,5 @@ public class MissingCloneCallFix extends AbstractFixHeuristic {
         }
 
         return issues;
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

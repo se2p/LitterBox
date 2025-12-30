@@ -18,8 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopSensing;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
@@ -29,23 +29,33 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
-public class MissingLoopSensingWaitFix extends AbstractIssueFinder {
-    public static final String NAME = "missing_loop_sensing_fix_wait";
-    private final String bugLocationBlockId;
+/**
+ * Fix heuristic for MissingLoopSensing that checks if the sensing block
+ * is now used in a WaitUntil followed by termination.
+ */
+public class MissingLoopSensingWaitFix extends AbstractFixHeuristic {
+
+    private final IssueFinder relatedBugFinder = new MissingLoopSensing();
 
     public MissingLoopSensingWaitFix(String bugLocationBlockId) {
-        this.bugLocationBlockId = bugLocationBlockId;
+        super(bugLocationBlockId);
+    }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
     }
 
     private void checkIfFixed(ASTNode node) {
-        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
+        if (matchesBugLocation(node)) {
             if (node.getParentNode() instanceof WaitUntil) {
                 StmtList stmtList = AstNodeUtil.findParent(node, StmtList.class);
-                assert stmtList != null;
-                ASTNode lastNode = stmtList.getStatement(stmtList.getNumberOfStatements() - 1);
-                ASTNode stmtListParent = stmtList.getParentNode();
-                if (lastNode instanceof StopAll || stmtListParent instanceof ScriptEntity) {
-                    addIssue(node, node.getMetadata());
+                if (stmtList != null && stmtList.getNumberOfStatements() > 0) {
+                    ASTNode lastNode = stmtList.getStatement(stmtList.getNumberOfStatements() - 1);
+                    ASTNode stmtListParent = stmtList.getParentNode();
+                    if (lastNode instanceof StopAll || stmtListParent instanceof ScriptEntity) {
+                        addIssue(node, node.getMetadata());
+                    }
                 }
             }
         } else {
@@ -81,20 +91,5 @@ public class MissingLoopSensingWaitFix extends AbstractIssueFinder {
     @Override
     public void visit(DistanceTo node) {
         checkIfFixed(node);
-    }
-
-    @Override
-    public void visit(Equals node) {
-        checkIfFixed(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    public IssueType getIssueType() {
-        return IssueType.FIX;
     }
 }

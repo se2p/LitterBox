@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingAsk;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 import java.util.Set;
 
@@ -32,14 +34,21 @@ import java.util.Set;
  * The bug is fixed if the program now also uses AskAndWait.
  */
 public class MissingAskFix extends AbstractFixHeuristic {
-    public static final String NAME = "missing_ask_fix";
 
     private boolean askUsed;
     private Answer targetAnswer;
 
+    private final IssueFinder relatedBugFinder = new MissingAsk();
+
     public MissingAskFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(AskAndWait node) {
@@ -66,10 +75,5 @@ public class MissingAskFix extends AbstractFixHeuristic {
             addIssue(targetAnswer, targetAnswer.getMetadata());
         }
         return issues;
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }

@@ -24,6 +24,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.HideWithoutShow;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
 /**
  * Fix heuristic for the HideWithoutShow bug.
@@ -32,15 +34,22 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMo
  * The bug is fixed if Show now exists OR the actor makes no visible changes.
  */
 public class HideWithoutShowFix extends AbstractFixHeuristic {
-    public static final String NAME = "hide_without_show_fix";
 
     private boolean hasVisibleChange;
     private boolean hasShow;
     private Hide targetHide;
 
+    private final IssueFinder relatedBugFinder = new HideWithoutShow();
+
     public HideWithoutShowFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
+
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
 
     @Override
     public void visit(ActorDefinition node) {
@@ -86,10 +95,5 @@ public class HideWithoutShowFix extends AbstractFixHeuristic {
     public void visit(ActorLookStmt node) {
         hasVisibleChange = true;
         super.visit(node);
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
     }
 }
