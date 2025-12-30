@@ -80,7 +80,7 @@ customBlockCallStmt     : customBlockCallPrefix customBlockCallParam* WS* (COMME
 
 customBlockCallParam    : exprOrLiteral stringArgument;
 
-customBlockCallPrefix   : (ESC|NUMBER|~(NEWLINE|'//'|BEGIN_ACTOR|DELIM|COMMENT))(ESC|NUMBER|~(NEWLINE|DELIM|COMMENT))+?;
+customBlockCallPrefix   : (ESC|NUMBER|~(NEWLINE|'//'|BEGIN_ACTOR|DELIM|COMMENT|BROADCAST))(ESC|NUMBER|~(NEWLINE|DELIM|COMMENT))+?;
 
 nonEmptyStmtList        : (WS* (stmt | COMMENT) NEWLINE)+;
 
@@ -231,7 +231,7 @@ deleteClone             : 'delete this clone';
 eventStmt               : broadcast
                         ;
 
-broadcast               : 'broadcast 'message wait=' and wait'?;
+broadcast               : BROADCAST WS message wait=' and wait'?;
 
 sensingStmt             : ask
                         | setDragMode
@@ -577,6 +577,8 @@ stringArgument          : (ESC | ~(NEWLINE|DELIM|LIST_MARKER))*?;
  * Lexer Rules
  */
 
+BROADCAST               : 'broadcast';
+
 ELSE                    : WS? 'else' WS? ;
 
 END                     : WS? 'end' WS? ;
@@ -599,6 +601,7 @@ COMMENT                 : WS* '//' ~[\r\n]*;
 HEX                     : '#' HEX_DIGIT HEX_DIGIT HEX_DIGIT (HEX_DIGIT HEX_DIGIT HEX_DIGIT)?;
 
 ESC                     : '\\(' | '\\)' | '\\[' | '\\]' | '\\<' | '\\>' | ':\\:';
+
 CHOICE_END              : ' v]';
 ROUND_CHOICE_END        : ' v)';
 LIST_MARKER             : WS* '::' WS? 'list';
