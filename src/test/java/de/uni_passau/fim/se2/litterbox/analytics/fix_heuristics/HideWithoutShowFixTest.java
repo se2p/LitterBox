@@ -18,12 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.HideWithoutShow;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.HideWithoutShowInjector;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Tests for HideWithoutShowFix.
@@ -65,8 +72,8 @@ public class HideWithoutShowFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
-        // Script containing the bug is gone
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Script containing the bug is gone - valid fix
         String code = """
                 when green flag clicked
                 move (10) steps
@@ -76,6 +83,56 @@ public class HideWithoutShowFixTest extends AbstractFixHeuristicTest {
         String blockId = "non-existent-id";
 
         HideWithoutShowFix finder = new HideWithoutShowFix(blockId);
-        assertNoFixFound(finder, program);
+        assertFixFound(finder, program);
+    }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    /**
+     * Tests fix detection using the injector.
+     *
+     * <p>The HideWithoutShowInjector removes Show statements.
+     * The fix heuristic should detect that the original program (with Show)
+     * is in a fixed state.
+     */
+    @Test
+    public void testInjector_ShowAndHide() throws IOException, ParsingException {
+        // Same pattern as HideWithoutShowInjectorTest - fixed version has both show and hide
+        String fixedCode = """
+                when green flag clicked
+                show
+                move (10) steps
+                wait (1) secs
+                hide
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original program has no bug
+        HideWithoutShow bugFinder = new HideWithoutShow();
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
+        Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original (fixed) program should have no HideWithoutShow issue");
+
+        // Inject bug
+        HideWithoutShowInjector injector = new HideWithoutShowInjector();
+        List<InjectionResult> injected = injector.inject(fixedProgram);
+
+        Assertions.assertFalse(injected.isEmpty(), "Injector should create at least one bug");
+
+        // Verify the mutated program has bugs
+        Program mutatedProgram = injected.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
+        Assertions.assertFalse(bugIssues.isEmpty(),
+                "Bug finder should detect HideWithoutShow in mutated program");
+
+        // Get the Hide block ID from the ORIGINAL program
+        String hideBlockId = findBlockId(fixedProgram, Hide.class);
+        Assertions.assertNotNull(hideBlockId,
+                "Should find Hide block in original program");
+
     }
 }
+

@@ -3,7 +3,15 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingPenUp;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.MissingPenUpInjector;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Set;
 
 import java.io.IOException;
 
@@ -60,8 +68,8 @@ public class MissingPenUpFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testSilentDeletion() throws IOException, ParsingException {
-        // Silent: The buggy pen down is removed
+    public void testFixFound_BlockDeleted() throws IOException, ParsingException {
+        // Fix: The buggy pen down is removed
         String source = """
                 when green flag clicked
                 pen up
@@ -69,6 +77,48 @@ public class MissingPenUpFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         MissingPenUpFix heuristic = new MissingPenUpFix("non-existent-id");
-        assertNoFixFound(heuristic, program);
+        assertFixFound(heuristic, program);
+    }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_PenUpRemoved() throws IOException, ParsingException {
+        // Fixed: Pen Up used after Pen Down
+        String fixedCode = """
+                when green flag clicked
+                pen down
+                pen up
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original program has no bug
+        MissingPenUp bugFinder = new MissingPenUp();
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
+        Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original (fixed) program should have no MissingPenUp issue");
+
+        // Inject bug: Removes 'pen up'
+        MissingPenUpInjector injector = new MissingPenUpInjector();
+        List<InjectionResult> injected = injector.inject(fixedProgram);
+
+        Assertions.assertFalse(injected.isEmpty(), "Injector should create at least one bug");
+
+        // Verify the mutated program has bugs
+        Program mutatedProgram = injected.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
+        Assertions.assertFalse(bugIssues.isEmpty(),
+                "Bug finder should detect MissingPenUp in mutated program");
+
+        // Get the PenDown block ID from the ORIGINAL program
+        String blockId = findBlockId(fixedProgram, PenDownStmt.class);
+        Assertions.assertNotNull(blockId, "Should find PenDownStmt block in original program");
+
+        // The fix heuristic should detect this is fixed in the original program
+        MissingPenUpFix fixHeuristic = new MissingPenUpFix(blockId);
+        assertFixFound(fixHeuristic, fixedProgram);
     }
 }

@@ -18,7 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.TerminatedLoop;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
@@ -26,10 +30,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesSt
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.TerminatedLoop;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Fix heuristic for the TerminatedLoop bug.
@@ -41,7 +46,7 @@ import java.util.List;
  * <ul>
  *   <li>The stop block is no longer inside a loop</li>
  *   <li>The stop block is no longer the last statement in the loop</li>
- *   <li>The stop block was removed or replaced</li>
+ *   <li>The stop block was removed or replaced (deleted block = fix)</li>
  * </ul>
  */
 public class TerminatedLoopFix extends AbstractFixHeuristic {
@@ -56,6 +61,18 @@ public class TerminatedLoopFix extends AbstractFixHeuristic {
     protected IssueFinder getRelatedBugFinder() {
         return relatedBugFinder;
     }
+
+    @Override
+    public Set<Issue> check(Program program) {
+        // Check if the buggy block was deleted - that's a valid fix
+        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
+            addIssueWithLooseComment();
+            return Collections.unmodifiableSet(issues);
+        }
+        return super.check(program);
+    }
+
+    // Removed createFixIssueForDeletedBlock helper as it is just one line
 
 
     @Override
@@ -103,3 +120,4 @@ public class TerminatedLoopFix extends AbstractFixHeuristic {
         // Otherwise, still buggy - don't report a fix
     }
 }
+

@@ -18,12 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.TerminatedLoop;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.TerminatedLoopInjector;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Tests for TerminatedLoopFix.
@@ -67,8 +75,8 @@ public class TerminatedLoopFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
-        // Script containing the bug is gone
+    public void testFixFound_BlockDeleted() throws IOException, ParsingException {
+        // Bug was fixed by deleting the stop block
         String code = """
                 when green flag clicked
                 move (10) steps
@@ -78,6 +86,51 @@ public class TerminatedLoopFixTest extends AbstractFixHeuristicTest {
         String blockId = "non-existent-id";
 
         TerminatedLoopFix finder = new TerminatedLoopFix(blockId);
-        assertNoFixFound(finder, program);
+        // Deleting the buggy block is a valid fix
+        assertFixFound(finder, program);
+    }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_ForeverLoop() throws IOException, ParsingException {
+        // Start with a fixed program - forever loop without stop
+        String fixedCode = """
+                when green flag clicked
+                forever
+                    move (10) steps
+                end""";
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original program has no TerminatedLoop
+        TerminatedLoop bugFinder = new TerminatedLoop();
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
+        Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original (fixed) program should have no TerminatedLoop issue");
+
+        // Inject bug
+        TerminatedLoopInjector injector = new TerminatedLoopInjector();
+        List<InjectionResult> injected = injector.inject(fixedProgram);
+
+        Assertions.assertFalse(injected.isEmpty(), "Injector should create at least one bug");
+
+        // Verify the mutated program has TerminatedLoop
+        Program mutatedProgram = injected.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
+        Assertions.assertFalse(bugIssues.isEmpty(),
+                "Bug finder should detect TerminatedLoop in mutated program");
+
+        // Get the block ID
+        Issue bugIssue = bugIssues.iterator().next();
+        String bugBlockId = AstNodeUtil.getBlockId(bugIssue.getCodeLocation());
+        Assertions.assertNotNull(bugBlockId, "Bug issue should have a block ID");
+
+        // The fix heuristic should detect a fix in the original program
+        TerminatedLoopFix fixHeuristic = new TerminatedLoopFix(bugBlockId);
+        assertFixFound(fixHeuristic, fixedProgram);
     }
 }
+

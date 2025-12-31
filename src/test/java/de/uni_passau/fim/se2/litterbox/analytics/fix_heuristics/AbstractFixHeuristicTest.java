@@ -76,19 +76,38 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
     /**
      * Assert that the given finder reports at least one FIX issue.
      */
-    protected void assertFixFound(AbstractIssueFinder finder, Program program) {
+    protected void assertFixFound(AbstractFixHeuristic finder, Program program) {
         Set<Issue> issues = finder.check(program);
         Assertions.assertFalse(issues.isEmpty(),
                 "Expected at least one FIX issue to be found, but found none.");
-        Assertions.assertTrue(issues.stream().anyMatch(i -> i.getIssueType() == IssueType.FIX),
-                "Expected an issue of type FIX, but found: " + issues);
+
+        Issue fixIssue = issues.stream()
+                .filter(i -> i.getIssueType() == IssueType.FIX)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Expected an issue of type FIX, but found: " + issues));
+
+        // T4: Robust Assertions
+        Assertions.assertNotNull(fixIssue.getHint(), "FIX issue must have a Hint.");
+
+        // Code location can be null if the block was deleted (which is a valid fix)
+        ASTNode loc = fixIssue.getCodeLocation();
+
+        // Verify it matches the original bug location (if known and location exists)
+        if (loc != null && finder.bugLocationBlockId != null
+                && !finder.bugLocationBlockId.startsWith("__registry_init__")) {
+            boolean matches = AstNodeUtil.hasBlockId(loc, finder.bugLocationBlockId)
+                    || loc == finder.semanticMatch;
+            Assertions.assertTrue(matches,
+                    "FIX issue location does not match original bug location ID: " + finder.bugLocationBlockId);
+        }
+        // If loc is null, the block was deleted - this is a valid fix scenario
     }
 
     /**
      * Assert that the given finder reports at least one FIX issue.
      * (Backward-compatible overload for JSON string sources.)
      */
-    protected void assertFixFound(AbstractIssueFinder finder, String jsonSource) throws IOException, ParsingException {
+    protected void assertFixFound(AbstractFixHeuristic finder, String jsonSource) throws IOException, ParsingException {
         Program program = new Scratch3Parser().parseString("test", jsonSource);
         assertFixFound(finder, program);
     }

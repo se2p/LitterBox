@@ -66,7 +66,7 @@ public class ParameterOutOfScopeFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing the bug is gone
         String code = """
                 when green flag clicked
@@ -77,6 +77,46 @@ public class ParameterOutOfScopeFixTest extends AbstractFixHeuristicTest {
         String blockId = "non-existent-id";
 
         ParameterOutOfScopeFix finder = new ParameterOutOfScopeFix(blockId);
-        assertNoFixFound(finder, program);
+        assertFixFound(finder, program);
+    }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_ParamOutOfScope() throws IOException, ParsingException {
+        // Start with a valid program (parameter used in procedure)
+        // Add a script with replaceable nodes (move steps) so the injector has a target.
+        String fixedCode = """
+                define myBlock (x)
+                say (x)
+                
+                when green flag clicked
+                move (10) steps
+                """;
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify clean
+        de.uni_passau.fim.se2.litterbox.analytics.bugs.ParameterOutOfScope bugFinder = new de.uni_passau.fim.se2.litterbox.analytics.bugs.ParameterOutOfScope();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues = bugFinder.check(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(), "Original program should be clean");
+
+        // Inject bug (uses parameter outside procedure, e.g. in a green flag script)
+        de.uni_passau.fim.se2.litterbox.injection.bugs.ParameterOutOfScopeInjector injector = new de.uni_passau.fim.se2.litterbox.injection.bugs.ParameterOutOfScopeInjector();
+        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results = injector.inject(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(results.isEmpty(), "Injector should produce results");
+
+        // Verify bug in mutated
+        Program mutatedProgram = results.get(0).mutatedProgram();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues = bugFinder.check(mutatedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(), "Mutated program should have bugs");
+
+        // Fix check: The bug is the usage of 'x' outside scope. In the original program, that usage block
+        // does not exist (it's inside the procedure).
+        String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
+        
+        ParameterOutOfScopeFix fix = new ParameterOutOfScopeFix(bugBlockId);
+        assertFixFound(fix, fixedProgram);
     }
 }

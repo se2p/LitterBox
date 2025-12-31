@@ -32,7 +32,10 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingCloneInitialization;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -94,6 +97,14 @@ public class MissingCloneInitializationFix extends AbstractFixHeuristic {
     public Set<Issue> check(Program program) {
         whenStartsAsCloneActors = new HashSet<>();
         bugLocators = new ArrayList<>();
+        bugLocators = new ArrayList<>();
+
+        // Check if block deleted
+        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
+            addIssueWithLooseComment();
+            return Collections.unmodifiableSet(issues);
+        }
+
         super.check(program);
 
         for (ASTNode bugNode : bugLocators) {
@@ -111,7 +122,7 @@ public class MissingCloneInitializationFix extends AbstractFixHeuristic {
                 }
                 
                 if (whenStartsAsCloneActors.contains(targetSprite)) {
-                    addIssue(bugNode, bugNode.getMetadata());
+                    addIssue(bugNode.getParentNode(), bugNode.getParentNode().getMetadata());
                 }
             }
         }

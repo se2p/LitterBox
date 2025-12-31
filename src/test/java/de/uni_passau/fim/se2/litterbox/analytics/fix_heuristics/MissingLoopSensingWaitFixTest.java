@@ -79,4 +79,40 @@ public class MissingLoopSensingWaitFixTest extends AbstractFixHeuristicTest {
         MissingLoopSensingWaitFix finder = new MissingLoopSensingWaitFix(blockId);
         assertNoFixFound(finder, program);
     }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_WaitUntilUnwrapped() throws IOException, ParsingException {
+        // Start with valid program (sensing inside WaitUntil followed by stop)
+        String fixedCode = """
+                when green flag clicked
+                wait until <key (space v) pressed?>
+                stop [all v]
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original has no bug (sensing is inside WaitUntil)
+        de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopSensing bugFinder =
+                new de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopSensing();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues =
+                bugFinder.check(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original program should be clean - WaitUntil counts as proper sensing handling");
+
+        // Note: The MissingLoopSensingInjector targets loop-based sensing, not WaitUntil.
+        // This test verifies that WaitUntil-based sensing is considered a valid fix.
+        
+        // Use existing IsKeyPressed block ID from original program
+        String existingBlockId = findBlockId(fixedProgram, 
+                de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed.class);
+        org.junit.jupiter.api.Assertions.assertNotNull(existingBlockId,
+                "Should find IsKeyPressed in original program");
+
+        MissingLoopSensingWaitFix fix = new MissingLoopSensingWaitFix(existingBlockId);
+        assertFixFound(fix, fixedProgram);
+    }
 }

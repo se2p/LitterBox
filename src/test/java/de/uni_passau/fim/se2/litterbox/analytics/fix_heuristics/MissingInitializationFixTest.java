@@ -21,7 +21,15 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingInitialization;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.MissingInitializationInjector;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Set;
 
 import java.io.IOException;
 
@@ -65,8 +73,8 @@ public class MissingInitializationFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testSilent_BlockDeleted() throws IOException, ParsingException {
-        // Silent: The buggy block/script was deleted
+    public void testFixFound_BlockDeleted() throws IOException, ParsingException {
+        // Fix: The buggy block/script was deleted
         String source = """
                 when green flag clicked
                 move (10) steps
@@ -75,6 +83,48 @@ public class MissingInitializationFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
 
         MissingInitializationFix heuristic = new MissingInitializationFix("non_existent_id");
-        assertNoFixFound(heuristic, program);
+        assertFixFound(heuristic, program);
+    }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_InitializationRemoved() throws IOException, ParsingException {
+        // Fixed: Variable initialized before usage
+        String fixedCode = """
+                when green flag clicked
+                set [myVar v] to (0)
+                change [myVar v] by (1)
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original program has no bug
+        MissingInitialization bugFinder = new MissingInitialization();
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
+        Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original (fixed) program should have no MissingInitialization issue");
+
+        // Inject bug: Removes 'set variable'
+        MissingInitializationInjector injector = new MissingInitializationInjector();
+        List<InjectionResult> injected = injector.inject(fixedProgram);
+
+        Assertions.assertFalse(injected.isEmpty(), "Injector should create at least one bug");
+
+        // Verify the mutated program has bugs
+        Program mutatedProgram = injected.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
+        Assertions.assertFalse(bugIssues.isEmpty(),
+                "Bug finder should detect MissingInitialization in mutated program");
+
+        // Get the ChangeVariableBy block ID from the ORIGINAL program
+        String blockId = findBlockId(fixedProgram, ChangeVariableBy.class);
+        Assertions.assertNotNull(blockId, "Should find ChangeVariableBy block in original program");
+
+        // The fix heuristic should detect this is fixed in the original program
+        MissingInitializationFix fixHeuristic = new MissingInitializationFix(blockId);
+        assertFixFound(fixHeuristic, fixedProgram);
     }
 }

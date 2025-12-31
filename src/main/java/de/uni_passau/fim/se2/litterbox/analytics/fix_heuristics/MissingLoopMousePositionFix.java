@@ -26,8 +26,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopMousePosition;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Fix heuristic for the MissingLoopMousePosition bug.
@@ -48,6 +55,17 @@ public class MissingLoopMousePositionFix extends AbstractFixHeuristic {
     @Override
     protected IssueFinder getRelatedBugFinder() {
         return relatedBugFinder;
+    }
+
+    @Override
+    public Set<Issue> check(Program program) {
+        // Check if block deleted
+        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
+            issues = new LinkedHashSet<>();
+            addIssueWithLooseComment();
+            return Collections.unmodifiableSet(issues);
+        }
+        return super.check(program);
     }
 
 

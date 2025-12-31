@@ -18,12 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingAsk;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.MissingAskInjector;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Tests for MissingAskFix.
@@ -77,4 +85,47 @@ public class MissingAskFixTest extends AbstractFixHeuristicTest {
         MissingAskFix finder = new MissingAskFix(blockId);
         assertNoFixFound(finder, program);
     }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_AskAndAnswer() throws IOException, ParsingException {
+        // Start with a fixed program - ask and answer are both used
+        String fixedCode = """
+                when green flag clicked
+                ask [What is your name?] and wait
+                say (answer)""";
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original program has no MissingAsk
+        MissingAsk bugFinder = new MissingAsk();
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
+        Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original (fixed) program should have no MissingAsk issue");
+
+        // Inject bug
+        MissingAskInjector injector = new MissingAskInjector();
+        List<InjectionResult> injected = injector.inject(fixedProgram);
+
+        Assertions.assertFalse(injected.isEmpty(), "Injector should create at least one bug");
+
+        // Verify the mutated program has the bug
+        Program mutatedProgram = injected.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
+        Assertions.assertFalse(bugIssues.isEmpty(),
+                "Bug finder should detect MissingAsk in mutated program");
+
+        // Get the block ID
+        Issue bugIssue = bugIssues.iterator().next();
+        String bugBlockId = AstNodeUtil.getBlockId(bugIssue.getCodeLocation());
+        Assertions.assertNotNull(bugBlockId, "Bug issue should have a block ID");
+
+        // The fix heuristic should detect a fix in the original program
+        MissingAskFix fixHeuristic = new MissingAskFix(bugBlockId);
+        assertFixFound(fixHeuristic, fixedProgram);
+    }
 }
+

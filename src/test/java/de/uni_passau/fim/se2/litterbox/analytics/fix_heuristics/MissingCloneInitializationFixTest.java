@@ -20,7 +20,15 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingCloneInitialization;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.MissingCloneInitializationInjector;
+import org.junit.jupiter.api.Assertions;
 
+import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -66,8 +74,8 @@ public class MissingCloneInitializationFixTest extends AbstractFixHeuristicTest 
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
-        // Script containing create clone is gone
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Fix: Script containing create clone is gone (deleted)
         String code = """
                 when green flag clicked
                 move (10) steps
@@ -77,6 +85,51 @@ public class MissingCloneInitializationFixTest extends AbstractFixHeuristicTest 
         String blockId = "non-existent-id";
 
         MissingCloneInitializationFix finder = new MissingCloneInitializationFix(blockId);
-        assertNoFixFound(finder, program);
+        assertFixFound(finder, program);
+    }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_HandlersRemoved() throws IOException, ParsingException {
+        // Fixed: Clone is created AND handled
+        String fixedCode = """
+                when green flag clicked
+                create clone of (myself v)
+                
+                when I start as a clone
+                move (10) steps
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original program has no bug
+        MissingCloneInitialization bugFinder = new MissingCloneInitialization();
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
+        Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original (fixed) program should have no MissingCloneInitialization issue");
+
+        // Inject bug: Removes 'when I start as a clone' handler
+        MissingCloneInitializationInjector injector = new MissingCloneInitializationInjector();
+        List<InjectionResult> injected = injector.inject(fixedProgram);
+
+        Assertions.assertFalse(injected.isEmpty(), "Injector should create at least one bug");
+
+        // Verify the mutated program has bugs
+        Program mutatedProgram = injected.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
+        Assertions.assertFalse(bugIssues.isEmpty(),
+                "Bug finder should detect MissingCloneInitialization in mutated program");
+
+        // Get the CreateCloneOf block ID from the ORIGINAL program
+        String blockId = findBlockId(fixedProgram, CreateCloneOf.class);
+        Assertions.assertNotNull(blockId, "Should find CreateCloneOf block in original program");
+
+        // The fix heuristic should detect this is fixed in the original program
+        // (because the handler is present there)
+        MissingCloneInitializationFix fixHeuristic = new MissingCloneInitializationFix(blockId);
+        assertFixFound(fixHeuristic, fixedProgram);
     }
 }

@@ -18,19 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.CustomBlockWithTermination;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -41,14 +33,6 @@ import java.util.Set;
  * The bug is fixed if the procedure no longer terminates, or the call is now last.
  */
 public class CustomBlockWithTerminationFix extends AbstractFixHeuristic {
-
-    private String currentProcedureName;
-    private Set<String> proceduresWithTermination;
-    private CallStmt targetCall;
-    private boolean insideProcedure;
-    private boolean isLastStatement;
-    private Script foundScript;
-    private ProcedureDefinition foundProcedure;
 
     private final IssueFinder relatedBugFinder = new CustomBlockWithTermination();
 
@@ -61,62 +45,16 @@ public class CustomBlockWithTerminationFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
     @Override
-    public void visit(ActorDefinition actor) {
-        proceduresWithTermination = new HashSet<>();
-        targetCall = null;
-        isLastStatement = false;
-        super.visit(actor);
-
-        if (targetCall != null) {
-            String procName = targetCall.getIdent().getName();
-            // Fixed if last statement OR procedure no longer terminates
-            if (isLastStatement || !proceduresWithTermination.contains(procName)) {
-                this.currentScript = foundScript;
-                this.currentProcedure = foundProcedure;
-                addIssue(targetCall, targetCall.getMetadata());
-            }
-        }
+    public Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> check(Program program) {
+        refreshBugInstances(program);
+        return super.check(program);
     }
 
     @Override
-    public void visit(ProcedureDefinition node) {
-        insideProcedure = true;
-        if (procMap.containsKey(node.getIdent())) {
-            currentProcedureName = procMap.get(node.getIdent()).getName();
-        }
-        super.visit(node);
-        insideProcedure = false;
-    }
-
-    @Override
-    public void visit(StopAll node) {
-        if (insideProcedure && currentProcedureName != null) {
-            proceduresWithTermination.add(currentProcedureName);
-        }
-        super.visit(node);
-    }
-
-    @Override
-    public void visit(DeleteClone node) {
-        if (insideProcedure && currentProcedureName != null) {
-            proceduresWithTermination.add(currentProcedureName);
-        }
-        super.visit(node);
-    }
-
-    @Override
-    public void visit(StmtList node) {
-        List<Stmt> stmts = node.getStmts();
-        for (int i = 0; i < stmts.size(); i++) {
-            Stmt stmt = stmts.get(i);
-            if (stmt instanceof CallStmt callStmt && matchesBugLocation(callStmt)) {
-                targetCall = callStmt;
-                isLastStatement = (i == stmts.size() - 1);
-                foundScript = currentScript;
-                foundProcedure = currentProcedure;
-            }
+    public void visit(CallStmt node) {
+        if (matchesBugLocation(node) && !isBugStillPresent(node)) {
+            addIssue(node, node.getMetadata());
         }
         super.visit(node);
     }

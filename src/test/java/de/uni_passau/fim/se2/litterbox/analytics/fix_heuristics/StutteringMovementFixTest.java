@@ -90,8 +90,8 @@ public class StutteringMovementFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testSilent_BlockDeleted() throws IOException, ParsingException {
-        // Silent: The buggy block was deleted
+    public void testFixFound_BlockDeleted() throws IOException, ParsingException {
+        // Fix: The buggy block was deleted
         String source = """
                 when green flag clicked
                 say [Hello]
@@ -100,6 +100,40 @@ public class StutteringMovementFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
 
         StutteringMovementFix heuristic = new StutteringMovementFix("non_existent_id");
-        assertNoFixFound(heuristic, program);
+        assertFixFound(heuristic, program);
+    }
+
+    @Test
+    public void testInjector_StutteringMovement() throws IOException, ParsingException {
+        // Start with a fixed program - movement inside loop checking key
+        String fixedCode = """
+                when green flag clicked
+                forever
+                    if <key (space v) pressed?> then
+                        move (10) steps
+                    end
+                end""";
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Inject bug
+        de.uni_passau.fim.se2.litterbox.injection.bugs.StutteringMovementInjector injector = new de.uni_passau.fim.se2.litterbox.injection.bugs.StutteringMovementInjector();
+        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> injected = injector.inject(fixedProgram);
+
+        org.junit.jupiter.api.Assertions.assertFalse(injected.isEmpty(), "Injector should create at least one bug");
+
+        // Verify the mutated program has the bug
+        Program mutatedProgram = injected.getFirst().mutatedProgram();
+        de.uni_passau.fim.se2.litterbox.analytics.smells.StutteringMovement bugFinder = new de.uni_passau.fim.se2.litterbox.analytics.smells.StutteringMovement();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues = bugFinder.check(mutatedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(), "Bug finder should detect StutteringMovement in mutated program");
+
+        // Get the block ID
+        de.uni_passau.fim.se2.litterbox.analytics.Issue bugIssue = bugIssues.iterator().next();
+        String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssue.getCodeLocation());
+
+        // The fix heuristic should detect a fix in the original program
+        StutteringMovementFix fixHeuristic = new StutteringMovementFix(bugBlockId);
+        assertFixFound(fixHeuristic, fixedProgram);
     }
 }

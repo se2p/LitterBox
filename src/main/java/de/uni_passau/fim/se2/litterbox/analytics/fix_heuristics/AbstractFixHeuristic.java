@@ -22,7 +22,13 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Abstract base class for fix heuristics that check whether a previously reported bug
@@ -39,6 +45,12 @@ public abstract class AbstractFixHeuristic extends AbstractIssueFinder {
 
     /** The block ID of the originally reported bug location. */
     protected final String bugLocationBlockId;
+
+    /** The bug instances found by the related bug finder in the current program. */
+    protected Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> currentBugInstances = Collections.emptySet();
+
+    /** A semantically matched node if the original block ID is missing. */
+    protected ASTNode semanticMatch;
 
     /**
      * Creates a new fix heuristic.
@@ -70,13 +82,74 @@ public abstract class AbstractFixHeuristic extends AbstractIssueFinder {
     }
 
     /**
-     * Checks if the given node matches the bug location block ID.
+     * Checks if the given node matches the bug location block ID or the semantic match.
      *
      * @param node the AST node to check
-     * @return true if this node has the same block ID as the original bug location
+     * @return true if this node matches the original bug location
      */
     protected boolean matchesBugLocation(ASTNode node) {
-        return AstNodeUtil.hasBlockId(node, bugLocationBlockId);
+        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
+            return true;
+        }
+        return semanticMatch != null && node == semanticMatch;
+    }
+
+    /**
+     * Runs the related bug finder on the given program and stores the results.
+     *
+     * @param program the program to check
+     */
+    protected void refreshBugInstances(Program program) {
+        currentBugInstances = getRelatedBugFinder().check(program);
+    }
+
+    /**
+     * Checks if a bug is still reported for the given node or any of its descendants.
+     *
+     * @param node the node to check
+     * @return true if the bug finder still reports an issue for this location
+     */
+    protected boolean isBugStillPresent(ASTNode node) {
+        for (de.uni_passau.fim.se2.litterbox.analytics.Issue issue : currentBugInstances) {
+            if (isSelfOrDescendant(issue.getCodeLocation(), node)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if node is the same as or a descendant of potentialParent.
+     */
+    protected boolean isSelfOrDescendant(ASTNode node, ASTNode potentialParent) {
+        ASTNode curr = node;
+        while (curr != null) {
+            if (curr == potentialParent) {
+                return true;
+            }
+            curr = curr.getParentNode();
+        }
+        return false;
+    }
+
+    @Override
+    public Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> check(Program program) {
+        this.program = program;
+        // Try to find semantic match if ID is missing (C3)
+        if (BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
+            findSemanticMatch(program);
+        }
+
+        refreshBugInstances(program);
+        return super.check(program);
+    }
+
+    /**
+     * Attempts to find a semantic match for the missing original block.
+     * Default implementation does nothing; subclasses can override for specific types.
+     */
+    protected void findSemanticMatch(Program program) {
+        // Subclasses can implement logic to find a "stunt double" for the missing block
     }
 }
 

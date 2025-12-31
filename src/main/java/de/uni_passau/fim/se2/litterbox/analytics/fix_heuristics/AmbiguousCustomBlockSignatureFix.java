@@ -45,6 +45,17 @@ public class AmbiguousCustomBlockSignatureFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
+    @Override
+    public java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> check(de.uni_passau.fim.se2.litterbox.ast.model.Program program) {
+        this.program = program;
+        this.issues = new java.util.LinkedHashSet<>();
+        if (bugLocationBlockId != null && de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
+            addIssueWithLooseComment();
+            return java.util.Collections.unmodifiableSet(issues);
+        }
+        return super.check(program);
+    }
+
 
     @Override
     public void visit(ProcedureDefinition node) {

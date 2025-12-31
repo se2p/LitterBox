@@ -66,7 +66,7 @@ public class CallWithoutDefinitionFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing the call is gone
         String code = """
                 when green flag clicked
@@ -77,6 +77,38 @@ public class CallWithoutDefinitionFixTest extends AbstractFixHeuristicTest {
         String blockId = "non-existent-id";
 
         CallWithoutDefinitionFix finder = new CallWithoutDefinitionFix(blockId);
-        assertNoFixFound(finder, program);
+        assertFixFound(finder, program);
+    }
+
+    @Test
+    public void testInjector_CallWithoutDefinition() throws IOException, ParsingException {
+        // Start with a valid program (defined call)
+        String fixedCode = """
+                define myProc
+                move (10) steps
+                
+                when green flag clicked
+                myProc
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Inject the bug: Remove definition of 'myProc'
+        de.uni_passau.fim.se2.litterbox.injection.bugs.CallWithoutDefinitionInjector injector =
+                new de.uni_passau.fim.se2.litterbox.injection.bugs.CallWithoutDefinitionInjector();
+
+        Program buggyProgram = injector.inject(fixedProgram).get(0).mutatedProgram();
+
+        // Verify the bug is found
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> issues =
+                new de.uni_passau.fim.se2.litterbox.analytics.bugs.CallWithoutDefinition().check(buggyProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(issues.isEmpty(), "Injector should create at least one bug");
+
+        // Verify the fix heuristic finds the fix (original program has definition)
+        de.uni_passau.fim.se2.litterbox.analytics.Issue issue = issues.iterator().next();
+        String bugID = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(issue.getNormalizedCodeLocation());
+
+        CallWithoutDefinitionFix heuristic = new CallWithoutDefinitionFix(bugID);
+        assertFixFound(heuristic, fixedProgram);
     }
 }

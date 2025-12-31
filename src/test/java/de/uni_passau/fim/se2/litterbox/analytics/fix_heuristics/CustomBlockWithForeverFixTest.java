@@ -73,7 +73,7 @@ public class CustomBlockWithForeverFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing the call is gone
         String code = """
                 when green flag clicked
@@ -84,6 +84,41 @@ public class CustomBlockWithForeverFixTest extends AbstractFixHeuristicTest {
         String blockId = "non-existent-id";
 
         CustomBlockWithForeverFix finder = new CustomBlockWithForeverFix(blockId);
-        assertNoFixFound(finder, program);
+        assertFixFound(finder, program);
+    }
+
+    @Test
+    public void testInjector_CustomBlockWithForever() throws IOException, ParsingException {
+        // Start with a valid program (loop is fine if it's not blocking a subsequent call, 
+        // or loop is not in custom block. Injector usually puts forever loop into custom block)
+        // Let's use a simple proc.
+        String fixedCode = """
+                define myProc
+                move (10) steps
+                
+                when green flag clicked
+                myProc
+                say [Done]
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Inject the bug: Add forever loop to myProc
+        de.uni_passau.fim.se2.litterbox.injection.bugs.CustomBlockWithForeverInjector injector =
+                new de.uni_passau.fim.se2.litterbox.injection.bugs.CustomBlockWithForeverInjector();
+
+        Program buggyProgram = injector.inject(fixedProgram).get(0).mutatedProgram();
+
+        // Verify the bug is found
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> issues =
+                new de.uni_passau.fim.se2.litterbox.analytics.bugs.CustomBlockWithForever().check(buggyProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(issues.isEmpty(), "Injector should create at least one bug");
+
+        // Verify the fix heuristic finds the fix (original program has no loop)
+        de.uni_passau.fim.se2.litterbox.analytics.Issue issue = issues.iterator().next();
+        String bugID = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(issue.getNormalizedCodeLocation());
+
+        CustomBlockWithForeverFix heuristic = new CustomBlockWithForeverFix(bugID);
+        assertFixFound(heuristic, fixedProgram);
     }
 }

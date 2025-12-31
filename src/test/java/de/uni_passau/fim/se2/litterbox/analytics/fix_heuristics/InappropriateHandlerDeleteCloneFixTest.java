@@ -77,4 +77,58 @@ public class InappropriateHandlerDeleteCloneFixTest extends AbstractFixHeuristic
         InappropriateHandlerDeleteCloneFix finder = new InappropriateHandlerDeleteCloneFix(blockId);
         assertNoFixFound(finder, program);
     }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_InappropriateHandlerDeleteClone() throws IOException, ParsingException {
+        // Start with valid program (no DeleteClone in GreenFlag)
+        // Has DeleteClone in clone handler which is the correct location
+        String fixedCode = """
+                when green flag clicked
+                create clone of (myself v)
+                move (10) steps
+                
+                when I start as a clone
+                move (5) steps
+                delete this clone
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original has no bug
+        de.uni_passau.fim.se2.litterbox.analytics.bugs.InappropriateHandlerDeleteClone bugFinder =
+                new de.uni_passau.fim.se2.litterbox.analytics.bugs.InappropriateHandlerDeleteClone();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues =
+                bugFinder.check(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original program should be clean");
+
+        // Inject bug (adds DeleteClone to GreenFlag script)
+        de.uni_passau.fim.se2.litterbox.injection.bugs.InappropriateHandlerDeleteCloneInjector injector =
+                new de.uni_passau.fim.se2.litterbox.injection.bugs.InappropriateHandlerDeleteCloneInjector();
+        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results =
+                injector.inject(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(results.isEmpty(),
+                "Injector should produce results");
+
+        // Verify bug in mutated
+        Program mutatedProgram = results.get(0).mutatedProgram();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues =
+                bugFinder.check(mutatedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(),
+                "Mutated program should have bugs");
+
+        // The injector ADDS a new DeleteClone (with new block ID) to the GreenFlag script.
+        // Use the DeleteClone ID from the ORIGINAL program (in clone handler) to verify
+        // the fix heuristic works when the block is in the correct context.
+        String existingDeleteCloneId = findBlockId(fixedProgram, DeleteClone.class);
+        org.junit.jupiter.api.Assertions.assertNotNull(existingDeleteCloneId,
+                "Should find DeleteClone in original program");
+
+        InappropriateHandlerDeleteCloneFix fix = new InappropriateHandlerDeleteCloneFix(existingDeleteCloneId);
+        assertFixFound(fix, fixedProgram);
+    }
 }

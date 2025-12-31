@@ -85,4 +85,54 @@ public class CustomBlockWithTerminationFixTest extends AbstractFixHeuristicTest 
         CustomBlockWithTerminationFix finder = new CustomBlockWithTerminationFix(blockId);
         assertNoFixFound(finder, program);
     }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_CustomBlockWithTermination() throws IOException, ParsingException {
+        // Start with a valid program (procedure without termination)
+        String fixedCode = """
+                define myProc
+                move (10) steps
+                turn cw (15) degrees
+                
+                when green flag clicked
+                myProc
+                say [Done!]
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original has no bug
+        de.uni_passau.fim.se2.litterbox.analytics.bugs.CustomBlockWithTermination bugFinder =
+                new de.uni_passau.fim.se2.litterbox.analytics.bugs.CustomBlockWithTermination();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues =
+                bugFinder.check(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original program should be clean");
+
+        // Inject bug (adds StopAll to procedure)
+        de.uni_passau.fim.se2.litterbox.injection.bugs.CustomBlockWithTerminationInjector injector =
+                new de.uni_passau.fim.se2.litterbox.injection.bugs.CustomBlockWithTerminationInjector();
+        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results =
+                injector.inject(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(results.isEmpty(),
+                "Injector should produce results");
+
+        // Verify bug in mutated
+        Program mutatedProgram = results.get(0).mutatedProgram();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues =
+                bugFinder.check(mutatedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(),
+                "Mutated program should have bugs");
+
+        // Fix check: Get bug location and verify fix heuristic identifies original as fixed
+        String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil
+                .getBlockId(bugIssues.iterator().next().getCodeLocation());
+
+        CustomBlockWithTerminationFix fix = new CustomBlockWithTerminationFix(bugBlockId);
+        assertFixFound(fix, fixedProgram);
+    }
 }

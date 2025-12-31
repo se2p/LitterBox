@@ -3,7 +3,15 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseX;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopMousePosition;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.MissingLoopMousePositionInjector;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Set;
 
 import java.io.IOException;
 
@@ -42,8 +50,8 @@ public class MissingLoopMousePositionFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testSilentOnDeletion() throws IOException, ParsingException {
-        // Silent: Buggy statement deleted
+    public void testFixFound_BlockDeleted() throws IOException, ParsingException {
+        // Fix: Buggy statement deleted
         String source = """
                 when green flag clicked
                 move (10) steps
@@ -52,6 +60,49 @@ public class MissingLoopMousePositionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         
         MissingLoopMousePositionFix heuristic = new MissingLoopMousePositionFix("non_existent_id");
-        assertNoFixFound(heuristic, program);
+        assertFixFound(heuristic, program);
+    }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_LoopRemoved() throws IOException, ParsingException {
+        // Fixed: MouseX inside a loop
+        String fixedCode = """
+                when green flag clicked
+                forever
+                    set x to (mouse x)
+                end
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original program has no bug
+        MissingLoopMousePosition bugFinder = new MissingLoopMousePosition();
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
+        Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original (fixed) program should have no MissingLoopMousePosition issue");
+
+        // Inject bug: Removes the loop (leaves content)
+        MissingLoopMousePositionInjector injector = new MissingLoopMousePositionInjector();
+        List<InjectionResult> injected = injector.inject(fixedProgram);
+
+        Assertions.assertFalse(injected.isEmpty(), "Injector should create at least one bug");
+
+        // Verify the mutated program has bugs
+        Program mutatedProgram = injected.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
+        Assertions.assertFalse(bugIssues.isEmpty(),
+                "Bug finder should detect MissingLoopMousePosition in mutated program");
+
+        // Get the MouseX block ID from the ORIGINAL program
+        String blockId = findBlockId(fixedProgram, MouseX.class);
+        Assertions.assertNotNull(blockId, "Should find MouseX block in original program");
+
+        // The fix heuristic should detect this is fixed in the original program
+        MissingLoopMousePositionFix fixHeuristic = new MissingLoopMousePositionFix(blockId);
+        assertFixFound(fixHeuristic, fixedProgram);
     }
 }

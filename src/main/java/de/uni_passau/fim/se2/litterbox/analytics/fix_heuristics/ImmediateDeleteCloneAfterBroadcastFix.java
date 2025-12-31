@@ -31,9 +31,9 @@ import java.util.List;
 
 /**
  * Fix heuristic for the ImmediateDeleteCloneAfterBroadcast bug.
- *
  * <p>The bug is reported when Broadcast is immediately followed by DeleteClone.
- * The bug is fixed if the next statement is no longer DeleteClone.
+ * The bug is fixed if the next statement is no longer DeleteClone, OR if there is a
+ * yielding statement (like Wait) before the DeleteClone.
  */
 public class ImmediateDeleteCloneAfterBroadcastFix extends AbstractFixHeuristic {
 
@@ -56,15 +56,27 @@ public class ImmediateDeleteCloneAfterBroadcastFix extends AbstractFixHeuristic 
             if (list != null) {
                 List<Stmt> stmts = list.getStmts();
                 int index = stmts.indexOf(node);
-                if (index != -1 && index < stmts.size() - 1) {
-                    Stmt nextStmt = stmts.get(index + 1);
-                    if (!(nextStmt instanceof DeleteClone)) {
-                        // Fixed: Next statement is NOT DeleteClone
+                
+                boolean foundDelete = false;
+                boolean foundYielding = false;
+
+                if (index != -1) {
+                    for (int i = index + 1; i < stmts.size(); i++) {
+                        Stmt s = stmts.get(i);
+                        if (s instanceof DeleteClone) {
+                            foundDelete = true;
+                            break;
+                        }
+                        if (de.uni_passau.fim.se2.litterbox.ast.util.AstBlockUtil.isYielding(s)) {
+                            foundYielding = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!foundDelete || foundYielding) {
+                        // Fixed: Either removed DeleteClone entirely, or inserted a yielding statement
                         addIssue(node, node.getMetadata());
                     }
-                } else {
-                    // Fixed: No next statement
-                    addIssue(node, node.getMetadata());
                 }
             }
         }

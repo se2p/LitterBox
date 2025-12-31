@@ -72,8 +72,8 @@ public class AmbiguousCustomBlockSignatureFixTest extends AbstractFixHeuristicTe
     }
 
     @Test
-    public void testSilent_BlockDeleted() throws IOException, ParsingException {
-        // Silent: The buggy procedure was deleted
+    public void testFixFound_BlockDeleted() throws IOException, ParsingException {
+        // Fix: The buggy procedure was deleted
         String source = """
                 when green flag clicked
                 move (10) steps
@@ -82,6 +82,35 @@ public class AmbiguousCustomBlockSignatureFixTest extends AbstractFixHeuristicTe
         Program program = parseProgram(source);
 
         AmbiguousCustomBlockSignatureFix heuristic = new AmbiguousCustomBlockSignatureFix("non_existent_id");
-        assertNoFixFound(heuristic, program);
+        assertFixFound(heuristic, program);
+    }
+
+    @Test
+    public void testInjector_AmbiguousSignature() throws IOException, ParsingException {
+        // Start with a valid program (unique signature)
+        String fixedCode = """
+                define myProc
+                move (10) steps
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Inject the bug: Duplicate 'myProc'
+        de.uni_passau.fim.se2.litterbox.injection.bugs.AmbiguousCustomBlockSignatureInjector injector =
+                new de.uni_passau.fim.se2.litterbox.injection.bugs.AmbiguousCustomBlockSignatureInjector();
+
+        Program buggyProgram = injector.inject(fixedProgram).get(0).mutatedProgram();
+
+        // Verify the bug is found
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> issues =
+                new de.uni_passau.fim.se2.litterbox.analytics.bugs.AmbiguousCustomBlockSignature().check(buggyProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(issues.isEmpty(), "Injector should create at least one bug");
+
+        // Verify the fix heuristic finds the fix (original program has no duplicates)
+        de.uni_passau.fim.se2.litterbox.analytics.Issue issue = issues.iterator().next();
+        String bugID = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(issue.getNormalizedCodeLocation());
+
+        AmbiguousCustomBlockSignatureFix heuristic = new AmbiguousCustomBlockSignatureFix(bugID);
+        assertFixFound(heuristic, fixedProgram);
     }
 }

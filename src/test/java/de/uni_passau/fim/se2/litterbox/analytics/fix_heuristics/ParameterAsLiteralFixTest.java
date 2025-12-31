@@ -65,7 +65,7 @@ public class ParameterAsLiteralFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing the bug is gone
         String code = """
                 when green flag clicked
@@ -76,6 +76,45 @@ public class ParameterAsLiteralFixTest extends AbstractFixHeuristicTest {
         String blockId = "non-existent-id";
 
         ParameterAsLiteralFix finder = new ParameterAsLiteralFix(blockId);
-        assertNoFixFound(finder, program);
+        assertFixFound(finder, program);
+    }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_ParamAsLiteral() throws IOException, ParsingException {
+        // Start with a valid program (using parameter variable, not literal)
+        String fixedCode = """
+                define myBlock (x)
+                say (x)
+                """;
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify clean
+        de.uni_passau.fim.se2.litterbox.analytics.bugs.ParameterAsLiteral bugFinder = new de.uni_passau.fim.se2.litterbox.analytics.bugs.ParameterAsLiteral();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues = bugFinder.check(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(), "Original program should be clean");
+
+        // Inject bug (swaps parameter usage with string literal of same name)
+        de.uni_passau.fim.se2.litterbox.injection.bugs.ParameterAsLiteralInjector injector = new de.uni_passau.fim.se2.litterbox.injection.bugs.ParameterAsLiteralInjector();
+        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results = injector.inject(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(results.isEmpty(), "Injector should produce results");
+
+        // Verify bug in mutated
+        Program mutatedProgram = results.get(0).mutatedProgram();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues = bugFinder.check(mutatedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(), "Mutated program should have bugs");
+
+        // Fix check: The bug is the string literal 'x'. In the original program, that literal is NOT present
+        // (it's a parameter reporter). So checking for the *literal's* ID in the original program
+        // should return empty (assuming IDs are preserved/mapped or purely based on object identity/location).
+        // Since we are simulating "deletion" or "replacement back to variable", if we look for the *literal*
+        // in the original (where it was a variable), it won't be found as that specific literal node.
+        String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
+        
+        ParameterAsLiteralFix fix = new ParameterAsLiteralFix(bugBlockId);
+        assertFixFound(fix, fixedProgram);
     }
 }

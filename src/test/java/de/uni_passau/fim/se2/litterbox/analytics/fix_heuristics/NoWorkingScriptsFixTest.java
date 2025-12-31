@@ -21,7 +21,15 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.NoWorkingScripts;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.NoWorkingScriptsInjector;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Set;
 
 import java.io.IOException;
 
@@ -57,8 +65,8 @@ public class NoWorkingScriptsFixTest extends AbstractFixHeuristicTest {
 
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
-        // Scripts are gone (or actor is clean)
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Fix: Scripts are gone (or actor is clean)
         String code = """
                 when green flag clicked
                 move (10) steps
@@ -68,6 +76,49 @@ public class NoWorkingScriptsFixTest extends AbstractFixHeuristicTest {
         String blockId = "non-existent-id";
 
         NoWorkingScriptsFix finder = new NoWorkingScriptsFix(blockId);
-        assertNoFixFound(finder, program);
+        assertFixFound(finder, program);
+    }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_WorkingScriptsBroken() throws IOException, ParsingException {
+        // Fixed: Actor has a valid script (working)
+        String fixedCode = """
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original program has no bug
+        NoWorkingScripts bugFinder = new NoWorkingScripts();
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
+        Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original (fixed) program should have no NoWorkingScripts issue");
+
+        // Inject bug: Spawns a 'Never' script (dead code) and disconnects the existing one (empty script)
+        // Note: NoWorkingScriptsInjector ensures the conditions for NoWorkingScripts are met.
+        NoWorkingScriptsInjector injector = new NoWorkingScriptsInjector();
+        List<InjectionResult> injected = injector.inject(fixedProgram);
+
+        Assertions.assertFalse(injected.isEmpty(), "Injector should create at least one bug");
+
+        // Verify the mutated program has bugs
+        Program mutatedProgram = injected.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
+        Assertions.assertFalse(bugIssues.isEmpty(),
+                "Bug finder should detect NoWorkingScripts in mutated program");
+
+        // Get the Block ID from the ORIGINAL program.
+        // For NoWorkingScriptsFix, we usually target a block in a script.
+        String blockId = findBlockId(fixedProgram, de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps.class);
+        Assertions.assertNotNull(blockId, "Should find MoveSteps block in original program");
+
+        // The fix heuristic should detect this is fixed in the original program
+        NoWorkingScriptsFix fixHeuristic = new NoWorkingScriptsFix(blockId);
+        assertFixFound(fixHeuristic, fixedProgram);
     }
 }

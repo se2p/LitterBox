@@ -66,7 +66,7 @@ public class OrphanedParameterFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing the bug is gone
         String code = """
                 when green flag clicked
@@ -77,6 +77,44 @@ public class OrphanedParameterFixTest extends AbstractFixHeuristicTest {
         String blockId = "non-existent-id";
 
         OrphanedParameterFix finder = new OrphanedParameterFix(blockId);
-        assertNoFixFound(finder, program);
+        assertFixFound(finder, program);
+    }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_OrphanedParam() throws IOException, ParsingException {
+        // Start with a valid program (parameter defined and used)
+        String fixedCode = """
+                define myBlock (x)
+                say (x)
+                """;
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify clean
+        de.uni_passau.fim.se2.litterbox.analytics.bugs.OrphanedParameter bugFinder = new de.uni_passau.fim.se2.litterbox.analytics.bugs.OrphanedParameter();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues = bugFinder.check(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(), "Original program should be clean");
+
+        // Inject bug
+        de.uni_passau.fim.se2.litterbox.injection.bugs.OrphanedParameterInjector injector = new de.uni_passau.fim.se2.litterbox.injection.bugs.OrphanedParameterInjector();
+        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results = injector.inject(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(results.isEmpty(), "Injector should produce results");
+
+        // Verify bug in mutated
+        Program mutatedProgram = results.get(0).mutatedProgram();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues = bugFinder.check(mutatedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(), "Mutated program should have bugs");
+
+        // Fix check: The bug is likely a parameter usage that is orphaned.
+        // In the original program, that usage was valid (or didn't exist in that form).
+        // If the injector modified an existing block to be orphaned, we target that block.
+        // If the injector removed the definition, the usage acts as the bug location.
+        String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
+        
+        OrphanedParameterFix fix = new OrphanedParameterFix(bugBlockId);
+        assertFixFound(fix, fixedProgram);
     }
 }

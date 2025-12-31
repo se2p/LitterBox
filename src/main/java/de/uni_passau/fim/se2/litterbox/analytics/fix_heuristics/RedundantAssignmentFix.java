@@ -54,6 +54,12 @@ public class RedundantAssignmentFix extends AbstractFixHeuristic {
     public Set<Issue> check(Program program) {
         this.program = program;
 
+        // Check if the buggy block was deleted
+        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
+            addIssueWithLooseComment();
+            return java.util.Collections.unmodifiableSet(issues);
+        }
+
         // Use composition: create a new bug finder instance
         RedundantAssignment bugFinder = new RedundantAssignment();
         Set<Issue> foundBugs = bugFinder.check(program);

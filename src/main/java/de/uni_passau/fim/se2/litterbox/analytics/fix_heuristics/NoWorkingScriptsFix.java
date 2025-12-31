@@ -18,15 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.NoWorkingScripts;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Fix heuristic for the NoWorkingScripts bug.
@@ -44,7 +48,10 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
     private boolean stillFullfilledEmptyScript;
     private boolean deadCodeFound;
     private boolean foundEvent;
-    private ActorDefinition targetActor;
+    
+    private ASTNode targetNode;
+    private Script targetScript;
+    private ActorDefinition targetActorOfBug;
 
     private final IssueFinder relatedBugFinder = new NoWorkingScripts();
 
@@ -57,43 +64,56 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
+    @Override
+    public Set<Issue> check(Program program) {
+        this.program = program;
+        
+        // 1. Find the buggy node and its context
+        BlockIdNodeFinder.find(program, bugLocationBlockId).ifPresent(ctx -> {
+            targetNode = ctx.node();
+            targetScript = ctx.script();
+            targetActorOfBug = ctx.actor();
+        });
+        
+        issues = new LinkedHashSet<>();
+        issues = new LinkedHashSet<>();
+        if (targetNode != null) {
+            program.accept(this);
+        } else {
+            // Fix: The buggy block/script is gone.
+            addIssueWithLooseComment();
+        }
+        
+        return Collections.unmodifiableSet(issues);
+    }
 
     @Override
     public void visit(ActorDefinition actor) {
+        if (actor != targetActorOfBug) {
+            return;
+        }
+        
         stillFullfilledEmptyScript = true;
         deadCodeFound = false;
         foundEvent = false;
 
-        // First pass: traverse to find the target actor and check conditions
+        // Traverse this actor's scripts
         super.visit(actor);
 
-        // Check if this is the actor containing our bug location
-        if (targetActor == actor) {
-            // Bug condition: deadCode AND emptyScript AND foundEvent
-            boolean bugPresent = deadCodeFound && stillFullfilledEmptyScript && foundEvent;
+        // Bug condition: deadCode AND emptyScript AND foundEvent
+        boolean bugPresent = deadCodeFound && stillFullfilledEmptyScript && foundEvent;
 
-            if (!bugPresent) {
-                // Fixed! The actor no longer has the bug condition.
-                issues.add(new IssueBuilder()
-                        .withFinder(this)
-                        .withSeverity(IssueSeverity.HIGH)
-                        .withProgram(program)
-                        .withActor(actor)
-                        .withMetadata(actor.getActorMetadata())
-                        .withHint(Hint.fromKey(getName()))
-                        .build());
-            }
+        if (!bugPresent) {
+            // Fixed!
+            currentActor = targetActorOfBug;
+            currentScript = targetScript;
+            addIssue(targetNode, targetNode.getMetadata());
         }
     }
 
     @Override
     public void visit(Script node) {
         currentScript = node;
-
-        // Check if this script or its blocks contain the bug location ID
-        if (containsBugLocation(node)) {
-            targetActor = currentActor;
-        }
 
         // Replicate bug finder logic exactly
         if (stillFullfilledEmptyScript) {
@@ -111,26 +131,7 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
             }
         }
 
+        super.visit(node);
         currentScript = null;
-    }
-
-    private boolean containsBugLocation(Script script) {
-        if (AstNodeUtil.hasBlockId(script, bugLocationBlockId)) {
-            return true;
-        }
-        // Check recursively in children
-        return containsBugLocationRecursive(script);
-    }
-
-    private boolean containsBugLocationRecursive(de.uni_passau.fim.se2.litterbox.ast.model.ASTNode node) {
-        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
-            return true;
-        }
-        for (de.uni_passau.fim.se2.litterbox.ast.model.ASTNode child : node.getChildren()) {
-            if (containsBugLocationRecursive(child)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

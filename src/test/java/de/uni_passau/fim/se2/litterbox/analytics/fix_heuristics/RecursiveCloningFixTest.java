@@ -41,7 +41,7 @@ public class RecursiveCloningFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testSilentOnDeletion() throws IOException, ParsingException {
+    public void testFixFound_BlockDeleted() throws IOException, ParsingException {
         // Silent: Buggy block deleted
         String source = """
                 when I start as a clone
@@ -49,10 +49,46 @@ public class RecursiveCloningFixTest extends AbstractFixHeuristicTest {
                 """;
 
         Program program = parseProgram(source);
-        // bugLocationBlockId won't be found, so heuristic should find nothing (or handle null)
-        // If we pass a dummy ID that doesn't exist, it should return empty issues (silent)
+        // bugLocationBlockId is gone
         
         RecursiveCloningFix heuristic = new RecursiveCloningFix("non_existent_id");
-        assertNoFixFound(heuristic, program);
+        assertFixFound(heuristic, program);
+    }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_RecursiveClone() throws IOException, ParsingException {
+        // Start with a valid program (no recursive clone loops)
+        // Use a script that does NOT delete the clone, but also doesn't create one recursively.
+        // The injector looks for scripts starting with "when I start as a clone" that do NOT have "delete this clone".
+        String fixedCode = """
+                when I start as a clone
+                move (10) steps
+                """;
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify clean
+        de.uni_passau.fim.se2.litterbox.analytics.bugs.RecursiveCloning bugFinder = new de.uni_passau.fim.se2.litterbox.analytics.bugs.RecursiveCloning();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues = bugFinder.check(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(), "Original program should be clean");
+
+        // Inject bug (adds 'create clone of myself' without delete, or just adds the loop)
+        de.uni_passau.fim.se2.litterbox.injection.bugs.RecursiveCloningInjector injector = new de.uni_passau.fim.se2.litterbox.injection.bugs.RecursiveCloningInjector();
+        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results = injector.inject(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(results.isEmpty(), "Injector should produce results");
+
+        // Verify bug in mutated
+        Program mutatedProgram = results.get(0).mutatedProgram();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues = bugFinder.check(mutatedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(), "Mutated program should have bugs");
+
+        // Fix check: The bug is the 'create clone' call. In the original, it doesn't exist.
+        String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
+        
+        RecursiveCloningFix fix = new RecursiveCloningFix(bugBlockId);
+        assertFixFound(fix, fixedProgram);
     }
 }

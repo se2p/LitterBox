@@ -84,7 +84,7 @@ public class RedundantAssignmentFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing the bug is gone
         String code = """
                 when green flag clicked
@@ -95,6 +95,37 @@ public class RedundantAssignmentFixTest extends AbstractFixHeuristicTest {
         String blockId = "non-existent-id";
 
         RedundantAssignmentFix finder = new RedundantAssignmentFix(blockId);
-        assertNoFixFound(finder, program);
+        assertFixFound(finder, program);
+    }
+
+    @Test
+    public void testInjector_RedundantAssignment() throws IOException, ParsingException {
+        // Start with a fixed program - no redundant assignment
+        String fixedCode = """
+                when green flag clicked
+                set [myVar v] to (10)
+                say (myVar)""";
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Inject bug
+        de.uni_passau.fim.se2.litterbox.injection.bugs.RedundantAssignmentInjector injector = new de.uni_passau.fim.se2.litterbox.injection.bugs.RedundantAssignmentInjector();
+        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> injected = injector.inject(fixedProgram);
+
+        org.junit.jupiter.api.Assertions.assertFalse(injected.isEmpty(), "Injector should create at least one bug");
+
+        // Verify the mutated program has the bug
+        Program mutatedProgram = injected.getFirst().mutatedProgram();
+        de.uni_passau.fim.se2.litterbox.analytics.bugs.RedundantAssignment bugFinder = new de.uni_passau.fim.se2.litterbox.analytics.bugs.RedundantAssignment();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues = bugFinder.check(mutatedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(), "Bug finder should detect RedundantAssignment in mutated program");
+
+        // Get the block ID
+        de.uni_passau.fim.se2.litterbox.analytics.Issue bugIssue = bugIssues.iterator().next();
+        String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssue.getCodeLocation());
+
+        // The fix heuristic should detect a fix in the original program
+        RedundantAssignmentFix fixHeuristic = new RedundantAssignmentFix(bugBlockId);
+        assertFixFound(fixHeuristic, fixedProgram);
     }
 }

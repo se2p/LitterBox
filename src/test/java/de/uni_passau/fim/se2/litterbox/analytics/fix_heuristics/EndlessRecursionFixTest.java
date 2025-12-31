@@ -78,4 +78,60 @@ public class EndlessRecursionFixTest extends AbstractFixHeuristicTest {
         EndlessRecursionFix finder = new EndlessRecursionFix(blockId);
         assertNoFixFound(finder, program);
     }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_EndlessRecursion() throws IOException, ParsingException {
+        // Procedure must be called in NON-TAIL position for injector to work
+        // The fixed version has conditional recursion (inside if block)
+        String fixedCode = """
+                define recurse
+                if <key (space v) pressed?> then
+                    recurse
+                end
+                
+                when green flag clicked
+                recurse
+                say [Done]
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original has no bug
+        de.uni_passau.fim.se2.litterbox.analytics.bugs.EndlessRecursion bugFinder =
+                new de.uni_passau.fim.se2.litterbox.analytics.bugs.EndlessRecursion();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues =
+                bugFinder.check(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original program should be clean");
+
+        // Inject bug (adds unconditional recursive call at start)
+        de.uni_passau.fim.se2.litterbox.injection.bugs.EndlessRecursionInjector injector =
+                new de.uni_passau.fim.se2.litterbox.injection.bugs.EndlessRecursionInjector();
+        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results =
+                injector.inject(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(results.isEmpty(),
+                "Injector should produce results");
+
+        // Verify bug in mutated
+        Program mutatedProgram = results.get(0).mutatedProgram();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues =
+                bugFinder.check(mutatedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(),
+                "Mutated program should have bugs");
+
+        // The injector ADDS a new CallStmt (with new ID) at the start of procedure.
+        // Use the EXISTING conditional recursion CallStmt ID from the fixed program.
+        // This validates that the fix heuristic correctly identifies guarded recursion as fixed.
+        String existingRecursiveCallId = findBlockId(fixedProgram, CallStmt.class,
+                call -> call.getIdent().getName().equals("recurse"));
+        org.junit.jupiter.api.Assertions.assertNotNull(existingRecursiveCallId,
+                "Should find recursive CallStmt in original program");
+
+        EndlessRecursionFix fix = new EndlessRecursionFix(existingRecursiveCallId);
+        assertFixFound(fix, fixedProgram);
+    }
 }

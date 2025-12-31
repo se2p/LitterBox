@@ -72,4 +72,52 @@ public class FloatingPointComparisonFixTest extends AbstractFixHeuristicTest {
         FloatingPointComparisonFix heuristic = new FloatingPointComparisonFix(blockId);
         assertNoFixFound(heuristic, program);
     }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_FloatingPointComparison() throws IOException, ParsingException {
+        // Start with valid program (comparing literal values, not unsafe operands)
+        String fixedCode = """
+                when green flag clicked
+                if <(10) = (20)> then
+                    say [Match!]
+                end
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original has no bug
+        de.uni_passau.fim.se2.litterbox.analytics.bugs.FloatingPointComparison bugFinder =
+                new de.uni_passau.fim.se2.litterbox.analytics.bugs.FloatingPointComparison();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues =
+                bugFinder.check(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original program should be clean");
+
+        // Inject bug (adds unsafe operand like PositionX)
+        de.uni_passau.fim.se2.litterbox.injection.bugs.FloatingPointComparisonInjector injector =
+                new de.uni_passau.fim.se2.litterbox.injection.bugs.FloatingPointComparisonInjector();
+        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results =
+                injector.inject(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(results.isEmpty(),
+                "Injector should produce results");
+
+        // Verify bug in mutated
+        Program mutatedProgram = results.get(0).mutatedProgram();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues =
+                bugFinder.check(mutatedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(),
+                "Mutated program should have bugs");
+
+        // Use existing Equals block ID from original program
+        String existingBlockId = findBlockId(fixedProgram, Equals.class);
+        org.junit.jupiter.api.Assertions.assertNotNull(existingBlockId,
+                "Should find Equals in original program");
+
+        FloatingPointComparisonFix fix = new FloatingPointComparisonFix(existingBlockId);
+        assertFixFound(fix, fixedProgram);
+    }
 }

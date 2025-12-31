@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
+
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.AmbiguousParameterNameUsed;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
@@ -31,48 +31,35 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
  */
 public class AmbiguousParameterNameUsedFix extends AbstractFixHeuristic {
 
-    private final IssueFinder relatedBugFinder = new AmbiguousParameterNameUsed();
-
     public AmbiguousParameterNameUsedFix(String bugLocationBlockId) {
         super(bugLocationBlockId);
     }
 
     @Override
     protected IssueFinder getRelatedBugFinder() {
-        return relatedBugFinder;
+        return new AmbiguousParameterNameUsed();
     }
 
+    @Override
+    public java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> check(de.uni_passau.fim.se2.litterbox.ast.model.Program program) {
+        this.program = program;
+        this.issues = new java.util.LinkedHashSet<>();
+        if (bugLocationBlockId != null && de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
+            addIssueWithLooseComment();
+            return java.util.Collections.unmodifiableSet(issues);
+        }
+        return super.check(program);
+    }
 
     @Override
     public void visit(ProcedureDefinition node) {
         super.visit(node);
         if (matchesBugLocation(node)) {
-            checkProc(node);
-        }
-    }
-
-    private void checkProc(ProcedureDefinition node) {
-        if (node.getIdent() == null || !procMap.containsKey(node.getIdent())) {
-            return;
-        }
-        ArgumentInfo[] arguments = procMap.get(node.getIdent()).getArguments();
-        boolean ambiguousFound = false;
-
-        for (int i = 0; i < arguments.length; i++) {
-            ArgumentInfo current = arguments[i];
-            for (int j = i + 1; j < arguments.length; j++) {
-                if (current.name().equals(arguments[j].name())) {
-                    ambiguousFound = true;
-                    break;
-                }
+            boolean stillPresent = isBugStillPresent(node);
+            
+            if (!stillPresent) {
+                addIssue(node, node.getMetadata());
             }
-            if (ambiguousFound) {
-                break;
-            }
-        }
-
-        if (!ambiguousFound) {
-            addIssue(node, node.getMetadata());
         }
     }
 }

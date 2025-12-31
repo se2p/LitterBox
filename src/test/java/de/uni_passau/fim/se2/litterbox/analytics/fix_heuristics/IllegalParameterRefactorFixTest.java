@@ -61,4 +61,55 @@ public class IllegalParameterRefactorFixTest extends AbstractFixHeuristicTest {
         IllegalParameterRefactorFix heuristic = new IllegalParameterRefactorFix(blockId);
         assertNoFixFound(heuristic, program);
     }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_IllegalParameterRefactor() throws IOException, ParsingException {
+        // Start with valid program (boolean parameter used as boolean)
+        String fixedCode = """
+                define myProc <myParam>
+                if <myParam> then
+                    say [True!]
+                end
+                
+                when green flag clicked
+                myProc <key (space v) pressed?>
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original has no bug
+        de.uni_passau.fim.se2.litterbox.analytics.bugs.IllegalParameterRefactor bugFinder =
+                new de.uni_passau.fim.se2.litterbox.analytics.bugs.IllegalParameterRefactor();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues =
+                bugFinder.check(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original program should be clean");
+
+        // Inject bug (changes boolean param type to string)
+        de.uni_passau.fim.se2.litterbox.injection.bugs.IllegalParameterRefactorInjector injector =
+                new de.uni_passau.fim.se2.litterbox.injection.bugs.IllegalParameterRefactorInjector();
+        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results =
+                injector.inject(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(results.isEmpty(),
+                "Injector should produce results");
+
+        // Verify bug in mutated
+        Program mutatedProgram = results.get(0).mutatedProgram();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues =
+                bugFinder.check(mutatedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(),
+                "Mutated program should have bugs");
+
+        // Use existing Parameter block ID from original program
+        String existingBlockId = findBlockId(fixedProgram, Parameter.class);
+        org.junit.jupiter.api.Assertions.assertNotNull(existingBlockId,
+                "Should find Parameter in original program");
+
+        IllegalParameterRefactorFix fix = new IllegalParameterRefactorFix(existingBlockId);
+        assertFixFound(fix, fixedProgram);
+    }
 }

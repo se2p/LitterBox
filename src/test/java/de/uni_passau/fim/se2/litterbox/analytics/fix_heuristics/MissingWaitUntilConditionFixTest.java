@@ -18,12 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingWaitUntilCondition;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.MissingWaitUntilConditionInjector;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Tests for MissingWaitUntilConditionFix.
@@ -65,8 +73,8 @@ public class MissingWaitUntilConditionFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
-        // Script containing the bug is gone
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
+        // Fix: Script containing the bug is gone
         String code = """
                 when green flag clicked
                 move (10) steps
@@ -76,6 +84,49 @@ public class MissingWaitUntilConditionFixTest extends AbstractFixHeuristicTest {
         String blockId = "non-existent-id";
 
         MissingWaitUntilConditionFix finder = new MissingWaitUntilConditionFix(blockId);
-        assertNoFixFound(finder, program);
+        assertFixFound(finder, program);
+    }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_WaitUntil() throws IOException, ParsingException {
+        // Start with a fixed program - wait until with a condition
+        String fixedCode = """
+                when green flag clicked
+                wait until <key (space v) pressed?>
+                move (10) steps""";
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original program has no MissingWaitUntilCondition
+        MissingWaitUntilCondition bugFinder = new MissingWaitUntilCondition();
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
+        Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original (fixed) program should have no MissingWaitUntilCondition issue");
+
+        // Inject bug
+        MissingWaitUntilConditionInjector injector = new MissingWaitUntilConditionInjector();
+        List<InjectionResult> injected = injector.inject(fixedProgram);
+
+        Assertions.assertFalse(injected.isEmpty(), "Injector should create at least one bug");
+
+        // Verify the mutated program has the bug
+        Program mutatedProgram = injected.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
+        Assertions.assertFalse(bugIssues.isEmpty(),
+                "Bug finder should detect MissingWaitUntilCondition in mutated program");
+
+        // Get the block ID
+        Issue bugIssue = bugIssues.iterator().next();
+        String bugBlockId = AstNodeUtil.getBlockId(bugIssue.getCodeLocation());
+        Assertions.assertNotNull(bugBlockId, "Bug issue should have a block ID");
+
+        // The fix heuristic should detect a fix in the original program
+        MissingWaitUntilConditionFix fixHeuristic = new MissingWaitUntilConditionFix(bugBlockId);
+        assertFixFound(fixHeuristic, fixedProgram);
     }
 }
+

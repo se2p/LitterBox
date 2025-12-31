@@ -18,17 +18,28 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideIf;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideIf;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Fix heuristic for the ForeverInsideIf bug.
  *
  * <p>The bug is reported when a RepeatForever is inside an If with following statements.
- * The bug is fixed if no longer inside an If OR no statements follow the If.
+ * The bug is fixed if:
+ * <ul>
+ *   <li>The forever block is no longer inside an If, OR</li>
+ *   <li>No statements follow the If, OR</li>
+ *   <li>The forever block was deleted (common fix)</li>
+ * </ul>
  */
 public class ForeverInsideIfFix extends AbstractFixHeuristic {
 
@@ -46,6 +57,34 @@ public class ForeverInsideIfFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
+    @Override
+    public Set<Issue> check(Program program) {
+        insideIf = false;
+        ifFollowingCounter = 0;
+
+        // First, check if the buggy block still exists
+        boolean blockExists = BlockIdNodeFinder.find(program, bugLocationBlockId).isPresent();
+
+        if (!blockExists) {
+            // Block was deleted - this is a valid fix for ForeverInsideIf
+            // Report fix using a synthetic issue (the bug is gone because the block is gone)
+            return createFixIssueForDeletedBlock(program);
+        }
+
+        // Block exists - run normal checking
+        return super.check(program);
+    }
+
+    /**
+     * Creates a FIX issue when the buggy block was deleted.
+     * Uses the program as the code location since the original block no longer exists.
+     */
+    private Set<Issue> createFixIssueForDeletedBlock(Program program) {
+        this.program = program;
+        // Use addIssueWithLooseComment since we don't have a script/procedure context
+        addIssueWithLooseComment();
+        return Collections.unmodifiableSet(issues);
+    }
 
     @Override
     public void visit(StmtList node) {
@@ -84,3 +123,4 @@ public class ForeverInsideIfFix extends AbstractFixHeuristic {
         visitChildren(node);
     }
 }
+

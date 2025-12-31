@@ -28,11 +28,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.OverwrittenVisualEffect;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Fix heuristic for the OverwrittenVisualEffect bug.
@@ -51,6 +56,16 @@ public class OverwrittenVisualEffectFix extends AbstractFixHeuristic {
     @Override
     protected IssueFinder getRelatedBugFinder() {
         return relatedBugFinder;
+    }
+
+    @Override
+    public Set<Issue> check(Program program) {
+        // If the original buggy block is gone, we consider it fixed.
+        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
+            addIssueWithLooseComment();
+            return Collections.unmodifiableSet(issues);
+        }
+        return super.check(program);
     }
 
 

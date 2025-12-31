@@ -20,9 +20,13 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ParameterAsLiteral;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,6 +49,27 @@ public class ParameterAsLiteralFix extends AbstractFixHeuristic {
     @Override
     protected IssueFinder getRelatedBugFinder() {
         return relatedBugFinder;
+    }
+
+    @Override
+    public Set<Issue> check(Program program) {
+        // If the original buggy block (StringLiteral) is gone, we consider it fixed.
+        java.util.Optional<BlockIdNodeFinder.NodeContext> foundOpt = BlockIdNodeFinder.find(program, bugLocationBlockId);
+        
+        if (bugLocationBlockId != null) {
+            if (foundOpt.isEmpty()) {
+                addIssueWithLooseComment();
+                return Collections.unmodifiableSet(issues);
+            }
+            
+            // Also fixed if the node exists but is no longer a StringLiteral (e.g. reverted to Parameter)
+            if (!(foundOpt.get().node() instanceof StringLiteral)) {
+                 addIssueWithLooseComment();
+                 return Collections.unmodifiableSet(issues);
+            }
+        }
+        
+        return super.check(program);
     }
 
 

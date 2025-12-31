@@ -48,8 +48,14 @@ public class InterruptedLoopSensingFix extends AbstractFixHeuristic {
     }
 
 
+    @Override
+    public java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> check(de.uni_passau.fim.se2.litterbox.ast.model.Program program) {
+        refreshBugInstances(program);
+        return super.check(program);
+    }
+
     private void check(ASTNode node) {
-        if (matchesBugLocation(node)) {
+        if (matchesBugLocation(node) && !isBugStillPresent(node)) {
             addIssue(node, node.getMetadata());
         }
     }
@@ -88,5 +94,57 @@ public class InterruptedLoopSensingFix extends AbstractFixHeuristic {
     public void visit(SayForSecs node) {
         check(node);
         super.visit(node);
+    }
+
+    @Override
+    protected void findSemanticMatch(de.uni_passau.fim.se2.litterbox.ast.model.Program program) {
+        // Simple semantic matching: find the first block of a supported type
+        // that is NOT still buggy. This is a heuristic itself.
+        program.accept(new de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor() {
+            @Override
+            public void visit(de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds node) {
+                tryMatch(node);
+                visitChildren(node);
+            }
+
+            @Override
+            public void visit(de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo node) {
+                tryMatch(node);
+                visitChildren(node);
+            }
+
+            @Override
+            public void visit(de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY node) {
+                tryMatch(node);
+                visitChildren(node);
+            }
+
+            @Override
+            public void visit(de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs node) {
+                tryMatch(node);
+                visitChildren(node);
+            }
+
+            @Override
+            public void visit(de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone node) {
+                tryMatch(node);
+                visitChildren(node);
+            }
+
+            @Override
+            public void visit(de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs node) {
+                tryMatch(node);
+                visitChildren(node);
+            }
+
+            private void tryMatch(ASTNode node) {
+                if (semanticMatch == null && !isBugStillPresent(node)) {
+                    // Check if it's in a script (roughly same context)
+                    if (de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.findParent(node, de.uni_passau.fim.se2.litterbox.ast.model.Script.class) != null) {
+                        semanticMatch = node;
+                    }
+                }
+            }
+        });
     }
 }

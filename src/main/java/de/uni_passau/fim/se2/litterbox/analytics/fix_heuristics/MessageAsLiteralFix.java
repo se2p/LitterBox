@@ -71,9 +71,27 @@ public class MessageAsLiteralFix extends AbstractFixHeuristic {
 
     @Override
     public void visit(StringLiteral node) {
-        if (matchesBugLocation(node)) {
+        // Bug finder reports on parent node (Say, Think, etc.) which has block ID,
+        // not on StringLiteral which has no block ID. Check ancestors too.
+        if (matchesOrAncestorMatches(node)) {
             foundLiteral = node;
         }
+    }
+
+    /**
+     * Check if node or any ancestor matches the bug location block ID.
+     * This is needed because StringLiteral nodes don't have their own block IDs -
+     * the block ID is on the parent statement (Say, Think, etc.).
+     */
+    private boolean matchesOrAncestorMatches(ASTNode node) {
+        ASTNode current = node;
+        while (current != null) {
+            if (matchesBugLocation(current)) {
+                return true;
+            }
+            current = current.getParentNode();
+        }
+        return false;
     }
 
     @Override

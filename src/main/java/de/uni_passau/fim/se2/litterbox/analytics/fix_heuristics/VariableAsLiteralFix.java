@@ -48,31 +48,67 @@ public class VariableAsLiteralFix extends AbstractFixHeuristic {
         super(bugLocationBlockId);
     }
 
+
+
+
+    @Override
+    public Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> check(Program program) {
+        // If the original buggy block (likely StringLiteral) is gone, we consider it fixed.
+        java.util.Optional<de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder.NodeContext> foundOpt = de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder.find(program, bugLocationBlockId);
+        
+        if (bugLocationBlockId != null) {
+            if (foundOpt.isEmpty()) {
+                addIssueWithLooseComment();
+                return java.util.Collections.unmodifiableSet(issues);
+            }
+            
+            // Also fixed if the node exists but is no longer a StringLiteral (e.g. reverted to Variable)
+            if (!(foundOpt.get().node() instanceof StringLiteral)) {
+                 addIssueWithLooseComment();
+                 return java.util.Collections.unmodifiableSet(issues);
+            }
+        }
+    
+        if (program.getSymbolTable() == null) {
+            // Should typically not happen for parsed programs
+            return java.util.Collections.emptySet();
+        }
+
+        varMap = program.getSymbolTable().getVariables();
+        listMap = program.getSymbolTable().getLists();
+        this.program = program;
+        
+        super.visit(program); // Just visit children, don't re-init tables
+        return issues;
+    }
+
     @Override
     protected IssueFinder getRelatedBugFinder() {
         return relatedBugFinder;
     }
 
-
     @Override
     public void visit(Program program) {
-        varMap = program.getSymbolTable().getVariables();
-        listMap = program.getSymbolTable().getLists();
+        // Already handled in check() or via super.visit()
         super.visit(program);
     }
 
     @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
+        if (currentActor.getIdent() == null) {
+            super.visit(actor);
+            return;
+        }
         String actorName = currentActor.getIdent().getName();
 
         variablesInScope = varMap.values().stream()
-                .filter(v -> v.global() || v.actor().equals(actorName))
+                .filter(v -> v.global() || (v.actor() != null && v.actor().equals(actorName)))
                 .map(VariableInfo::variableName)
                 .collect(Collectors.toSet());
 
         variablesInScope.addAll(listMap.values().stream()
-                .filter(v -> v.global() || v.actor().equals(actorName))
+                .filter(v -> v.global() || (v.actor() != null && v.actor().equals(actorName)))
                 .map(ExpressionListInfo::variableName)
                 .collect(Collectors.toSet()));
 

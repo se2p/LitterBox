@@ -39,6 +39,7 @@ import java.util.*;
 public class MessageNeverReceivedFix extends AbstractFixHeuristic {
     private String message = null;
     private Map<String, Map<ActorDefinition, List<Script>>> actorScriptsPerMessage;
+    private ASTNode buggyBroadcast;
 
     private final IssueFinder relatedBugFinder = new MessageNeverReceived();
 
@@ -58,18 +59,18 @@ public class MessageNeverReceivedFix extends AbstractFixHeuristic {
         this.program = program;
         issues = new LinkedHashSet<>();
         actorScriptsPerMessage = new LinkedHashMap<>();
+        // Check if block deleted
+        if (bugLocationBlockId != null && de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
+            addIssueWithLooseComment();
+            return Collections.unmodifiableSet(issues);
+        }
+
         program.accept(this);
 
-        if (message != null) {
+        if (buggyBroadcast != null && message != null) {
             Map<ActorDefinition, List<Script>> actorEvents = actorScriptsPerMessage.get(message);
             if (actorEvents != null) {
-                Map.Entry<ActorDefinition, List<Script>> entry = actorEvents.entrySet().iterator().next();
-                ActorDefinition actor = entry.getKey();
-                List<Script> scripts = entry.getValue();
-                currentActor = actor;
-                Script script = scripts.getFirst();
-                currentScript = script;
-                addIssue(script.getEvent(), script.getEvent().getMetadata());
+                addIssue(buggyBroadcast, buggyBroadcast.getMetadata());
             }
         }
         return Collections.unmodifiableSet(issues);
@@ -78,6 +79,7 @@ public class MessageNeverReceivedFix extends AbstractFixHeuristic {
     @Override
     public void visit(Broadcast node) {
         if (matchesBugLocation(node)) {
+            buggyBroadcast = node;
             if (node.getMessage().getMessage() instanceof StringLiteral text) {
                 message = text.getText();
             }
@@ -89,6 +91,7 @@ public class MessageNeverReceivedFix extends AbstractFixHeuristic {
     @Override
     public void visit(BroadcastAndWait node) {
         if (matchesBugLocation(node)) {
+            buggyBroadcast = node;
             if (node.getMessage().getMessage() instanceof StringLiteral text) {
                 message = text.getText();
             }

@@ -3,7 +3,14 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingEraseAll;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.MissingEraseAllInjector;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import java.util.List;
+import java.util.Set;
 
 import java.io.IOException;
 
@@ -76,8 +83,8 @@ public class MissingEraseAllFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testSilentDeletion() throws IOException, ParsingException {
-        // Silent: The buggy pen down is removed
+    public void testFixFound_BlockDeleted() throws IOException, ParsingException {
+        // Fix: The buggy pen down is removed
         String source = """
                 when green flag clicked
                 erase all
@@ -85,6 +92,48 @@ public class MissingEraseAllFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         MissingEraseAllFix heuristic = new MissingEraseAllFix("non-existent-id");
-        assertNoFixFound(heuristic, program);
+        assertFixFound(heuristic, program);
+    }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_EraseAllRemoved() throws IOException, ParsingException {
+        // Fixed: Pen Down used WITH erase all
+        String fixedCode = """
+                when green flag clicked
+                erase all
+                pen down
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original program has no bug
+        MissingEraseAll bugFinder = new MissingEraseAll();
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
+        Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original (fixed) program should have no MissingEraseAll issue");
+
+        // Inject bug: Removes 'erase all'
+        MissingEraseAllInjector injector = new MissingEraseAllInjector();
+        List<InjectionResult> injected = injector.inject(fixedProgram);
+
+        Assertions.assertFalse(injected.isEmpty(), "Injector should create at least one bug");
+
+        // Verify the mutated program has bugs
+        Program mutatedProgram = injected.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
+        Assertions.assertFalse(bugIssues.isEmpty(),
+                "Bug finder should detect MissingEraseAll in mutated program");
+
+        // Get the PenDown block ID from the ORIGINAL program
+        String blockId = findBlockId(fixedProgram, PenDownStmt.class);
+        Assertions.assertNotNull(blockId, "Should find PenDownStmt block in original program");
+
+        // The fix heuristic should detect this is fixed in the original program
+        MissingEraseAllFix fixHeuristic = new MissingEraseAllFix(blockId);
+        assertFixFound(fixHeuristic, fixedProgram);
     }
 }

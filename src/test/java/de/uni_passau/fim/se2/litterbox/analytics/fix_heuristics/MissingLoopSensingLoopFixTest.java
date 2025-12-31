@@ -82,4 +82,54 @@ public class MissingLoopSensingLoopFixTest extends AbstractFixHeuristicTest {
         MissingLoopSensingLoopFix finder = new MissingLoopSensingLoopFix(blockId);
         assertNoFixFound(finder, program);
     }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_LoopUnwrapped() throws IOException, ParsingException {
+        // Start with valid program (sensing inside a loop)
+        String fixedCode = """
+                when green flag clicked
+                forever
+                    if <key (space v) pressed?> then
+                        move (10) steps
+                    end
+                end
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original has no bug (sensing is inside loop)
+        de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopSensing bugFinder =
+                new de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopSensing();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues =
+                bugFinder.check(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original program should be clean");
+
+        // Inject bug (unwraps loop, sensing is now outside)
+        de.uni_passau.fim.se2.litterbox.injection.bugs.MissingLoopSensingInjector injector =
+                new de.uni_passau.fim.se2.litterbox.injection.bugs.MissingLoopSensingInjector();
+        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results =
+                injector.inject(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(results.isEmpty(),
+                "Injector should produce results");
+
+        // Verify bug in mutated
+        Program mutatedProgram = results.get(0).mutatedProgram();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues =
+                bugFinder.check(mutatedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(),
+                "Mutated program should have bugs");
+
+        // Use existing IsKeyPressed block ID from original program
+        String existingBlockId = findBlockId(fixedProgram, IsKeyPressed.class);
+        org.junit.jupiter.api.Assertions.assertNotNull(existingBlockId,
+                "Should find IsKeyPressed in original program");
+
+        MissingLoopSensingLoopFix fix = new MissingLoopSensingLoopFix(existingBlockId);
+        assertFixFound(fix, fixedProgram);
+    }
 }

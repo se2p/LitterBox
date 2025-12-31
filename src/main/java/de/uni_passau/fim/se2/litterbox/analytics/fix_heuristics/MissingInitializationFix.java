@@ -18,15 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.cfg.*;
-import de.uni_passau.fim.se2.litterbox.dataflow.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingInitialization;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+
+import java.util.Collections;
 
 import java.util.Optional;
 import java.util.Set;
@@ -54,72 +53,27 @@ public class MissingInitializationFix extends AbstractFixHeuristic {
 
     @Override
     public Set<Issue> check(Program program) {
-        this.program = program;
-
-        // Build CFG and perform dataflow analysis
-        ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
-        program.accept(visitor);
-        ControlFlowGraph cfg = visitor.getControlFlowGraph();
-
-        // Initial definitions analysis
-        DataflowAnalysisBuilder<Definition> defBuilder = new DataflowAnalysisBuilder<>(cfg);
-        DataflowAnalysis<Definition> defAnalysis = defBuilder
-                .withBackward()
-                .withMay()
-                .withTransferFunction(new InitialDefinitionTransferFunction())
-                .build();
-        defAnalysis.applyAnalysis();
-        Set<Definition> initialDefinitions = defAnalysis.getDataflowFacts(cfg.getEntryNode());
-
-        // Initial uses (liveness) analysis
-        DataflowAnalysisBuilder<Use> useBuilder = new DataflowAnalysisBuilder<>(cfg);
-        DataflowAnalysis<Use> livenessAnalysis = useBuilder
-                .withBackward()
-                .withMay()
-                .withTransferFunction(new LivenessTransferFunction())
-                .build();
-        livenessAnalysis.applyAnalysis();
-        Set<Use> initialUses = livenessAnalysis.getDataflowFacts(cfg.getEntryNode());
+        super.check(program);
 
         // Find the target node
         Optional<BlockIdNodeFinder.NodeContext> contextOpt =
                 BlockIdNodeFinder.find(program, bugLocationBlockId);
 
+        if (contextOpt.isEmpty()) {
+            addIssueWithLooseComment();
+            return Collections.unmodifiableSet(issues);
+        }
+
         contextOpt.ifPresent(context -> {
-            // Check if this node corresponds to an initial use (still buggy)
-            boolean matchesBug = false;
-
-            for (Use use : initialUses) {
-                if (use.getUseTarget().getASTNode() == context.node()) {
-                    // Potential bug. Apply Bug Finder filters.
-                    if (use.getDefinable() instanceof Attribute attribute) {
-                        if (attribute.getAttributeType() == Attribute.AttributeType.VISIBILITY) {
-                            continue; // Skip visibility
-                        }
-                    }
-
-                    // Check if there's a definition in another script
-                    boolean hasDefInOtherScript = initialDefinitions.stream()
-                            .filter(d -> d.getDefinable().equals(use.getDefinable()))
-                            .noneMatch(d -> d.getDefinitionSource().getScriptOrProcedure()
-                                    != use.getUseTarget().getScriptOrProcedure());
-
-                    if (hasDefInOtherScript) {
-                        matchesBug = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!matchesBug) {
-                // Fixed! The use is now properly initialized.
+            if (!isBugStillPresent(context.node())) {
+                // Fixed! The use is now properly initialized (or removed).
                 IssueBuilder builder = new IssueBuilder()
                         .withFinder(this)
                         .withCurrentNode(context.node())
                         .withActor(context.actor())
                         .withProgram(program)
                         .withMetadata(context.node().getMetadata())
-                        .withHint(Hint.fromKey(getName()));
+                        .withHint(getName());
 
                 if (context.script() != null) {
                     builder.withScript(context.script());

@@ -18,6 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideLoop;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -25,8 +29,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideLoop;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Fix heuristic for the ForeverInsideLoop bug.
@@ -34,8 +40,11 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
  * <p>The bug is reported when a RepeatForever/Until/RepeatTimes loop is nested
  * inside another loop, causing the outer loop to never iterate.
  *
- * <p>The bug is fixed if the loop identified by the block ID is no longer
- * nested inside another loop while still being inside a working script.
+ * <p>The bug is fixed if:
+ * <ul>
+ *   <li>The loop is no longer nested inside another loop, OR</li>
+ *   <li>The buggy loop was deleted (common fix)</li>
+ * </ul>
  */
 public class ForeverInsideLoopFix extends AbstractFixHeuristic {
     private boolean insideScript = false;
@@ -52,21 +61,49 @@ public class ForeverInsideLoopFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
+    @Override
+    public Set<Issue> check(Program program) {
+        insideScript = false;
+        loopDepth = 0;
+
+        // First, check if the buggy block still exists
+        boolean blockExists = BlockIdNodeFinder.find(program, bugLocationBlockId).isPresent();
+
+        if (!blockExists) {
+            // Block was deleted - this is a valid fix for ForeverInsideLoop
+            return createFixIssueForDeletedBlock(program);
+        }
+
+        // Block exists - run normal checking
+        return super.check(program);
+    }
+
+    /**
+     * Creates a FIX issue when the buggy block was deleted.
+     */
+    private Set<Issue> createFixIssueForDeletedBlock(Program program) {
+        this.program = program;
+        // Use addIssueWithLooseComment since we don't have a script/procedure context
+        addIssueWithLooseComment();
+        return Collections.unmodifiableSet(issues);
+    }
 
     @Override
     public void visit(ProcedureDefinition node) {
+        boolean oldInside = insideScript;
         insideScript = true;
         super.visit(node);
-        insideScript = false;
+        insideScript = oldInside;
     }
 
     @Override
     public void visit(Script node) {
+        boolean oldInside = insideScript;
         if (!(node.getEvent() instanceof Never)) {
             insideScript = true;
         }
         super.visit(node);
-        insideScript = false;
+        insideScript = oldInside;
     }
 
     @Override
@@ -79,7 +116,6 @@ public class ForeverInsideLoopFix extends AbstractFixHeuristic {
 
     @Override
     public void visit(UntilStmt node) {
-        checkLoopFix(node);
         loopDepth++;
         super.visit(node);
         loopDepth--;
@@ -87,7 +123,6 @@ public class ForeverInsideLoopFix extends AbstractFixHeuristic {
 
     @Override
     public void visit(RepeatTimesStmt node) {
-        checkLoopFix(node);
         loopDepth++;
         super.visit(node);
         loopDepth--;

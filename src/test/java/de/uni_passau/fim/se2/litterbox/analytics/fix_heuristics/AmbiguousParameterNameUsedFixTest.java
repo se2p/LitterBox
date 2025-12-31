@@ -32,21 +32,34 @@ public class AmbiguousParameterNameUsedFixTest extends AbstractFixHeuristicTest 
     @Test
     public void testNoFix() throws IOException, ParsingException {
         // No Fix: Custom block parameters are DUPLICATE (param1, param1)
-        // Note: ScratchBlocks format might not strictly enforce uniqueness during parse, 
-        // allowing us to simulate the bug.
-        String source = """
-                define myProc (param1) (param1)
+        // We use the injector to ensure the AST has duplicates/ambiguity, 
+        // as the parser might normalize invalid ScratchBlocks code.
+        String fixedCode = """
+                define myProc (param1) (param2)
+                say (param1)
+                say (param2)
                 """;
-
-        Program program = parseProgram(source);
-        String bugLocationBlockId = findBlockId(program, ProcedureDefinition.class);
+        Program program = parseProgram(fixedCode);
         
+        // Inject the bug
+        de.uni_passau.fim.se2.litterbox.injection.bugs.AmbiguousParameterNameUsedInjector injector = 
+            new de.uni_passau.fim.se2.litterbox.injection.bugs.AmbiguousParameterNameUsedInjector();
+        
+        Program buggyProgram = injector.inject(program).get(0).mutatedProgram();
+        
+        String bugLocationBlockId = findBlockId(buggyProgram, ProcedureDefinition.class);
+        
+        // Ensure the bug actually exists before testing the fix heuristic
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugs = 
+            new de.uni_passau.fim.se2.litterbox.analytics.bugs.AmbiguousParameterNameUsed().check(buggyProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(bugs.isEmpty(), "Injection failed - bug not found in buggyProgram");
+
         AmbiguousParameterNameUsedFix heuristic = new AmbiguousParameterNameUsedFix(bugLocationBlockId);
-        assertNoFixFound(heuristic, program);
+        assertNoFixFound(heuristic, buggyProgram);
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing the bug is gone
         String code = """
                 when green flag clicked
@@ -57,6 +70,36 @@ public class AmbiguousParameterNameUsedFixTest extends AbstractFixHeuristicTest 
         String blockId = "non-existent-id";
 
         AmbiguousParameterNameUsedFix heuristic = new AmbiguousParameterNameUsedFix(blockId);
-        assertNoFixFound(heuristic, program);
+        assertFixFound(heuristic, program);
+    }
+
+    @Test
+    public void testInjector_AmbiguousParameter() throws IOException, ParsingException {
+        // Start with a valid program (unique parameters) AND USE THEM
+        String fixedCode = """
+                define myProc (param1) (param2)
+                say (param1)
+                say (param2)
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Inject the bug: Duplicate parameter names
+        de.uni_passau.fim.se2.litterbox.injection.bugs.AmbiguousParameterNameUsedInjector injector =
+                new de.uni_passau.fim.se2.litterbox.injection.bugs.AmbiguousParameterNameUsedInjector();
+
+        Program buggyProgram = injector.inject(fixedProgram).get(0).mutatedProgram();
+
+        // Verify the bug is found
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> issues =
+                new de.uni_passau.fim.se2.litterbox.analytics.bugs.AmbiguousParameterNameUsed().check(buggyProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(issues.isEmpty(), "Injector should create at least one bug");
+
+        // Verify the fix heuristic finds the fix (original program)
+        de.uni_passau.fim.se2.litterbox.analytics.Issue issue = issues.iterator().next();
+        String bugID = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(issue.getNormalizedCodeLocation());
+
+        AmbiguousParameterNameUsedFix heuristic = new AmbiguousParameterNameUsedFix(bugID);
+        assertFixFound(heuristic, fixedProgram);
     }
 }

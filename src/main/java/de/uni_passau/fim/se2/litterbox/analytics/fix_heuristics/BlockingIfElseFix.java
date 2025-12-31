@@ -21,6 +21,10 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.BlockingIfElse;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Fix heuristic for the BlockingIfElse bug.
@@ -40,6 +44,16 @@ public class BlockingIfElseFix extends AbstractFixHeuristic {
     @Override
     protected IssueFinder getRelatedBugFinder() {
         return relatedBugFinder;
+    }
+
+    @Override
+    public Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> check(de.uni_passau.fim.se2.litterbox.ast.model.Program program) {
+        // Check if the buggy block was deleted - that's a valid fix
+        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
+            addIssueWithLooseComment();
+            return Collections.unmodifiableSet(issues);
+        }
+        return super.check(program);
     }
 
 

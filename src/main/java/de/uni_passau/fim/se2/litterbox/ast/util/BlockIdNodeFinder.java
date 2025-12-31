@@ -108,12 +108,14 @@ public final class BlockIdNodeFinder implements ScratchVisitor {
 
     @Override
     public void visit(ActorDefinition actor) {
+        checkNode(actor);
         currentActor = actor;
         visitChildren(actor);
     }
 
     @Override
     public void visit(Script script) {
+        checkNode(script);
         currentScript = script;
         currentProcedure = null;
         visitChildren(script);
@@ -122,6 +124,7 @@ public final class BlockIdNodeFinder implements ScratchVisitor {
 
     @Override
     public void visit(ProcedureDefinition procedure) {
+        checkNode(procedure);
         currentProcedure = procedure;
         currentScript = null;
         visitChildren(procedure);

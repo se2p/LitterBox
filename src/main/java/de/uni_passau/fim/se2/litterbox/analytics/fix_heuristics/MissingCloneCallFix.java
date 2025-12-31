@@ -31,6 +31,9 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingCloneCall;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -91,6 +94,14 @@ public class MissingCloneCallFix extends AbstractFixHeuristic {
         targetEvent = null;
         foundActor = null;
         foundScript = null;
+        foundScript = null;
+
+        // Check if block deleted
+        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
+            addIssueWithLooseComment();
+            return Collections.unmodifiableSet(issues);
+        }
+
         super.check(program);
 
         if (targetEvent != null) {

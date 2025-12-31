@@ -109,4 +109,51 @@ public class ImmediateStopAfterSayFixTest extends AbstractFixHeuristicTest {
         ImmediateStopAfterSayFix heuristic = new ImmediateStopAfterSayFix(blockId);
         assertNoFixFound(heuristic, program);
     }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    @Test
+    public void testInjector_ImmediateStopAfterSay() throws IOException, ParsingException {
+        // Start with valid program (say not followed by stop)
+        String fixedCode = """
+                when green flag clicked
+                say [Hello]
+                move (10) steps
+                """;
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original has no bug
+        de.uni_passau.fim.se2.litterbox.analytics.bugs.ImmediateStopAfterSayThink bugFinder =
+                new de.uni_passau.fim.se2.litterbox.analytics.bugs.ImmediateStopAfterSayThink();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues =
+                bugFinder.check(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original program should be clean");
+
+        // Inject bug (adds StopAll after Say)
+        de.uni_passau.fim.se2.litterbox.injection.bugs.ImmediateStopAfterSayThinkInjector injector =
+                new de.uni_passau.fim.se2.litterbox.injection.bugs.ImmediateStopAfterSayThinkInjector();
+        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results =
+                injector.inject(fixedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(results.isEmpty(),
+                "Injector should produce results");
+
+        // Verify bug in mutated
+        Program mutatedProgram = results.get(0).mutatedProgram();
+        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues =
+                bugFinder.check(mutatedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(),
+                "Mutated program should have bugs");
+
+        // Use existing Say block ID from original program
+        String existingBlockId = findBlockId(fixedProgram, Say.class);
+        org.junit.jupiter.api.Assertions.assertNotNull(existingBlockId,
+                "Should find Say in original program");
+
+        ImmediateStopAfterSayFix fix = new ImmediateStopAfterSayFix(existingBlockId);
+        assertFixFound(fix, fixedProgram);
+    }
 }

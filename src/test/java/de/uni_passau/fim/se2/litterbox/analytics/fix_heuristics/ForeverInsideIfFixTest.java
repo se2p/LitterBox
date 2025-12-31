@@ -18,17 +18,24 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideIf;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.ForeverInsideIfInjector;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Tests for ForeverInsideIfFix.
  * Bug: RepeatForever inside If with following statements.
- * Fix: No longer inside If or no statements follow.
+ * Fix: No longer inside If, no statements follow, or forever was deleted.
  */
 public class ForeverInsideIfFixTest extends AbstractFixHeuristicTest {
 
@@ -70,8 +77,8 @@ public class ForeverInsideIfFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
-        // Script containing the bug is gone
+    public void testFixFound_BlockDeleted() throws IOException, ParsingException {
+        // Bug was fixed by deleting the forever loop entirely
         String code = """
                 when green flag clicked
                 move (10) steps
@@ -81,6 +88,62 @@ public class ForeverInsideIfFixTest extends AbstractFixHeuristicTest {
         String blockId = "non-existent-id";
 
         ForeverInsideIfFix finder = new ForeverInsideIfFix(blockId);
-        assertNoFixFound(finder, program);
+        // Deleting the buggy block is a valid fix
+        assertFixFound(finder, program);
+    }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
+    /**
+     * Tests fix detection using the injector.
+     *
+     * <p>The ForeverInsideIfInjector wraps statements in an if-then-forever pattern.
+     * The fix heuristic should detect that the original program (which doesn't have
+     * the injected forever) represents a fixed state.
+     */
+    @Test
+    public void testInjector_IfElseWithStatements() throws IOException, ParsingException {
+        // Start with a fixed program - an IfElse with statements after code
+        String fixedCode = """
+                when green flag clicked
+                if <key (space v) pressed?> then
+                  move (10) steps
+                else
+                  turn right (15) degrees
+                end
+                say [done]""";
+
+        Program fixedProgram = parseProgram(fixedCode);
+
+        // Verify original program has no ForeverInsideIf bug
+        ForeverInsideIf bugFinder = new ForeverInsideIf();
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
+        Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original (fixed) program should have no ForeverInsideIf issue");
+
+        // Inject bug
+        ForeverInsideIfInjector injector = new ForeverInsideIfInjector();
+        List<InjectionResult> injected = injector.inject(fixedProgram);
+
+        Assertions.assertFalse(injected.isEmpty(), "Injector should create at least one bug");
+
+        // Verify the mutated program has bugs
+        Program mutatedProgram = injected.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
+        Assertions.assertFalse(bugIssues.isEmpty(),
+                "Bug finder should detect ForeverInsideIf in mutated program");
+
+        // Get the block ID of the forever loop that was added
+        Issue bugIssue = bugIssues.iterator().next();
+        String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(
+                bugIssue.getCodeLocation());
+        Assertions.assertNotNull(bugBlockId, "Bug issue should have a block ID");
+
+        // The fix heuristic should detect this block is fixed (deleted) in original program
+        ForeverInsideIfFix fixHeuristic = new ForeverInsideIfFix(bugBlockId);
+        assertFixFound(fixHeuristic, fixedProgram);
     }
 }
+

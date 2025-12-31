@@ -97,4 +97,12 @@ public class StutteringMovementFix extends AbstractFixHeuristic {
     public void visit(TurnLeft node) {
         checkIfFixed(node);
     }
+    @Override
+    public java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> check(de.uni_passau.fim.se2.litterbox.ast.model.Program program) {
+        if (bugLocationBlockId != null && de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
+            addIssueWithLooseComment();
+            return java.util.Collections.unmodifiableSet(issues);
+        }
+        return super.check(program);
+    }
 }

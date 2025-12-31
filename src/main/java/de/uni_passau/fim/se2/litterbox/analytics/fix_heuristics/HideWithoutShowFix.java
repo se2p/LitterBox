@@ -26,6 +26,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLook
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.HideWithoutShow;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Fix heuristic for the HideWithoutShow bug.
@@ -48,6 +52,16 @@ public class HideWithoutShowFix extends AbstractFixHeuristic {
     @Override
     protected IssueFinder getRelatedBugFinder() {
         return relatedBugFinder;
+    }
+
+    @Override
+    public Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> check(de.uni_passau.fim.se2.litterbox.ast.model.Program program) {
+        // Check if the buggy block was deleted - that's a valid fix
+        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
+            addIssueWithLooseComment();
+            return Collections.unmodifiableSet(issues);
+        }
+        return super.check(program);
     }
 
 

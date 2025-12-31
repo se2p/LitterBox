@@ -76,39 +76,19 @@ public class MissingResourceFix extends AbstractFixHeuristic {
     public void visit(ActorDefinition actor) {
         images = collectResourceNames(actor.getActorMetadata().getCostumes().getList());
         sounds = collectResourceNames(actor.getActorMetadata().getSounds().getList());
-        System.out.println("Actor: " + actor.getIdent().getName());
-        for (String s : images) {
-            System.out.println("  Image: [" + s + "] (len: " + s.length() + ")");
-        }
-        for (String s : sounds) {
-            System.out.println("  Sound: [" + s + "] (len: " + s.length() + ")");
-        }
         if (actor.getActorType().isStage()) {
             backdrops = collectResourceNames(actor.getActorMetadata().getCostumes().getList());
-            for (String s : backdrops) {
-                System.out.println("  Backdrop: [" + s + "] (len: " + s.length() + ")");
-            }
         }
         super.visit(actor);
     }
 
     private Set<String> collectResourceNames(List<? extends ResourceMetadata> resources) {
-        return resources.stream().map(r -> {
-            String name = r.getName();
-            try {
-                java.lang.reflect.Field nameField = ResourceMetadata.class.getDeclaredField("name");
-                nameField.setAccessible(true);
-                Object fieldValue = nameField.get(r);
-                System.out.println("DEBUG: Resource class=" + r.getClass().getSimpleName() + " name=[" + name + "] field(name)=[" + fieldValue + "]");
-            } catch (Exception e) {
-                System.out.println("DEBUG: Reflection failed: " + e.getMessage());
-            }
-            return name;
-        }).collect(Collectors.toUnmodifiableSet());
+        return resources.stream()
+                .map(ResourceMetadata::getName)
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     private void check(ASTNode node, String name, Set<String> resources) {
-        System.out.println("DEBUG: check(node=" + node.getClass().getSimpleName() + ", name=[" + name + "], resources=" + resources + ")");
         if (matchesBugLocation(node)) {
             // Fix: Resource IS present
             if (resources != null && resources.contains(name)) {

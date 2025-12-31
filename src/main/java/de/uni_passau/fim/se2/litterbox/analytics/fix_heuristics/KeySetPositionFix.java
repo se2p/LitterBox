@@ -18,7 +18,15 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.KeySetPosition;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed;
@@ -28,10 +36,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.KeySetPosition;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Fix heuristic for the KeySetPosition bug.
@@ -42,7 +52,7 @@ import java.util.List;
  * <ul>
  *   <li>The arrow key was changed to a non-arrow key</li>
  *   <li>The block is no longer directly inside the key event handler</li>
- *   <li>The block was replaced with a different statement type</li>
+ *   <li>The block was replaced with a different statement type (or deleted)</li>
  * </ul>
  */
 public class KeySetPositionFix extends AbstractFixHeuristic {
@@ -60,6 +70,43 @@ public class KeySetPositionFix extends AbstractFixHeuristic {
     @Override
     protected IssueFinder getRelatedBugFinder() {
         return relatedBugFinder;
+    }
+
+    @Override
+    public Set<Issue> check(Program program) {
+        Optional<BlockIdNodeFinder.NodeContext> contextOpt = BlockIdNodeFinder.find(program, bugLocationBlockId);
+
+        if (contextOpt.isEmpty()) {
+            addIssueWithLooseComment();
+            return Collections.unmodifiableSet(issues);
+        }
+
+        BlockIdNodeFinder.NodeContext context = contextOpt.get();
+        ASTNode node = context.node();
+
+        // If the node exists but is not a SetX or SetY, it means it was replaced (e.g. by ChangeX)
+        // enabling the fix condition.
+        if (!(node instanceof SetXTo) && !(node instanceof SetYTo)) {
+            IssueBuilder builder = new IssueBuilder()
+                    .withFinder(this)
+                    .withProgram(program)
+                    .withActor(context.actor())
+                    .withCurrentNode(node)
+                    .withMetadata(node.getMetadata())
+                    .withHint(Hint.fromKey(getName()))
+                    .withSeverity(IssueSeverity.HIGH);
+
+            if (context.script() != null) {
+                builder.withScript(context.script());
+            } else if (context.procedure() != null) {
+                builder.withProcedure(context.procedure());
+            }
+
+            issues.add(builder.build());
+            return Collections.unmodifiableSet(issues);
+        }
+
+        return super.check(program);
     }
 
 
