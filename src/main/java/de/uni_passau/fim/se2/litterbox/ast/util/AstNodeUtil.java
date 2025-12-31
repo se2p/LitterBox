@@ -822,4 +822,25 @@ public class AstNodeUtil {
             inputs.put(COLOR_KEY, node.getColorExpr());
         }
     }
+
+    /**
+     * Checks if a statement is a yielding statement (one that pauses script execution).
+     *
+     * <p>Yielding statements transfer control back to the Scratch runtime, allowing other
+     * scripts to execute. This includes wait blocks, timed speech/thought bubbles, glide
+     * motions, and blocking broadcast/sound operations.
+     *
+     * @param stmt the statement to check
+     * @return true if the statement is yielding
+     */
+    public static boolean isYielding(de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt stmt) {
+        return stmt instanceof WaitSeconds
+                || stmt instanceof SayForSecs
+                || stmt instanceof ThinkForSecs
+                || stmt instanceof GlideSecsTo
+                || stmt instanceof GlideSecsToXY
+                || stmt instanceof PlaySoundUntilDone
+                || stmt instanceof AskAndWait
+                || stmt instanceof BroadcastAndWait;
+    }
 }
