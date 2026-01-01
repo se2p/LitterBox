@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
