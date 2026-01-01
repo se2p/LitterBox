@@ -160,6 +160,22 @@ public abstract class AbstractExportVisitor implements ScratchVisitor {
         return currentActor;
     }
 
+    /**
+     * Called at the beginning of an export process.
+     */
+    protected void begin() {
+        // Default implementation does nothing
+    }
+
+    /**
+     * Called at the end of an export process.
+     */
+    protected void end() {
+        newLine();
+        appendIndentation();
+        emitToken("end");
+    }
+
     // ---------------------------------------------------------------
     // Output Retrieval
     // ---------------------------------------------------------------

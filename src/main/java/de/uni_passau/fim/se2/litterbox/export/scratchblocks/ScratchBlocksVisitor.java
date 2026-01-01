@@ -108,8 +108,8 @@ import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.MBlockVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.PrintVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.export.AbstractExportVisitor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -133,7 +133,7 @@ import java.util.*;
  * end
  * [/scratchblocks]
  */
-public class ScratchBlocksVisitor extends PrintVisitor implements
+public class ScratchBlocksVisitor extends AbstractExportVisitor implements
         PenExtensionVisitor, TextToSpeechExtensionVisitor, MBlockVisitor, MusicExtensionVisitor {
 
     private static final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
@@ -150,12 +150,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
 
     private boolean hasContent = false;
 
-    private Program program = null;
-
-    private ActorDefinition currentActor = null;
-
-    private ByteArrayOutputStream byteStream = null;
-
     private boolean lineWrapped = true;
 
     private final Set<Issue> issues = new LinkedHashSet<>();
@@ -169,9 +163,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     private boolean addActorNames = false;
 
     public ScratchBlocksVisitor() {
-        super(null);
-        byteStream = new ByteArrayOutputStream();
-        printStream = new PrintStream(byteStream);
+        super();
     }
 
     public ScratchBlocksVisitor(PrintStream stream) {
@@ -2020,12 +2012,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         lineWrapped = false;
     }
 
-    // FIXME: Hacky because of PrintVisitor interface, maybe this shouldn't be extended after all?
     public String getScratchBlocks() {
-        if (byteStream == null) {
-            throw new IllegalArgumentException("To access this function, do not set a PrintStream in the constructor");
-        }
-        return byteStream.toString();
+        return getOutput();
     }
 
     @Override
@@ -2082,41 +2070,35 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     }
 
     private String getParameterName(ParameterDefinition node) {
-        // FIXME: Terrible hack
-        PrintStream origStream = printStream;
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        printStream = new PrintStream(os);
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false, false);
+        visitor.setProgram(program);
+        visitor.setCurrentActor(currentActor);
 
         if (node.getType() instanceof StringType) {
-            emitNoSpace("[");
-            node.getIdent().accept(this);
-            storeNotesForIssue(node);
-            emitNoSpace("]");
+            visitor.emitNoSpace("[");
+            node.getIdent().accept(visitor);
+            visitor.storeNotesForIssue(node);
+            visitor.emitNoSpace("]");
         } else if (node.getType() instanceof NumberType) {
-            emitNoSpace("(");
-            node.getIdent().accept(this);
-            storeNotesForIssue(node);
-            emitNoSpace(")");
+            visitor.emitNoSpace("(");
+            node.getIdent().accept(visitor);
+            visitor.storeNotesForIssue(node);
+            visitor.emitNoSpace(")");
         } else if (node.getType() instanceof BooleanType) {
-            emitNoSpace("<");
-            node.getIdent().accept(this);
-            storeNotesForIssue(node);
-            emitNoSpace(">");
+            visitor.emitNoSpace("<");
+            node.getIdent().accept(visitor);
+            visitor.storeNotesForIssue(node);
+            visitor.emitNoSpace(">");
         }
-        String name = os.toString();
-        printStream = origStream;
-        return name;
+        return visitor.getOutput();
     }
 
     private String getParameterName(Expression node) {
-        // FIXME: Terrible hack
-        PrintStream origStream = printStream;
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        printStream = new PrintStream(os);
-        handlePossibleQualified(node);
-        String name = os.toString();
-        printStream = origStream;
-        return name;
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false, false);
+        visitor.setProgram(program);
+        visitor.setCurrentActor(currentActor);
+        visitor.handlePossibleQualified(node);
+        return visitor.getOutput();
     }
 
     private void handlePossibleQualified(ASTNode node) {
