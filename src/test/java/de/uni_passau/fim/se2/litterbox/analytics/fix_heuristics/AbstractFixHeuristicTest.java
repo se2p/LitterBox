@@ -92,8 +92,7 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
         // Verify it matches the original bug location (if known and location exists)
         if (loc != null && finder.getBugLocationBlockId() != null
                 && !finder.getBugLocationBlockId().startsWith("__")) {
-            boolean matches = AstNodeUtil.hasBlockId(loc, finder.getBugLocationBlockId())
-                    || loc == finder.semanticMatch;
+            boolean matches = AstNodeUtil.hasBlockId(loc, finder.getBugLocationBlockId());
             Assertions.assertTrue(matches,
                     "Fix location does not match original bug location ID: " + finder.getBugLocationBlockId());
         }

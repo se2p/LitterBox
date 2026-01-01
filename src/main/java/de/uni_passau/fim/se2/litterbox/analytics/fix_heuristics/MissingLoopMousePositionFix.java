@@ -40,10 +40,15 @@ public class MissingLoopMousePositionFix extends AbstractFixHeuristic {
 
     private boolean insideLoop;
 
-    private final IssueFinder relatedBugFinder = new MissingLoopMousePosition();
+    private final MissingLoopMousePosition relatedBugFinder = new MissingLoopMousePosition();
 
     public MissingLoopMousePositionFix(IssueDTO originalIssue) {
         super(originalIssue);
+    }
+
+    @Override
+    protected void resetState() {
+        insideLoop = false;
     }
 
     @Override

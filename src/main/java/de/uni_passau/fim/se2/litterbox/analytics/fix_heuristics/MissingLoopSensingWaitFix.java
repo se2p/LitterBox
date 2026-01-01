@@ -36,7 +36,7 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
  */
 public class MissingLoopSensingWaitFix extends AbstractFixHeuristic {
 
-    private final IssueFinder relatedBugFinder = new MissingLoopSensing();
+    private final MissingLoopSensing relatedBugFinder = new MissingLoopSensing();
 
     public MissingLoopSensingWaitFix(IssueDTO originalIssue) {
         super(originalIssue);

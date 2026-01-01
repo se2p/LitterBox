@@ -38,10 +38,15 @@ public class OrphanedParameterFix extends AbstractFixHeuristic {
 
     private List<ParameterDefinition> currentParameterDefinitions;
 
-    private final IssueFinder relatedBugFinder = new OrphanedParameter();
+    private final OrphanedParameter relatedBugFinder = new OrphanedParameter();
 
     public OrphanedParameterFix(IssueDTO originalIssue) {
         super(originalIssue);
+    }
+
+    @Override
+    protected void resetState() {
+        currentParameterDefinitions = null;
     }
 
     @Override

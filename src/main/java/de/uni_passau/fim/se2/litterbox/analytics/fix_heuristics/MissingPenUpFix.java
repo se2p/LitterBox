@@ -39,10 +39,17 @@ public class MissingPenUpFix extends AbstractFixHeuristic implements PenExtensio
     private PenDownStmt targetPenDown;
     private Script foundScript;
 
-    private final IssueFinder relatedBugFinder = new MissingPenUp();
+    private final MissingPenUp relatedBugFinder = new MissingPenUp();
 
     public MissingPenUpFix(IssueDTO originalIssue) {
         super(originalIssue);
+    }
+
+    @Override
+    protected void resetState() {
+        penUpSet = false;
+        targetPenDown = null;
+        foundScript = null;
     }
 
     @Override
@@ -55,9 +62,6 @@ public class MissingPenUpFix extends AbstractFixHeuristic implements PenExtensio
 
     @Override
     public void visit(ActorDefinition actor) {
-        penUpSet = false;
-        targetPenDown = null;
-        foundScript = null;
         super.visit(actor);
 
         if (targetPenDown != null && penUpSet) {

@@ -32,7 +32,7 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
  */
 public class BlockingIfElseFix extends AbstractFixHeuristic {
 
-    private final IssueFinder relatedBugFinder = new BlockingIfElse();
+    private final BlockingIfElse relatedBugFinder = new BlockingIfElse();
 
     public BlockingIfElseFix(IssueDTO originalIssue) {
         super(originalIssue);

@@ -32,13 +32,15 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
  */
 public class AmbiguousParameterNameUsedFix extends AbstractFixHeuristic {
 
+    private final AmbiguousParameterNameUsed relatedBugFinder = new AmbiguousParameterNameUsed();
+
     public AmbiguousParameterNameUsedFix(IssueDTO originalIssue) {
         super(originalIssue);
     }
 
     @Override
     protected IssueFinder getRelatedBugFinder() {
-        return new AmbiguousParameterNameUsed();
+        return relatedBugFinder;
     }
 
 

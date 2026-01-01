@@ -38,7 +38,7 @@ public class InvalidNumberStringFix extends AbstractFixHeuristic {
     private static final Pattern VALID_NUMBER =
             Pattern.compile("^[+-]?(\\d+(\\.\\d*)?|\\.\\d+)([eE][+-]?\\d+)?$");
 
-    private final IssueFinder relatedBugFinder = new InvalidNumberString();
+    private final InvalidNumberString relatedBugFinder = new InvalidNumberString();
 
     public InvalidNumberStringFix(IssueDTO originalIssue) {
         super(originalIssue);

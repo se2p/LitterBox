@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -95,7 +96,7 @@ public class InvalidNumberStringFixTest extends AbstractFixHeuristicTest {
         InvalidNumberStringFix heuristic = new InvalidNumberStringFix(createTestIssueDTO("__deleted_block__"));
         Set<FixResult> fixes = heuristic.check(program);
         // When the block is deleted, it's considered fixed
-        org.junit.jupiter.api.Assertions.assertFalse(fixes.isEmpty(), 
+        Assertions.assertFalse(fixes.isEmpty(), 
                 "Should find fix when block is deleted");
     }
 }

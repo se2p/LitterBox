@@ -19,16 +19,10 @@
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
-
-
-import java.util.Collections;
 import java.util.Set;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingInitialization;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
-
-
 
 /**
  * Fix heuristic for the MissingInitialization bug.
@@ -39,7 +33,7 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
  */
 public class MissingInitializationFix extends AbstractFixHeuristic {
 
-    private final IssueFinder relatedBugFinder = new MissingInitialization();
+    private final MissingInitialization relatedBugFinder = new MissingInitialization();
 
     public MissingInitializationFix(IssueDTO originalIssue) {
         super(originalIssue);
@@ -52,22 +46,6 @@ public class MissingInitializationFix extends AbstractFixHeuristic {
 
     @Override
     public Set<FixResult> check(Program program) {
-        Set<FixResult> results = super.check(program);
-        if (!results.isEmpty()) {
-            return results;
-        }
-
-        // Find the target node
-        BlockIdNodeFinder.find(program, getBugLocationBlockId()).ifPresent(context -> {
-            if (!isBugStillPresent(context.node())) {
-                // Fixed! The use is now properly initialized (or removed).
-                currentActor = context.actor();
-                currentScript = context.script();
-                currentProcedure = context.procedure();
-                addFix(context.node(), context.node().getMetadata());
-            }
-        });
-
-        return Collections.unmodifiableSet(fixes);
+        return checkWithNodeFinder(program);
     }
 }

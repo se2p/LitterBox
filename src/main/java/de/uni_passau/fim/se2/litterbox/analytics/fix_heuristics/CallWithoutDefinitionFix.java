@@ -38,10 +38,17 @@ public class CallWithoutDefinitionFix extends AbstractFixHeuristic {
     private Script foundScript;
     private ProcedureDefinition foundProcedure;
 
-    private final IssueFinder relatedBugFinder = new CallWithoutDefinition();
+    private final CallWithoutDefinition relatedBugFinder = new CallWithoutDefinition();
 
     public CallWithoutDefinitionFix(IssueDTO originalIssue) {
         super(originalIssue);
+    }
+
+    @Override
+    protected void resetState() {
+        targetCall = null;
+        foundScript = null;
+        foundProcedure = null;
     }
 
     @Override

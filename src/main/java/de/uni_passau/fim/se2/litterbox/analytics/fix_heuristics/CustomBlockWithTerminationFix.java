@@ -32,7 +32,7 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
  */
 public class CustomBlockWithTerminationFix extends AbstractFixHeuristic {
 
-    private final IssueFinder relatedBugFinder = new CustomBlockWithTermination();
+    private final CustomBlockWithTermination relatedBugFinder = new CustomBlockWithTermination();
 
     public CustomBlockWithTerminationFix(IssueDTO originalIssue) {
         super(originalIssue);
@@ -42,8 +42,6 @@ public class CustomBlockWithTerminationFix extends AbstractFixHeuristic {
     protected IssueFinder getRelatedBugFinder() {
         return relatedBugFinder;
     }
-
-
 
     @Override
     public void visit(CallStmt node) {

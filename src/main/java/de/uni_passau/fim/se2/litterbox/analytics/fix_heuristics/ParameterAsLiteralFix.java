@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ParameterAsLiteral;
@@ -41,10 +40,15 @@ public class ParameterAsLiteralFix extends AbstractFixHeuristic {
 
     private Set<String> parametersInScope;
 
-    private final IssueFinder relatedBugFinder = new ParameterAsLiteral();
+    private final ParameterAsLiteral relatedBugFinder = new ParameterAsLiteral();
 
     public ParameterAsLiteralFix(IssueDTO originalIssue) {
         super(originalIssue);
+    }
+
+    @Override
+    protected void resetState() {
+        parametersInScope = null;
     }
 
     @Override

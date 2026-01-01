@@ -43,10 +43,16 @@ public class IllegalParameterRefactorFix extends AbstractFixHeuristic {
     private ArgumentInfo[] currentArguments;
     private boolean insideProcedure;
 
-    private final IssueFinder relatedBugFinder = new IllegalParameterRefactor();
+    private final IllegalParameterRefactor relatedBugFinder = new IllegalParameterRefactor();
 
     public IllegalParameterRefactorFix(IssueDTO originalIssue) {
         super(originalIssue);
+    }
+
+    @Override
+    protected void resetState() {
+        currentArguments = null;
+        insideProcedure = false;
     }
 
     @Override
@@ -60,8 +66,10 @@ public class IllegalParameterRefactorFix extends AbstractFixHeuristic {
         insideProcedure = true;
         if (procMap.containsKey(node.getIdent())) {
             currentArguments = procMap.get(node.getIdent()).getArguments();
+        } else {
+            currentArguments = null;
         }
-        visitChildren(node);
+        super.visit(node);
         insideProcedure = false;
     }
 

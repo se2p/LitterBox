@@ -23,7 +23,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingPenDown;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
@@ -40,10 +39,17 @@ public class MissingPenDownFix extends AbstractFixHeuristic implements PenExtens
     private PenUpStmt targetPenUp;
     private Script foundScript;
 
-    private final IssueFinder relatedBugFinder = new MissingPenDown();
+    private final MissingPenDown relatedBugFinder = new MissingPenDown();
 
     public MissingPenDownFix(IssueDTO originalIssue) {
         super(originalIssue);
+    }
+
+    @Override
+    protected void resetState() {
+        penDownSet = false;
+        targetPenUp = null;
+        foundScript = null;
     }
 
     @Override
@@ -51,14 +57,8 @@ public class MissingPenDownFix extends AbstractFixHeuristic implements PenExtens
         return relatedBugFinder;
     }
 
-
-
-
     @Override
     public void visit(ActorDefinition actor) {
-        penDownSet = false;
-        targetPenUp = null;
-        foundScript = null;
         super.visit(actor);
 
         if (targetPenUp != null && penDownSet) {

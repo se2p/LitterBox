@@ -18,13 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageNeverReceived;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
@@ -42,7 +43,7 @@ public class MessageNeverReceivedFix extends AbstractFixHeuristic {
     private Map<String, Map<ActorDefinition, List<Script>>> actorScriptsPerMessage;
     private ASTNode buggyBroadcast;
 
-    private final IssueFinder relatedBugFinder = new MessageNeverReceived();
+    private final MessageNeverReceived relatedBugFinder = new MessageNeverReceived();
 
     public MessageNeverReceivedFix(IssueDTO originalIssue) {
         super(originalIssue);
@@ -55,22 +56,21 @@ public class MessageNeverReceivedFix extends AbstractFixHeuristic {
 
 
     @Override
-    public Set<FixResult> check(Program program) {
-        Preconditions.checkNotNull(program);
-        this.program = program;
-        fixes = new LinkedHashSet<>();
+    protected void resetState() {
+        message = null;
         actorScriptsPerMessage = new LinkedHashMap<>();
         buggyBroadcast = null;
-        message = null;
+    }
 
+    @Override
+    public Set<FixResult> check(Program program) {
         Set<FixResult> results = super.check(program);
         if (!results.isEmpty()) {
             return results;
         }
 
         if (buggyBroadcast != null && message != null) {
-            Map<ActorDefinition, List<Script>> actorEvents = actorScriptsPerMessage.get(message);
-            if (actorEvents != null) {
+            if (actorScriptsPerMessage.containsKey(message)) {
                 addFix(buggyBroadcast, buggyBroadcast.getMetadata());
             }
         }

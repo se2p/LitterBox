@@ -38,7 +38,7 @@ public class EndlessRecursionFix extends AbstractFixHeuristic {
     private String currentProcedureName;
     private boolean insideProcedure;
 
-    private final IssueFinder relatedBugFinder = new EndlessRecursion();
+    private final EndlessRecursion relatedBugFinder = new EndlessRecursion();
 
     public EndlessRecursionFix(IssueDTO originalIssue) {
         super(originalIssue);
@@ -51,13 +51,21 @@ public class EndlessRecursionFix extends AbstractFixHeuristic {
 
 
     @Override
+    protected void resetState() {
+        loopIfCounter = 0;
+        currentProcedureName = null;
+        insideProcedure = false;
+    }
+
+    @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
-        if (procMap.containsKey(node.getIdent())) {
+        if (procMap != null && procMap.containsKey(node.getIdent())) {
             currentProcedureName = procMap.get(node.getIdent()).getName();
         }
         visitChildren(node);
         insideProcedure = false;
+        currentProcedureName = null;
     }
 
     @Override

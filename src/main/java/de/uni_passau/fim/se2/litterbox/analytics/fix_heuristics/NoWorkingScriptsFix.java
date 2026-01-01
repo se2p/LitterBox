@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -52,7 +51,7 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
     private Script targetScript;
     private ActorDefinition targetActorOfBug;
 
-    private final IssueFinder relatedBugFinder = new NoWorkingScripts();
+    private final NoWorkingScripts relatedBugFinder = new NoWorkingScripts();
 
     public NoWorkingScriptsFix(IssueDTO originalIssue) {
         super(originalIssue);
@@ -64,25 +63,29 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
     }
 
     @Override
-    public Set<FixResult> check(Program program) {
-        this.program = program;
+    protected void resetState() {
+        stillFullfilledEmptyScript = false;
+        deadCodeFound = false;
+        foundEvent = false;
         targetNode = null;
         targetScript = null;
         targetActorOfBug = null;
 
-        // 1. Find the buggy node and its context
         BlockIdNodeFinder.find(program, getBugLocationBlockId()).ifPresent(ctx -> {
             targetNode = ctx.node();
             targetScript = ctx.script();
             targetActorOfBug = ctx.actor();
         });
-        
+    }
+
+    @Override
+    public Set<FixResult> check(Program program) {
         return super.check(program);
     }
 
     @Override
     public void visit(ActorDefinition actor) {
-        if (actor != targetActorOfBug) {
+        if (targetActorOfBug == null || actor != targetActorOfBug) {
             return;
         }
         

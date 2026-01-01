@@ -39,10 +39,16 @@ public class MissingAskFix extends AbstractFixHeuristic {
     private boolean askUsed;
     private Answer targetAnswer;
 
-    private final IssueFinder relatedBugFinder = new MissingAsk();
+    private final MissingAsk relatedBugFinder = new MissingAsk();
 
     public MissingAskFix(IssueDTO originalIssue) {
         super(originalIssue);
+    }
+
+    @Override
+    protected void resetState() {
+        askUsed = false;
+        targetAnswer = null;
     }
 
     @Override
@@ -67,8 +73,6 @@ public class MissingAskFix extends AbstractFixHeuristic {
 
     @Override
     public Set<FixResult> check(Program program) {
-        askUsed = false;
-        targetAnswer = null;
         super.check(program);
 
         if (targetAnswer != null && askUsed) {

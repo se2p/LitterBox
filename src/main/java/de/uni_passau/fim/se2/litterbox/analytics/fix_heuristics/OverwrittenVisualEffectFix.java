@@ -44,7 +44,7 @@ import java.util.Map;
  */
 public class OverwrittenVisualEffectFix extends AbstractFixHeuristic {
 
-    private final IssueFinder relatedBugFinder = new OverwrittenVisualEffect();
+    private final OverwrittenVisualEffect relatedBugFinder = new OverwrittenVisualEffect();
 
     public OverwrittenVisualEffectFix(IssueDTO originalIssue) {
         super(originalIssue);

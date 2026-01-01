@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class AmbiguousCustomBlockSignatureFix extends AbstractFixHeuristic {
 
-    private final IssueFinder relatedBugFinder = new AmbiguousCustomBlockSignature();
+    private final AmbiguousCustomBlockSignature relatedBugFinder = new AmbiguousCustomBlockSignature();
 
     public AmbiguousCustomBlockSignatureFix(IssueDTO originalIssue) {
         super(originalIssue);

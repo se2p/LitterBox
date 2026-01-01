@@ -49,10 +49,17 @@ public class MissingResourceFix extends AbstractFixHeuristic {
     private Set<String> backdrops;
     private Set<String> sounds;
 
-    private final IssueFinder relatedBugFinder = new MissingResource();
+    private final MissingResource relatedBugFinder = new MissingResource();
 
     public MissingResourceFix(IssueDTO originalIssue) {
         super(originalIssue);
+    }
+
+    @Override
+    protected void resetState() {
+        images = null;
+        backdrops = null;
+        sounds = null;
     }
 
     @Override

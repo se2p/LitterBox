@@ -47,9 +47,15 @@ public class MissingLoopSensingFix extends AbstractFixHeuristic {
     private boolean afterWaitUntil;
     private boolean afterAskAndWait;
 
+    @Override
+    protected void resetState() {
+        loopStack = new Stack<>();
+        afterWaitUntil = false;
+        afterAskAndWait = false;
+    }
+
     public MissingLoopSensingFix(IssueDTO originalIssue) {
         super(originalIssue);
-        loopStack = new Stack<>();
     }
 
     @Override
@@ -57,12 +63,11 @@ public class MissingLoopSensingFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
-
     @Override
     public void visit(Script node) {
-        // Reset flags for each script to ensure proper scoping
-        loopStack = new Stack<>();
+        // Flags reset at start of overall check via resetState(),
+        // but we reset them here for each script to ensure proper scoping
+        // within the same program traversal.
         afterWaitUntil = false;
         afterAskAndWait = false;
         visitChildren(node);

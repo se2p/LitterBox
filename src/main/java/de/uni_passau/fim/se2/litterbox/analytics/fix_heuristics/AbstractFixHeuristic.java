@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import java.util.Optional;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
@@ -61,9 +62,6 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
     /** The bug instances found by the related bug finder in the current program. */
     protected Set<Issue> currentBugInstances = Collections.emptySet();
 
-    /** A semantically matched node if the original block ID is missing. */
-    protected ASTNode semanticMatch;
-
     // Context fields (similar to AbstractIssueFinder)
     protected Program program;
     protected ActorDefinition currentActor;
@@ -95,6 +93,18 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
     }
 
     /**
+     * Returns the name of the related bug finder.
+     *
+     * <p>Subclasses can override this to return a constant string instead of
+     * instantiating the bug finder.
+     *
+     * @return the related bug finder name
+     */
+    protected String getRelatedBugFinderName() {
+        return getRelatedBugFinder().getName();
+    }
+
+    /**
      * Returns the bug finder that this fix heuristic is associated with.
      *
      * <p>This follows the injector pattern: each fix heuristic knows which bug
@@ -105,21 +115,18 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
     protected abstract IssueFinder getRelatedBugFinder();
 
     @Override
-    public String getName() {
-        return getRelatedBugFinder().getName();
+    public final String getName() {
+        return getRelatedBugFinderName();
     }
 
     /**
-     * Checks if the given node matches the bug location block ID or the semantic match.
+     * Checks if the given node matches the bug location block ID.
      *
      * @param node the AST node to check
      * @return true if this node matches the original bug location
      */
     protected boolean matchesBugLocation(ASTNode node) {
-        if (AstNodeUtil.hasBlockId(node, getBugLocationBlockId())) {
-            return true;
-        }
-        return semanticMatch != null && node == semanticMatch;
+        return AstNodeUtil.hasBlockId(node, getBugLocationBlockId());
     }
 
     /**
@@ -138,8 +145,20 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
      * @return true if the bug finder still reports an issue for this location
      */
     protected boolean isBugStillPresent(ASTNode node) {
+        String originalBlockId = getBugLocationBlockId();
+
         for (Issue issue : currentBugInstances) {
-            if (isSelfOrDescendant(issue.getCodeLocation(), node)) {
+            ASTNode bugLoc = issue.getCodeLocation();
+
+            // If we have a block ID, try to match specifically on that
+            if (originalBlockId != null && !originalBlockId.isBlank()) {
+                if (AstNodeUtil.hasBlockId(bugLoc, originalBlockId)) {
+                    return true;
+                }
+            }
+
+            // Fallback: check if the bug location is a descendant of the given node
+            if (isSelfOrDescendant(bugLoc, node)) {
                 return true;
             }
         }
@@ -160,10 +179,19 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
         return false;
     }
 
+    /**
+     * Hook for subclasses to reset their state before each check.
+     * Called at the start of {@link #check(Program)}.
+     */
+    protected void resetState() {
+        // Default: no additional state to reset
+    }
+
     @Override
     public Set<FixResult> check(Program program) {
         this.program = program;
         this.fixes = new LinkedHashSet<>();
+        resetState();
 
         String blockId = getBugLocationBlockId();
         boolean blockExists = true;
@@ -171,15 +199,11 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
         if (blockId != null && !blockId.isBlank()) {
             blockExists = !BlockIdNodeFinder.find(program, blockId).isEmpty();
 
-            // Try to find semantic match if ID is missing (C3)
+            // If the block is not found, it implies the buggy block was deleted,
+            // which is considered a valid fix.
             if (!blockExists) {
-                findSemanticMatch(program);
-                // If the block is not found and no semantic match is found,
-                // it implies the buggy block was deleted, which is valid fix.
-                if (semanticMatch == null) {
-                    addFixWithLooseComment();
-                    return Collections.unmodifiableSet(fixes);
-                }
+                addFixWithLooseComment();
+                return Collections.unmodifiableSet(fixes);
             }
         }
 
@@ -192,11 +216,42 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
     }
 
     /**
-     * Attempts to find a semantic match for the missing original block.
-     * Default implementation does nothing; subclasses can override for specific types.
+     * Alternative check implementation that uses BlockIdNodeFinder directly.
+     *
+     * <p>Subclasses that don't need complex visitor-based detection can override
+     * {@link #check(Program)} and call this method.
+     *
+     * @param program the program to check
+     * @return a set of fix results
      */
-    protected void findSemanticMatch(Program program) {
-        // Subclasses can implement logic to find a "stunt double" for the missing block
+    protected Set<FixResult> checkWithNodeFinder(Program program) {
+        this.program = program;
+        this.fixes = new LinkedHashSet<>();
+        resetState();
+
+        String blockId = getBugLocationBlockId();
+        if (blockId == null || blockId.isBlank()) {
+            return Collections.emptySet();
+        }
+
+        Optional<BlockIdNodeFinder.NodeContext> contextOpt = BlockIdNodeFinder.find(program, blockId);
+
+        if (contextOpt.isEmpty()) {
+            // Block deleted - valid fix
+            addFixWithLooseComment();
+        } else {
+            refreshBugInstances(program);
+            BlockIdNodeFinder.NodeContext context = contextOpt.get();
+            if (!isBugStillPresent(context.node())) {
+                // Fixed! The block exists but the bug no longer applies.
+                currentActor = context.actor();
+                currentScript = context.script();
+                currentProcedure = context.procedure();
+                addFix(context.node(), context.node().getMetadata());
+            }
+        }
+
+        return Collections.unmodifiableSet(fixes);
     }
 
     /**
@@ -245,6 +300,7 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
         currentScript = script;
         currentProcedure = null;
         visitChildren(script);
+        currentScript = null;
     }
 
     @Override
@@ -252,5 +308,6 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
         currentProcedure = procedure;
         currentScript = null;
         visitChildren(procedure);
+        currentProcedure = null;
     }
 }

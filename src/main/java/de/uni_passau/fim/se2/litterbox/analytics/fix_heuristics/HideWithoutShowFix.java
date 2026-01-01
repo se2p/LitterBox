@@ -42,10 +42,17 @@ public class HideWithoutShowFix extends AbstractFixHeuristic {
     private boolean hasShow;
     private Hide targetHide;
 
-    private final IssueFinder relatedBugFinder = new HideWithoutShow();
+    private final HideWithoutShow relatedBugFinder = new HideWithoutShow();
 
     public HideWithoutShowFix(IssueDTO originalIssue) {
         super(originalIssue);
+    }
+
+    @Override
+    protected void resetState() {
+        hasVisibleChange = false;
+        hasShow = false;
+        targetHide = null;
     }
 
     @Override
@@ -53,15 +60,10 @@ public class HideWithoutShowFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
-
-
     @Override
     public void visit(ActorDefinition node) {
-        hasVisibleChange = false;
-        hasShow = false;
-        targetHide = null;
-        visitChildren(node);
+        // State is reset by resetState() at the start of check()
+        super.visit(node);
 
         if (targetHide != null && (hasShow || !hasVisibleChange)) {
             addFix(targetHide, targetHide.getMetadata());

@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -200,7 +201,7 @@ public class KeySetPositionFixTest extends AbstractFixHeuristicTest {
                 new de.uni_passau.fim.se2.litterbox.analytics.bugs.KeySetPosition();
         java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues =
                 bugFinder.check(fixedProgram);
-        org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(),
+        Assertions.assertTrue(originalIssues.isEmpty(),
                 "Original polling program with ChangeX should be clean");
 
         // Inject bug - transforms polling to event-driven with SetX
@@ -209,20 +210,20 @@ public class KeySetPositionFixTest extends AbstractFixHeuristicTest {
         java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results =
                 injector.inject(fixedProgram);
 
-        org.junit.jupiter.api.Assertions.assertFalse(results.isEmpty(),
+        Assertions.assertFalse(results.isEmpty(),
                 "Injector should transform polling to event-driven");
 
         // Verify bug in mutated program
         Program mutatedProgram = results.get(0).mutatedProgram();
         java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues =
                 bugFinder.check(mutatedProgram);
-        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(),
+        Assertions.assertFalse(bugIssues.isEmpty(),
                 "Mutated event-driven program should have KeySetPosition bug");
 
         // Find the ChangeXBy block ID in the original (correct) program
         String changeXBlockId = findBlockId(fixedProgram, 
                 de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy.class);
-        org.junit.jupiter.api.Assertions.assertNotNull(changeXBlockId,
+        Assertions.assertNotNull(changeXBlockId,
                 "Should find ChangeXBy block in original program");
         
         // Fix heuristic should detect fix on the original program

@@ -47,7 +47,7 @@ import java.util.List;
  */
 public class TerminatedLoopFix extends AbstractFixHeuristic {
 
-    private final IssueFinder relatedBugFinder = new TerminatedLoop();
+    private final TerminatedLoop relatedBugFinder = new TerminatedLoop();
 
     public TerminatedLoopFix(IssueDTO originalIssue) {
         super(originalIssue);

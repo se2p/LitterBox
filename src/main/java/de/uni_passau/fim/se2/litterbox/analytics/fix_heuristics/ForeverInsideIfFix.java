@@ -43,10 +43,16 @@ public class ForeverInsideIfFix extends AbstractFixHeuristic {
     private boolean insideIf;
     private int ifFollowingCounter;
 
-    private final IssueFinder relatedBugFinder = new ForeverInsideIf();
+    private final ForeverInsideIf relatedBugFinder = new ForeverInsideIf();
 
     public ForeverInsideIfFix(IssueDTO originalIssue) {
         super(originalIssue);
+    }
+
+    @Override
+    protected void resetState() {
+        insideIf = false;
+        ifFollowingCounter = 0;
     }
 
     @Override

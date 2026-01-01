@@ -19,9 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.TypeError;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
@@ -36,36 +34,19 @@ import java.util.Set;
  */
 public class TypeErrorFix extends AbstractFixHeuristic {
 
-    private final TypeError typeErrorFinder;
+    private final TypeError relatedBugFinder = new TypeError();
 
     public TypeErrorFix(IssueDTO originalIssue) {
         super(originalIssue);
-        this.typeErrorFinder = new TypeError();
     }
 
     @Override
     protected IssueFinder getRelatedBugFinder() {
-        return typeErrorFinder;
+        return relatedBugFinder;
     }
 
     @Override
     public Set<FixResult> check(Program program) {
-        Set<FixResult> results = super.check(program);
-        if (!results.isEmpty()) {
-            return results;
-        }
-
-        // Find the target node
-        BlockIdNodeFinder.find(program, getBugLocationBlockId()).ifPresent(context -> {
-            ASTNode foundNode = context.node();
-            if (!isBugStillPresent(foundNode)) {
-                currentActor = context.actor();
-                currentScript = context.script();
-                currentProcedure = context.procedure();
-                addFix(foundNode, foundNode.getMetadata());
-            }
-        });
-
-        return java.util.Collections.unmodifiableSet(fixes);
+        return checkWithNodeFinder(program);
     }
 }

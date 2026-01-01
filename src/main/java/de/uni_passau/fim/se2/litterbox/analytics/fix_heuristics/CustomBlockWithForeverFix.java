@@ -32,7 +32,7 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
  */
 public class CustomBlockWithForeverFix extends AbstractFixHeuristic {
 
-    private final IssueFinder relatedBugFinder = new CustomBlockWithForever();
+    private final CustomBlockWithForever relatedBugFinder = new CustomBlockWithForever();
 
     public CustomBlockWithForeverFix(IssueDTO originalIssue) {
         super(originalIssue);

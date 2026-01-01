@@ -43,10 +43,15 @@ public class FloatingPointComparisonFix extends AbstractFixHeuristic {
 
     private boolean inCondition;
 
-    private final IssueFinder relatedBugFinder = new FloatingPointComparison();
+    private final FloatingPointComparison relatedBugFinder = new FloatingPointComparison();
 
     public FloatingPointComparisonFix(IssueDTO originalIssue) {
         super(originalIssue);
+    }
+
+    @Override
+    protected void resetState() {
+        inCondition = false;
     }
 
     @Override
@@ -54,10 +59,9 @@ public class FloatingPointComparisonFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
     @Override
     public void visit(Script node) {
-        inCondition = false;
+        // State is reset by resetState() at the start of check()
         visitChildren(node);
     }
 

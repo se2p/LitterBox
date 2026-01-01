@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -53,10 +52,19 @@ public class MissingBackdropSwitchFix extends AbstractFixHeuristic {
     private ActorDefinition foundActor;
     private Script foundScript;
 
-    private final IssueFinder relatedBugFinder = new MissingBackdropSwitch();
+    private final MissingBackdropSwitch relatedBugFinder = new MissingBackdropSwitch();
 
     public MissingBackdropSwitchFix(IssueDTO originalIssue) {
         super(originalIssue);
+    }
+
+    @Override
+    protected void resetState() {
+        switchedBackdrops = new HashSet<>();
+        nextRandPrev = false;
+        targetEvent = null;
+        foundActor = null;
+        foundScript = null;
     }
 
     @Override

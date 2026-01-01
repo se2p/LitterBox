@@ -39,7 +39,7 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
  */
 public class ExpressionAsTouchingOrColorFix extends AbstractFixHeuristic implements PenExtensionVisitor {
 
-    private final IssueFinder relatedBugFinder = new ExpressionAsTouchingOrColor();
+    private final ExpressionAsTouchingOrColor relatedBugFinder = new ExpressionAsTouchingOrColor();
 
     public ExpressionAsTouchingOrColorFix(IssueDTO originalIssue) {
         super(originalIssue);

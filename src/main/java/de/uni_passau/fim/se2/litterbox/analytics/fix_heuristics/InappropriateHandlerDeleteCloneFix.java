@@ -36,10 +36,15 @@ public class InappropriateHandlerDeleteCloneFix extends AbstractFixHeuristic {
 
     private boolean insideGreenFlag;
 
-    private final IssueFinder relatedBugFinder = new InappropriateHandlerDeleteClone();
+    private final InappropriateHandlerDeleteClone relatedBugFinder = new InappropriateHandlerDeleteClone();
 
     public InappropriateHandlerDeleteCloneFix(IssueDTO originalIssue) {
         super(originalIssue);
+    }
+
+    @Override
+    protected void resetState() {
+        insideGreenFlag = false;
     }
 
     @Override

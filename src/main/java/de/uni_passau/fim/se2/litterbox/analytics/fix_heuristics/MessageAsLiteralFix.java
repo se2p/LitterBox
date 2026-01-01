@@ -44,17 +44,22 @@ public class MessageAsLiteralFix extends AbstractFixHeuristic {
     private Set<String> sentMessages;
     private StringLiteral foundLiteral;
 
-    private final IssueFinder relatedBugFinder = new MessageAsLiteral();
+    private final MessageAsLiteral relatedBugFinder = new MessageAsLiteral();
 
     public MessageAsLiteralFix(IssueDTO originalIssue) {
         super(originalIssue);
     }
 
     @Override
+    protected void resetState() {
+        sentMessages = new LinkedHashSet<>();
+        foundLiteral = null;
+    }
+
+    @Override
     protected IssueFinder getRelatedBugFinder() {
         return relatedBugFinder;
     }
-
 
     @Override
     public void visit(Broadcast node) {
@@ -99,9 +104,6 @@ public class MessageAsLiteralFix extends AbstractFixHeuristic {
 
     @Override
     public Set<FixResult> check(Program program) {
-        sentMessages = new LinkedHashSet<>();
-        foundLiteral = null;
-
         Set<FixResult> results = super.check(program);
         if (!results.isEmpty()) {
             return results;

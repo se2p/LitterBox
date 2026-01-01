@@ -19,8 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
@@ -29,8 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.InterruptedLoopSensing;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
@@ -41,7 +37,7 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
  */
 public class InterruptedLoopSensingFix extends AbstractFixHeuristic {
 
-    private final IssueFinder relatedBugFinder = new InterruptedLoopSensing();
+    private final InterruptedLoopSensing relatedBugFinder = new InterruptedLoopSensing();
 
     public InterruptedLoopSensingFix(IssueDTO originalIssue) {
         super(originalIssue);
@@ -95,57 +91,5 @@ public class InterruptedLoopSensingFix extends AbstractFixHeuristic {
     public void visit(SayForSecs node) {
         check(node);
         visitChildren(node);
-    }
-
-    @Override
-    protected void findSemanticMatch(Program program) {
-        // Simple semantic matching: find the first block of a supported type
-        // that is NOT still buggy. This is a heuristic itself.
-        program.accept(new ScratchVisitor() {
-            @Override
-            public void visit(WaitSeconds node) {
-                tryMatch(node);
-                visitChildren(node);
-            }
-
-            @Override
-            public void visit(GlideSecsTo node) {
-                tryMatch(node);
-                visitChildren(node);
-            }
-
-            @Override
-            public void visit(GlideSecsToXY node) {
-                tryMatch(node);
-                visitChildren(node);
-            }
-
-            @Override
-            public void visit(ThinkForSecs node) {
-                tryMatch(node);
-                visitChildren(node);
-            }
-
-            @Override
-            public void visit(PlaySoundUntilDone node) {
-                tryMatch(node);
-                visitChildren(node);
-            }
-
-            @Override
-            public void visit(SayForSecs node) {
-                tryMatch(node);
-                visitChildren(node);
-            }
-
-            private void tryMatch(ASTNode node) {
-                if (semanticMatch == null && !isBugStillPresent(node)) {
-                    // Check if it's in a script (roughly same context)
-                    if (AstNodeUtil.findParent(node, Script.class) != null) {
-                        semanticMatch = node;
-                    }
-                }
-            }
-        });
     }
 }

@@ -38,7 +38,7 @@ import java.util.List;
  */
 public class ImmediateStopAfterSayFix extends AbstractFixHeuristic {
 
-    private final IssueFinder relatedBugFinder = new ImmediateStopAfterSayThink();
+    private final ImmediateStopAfterSayThink relatedBugFinder = new ImmediateStopAfterSayThink();
 
     public ImmediateStopAfterSayFix(IssueDTO originalIssue) {
         super(originalIssue);

@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
@@ -46,7 +45,7 @@ import java.util.*;
  * The bug is fixed if the message is now sent.
  */
 public class MessageNeverSentFix extends AbstractFixHeuristic {
-    private final IssueFinder relatedBugFinder = new MessageNeverSent();
+    private final MessageNeverSent relatedBugFinder = new MessageNeverSent();
 
     public MessageNeverSentFix(IssueDTO originalIssue) {
         super(originalIssue);

@@ -47,10 +47,18 @@ public class MissingCloneCallFix extends AbstractFixHeuristic {
     private ActorDefinition foundActor;
     private Script foundScript;
 
-    private final IssueFinder relatedBugFinder = new MissingCloneCall();
+    private final MissingCloneCall relatedBugFinder = new MissingCloneCall();
 
     public MissingCloneCallFix(IssueDTO originalIssue) {
         super(originalIssue);
+    }
+
+    @Override
+    protected void resetState() {
+        clonedActors = new HashSet<>();
+        targetEvent = null;
+        foundActor = null;
+        foundScript = null;
     }
 
     @Override

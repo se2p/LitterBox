@@ -38,7 +38,7 @@ import java.util.List;
  */
 public class ImmediateDeleteCloneAfterBroadcastFix extends AbstractFixHeuristic {
 
-    private final IssueFinder relatedBugFinder = new ImmediateDeleteCloneAfterBroadcast();
+    private final ImmediateDeleteCloneAfterBroadcast relatedBugFinder = new ImmediateDeleteCloneAfterBroadcast();
 
     public ImmediateDeleteCloneAfterBroadcastFix(IssueDTO originalIssue) {
         super(originalIssue);

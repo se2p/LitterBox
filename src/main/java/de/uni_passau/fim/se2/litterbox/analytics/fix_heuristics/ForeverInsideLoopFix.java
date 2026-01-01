@@ -48,7 +48,7 @@ public class ForeverInsideLoopFix extends AbstractFixHeuristic {
     private boolean insideScript = false;
     private int loopDepth = 0;
 
-    private final IssueFinder relatedBugFinder = new ForeverInsideLoop();
+    private final ForeverInsideLoop relatedBugFinder = new ForeverInsideLoop();
 
     public ForeverInsideLoopFix(IssueDTO originalIssue) {
         super(originalIssue);
@@ -60,6 +60,12 @@ public class ForeverInsideLoopFix extends AbstractFixHeuristic {
     }
 
 
+
+    @Override
+    protected void resetState() {
+        insideScript = false;
+        loopDepth = 0;
+    }
 
     @Override
     public void visit(ProcedureDefinition node) {
@@ -89,6 +95,7 @@ public class ForeverInsideLoopFix extends AbstractFixHeuristic {
 
     @Override
     public void visit(UntilStmt node) {
+        checkLoopFix(node);
         loopDepth++;
         visitChildren(node);
         loopDepth--;
@@ -96,6 +103,7 @@ public class ForeverInsideLoopFix extends AbstractFixHeuristic {
 
     @Override
     public void visit(RepeatTimesStmt node) {
+        checkLoopFix(node);
         loopDepth++;
         visitChildren(node);
         loopDepth--;

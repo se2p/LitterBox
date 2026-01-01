@@ -32,7 +32,7 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
  */
 public class MissingTerminationConditionFix extends AbstractFixHeuristic {
 
-    private final IssueFinder relatedBugFinder = new MissingTerminationCondition();
+    private final MissingTerminationCondition relatedBugFinder = new MissingTerminationCondition();
 
     public MissingTerminationConditionFix(IssueDTO originalIssue) {
         super(originalIssue);

@@ -36,10 +36,15 @@ public class ParameterOutOfScopeFix extends AbstractFixHeuristic {
 
     private boolean insideScript;
 
-    private final IssueFinder relatedBugFinder = new ParameterOutOfScope();
+    private final ParameterOutOfScope relatedBugFinder = new ParameterOutOfScope();
 
     public ParameterOutOfScopeFix(IssueDTO originalIssue) {
         super(originalIssue);
+    }
+
+    @Override
+    protected void resetState() {
+        insideScript = false;
     }
 
     @Override

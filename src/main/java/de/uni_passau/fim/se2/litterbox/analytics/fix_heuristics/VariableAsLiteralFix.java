@@ -47,14 +47,23 @@ public class VariableAsLiteralFix extends AbstractFixHeuristic {
     private Map<String, ExpressionListInfo> listMap;
     private Set<String> variablesInScope;
 
-    private final IssueFinder relatedBugFinder = new VariableAsLiteral();
+    private final VariableAsLiteral relatedBugFinder = new VariableAsLiteral();
 
     public VariableAsLiteralFix(IssueDTO originalIssue) {
         super(originalIssue);
     }
 
+    @Override
+    protected void resetState() {
+        variablesInScope = null;
+        varMap = null;
+        listMap = null;
+    }
 
-
+    @Override
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
 
     @Override
     public Set<FixResult> check(Program program) {
@@ -92,11 +101,6 @@ public class VariableAsLiteralFix extends AbstractFixHeuristic {
         visit(program);
         
         return Collections.unmodifiableSet(fixes);
-    }
-
-    @Override
-    protected IssueFinder getRelatedBugFinder() {
-        return relatedBugFinder;
     }
 
     @Override

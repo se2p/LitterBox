@@ -18,12 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.KeySetPosition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
@@ -40,6 +36,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -62,7 +59,7 @@ public class KeySetPositionFix extends AbstractFixHeuristic {
     private int currentArrowKey = -1;
     private boolean inKeyContext = false;
 
-    private final IssueFinder relatedBugFinder = new KeySetPosition();
+    private final KeySetPosition relatedBugFinder = new KeySetPosition();
 
     public KeySetPositionFix(IssueDTO originalIssue) {
         super(originalIssue);
@@ -74,7 +71,23 @@ public class KeySetPositionFix extends AbstractFixHeuristic {
     }
 
     @Override
+    protected void resetState() {
+        currentArrowKey = -1;
+        inKeyContext = false;
+    }
+
+    @Override
     public Set<FixResult> check(Program program) {
+        this.program = program;
+        this.fixes = new LinkedHashSet<>();
+        resetState();
+
+        // Handle deleted blocks
+        if (getBugLocationBlockId() != null && getBugLocationBlockId().startsWith("__")) {
+            addFix(null, null);
+            return Collections.unmodifiableSet(fixes);
+        }
+
         Optional<BlockIdNodeFinder.NodeContext> contextOpt = BlockIdNodeFinder.find(program, getBugLocationBlockId());
 
         if (contextOpt.isPresent()) {
@@ -84,17 +97,22 @@ public class KeySetPositionFix extends AbstractFixHeuristic {
             // If the node exists but is not a SetX or SetY, it means it was replaced (e.g. by ChangeX)
             // enabling the fix condition.
             if (!(node instanceof SetXTo) && !(node instanceof SetYTo)) {
-                currentActor = context.actor();
-                currentScript = context.script();
-                currentProcedure = context.procedure();
+                this.currentActor = context.actor();
+                this.currentScript = context.script();
+                this.currentProcedure = context.procedure();
                 addFix(node, node.getMetadata());
-                return Collections.unmodifiableSet(fixes);
             }
         } else {
-             // If context is empty, let super logic handle deletion detection
+            // Block was deleted
+            addFix(null, null);
         }
 
-        return super.check(program);
+        if (fixes.isEmpty()) {
+            refreshBugInstances(program);
+            program.accept(this);
+        }
+
+        return Collections.unmodifiableSet(fixes);
     }
 
 

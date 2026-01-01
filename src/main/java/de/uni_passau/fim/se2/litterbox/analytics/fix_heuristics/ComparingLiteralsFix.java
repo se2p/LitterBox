@@ -39,7 +39,7 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
  */
 public class ComparingLiteralsFix extends AbstractFixHeuristic {
 
-    private final IssueFinder relatedBugFinder = new ComparingLiterals();
+    private final ComparingLiterals relatedBugFinder = new ComparingLiterals();
 
     public ComparingLiteralsFix(IssueDTO originalIssue) {
         super(originalIssue);

@@ -39,10 +39,16 @@ public class RecursiveCloningFix extends AbstractFixHeuristic {
     private boolean secondVisit;
     private boolean foundDelete;
 
-    private final IssueFinder relatedBugFinder = new RecursiveCloning();
+    private final RecursiveCloning relatedBugFinder = new RecursiveCloning();
 
     public RecursiveCloningFix(IssueDTO originalIssue) {
         super(originalIssue);
+    }
+
+    @Override
+    protected void resetState() {
+        secondVisit = false;
+        foundDelete = false;
     }
 
     @Override
