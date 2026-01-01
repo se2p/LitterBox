@@ -19,6 +19,8 @@
 package de.uni_passau.fim.se2.litterbox;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.export.ExportAnalyzer;
+import de.uni_passau.fim.se2.litterbox.export.ExportFormat;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
@@ -43,11 +45,10 @@ import java.util.concurrent.Callable;
                 LlmSubcommand.class,
                 Main.DetectorsSubcommand.class,
                 Main.FeatureSubcommand.class,
-                Main.LeilaSubcommand.class,
+                Main.ExportSubcommand.class,
                 Main.RefactoringSubcommand.class,
                 Main.StatsSubcommand.class,
                 Main.DotSubcommand.class,
-                Main.ScratchBlocksSubcommand.class,
                 Main.ExtractSubcommand.class,
                 MineSubcommand.class,
         },
@@ -62,10 +63,11 @@ import java.util.concurrent.Callable;
                         + "java -jar Litterbox.jar stats%n"
                         + "    --path ~/path/to/json/project/or/folder/with/projects%n"
                         + "    -o ~/path/to/folder/or/file/for/the/output",
-                "%nExample for Leila intermediate language output:%n"
-                        + "java -jar Litterbox.jar leila%n"
-                        + "    --path ~/path/to/json/project/or/folder/with/projects%n"
-                        + "    -o ~/path/to/folder/or/file/for/the/output",
+                "%nExample for exporting to different formats:%n"
+                        + "java -jar Litterbox.jar export%n"
+                        + "    --path ~/path/to/project%n"
+                        + "    --format goboscript%n"
+                        + "    -o ~/path/to/output/folder",
                 "%nExample for refactoring:%n"
                         + "java -jar Litterbox.jar refactoring%n"
                         + "    --path ~/path/to/project%n"
@@ -359,25 +361,39 @@ public class Main implements Callable<Integer> {
     }
 
     @CommandLine.Command(
-            name = "leila",
-            description = "Translate Scratch projects to Leila."
+            name = "export",
+            description = "Export Scratch projects to various text-based formats."
     )
-    static class LeilaSubcommand extends LitterBoxSubcommand {
+    static class ExportSubcommand extends LitterBoxSubcommand {
+        @CommandLine.Option(
+                names = {"-f", "--format"},
+                description = "Export format. Values: ${COMPLETION-CANDIDATES}",
+                required = true
+        )
+        ExportFormat format;
+
         @CommandLine.Option(
                 names = {"-n", "--nondet"},
-                description = "Allow non deterministic (i.e., non-initialised) attributes in the intermediate language."
+                description = "For Leila: allow non-deterministic (non-initialised) attributes."
         )
         boolean nonDeterministic;
 
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
-            requireOutputPath();
+            if (format != ExportFormat.SCRATCHBLOCKS) {
+                requireOutputPath();
+            }
         }
 
         @Override
-        protected LeilaAnalyzer getAnalyzer() {
-            return new LeilaAnalyzer(commonOptions.outputPath, nonDeterministic, false, commonOptions.deleteProject);
+        protected ExportAnalyzer getAnalyzer() {
+            return new ExportAnalyzer(
+                    format,
+                    commonOptions.outputPath,
+                    commonOptions.deleteProject,
+                    nonDeterministic
+            );
         }
     }
 
@@ -460,20 +476,5 @@ public class Main implements Callable<Integer> {
         }
     }
 
-    @CommandLine.Command(
-            name = "scratchblocks",
-            description = "Convert the project into scratchblocks notation."
-    )
-    static class ScratchBlocksSubcommand extends LitterBoxSubcommand {
 
-        @Override
-        protected void validateParams() throws CommandLine.ParameterException {
-            requireProjectPath();
-        }
-
-        @Override
-        protected ScratchBlocksAnalyzer getAnalyzer() {
-            return new ScratchBlocksAnalyzer(commonOptions.outputPath, commonOptions.deleteProject);
-        }
-    }
 }

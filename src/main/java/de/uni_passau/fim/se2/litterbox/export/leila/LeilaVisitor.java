@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.visitor;
+package de.uni_passau.fim.se2.litterbox.export.leila;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
@@ -89,7 +89,9 @@ import java.io.PrintStream;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static de.uni_passau.fim.se2.litterbox.ast.visitor.LeilaVisitor.TYPE.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PrintVisitor;
+
+import static de.uni_passau.fim.se2.litterbox.export.leila.LeilaVisitor.TYPE.*;
 
 public class LeilaVisitor extends PrintVisitor {
 

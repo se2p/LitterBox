@@ -53,7 +53,8 @@ public abstract class CliTest {
         System.setOut(new PrintStream(mockOut, true, StandardCharsets.UTF_8));
         System.setErr(new PrintStream(mockErr, true, StandardCharsets.UTF_8));
 
-        commandLine = new CommandLine(new Main());
+        commandLine = new CommandLine(new Main())
+                .setCaseInsensitiveEnumValuesAllowed(true);
     }
 
     protected void assertStdOutContains(final String expected) {
