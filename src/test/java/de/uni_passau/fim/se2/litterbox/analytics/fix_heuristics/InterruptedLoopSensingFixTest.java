@@ -28,7 +28,7 @@ public class InterruptedLoopSensingFixTest extends AbstractFixHeuristicTest {
                            "end";
         Program fixedProgram = parseProgram(fixedCode);
         
-        InterruptedLoopSensingFix heuristic = new InterruptedLoopSensingFix(blockId);
+        InterruptedLoopSensingFix heuristic = new InterruptedLoopSensingFix(createTestIssueDTO(blockId));
         assertFixFound(heuristic, fixedProgram);
     }
 
@@ -43,7 +43,7 @@ public class InterruptedLoopSensingFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds.class);
         
-        InterruptedLoopSensingFix heuristic = new InterruptedLoopSensingFix(blockId);
+        InterruptedLoopSensingFix heuristic = new InterruptedLoopSensingFix(createTestIssueDTO(blockId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -68,7 +68,7 @@ public class InterruptedLoopSensingFixTest extends AbstractFixHeuristicTest {
         Program fixedProgram = parseProgram(fixedCode);
         
         // Use a dummy ID, semantic matching should kick in.
-        InterruptedLoopSensingFix heuristic = new InterruptedLoopSensingFix("lost-id");
+        InterruptedLoopSensingFix heuristic = new InterruptedLoopSensingFix(createTestIssueDTO("lost-id"));
         assertFixFound(heuristic, fixedProgram);
     }
 
@@ -132,7 +132,7 @@ public class InterruptedLoopSensingFixTest extends AbstractFixHeuristicTest {
         org.junit.jupiter.api.Assertions.assertNotNull(existingBlockId,
                 "Should find SayForSecs in original program");
 
-        InterruptedLoopSensingFix fix = new InterruptedLoopSensingFix(existingBlockId);
+        InterruptedLoopSensingFix fix = new InterruptedLoopSensingFix(createTestIssueDTO(existingBlockId));
         assertFixFound(fix, fixedProgram);
     }
 }

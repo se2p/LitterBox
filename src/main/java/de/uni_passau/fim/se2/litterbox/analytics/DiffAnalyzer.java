@@ -18,9 +18,15 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.FixHeuristic;
 import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.FixHeuristicRegistry;
+import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.FixResult;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
@@ -79,7 +85,7 @@ public class DiffAnalyzer {
         Map<String, List<Issue>> afterIssuesByFinder = groupByFinder(afterIssues);
 
         // Categorize issues
-        List<Issue> fixed = new ArrayList<>();
+        List<FixResult> fixed = new ArrayList<>();
         List<Issue> persisting = new ArrayList<>();
         List<RemovedIssueInfo> removedInfos = new ArrayList<>();
 
@@ -109,7 +115,10 @@ public class DiffAnalyzer {
         // Convert removed info to placeholder issues for consistent API
         List<Issue> removed = createRemovedIssues(removedInfos, afterProgram);
 
-        return new DiffResult(beforeSource, afterSource, fixed, newIssues, persisting, removed);
+        // Convert FixResults to Issues for backward compatibility
+        List<Issue> fixedIssues = convertFixResultsToIssues(fixed, afterProgram);
+
+        return new DiffResult(beforeSource, afterSource, fixedIssues, newIssues, persisting, removed);
     }
 
     private Map<String, List<IssueDTO>> loadBeforeIssues(Path beforePath)
@@ -126,7 +135,7 @@ public class DiffAnalyzer {
             List<IssueDTO> beforeIssues,
             List<Issue> afterIssues,
             Program afterProgram,
-            List<Issue> fixed,
+            List<FixResult> fixed,
             List<Issue> persisting,
             List<RemovedIssueInfo> removed
     ) {
@@ -149,7 +158,7 @@ public class DiffAnalyzer {
                         .ifPresent(persisting::add);
             } else {
                 // Issue no longer at this location - check if fixed or just removed
-                List<Issue> fixResults = checkIfFixed(finderName, blockId, afterProgram);
+                List<FixResult> fixResults = checkIfFixed(finderName, beforeIssue, afterProgram);
                 if (!fixResults.isEmpty()) {
                     fixed.addAll(fixResults);
                 } else {
@@ -159,16 +168,47 @@ public class DiffAnalyzer {
         }
     }
 
-    private List<Issue> checkIfFixed(String finderName, String blockId, Program program) {
-        List<IssueFinder> heuristics = FixHeuristicRegistry.getFixHeuristics(finderName, blockId);
-        List<Issue> fixIssues = new ArrayList<>();
+    private List<FixResult> checkIfFixed(String finderName, IssueDTO originalIssue, Program program) {
+        List<FixHeuristic> heuristics = FixHeuristicRegistry.getFixHeuristics(finderName, originalIssue);
+        List<FixResult> fixResults = new ArrayList<>();
 
-        for (IssueFinder heuristic : heuristics) {
-            Set<Issue> results = heuristic.check(program);
-            fixIssues.addAll(results);
+        for (FixHeuristic heuristic : heuristics) {
+            Set<FixResult> results = heuristic.check(program);
+            fixResults.addAll(results);
         }
 
-        return fixIssues;
+        return fixResults;
+    }
+
+    private List<Issue> convertFixResultsToIssues(List<FixResult> fixResults, Program program) {
+        // For backward compatibility, convert FixResults to Issue objects
+        List<Issue> issues = new ArrayList<>();
+        for (FixResult fix : fixResults) {
+            if (fix.fixedNode() != null) {
+                Issue issue = new IssueBuilder()
+                        .withFinder(new AbstractIssueFinder() {
+                            @Override
+                            public String getName() {
+                                return fix.getOriginalBugFinder();
+                            }
+
+                            @Override
+                            public IssueType getIssueType() {
+                                return IssueType.BUG;
+                            }
+                        })
+                        .withProgram(program)
+                        .withActor(fix.actor())
+                        .withCurrentNode(fix.fixedNode())
+                        .withScriptOrProcedure(AstNodeUtil.findParent(fix.fixedNode(), ScriptEntity.class))
+                        .withMetadata(fix.metadata())
+                        .withSeverity(IssueSeverity.LOW)
+                        .withHint(fix.getOriginalBugFinder())
+                        .build();
+                issues.add(issue);
+            }
+        }
+        return issues;
     }
 
     private List<Issue> createRemovedIssues(List<RemovedIssueInfo> removedInfos, Program program) {
@@ -265,4 +305,6 @@ public class DiffAnalyzer {
             return IssueType.BUG;
         }
     }
+
+
 }

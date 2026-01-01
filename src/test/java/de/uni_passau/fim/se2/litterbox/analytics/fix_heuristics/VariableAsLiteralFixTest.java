@@ -44,7 +44,7 @@ public class VariableAsLiteralFixTest extends AbstractFixHeuristicTest {
         String blockId = findBlockId(program, StringLiteral.class,
                 lit -> "hello".equals(lit.getText()));
 
-        VariableAsLiteralFix finder = new VariableAsLiteralFix(blockId);
+        VariableAsLiteralFix finder = new VariableAsLiteralFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -61,7 +61,7 @@ public class VariableAsLiteralFixTest extends AbstractFixHeuristicTest {
         String blockId = findBlockId(program, StringLiteral.class,
                 lit -> "hello".equals(lit.getText()));
 
-        VariableAsLiteralFix finder = new VariableAsLiteralFix(blockId);
+        VariableAsLiteralFix finder = new VariableAsLiteralFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
@@ -76,7 +76,7 @@ public class VariableAsLiteralFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        VariableAsLiteralFix finder = new VariableAsLiteralFix(blockId);
+        VariableAsLiteralFix finder = new VariableAsLiteralFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -107,7 +107,7 @@ public class VariableAsLiteralFixTest extends AbstractFixHeuristicTest {
         String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssue.getCodeLocation());
 
         // The fix heuristic should detect a fix in the original program
-        VariableAsLiteralFix fixHeuristic = new VariableAsLiteralFix(bugBlockId);
+        VariableAsLiteralFix fixHeuristic = new VariableAsLiteralFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

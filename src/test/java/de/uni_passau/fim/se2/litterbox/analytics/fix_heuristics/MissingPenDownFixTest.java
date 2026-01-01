@@ -29,7 +29,7 @@ public class MissingPenDownFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, PenUpStmt.class);
         
-        MissingPenDownFix heuristic = new MissingPenDownFix(bugLocationBlockId);
+        MissingPenDownFix heuristic = new MissingPenDownFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -47,7 +47,7 @@ public class MissingPenDownFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, PenUpStmt.class);
         
-        MissingPenDownFix heuristic = new MissingPenDownFix(bugLocationBlockId);
+        MissingPenDownFix heuristic = new MissingPenDownFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -63,7 +63,7 @@ public class MissingPenDownFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, PenUpStmt.class);
         
-        MissingPenDownFix heuristic = new MissingPenDownFix(bugLocationBlockId);
+        MissingPenDownFix heuristic = new MissingPenDownFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -76,7 +76,7 @@ public class MissingPenDownFixTest extends AbstractFixHeuristicTest {
                 """;
 
         Program program = parseProgram(source);
-        MissingPenDownFix heuristic = new MissingPenDownFix("non-existent-id");
+        MissingPenDownFix heuristic = new MissingPenDownFix(createTestIssueDTO("non-existent-id"));
         assertFixFound(heuristic, program);
     }
 
@@ -118,7 +118,7 @@ public class MissingPenDownFixTest extends AbstractFixHeuristicTest {
         Assertions.assertNotNull(blockId, "Should find PenUpStmt block in original program");
 
         // The fix heuristic should detect this is fixed in the original program
-        MissingPenDownFix fixHeuristic = new MissingPenDownFix(blockId);
+        MissingPenDownFix fixHeuristic = new MissingPenDownFix(createTestIssueDTO(blockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

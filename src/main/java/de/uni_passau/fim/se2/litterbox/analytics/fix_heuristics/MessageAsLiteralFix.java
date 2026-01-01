@@ -18,15 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageAsLiteral;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -43,8 +46,8 @@ public class MessageAsLiteralFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new MessageAsLiteral();
 
-    public MessageAsLiteralFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public MessageAsLiteralFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -58,7 +61,7 @@ public class MessageAsLiteralFix extends AbstractFixHeuristic {
         if (node.getMessage().getMessage() instanceof StringLiteral stringLiteral) {
             sentMessages.add(stringLiteral.getText());
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -66,7 +69,7 @@ public class MessageAsLiteralFix extends AbstractFixHeuristic {
         if (node.getMessage().getMessage() instanceof StringLiteral stringLiteral) {
             sentMessages.add(stringLiteral.getText());
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -95,11 +98,14 @@ public class MessageAsLiteralFix extends AbstractFixHeuristic {
     }
 
     @Override
-    public Set<Issue> check(Program program) {
+    public Set<FixResult> check(Program program) {
         sentMessages = new LinkedHashSet<>();
         foundLiteral = null;
 
-        super.check(program);
+        Set<FixResult> results = super.check(program);
+        if (!results.isEmpty()) {
+            return results;
+        }
 
         if (foundLiteral != null) {
             String text = foundLiteral.getText();
@@ -110,14 +116,14 @@ public class MessageAsLiteralFix extends AbstractFixHeuristic {
             boolean isSent = sentMessages.contains(text);
 
             if (!isDefined || isSent) {
-                addIssue(foundLiteral, getMetadata(foundLiteral));
+                addFix(foundLiteral, getMetadata(foundLiteral));
             }
         }
 
-        return issues;
+        return Collections.unmodifiableSet(fixes);
     }
 
-    private de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata getMetadata(ASTNode node) {
+    private Metadata getMetadata(ASTNode node) {
         if (node.getMetadata() != null) {
             return node.getMetadata();
         }

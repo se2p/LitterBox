@@ -21,7 +21,7 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Broadcast.class);
         
-        ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(bugLocationBlockId);
+        ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -37,7 +37,7 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Broadcast.class);
         
-        ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(bugLocationBlockId);
+        ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -53,7 +53,7 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Broadcast.class);
         
-        ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(bugLocationBlockId);
+        ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -68,12 +68,12 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, BroadcastAndWait.class);
         
-        ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(bugLocationBlockId);
+        ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing the bug is gone
         String code = """
                 when green flag clicked
@@ -83,8 +83,8 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(blockId);
-        assertNoFixFound(heuristic, program);
+        ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(createTestIssueDTO(blockId));
+        assertFixFound(heuristic, program);
     }
     @Test
     public void testNoFix_MultipleNonYieldingStmts() throws IOException, ParsingException {
@@ -100,7 +100,7 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Broadcast.class);
         
-        ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(bugLocationBlockId);
+        ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -117,7 +117,7 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Broadcast.class);
         
-        ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(bugLocationBlockId);
+        ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -167,7 +167,7 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
         String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil
                 .getBlockId(bugIssues.iterator().next().getCodeLocation());
 
-        ImmediateDeleteCloneAfterBroadcastFix fix = new ImmediateDeleteCloneAfterBroadcastFix(bugBlockId);
+        ImmediateDeleteCloneAfterBroadcastFix fix = new ImmediateDeleteCloneAfterBroadcastFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fix, fixedProgram);
     }
 }

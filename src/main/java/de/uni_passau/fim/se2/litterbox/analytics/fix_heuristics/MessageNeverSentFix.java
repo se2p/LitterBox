@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
@@ -30,6 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageNeverSent;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
@@ -45,8 +48,8 @@ import java.util.*;
 public class MessageNeverSentFix extends AbstractFixHeuristic {
     private final IssueFinder relatedBugFinder = new MessageNeverSent();
 
-    public MessageNeverSentFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public MessageNeverSentFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -55,56 +58,57 @@ public class MessageNeverSentFix extends AbstractFixHeuristic {
     }
 
     @Override
-    public Set<Issue> check(Program program) {
+    public Set<FixResult> check(Program program) {
         Preconditions.checkNotNull(program);
-        this.program = program;
-        issues = new LinkedHashSet<>();
+        
+        Set<FixResult> results = super.check(program);
+        if (!results.isEmpty()) {
+            return results;
+        }
 
         // 1. Find the buggy node using the block ID
-        Optional<BlockIdNodeFinder.NodeContext> bugContextOpt = BlockIdNodeFinder.find(program, bugLocationBlockId);
-        if (bugContextOpt.isEmpty()) {
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
-        }
+        Optional<BlockIdNodeFinder.NodeContext> bugContextOpt = BlockIdNodeFinder.find(program, getBugLocationBlockId());
         
-        ASTNode buggyNode = bugContextOpt.get().node();
-        if (!(buggyNode instanceof ReceptionOfMessage receptionNode)) {
-            return Collections.unmodifiableSet(issues);
-        }
+        // If not empty (handled by super), get node
+        if (bugContextOpt.isPresent()) {
+            ASTNode buggyNode = bugContextOpt.get().node();
+            if (buggyNode instanceof ReceptionOfMessage receptionNode) {
+                // 2. Extract the message name
+                String targetMessage = null;
+                if (scriptNotEmpty(receptionNode.getParentNode())) {
+                    if (receptionNode.getMsg().getMessage() instanceof StringLiteral text) {
+                        targetMessage = text.getText();
+                    }
+                }
 
-        // 2. Extract the message name
-        String targetMessage = null;
-        if (scriptNotEmpty(receptionNode.getParentNode())) {
-            if (receptionNode.getMsg().getMessage() instanceof StringLiteral text) {
-                targetMessage = text.getText();
+                if (targetMessage != null) {
+                    // 3. Search for a valid sender for this specific message
+                    ValidSenderFinder senderFinder = new ValidSenderFinder(targetMessage);
+                    program.accept(senderFinder);
+
+                    if (senderFinder.foundSender != null) {
+                        ASTNode sender = senderFinder.foundSender;
+                        // Use helper to set current context if needed for addFix (though addFix uses foundSender context if available? 
+                        // Wait, addFix uses 'this.currentActor' etc. which might not be set because we didn't visit normally!)
+                        // We must set currentActor/Script manually as in old code.
+                        currentActor = AstNodeUtil.findParent(sender, ActorDefinition.class);
+                        ScriptEntity scriptEntity = AstNodeUtil.findParent(sender, ScriptEntity.class);
+
+                        if (scriptEntity instanceof Script script) {
+                            currentScript = script;
+                            currentProcedure = null;
+                        } else if (scriptEntity instanceof ProcedureDefinition proc) {
+                            currentProcedure = proc;
+                            currentScript = null;
+                        }
+
+                        addFix(receptionNode, receptionNode.getMetadata());
+                    }
+                }
             }
         }
-        
-        if (targetMessage == null) {
-            return Collections.unmodifiableSet(issues);
-        }
 
-        // 3. Search for a valid sender for this specific message
-        ValidSenderFinder senderFinder = new ValidSenderFinder(targetMessage);
-        program.accept(senderFinder);
-
-        if (senderFinder.foundSender != null) {
-            ASTNode sender = senderFinder.foundSender;
-            currentActor = AstNodeUtil.findParent(sender, ActorDefinition.class);
-            ScriptEntity scriptEntity = AstNodeUtil.findParent(sender, ScriptEntity.class);
-            
-            if (scriptEntity instanceof Script script) {
-                currentScript = script;
-                currentProcedure = null;
-            } else if (scriptEntity instanceof ProcedureDefinition proc) {
-                currentProcedure = proc;
-                currentScript = null;
-            }
-            
-            addIssue(receptionNode, receptionNode.getMetadata());
-        }
-        
-        return Collections.unmodifiableSet(issues);
+        return Collections.unmodifiableSet(fixes);
     }
 
     private boolean scriptNotEmpty(ASTNode parentNode) {
@@ -123,13 +127,21 @@ public class MessageNeverSentFix extends AbstractFixHeuristic {
         }
 
         @Override
+        public void visit(ASTNode node) {
+            // Default traversal for all nodes
+            if (foundSender == null) {
+                visitChildren(node);
+            }
+        }
+
+        @Override
         public void visit(Broadcast node) {
             if (foundSender == null && matchesMessage(node.getMessage().getMessage())) {
                 if (scriptHasHead(node)) {
                     foundSender = node;
                 }
             }
-            // No need to traverse deeper into Broadcast for this heuristic
+            // Don't traverse deeper into Broadcast's children
         }
 
         @Override
@@ -139,16 +151,16 @@ public class MessageNeverSentFix extends AbstractFixHeuristic {
                     foundSender = node;
                 }
             }
-            // No need to traverse deeper
+            // Don't traverse deeper into BroadcastAndWait's children
         }
-        
-        private boolean matchesMessage(de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression msgExpr) {
-            if (msgExpr instanceof de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral text) {
+
+        private boolean matchesMessage(Expression msgExpr) {
+            if (msgExpr instanceof StringLiteral text) {
                 // Use case-insensitive comparison to match bug finder behavior
                 return text.getText().equalsIgnoreCase(targetMessage);
             }
             // ScratchBlocks parser may produce StrId for broadcast (msg v) syntax
-            if (msgExpr instanceof de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId strId) {
+            if (msgExpr instanceof StrId strId) {
                 return strId.getName().equalsIgnoreCase(targetMessage);
             }
             return false;

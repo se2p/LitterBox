@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingAsk;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.Set;
 
@@ -40,8 +41,8 @@ public class MissingAskFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new MissingAsk();
 
-    public MissingAskFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public MissingAskFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class MissingAskFix extends AbstractFixHeuristic {
     @Override
     public void visit(AskAndWait node) {
         askUsed = true;
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -61,19 +62,19 @@ public class MissingAskFix extends AbstractFixHeuristic {
         if (matchesBugLocation(node)) {
             targetAnswer = node;
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
-    public Set<Issue> check(Program program) {
+    public Set<FixResult> check(Program program) {
         askUsed = false;
         targetAnswer = null;
         super.check(program);
 
         if (targetAnswer != null && askUsed) {
             // Fixed: The answer block exists, and Ask IS used now.
-            addIssue(targetAnswer, targetAnswer.getMetadata());
+            addFix(targetAnswer, targetAnswer.getMetadata());
         }
-        return issues;
+        return java.util.Collections.unmodifiableSet(fixes);
     }
 }

@@ -30,7 +30,7 @@ public class MissingLoopMousePositionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, MouseX.class);
         
-        MissingLoopMousePositionFix heuristic = new MissingLoopMousePositionFix(bugLocationBlockId);
+        MissingLoopMousePositionFix heuristic = new MissingLoopMousePositionFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -45,7 +45,7 @@ public class MissingLoopMousePositionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, MouseX.class);
         
-        MissingLoopMousePositionFix heuristic = new MissingLoopMousePositionFix(bugLocationBlockId);
+        MissingLoopMousePositionFix heuristic = new MissingLoopMousePositionFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -59,7 +59,7 @@ public class MissingLoopMousePositionFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         
-        MissingLoopMousePositionFix heuristic = new MissingLoopMousePositionFix("non_existent_id");
+        MissingLoopMousePositionFix heuristic = new MissingLoopMousePositionFix(createTestIssueDTO("non_existent_id"));
         assertFixFound(heuristic, program);
     }
 
@@ -102,7 +102,7 @@ public class MissingLoopMousePositionFixTest extends AbstractFixHeuristicTest {
         Assertions.assertNotNull(blockId, "Should find MouseX block in original program");
 
         // The fix heuristic should detect this is fixed in the original program
-        MissingLoopMousePositionFix fixHeuristic = new MissingLoopMousePositionFix(blockId);
+        MissingLoopMousePositionFix fixHeuristic = new MissingLoopMousePositionFix(createTestIssueDTO(blockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

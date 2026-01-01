@@ -22,13 +22,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ParameterOutOfScope;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-
-import java.util.Collections;
-import java.util.Set;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
  * Fix heuristic for the ParameterOutOfScope bug.
@@ -42,8 +38,8 @@ public class ParameterOutOfScopeFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new ParameterOutOfScope();
 
-    public ParameterOutOfScopeFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public ParameterOutOfScopeFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -51,28 +47,20 @@ public class ParameterOutOfScopeFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-    @Override
-    public Set<Issue> check(Program program) {
-        // If the original buggy block (Parameter) is gone, we consider it fixed.
-        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
-        }
-        return super.check(program);
-    }
+
 
 
     @Override
     public void visit(Script node) {
         insideScript = true;
-        super.visit(node);
+        visitChildren(node);
         insideScript = false;
     }
 
     @Override
     public void visit(ProcedureDefinition node) {
         // Parameters are safe inside procedures
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -80,9 +68,9 @@ public class ParameterOutOfScopeFix extends AbstractFixHeuristic {
         if (matchesBugLocation(node)) {
             // Fix: NOT inside Script (moved to Procedure)
             if (!insideScript) {
-                addIssue(node, node.getMetadata());
+                addFix(node, node.getMetadata());
             }
         }
-        super.visit(node);
+        visitChildren(node);
     }
 }

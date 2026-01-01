@@ -22,14 +22,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.RecursiveCloning;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 
-import java.util.Collections;
-import java.util.Set;
+
 
 /**
  * Fix heuristic for the RecursiveCloning bug.
@@ -44,8 +41,8 @@ public class RecursiveCloningFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new RecursiveCloning();
 
-    public RecursiveCloningFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public RecursiveCloningFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -53,15 +50,7 @@ public class RecursiveCloningFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-    @Override
-    public Set<Issue> check(Program program) {
-        // If the original buggy block (e.g. CreateCloneOf) is gone, we consider it fixed.
-        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
-        }
-        return super.check(program);
-    }
+
 
 
     @Override
@@ -71,12 +60,12 @@ public class RecursiveCloningFix extends AbstractFixHeuristic {
             secondVisit = false;
 
             // First pass: check if DeleteClone exists in the script
-            super.visit(node);
+            visitChildren(node);
             
             // Second pass: if DeleteClone was found, report the fix at the buggy block location
             if (foundDelete) {
                 secondVisit = true;
-                super.visit(node);
+                visitChildren(node);
                 secondVisit = false;
             }
             
@@ -87,7 +76,7 @@ public class RecursiveCloningFix extends AbstractFixHeuristic {
     @Override
     public void visit(Myself node) {
         if (secondVisit && matchesBugLocation(node.getParentNode())) {
-            addIssue(node.getParentNode(), node.getParentNode().getMetadata());
+            addFix(node.getParentNode(), node.getParentNode().getMetadata());
         }
         visitChildren(node);
     }

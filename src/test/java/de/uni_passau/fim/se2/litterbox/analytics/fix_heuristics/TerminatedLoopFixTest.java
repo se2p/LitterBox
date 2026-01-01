@@ -52,7 +52,7 @@ public class TerminatedLoopFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, StopAll.class);
 
-        TerminatedLoopFix finder = new TerminatedLoopFix(blockId);
+        TerminatedLoopFix finder = new TerminatedLoopFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -70,7 +70,7 @@ public class TerminatedLoopFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, StopAll.class);
 
-        TerminatedLoopFix finder = new TerminatedLoopFix(blockId);
+        TerminatedLoopFix finder = new TerminatedLoopFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
@@ -85,7 +85,7 @@ public class TerminatedLoopFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        TerminatedLoopFix finder = new TerminatedLoopFix(blockId);
+        TerminatedLoopFix finder = new TerminatedLoopFix(createTestIssueDTO(blockId));
         // Deleting the buggy block is a valid fix
         assertFixFound(finder, program);
     }
@@ -129,7 +129,7 @@ public class TerminatedLoopFixTest extends AbstractFixHeuristicTest {
         Assertions.assertNotNull(bugBlockId, "Bug issue should have a block ID");
 
         // The fix heuristic should detect a fix in the original program
-        TerminatedLoopFix fixHeuristic = new TerminatedLoopFix(bugBlockId);
+        TerminatedLoopFix fixHeuristic = new TerminatedLoopFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

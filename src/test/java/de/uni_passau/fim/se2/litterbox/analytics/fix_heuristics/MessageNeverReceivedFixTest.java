@@ -54,7 +54,7 @@ public class MessageNeverReceivedFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, Broadcast.class);
 
-        MessageNeverReceivedFix heuristic = new MessageNeverReceivedFix(bugId);
+        MessageNeverReceivedFix heuristic = new MessageNeverReceivedFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -69,7 +69,7 @@ public class MessageNeverReceivedFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, Broadcast.class);
 
-        MessageNeverReceivedFix heuristic = new MessageNeverReceivedFix(bugId);
+        MessageNeverReceivedFix heuristic = new MessageNeverReceivedFix(createTestIssueDTO(bugId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -83,7 +83,7 @@ public class MessageNeverReceivedFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
 
-        MessageNeverReceivedFix heuristic = new MessageNeverReceivedFix("non_existent_id");
+        MessageNeverReceivedFix heuristic = new MessageNeverReceivedFix(createTestIssueDTO("non_existent_id"));
         assertFixFound(heuristic, program);
     }
 
@@ -102,7 +102,7 @@ public class MessageNeverReceivedFixTest extends AbstractFixHeuristicTest {
         de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.linkParents(program);
         
         String bugId = findBlockId(program, Broadcast.class);
-        MessageNeverReceivedFix heuristic = new MessageNeverReceivedFix(bugId);
+        MessageNeverReceivedFix heuristic = new MessageNeverReceivedFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -147,7 +147,7 @@ public class MessageNeverReceivedFixTest extends AbstractFixHeuristicTest {
         Assertions.assertNotNull(bugId, "Should find broadcast block in original program");
 
         // The fix heuristic should detect this block is in a fixed state
-        MessageNeverReceivedFix fixHeuristic = new MessageNeverReceivedFix(bugId);
+        MessageNeverReceivedFix fixHeuristic = new MessageNeverReceivedFix(createTestIssueDTO(bugId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

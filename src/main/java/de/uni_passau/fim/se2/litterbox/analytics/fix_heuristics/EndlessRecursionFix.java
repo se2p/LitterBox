@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.EndlessRecursion;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
  * Fix heuristic for the EndlessRecursion bug.
@@ -39,8 +40,8 @@ public class EndlessRecursionFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new EndlessRecursion();
 
-    public EndlessRecursionFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public EndlessRecursionFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -55,7 +56,7 @@ public class EndlessRecursionFix extends AbstractFixHeuristic {
         if (procMap.containsKey(node.getIdent())) {
             currentProcedureName = procMap.get(node.getIdent()).getName();
         }
-        super.visit(node);
+        visitChildren(node);
         insideProcedure = false;
     }
 
@@ -70,27 +71,27 @@ public class EndlessRecursionFix extends AbstractFixHeuristic {
             if (isRecursive) {
                 // Fixed if guarded by a conditional (loopIfCounter > 0)
                 if (loopIfCounter > 0) {
-                    addIssue(node, node.getMetadata());
+                    addFix(node, node.getMetadata());
                 }
             } else {
                 // No longer recursive - fixed!
-                addIssue(node, node.getMetadata());
+                addFix(node, node.getMetadata());
             }
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(IfElseStmt node) {
         loopIfCounter++;
-        super.visit(node);
+        visitChildren(node);
         loopIfCounter--;
     }
 
     @Override
     public void visit(IfThenStmt node) {
         loopIfCounter++;
-        super.visit(node);
+        visitChildren(node);
         loopIfCounter--;
     }
 }

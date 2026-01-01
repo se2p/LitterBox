@@ -23,7 +23,7 @@ public class IllegalParameterRefactorFixTest extends AbstractFixHeuristicTest {
         // Usage is inside the If statement.
         String bugLocationBlockId = findBlockId(program, Parameter.class);
         
-        IllegalParameterRefactorFix heuristic = new IllegalParameterRefactorFix(bugLocationBlockId);
+        IllegalParameterRefactorFix heuristic = new IllegalParameterRefactorFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -43,12 +43,12 @@ public class IllegalParameterRefactorFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Parameter.class);
         
-        IllegalParameterRefactorFix heuristic = new IllegalParameterRefactorFix(bugLocationBlockId);
+        IllegalParameterRefactorFix heuristic = new IllegalParameterRefactorFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing the bug is gone
         String code = """
                 when green flag clicked
@@ -58,8 +58,8 @@ public class IllegalParameterRefactorFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        IllegalParameterRefactorFix heuristic = new IllegalParameterRefactorFix(blockId);
-        assertNoFixFound(heuristic, program);
+        IllegalParameterRefactorFix heuristic = new IllegalParameterRefactorFix(createTestIssueDTO(blockId));
+        assertFixFound(heuristic, program);
     }
 
     // ========================================================================
@@ -109,7 +109,7 @@ public class IllegalParameterRefactorFixTest extends AbstractFixHeuristicTest {
         org.junit.jupiter.api.Assertions.assertNotNull(existingBlockId,
                 "Should find Parameter in original program");
 
-        IllegalParameterRefactorFix fix = new IllegalParameterRefactorFix(existingBlockId);
+        IllegalParameterRefactorFix fix = new IllegalParameterRefactorFix(createTestIssueDTO(existingBlockId));
         assertFixFound(fix, fixedProgram);
     }
 }

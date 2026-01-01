@@ -54,7 +54,7 @@ public class MissingLoopSensingFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, IsKeyPressed.class);
 
-        MissingLoopSensingFix finder = new MissingLoopSensingFix(blockId);
+        MissingLoopSensingFix finder = new MissingLoopSensingFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -73,7 +73,7 @@ public class MissingLoopSensingFixTest extends AbstractFixHeuristicTest {
         // Find the second IsKeyPressed (the one in the if)
         String blockId = findBlockId(program, IsKeyPressed.class);
 
-        MissingLoopSensingFix finder = new MissingLoopSensingFix(blockId);
+        MissingLoopSensingFix finder = new MissingLoopSensingFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -88,7 +88,7 @@ public class MissingLoopSensingFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        MissingLoopSensingFix finder = new MissingLoopSensingFix(blockId);
+        MissingLoopSensingFix finder = new MissingLoopSensingFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -149,7 +149,7 @@ public class MissingLoopSensingFixTest extends AbstractFixHeuristicTest {
                 "Should find IsKeyPressed block in original program");
 
         // The fix heuristic should detect this block is in a fixed state
-        MissingLoopSensingFix fixHeuristic = new MissingLoopSensingFix(sensingBlockId);
+        MissingLoopSensingFix fixHeuristic = new MissingLoopSensingFix(createTestIssueDTO(sensingBlockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 
@@ -201,7 +201,7 @@ public class MissingLoopSensingFixTest extends AbstractFixHeuristicTest {
                 "Should find IsKeyPressed block in original program");
 
         // The fix heuristic should detect this block is in a fixed state
-        MissingLoopSensingFix fixHeuristic = new MissingLoopSensingFix(sensingBlockId);
+        MissingLoopSensingFix fixHeuristic = new MissingLoopSensingFix(createTestIssueDTO(sensingBlockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

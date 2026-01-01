@@ -22,7 +22,7 @@ public class FloatingPointComparisonFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Equals.class);
         
-        FloatingPointComparisonFix heuristic = new FloatingPointComparisonFix(bugLocationBlockId);
+        FloatingPointComparisonFix heuristic = new FloatingPointComparisonFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -38,7 +38,7 @@ public class FloatingPointComparisonFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Equals.class);
         
-        FloatingPointComparisonFix heuristic = new FloatingPointComparisonFix(bugLocationBlockId);
+        FloatingPointComparisonFix heuristic = new FloatingPointComparisonFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -54,12 +54,12 @@ public class FloatingPointComparisonFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Equals.class);
         
-        FloatingPointComparisonFix heuristic = new FloatingPointComparisonFix(bugLocationBlockId);
+        FloatingPointComparisonFix heuristic = new FloatingPointComparisonFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing the bug is gone
         String code = """
                 when green flag clicked
@@ -69,8 +69,8 @@ public class FloatingPointComparisonFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        FloatingPointComparisonFix heuristic = new FloatingPointComparisonFix(blockId);
-        assertNoFixFound(heuristic, program);
+        FloatingPointComparisonFix heuristic = new FloatingPointComparisonFix(createTestIssueDTO(blockId));
+        assertFixFound(heuristic, program);
     }
 
     // ========================================================================
@@ -117,7 +117,7 @@ public class FloatingPointComparisonFixTest extends AbstractFixHeuristicTest {
         org.junit.jupiter.api.Assertions.assertNotNull(existingBlockId,
                 "Should find Equals in original program");
 
-        FloatingPointComparisonFix fix = new FloatingPointComparisonFix(existingBlockId);
+        FloatingPointComparisonFix fix = new FloatingPointComparisonFix(createTestIssueDTO(existingBlockId));
         assertFixFound(fix, fixedProgram);
     }
 }

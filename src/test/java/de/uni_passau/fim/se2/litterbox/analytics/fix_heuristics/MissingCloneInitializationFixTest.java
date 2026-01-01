@@ -54,7 +54,7 @@ public class MissingCloneInitializationFixTest extends AbstractFixHeuristicTest 
         Program program = parseProgram(code);
         String blockId = findBlockId(program, de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf.class);
 
-        MissingCloneInitializationFix finder = new MissingCloneInitializationFix(blockId);
+        MissingCloneInitializationFix finder = new MissingCloneInitializationFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -69,7 +69,7 @@ public class MissingCloneInitializationFixTest extends AbstractFixHeuristicTest 
         Program program = parseProgram(code);
         String blockId = findBlockId(program, de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf.class);
 
-        MissingCloneInitializationFix finder = new MissingCloneInitializationFix(blockId);
+        MissingCloneInitializationFix finder = new MissingCloneInitializationFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
@@ -84,7 +84,7 @@ public class MissingCloneInitializationFixTest extends AbstractFixHeuristicTest 
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        MissingCloneInitializationFix finder = new MissingCloneInitializationFix(blockId);
+        MissingCloneInitializationFix finder = new MissingCloneInitializationFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -129,7 +129,7 @@ public class MissingCloneInitializationFixTest extends AbstractFixHeuristicTest 
 
         // The fix heuristic should detect this is fixed in the original program
         // (because the handler is present there)
-        MissingCloneInitializationFix fixHeuristic = new MissingCloneInitializationFix(blockId);
+        MissingCloneInitializationFix fixHeuristic = new MissingCloneInitializationFix(createTestIssueDTO(blockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

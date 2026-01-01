@@ -45,7 +45,7 @@ public class RedundantAssignmentFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, SetVariableTo.class);
 
-        RedundantAssignmentFix finder = new RedundantAssignmentFix(blockId);
+        RedundantAssignmentFix finder = new RedundantAssignmentFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -62,7 +62,7 @@ public class RedundantAssignmentFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, SetVariableTo.class);
 
-        RedundantAssignmentFix finder = new RedundantAssignmentFix(blockId);
+        RedundantAssignmentFix finder = new RedundantAssignmentFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -79,7 +79,7 @@ public class RedundantAssignmentFixTest extends AbstractFixHeuristicTest {
         // Both assignments refer to myVar, pick the first one which is overwritten
         String blockId = findBlockId(program, SetVariableTo.class);
 
-        RedundantAssignmentFix finder = new RedundantAssignmentFix(blockId);
+        RedundantAssignmentFix finder = new RedundantAssignmentFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
@@ -94,7 +94,7 @@ public class RedundantAssignmentFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        RedundantAssignmentFix finder = new RedundantAssignmentFix(blockId);
+        RedundantAssignmentFix finder = new RedundantAssignmentFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -125,7 +125,7 @@ public class RedundantAssignmentFixTest extends AbstractFixHeuristicTest {
         String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssue.getCodeLocation());
 
         // The fix heuristic should detect a fix in the original program
-        RedundantAssignmentFix fixHeuristic = new RedundantAssignmentFix(bugBlockId);
+        RedundantAssignmentFix fixHeuristic = new RedundantAssignmentFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

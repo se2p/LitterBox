@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ImmediateStopAfterSayThink;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.List;
 
@@ -39,8 +40,8 @@ public class ImmediateStopAfterSayFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new ImmediateStopAfterSayThink();
 
-    public ImmediateStopAfterSayFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public ImmediateStopAfterSayFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -52,13 +53,13 @@ public class ImmediateStopAfterSayFix extends AbstractFixHeuristic {
     @Override
     public void visit(Say node) {
         checkFixed(node);
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(Think node) {
         checkFixed(node);
-        super.visit(node);
+        visitChildren(node);
     }
 
     private void checkFixed(Stmt node) {
@@ -71,11 +72,11 @@ public class ImmediateStopAfterSayFix extends AbstractFixHeuristic {
                     Stmt nextStmt = stmts.get(index + 1);
                     if (!(nextStmt instanceof StopAll)) {
                         // Fixed: Next statement is NOT StopAll
-                        addIssue(node, node.getMetadata());
+                        addFix(node, node.getMetadata());
                     }
                 } else {
                     // Fixed: No next statement
-                    addIssue(node, node.getMetadata());
+                    addFix(node, node.getMetadata());
                 }
             }
         }

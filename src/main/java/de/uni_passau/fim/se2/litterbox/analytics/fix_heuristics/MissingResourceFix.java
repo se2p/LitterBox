@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingResource;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.List;
 import java.util.Set;
@@ -50,8 +51,8 @@ public class MissingResourceFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new MissingResource();
 
-    public MissingResourceFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public MissingResourceFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -69,7 +70,7 @@ public class MissingResourceFix extends AbstractFixHeuristic {
                 break;
             }
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -92,7 +93,7 @@ public class MissingResourceFix extends AbstractFixHeuristic {
         if (matchesBugLocation(node)) {
             // Fix: Resource IS present
             if (resources != null && resources.contains(name)) {
-                addIssue(node, node.getMetadata());
+                addFix(node, node.getMetadata());
             }
         }
     }

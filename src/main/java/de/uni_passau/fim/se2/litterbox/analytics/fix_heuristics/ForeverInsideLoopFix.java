@@ -18,10 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideLoop;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -29,10 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 
-import java.util.Collections;
-import java.util.Set;
 
 /**
  * Fix heuristic for the ForeverInsideLoop bug.
@@ -52,8 +50,8 @@ public class ForeverInsideLoopFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new ForeverInsideLoop();
 
-    public ForeverInsideLoopFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public ForeverInsideLoopFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -61,38 +59,13 @@ public class ForeverInsideLoopFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-    @Override
-    public Set<Issue> check(Program program) {
-        insideScript = false;
-        loopDepth = 0;
 
-        // First, check if the buggy block still exists
-        boolean blockExists = BlockIdNodeFinder.find(program, bugLocationBlockId).isPresent();
-
-        if (!blockExists) {
-            // Block was deleted - this is a valid fix for ForeverInsideLoop
-            return createFixIssueForDeletedBlock(program);
-        }
-
-        // Block exists - run normal checking
-        return super.check(program);
-    }
-
-    /**
-     * Creates a FIX issue when the buggy block was deleted.
-     */
-    private Set<Issue> createFixIssueForDeletedBlock(Program program) {
-        this.program = program;
-        // Use addIssueWithLooseComment since we don't have a script/procedure context
-        addIssueWithLooseComment();
-        return Collections.unmodifiableSet(issues);
-    }
 
     @Override
     public void visit(ProcedureDefinition node) {
         boolean oldInside = insideScript;
         insideScript = true;
-        super.visit(node);
+        visitChildren(node);
         insideScript = oldInside;
     }
 
@@ -102,7 +75,7 @@ public class ForeverInsideLoopFix extends AbstractFixHeuristic {
         if (!(node.getEvent() instanceof Never)) {
             insideScript = true;
         }
-        super.visit(node);
+        visitChildren(node);
         insideScript = oldInside;
     }
 
@@ -110,21 +83,21 @@ public class ForeverInsideLoopFix extends AbstractFixHeuristic {
     public void visit(RepeatForeverStmt node) {
         checkLoopFix(node);
         loopDepth++;
-        super.visit(node);
+        visitChildren(node);
         loopDepth--;
     }
 
     @Override
     public void visit(UntilStmt node) {
         loopDepth++;
-        super.visit(node);
+        visitChildren(node);
         loopDepth--;
     }
 
     @Override
     public void visit(RepeatTimesStmt node) {
         loopDepth++;
-        super.visit(node);
+        visitChildren(node);
         loopDepth--;
     }
 
@@ -135,7 +108,7 @@ public class ForeverInsideLoopFix extends AbstractFixHeuristic {
     private void checkLoopFix(LoopStmt node) {
         if (matchesBugLocation(node) && insideScript && loopDepth == 0) {
             // The loop exists, is inside a working script, and is NOT nested
-            addIssue(node, node.getMetadata());
+            addFix(node, node.getMetadata());
         }
     }
 }

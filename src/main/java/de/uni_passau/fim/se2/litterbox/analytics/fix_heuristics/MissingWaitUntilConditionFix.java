@@ -21,13 +21,9 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingWaitUntilCondition;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-
-import java.util.Collections;
-import java.util.Set;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
  * Fix heuristic for the MissingWaitUntilCondition bug.
@@ -39,8 +35,8 @@ public class MissingWaitUntilConditionFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new MissingWaitUntilCondition();
 
-    public MissingWaitUntilConditionFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public MissingWaitUntilConditionFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -48,15 +44,7 @@ public class MissingWaitUntilConditionFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-    @Override
-    public Set<Issue> check(Program program) {
-        // If the original buggy block (WaitUntil) is gone, we consider it fixed.
-        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
-        }
-        return super.check(program);
-    }
+
 
 
     @Override
@@ -64,9 +52,9 @@ public class MissingWaitUntilConditionFix extends AbstractFixHeuristic {
         if (matchesBugLocation(node)) {
             // Fix: Condition IS specified (not UnspecifiedBoolExpr).
             if (!(node.getUntil() instanceof UnspecifiedBoolExpr)) {
-                addIssue(node, node.getMetadata());
+                addFix(node, node.getMetadata());
             }
         }
-        super.visit(node);
+        visitChildren(node);
     }
 }

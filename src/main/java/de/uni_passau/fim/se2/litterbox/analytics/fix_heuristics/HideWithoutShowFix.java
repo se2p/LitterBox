@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ActorLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
@@ -26,10 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLook
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.HideWithoutShow;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
-import java.util.Collections;
-import java.util.Set;
 
 /**
  * Fix heuristic for the HideWithoutShow bug.
@@ -45,8 +44,8 @@ public class HideWithoutShowFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new HideWithoutShow();
 
-    public HideWithoutShowFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public HideWithoutShowFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -54,15 +53,7 @@ public class HideWithoutShowFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-    @Override
-    public Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> check(de.uni_passau.fim.se2.litterbox.ast.model.Program program) {
-        // Check if the buggy block was deleted - that's a valid fix
-        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
-        }
-        return super.check(program);
-    }
+
 
 
     @Override
@@ -70,17 +61,17 @@ public class HideWithoutShowFix extends AbstractFixHeuristic {
         hasVisibleChange = false;
         hasShow = false;
         targetHide = null;
-        super.visit(node);
+        visitChildren(node);
 
         if (targetHide != null && (hasShow || !hasVisibleChange)) {
-            addIssue(targetHide, targetHide.getMetadata());
+            addFix(targetHide, targetHide.getMetadata());
         }
     }
 
     @Override
     public void visit(Show node) {
         hasShow = true;
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -88,13 +79,13 @@ public class HideWithoutShowFix extends AbstractFixHeuristic {
         if (matchesBugLocation(node)) {
             targetHide = node;
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(SpriteMotionStmt node) {
         hasVisibleChange = true;
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -102,12 +93,12 @@ public class HideWithoutShowFix extends AbstractFixHeuristic {
         if (!(node instanceof Hide) && !(node instanceof Show)) {
             hasVisibleChange = true;
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(ActorLookStmt node) {
         hasVisibleChange = true;
-        super.visit(node);
+        visitChildren(node);
     }
 }

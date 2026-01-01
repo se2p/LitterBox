@@ -44,7 +44,7 @@ public class MissingLoopSensingWaitFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed.class);
 
-        MissingLoopSensingWaitFix finder = new MissingLoopSensingWaitFix(blockId);
+        MissingLoopSensingWaitFix finder = new MissingLoopSensingWaitFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -61,12 +61,12 @@ public class MissingLoopSensingWaitFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.IsKeyPressed.class);
 
-        MissingLoopSensingWaitFix finder = new MissingLoopSensingWaitFix(blockId);
+        MissingLoopSensingWaitFix finder = new MissingLoopSensingWaitFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing the bug is gone
         String code = """
                 when green flag clicked
@@ -76,8 +76,8 @@ public class MissingLoopSensingWaitFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        MissingLoopSensingWaitFix finder = new MissingLoopSensingWaitFix(blockId);
-        assertNoFixFound(finder, program);
+        MissingLoopSensingWaitFix finder = new MissingLoopSensingWaitFix(createTestIssueDTO(blockId));
+        assertFixFound(finder, program);
     }
 
     // ========================================================================
@@ -112,7 +112,7 @@ public class MissingLoopSensingWaitFixTest extends AbstractFixHeuristicTest {
         org.junit.jupiter.api.Assertions.assertNotNull(existingBlockId,
                 "Should find IsKeyPressed in original program");
 
-        MissingLoopSensingWaitFix fix = new MissingLoopSensingWaitFix(existingBlockId);
+        MissingLoopSensingWaitFix fix = new MissingLoopSensingWaitFix(createTestIssueDTO(existingBlockId));
         assertFixFound(fix, fixedProgram);
     }
 }

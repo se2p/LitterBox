@@ -52,7 +52,7 @@ public class ForeverInsideIfFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, RepeatForeverStmt.class);
 
-        ForeverInsideIfFix finder = new ForeverInsideIfFix(blockId);
+        ForeverInsideIfFix finder = new ForeverInsideIfFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -72,7 +72,7 @@ public class ForeverInsideIfFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, RepeatForeverStmt.class);
 
-        ForeverInsideIfFix finder = new ForeverInsideIfFix(blockId);
+        ForeverInsideIfFix finder = new ForeverInsideIfFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
@@ -87,7 +87,7 @@ public class ForeverInsideIfFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        ForeverInsideIfFix finder = new ForeverInsideIfFix(blockId);
+        ForeverInsideIfFix finder = new ForeverInsideIfFix(createTestIssueDTO(blockId));
         // Deleting the buggy block is a valid fix
         assertFixFound(finder, program);
     }
@@ -142,7 +142,7 @@ public class ForeverInsideIfFixTest extends AbstractFixHeuristicTest {
         Assertions.assertNotNull(bugBlockId, "Bug issue should have a block ID");
 
         // The fix heuristic should detect this block is fixed (deleted) in original program
-        ForeverInsideIfFix fixHeuristic = new ForeverInsideIfFix(bugBlockId);
+        ForeverInsideIfFix fixHeuristic = new ForeverInsideIfFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

@@ -53,7 +53,7 @@ public class MissingTerminationConditionFixTest extends AbstractFixHeuristicTest
         Program program = parseProgram(code);
         String blockId = findBlockId(program, UntilStmt.class);
 
-        MissingTerminationConditionFix finder = new MissingTerminationConditionFix(blockId);
+        MissingTerminationConditionFix finder = new MissingTerminationConditionFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -70,7 +70,7 @@ public class MissingTerminationConditionFixTest extends AbstractFixHeuristicTest
         Program program = parseProgram(code);
         String blockId = findBlockId(program, UntilStmt.class);
 
-        MissingTerminationConditionFix finder = new MissingTerminationConditionFix(blockId);
+        MissingTerminationConditionFix finder = new MissingTerminationConditionFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
@@ -85,7 +85,7 @@ public class MissingTerminationConditionFixTest extends AbstractFixHeuristicTest
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        MissingTerminationConditionFix finder = new MissingTerminationConditionFix(blockId);
+        MissingTerminationConditionFix finder = new MissingTerminationConditionFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -128,7 +128,7 @@ public class MissingTerminationConditionFixTest extends AbstractFixHeuristicTest
         Assertions.assertNotNull(bugBlockId, "Bug issue should have a block ID");
 
         // The fix heuristic should detect a fix in the original program
-        MissingTerminationConditionFix fixHeuristic = new MissingTerminationConditionFix(bugBlockId);
+        MissingTerminationConditionFix fixHeuristic = new MissingTerminationConditionFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

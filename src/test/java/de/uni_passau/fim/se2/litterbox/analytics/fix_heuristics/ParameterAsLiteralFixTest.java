@@ -44,7 +44,7 @@ public class ParameterAsLiteralFixTest extends AbstractFixHeuristicTest {
         String blockId = findBlockId(program, StringLiteral.class,
                 lit -> "hello".equals(lit.getText()));
 
-        ParameterAsLiteralFix finder = new ParameterAsLiteralFix(blockId);
+        ParameterAsLiteralFix finder = new ParameterAsLiteralFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -60,7 +60,7 @@ public class ParameterAsLiteralFixTest extends AbstractFixHeuristicTest {
         String blockId = findBlockId(program, StringLiteral.class,
                 lit -> "x".equals(lit.getText()));
 
-        ParameterAsLiteralFix finder = new ParameterAsLiteralFix(blockId);
+        ParameterAsLiteralFix finder = new ParameterAsLiteralFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
@@ -75,7 +75,7 @@ public class ParameterAsLiteralFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        ParameterAsLiteralFix finder = new ParameterAsLiteralFix(blockId);
+        ParameterAsLiteralFix finder = new ParameterAsLiteralFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -114,7 +114,7 @@ public class ParameterAsLiteralFixTest extends AbstractFixHeuristicTest {
         // in the original (where it was a variable), it won't be found as that specific literal node.
         String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
         
-        ParameterAsLiteralFix fix = new ParameterAsLiteralFix(bugBlockId);
+        ParameterAsLiteralFix fix = new ParameterAsLiteralFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fix, fixedProgram);
     }
 }

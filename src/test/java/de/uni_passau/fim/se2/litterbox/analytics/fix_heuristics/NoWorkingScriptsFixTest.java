@@ -58,7 +58,7 @@ public class NoWorkingScriptsFixTest extends AbstractFixHeuristicTest {
         // Use any block ID from the script as the bug location
         String blockId = findBlockId(program, de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps.class);
 
-        NoWorkingScriptsFix finder = new NoWorkingScriptsFix(blockId);
+        NoWorkingScriptsFix finder = new NoWorkingScriptsFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -75,7 +75,7 @@ public class NoWorkingScriptsFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        NoWorkingScriptsFix finder = new NoWorkingScriptsFix(blockId);
+        NoWorkingScriptsFix finder = new NoWorkingScriptsFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -118,7 +118,7 @@ public class NoWorkingScriptsFixTest extends AbstractFixHeuristicTest {
         Assertions.assertNotNull(blockId, "Should find MoveSteps block in original program");
 
         // The fix heuristic should detect this is fixed in the original program
-        NoWorkingScriptsFix fixHeuristic = new NoWorkingScriptsFix(blockId);
+        NoWorkingScriptsFix fixHeuristic = new NoWorkingScriptsFix(createTestIssueDTO(blockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.InappropriateHandlerDeleteClone;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
  * Fix heuristic for the InappropriateHandlerDeleteClone bug.
@@ -37,8 +38,8 @@ public class InappropriateHandlerDeleteCloneFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new InappropriateHandlerDeleteClone();
 
-    public InappropriateHandlerDeleteCloneFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public InappropriateHandlerDeleteCloneFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class InappropriateHandlerDeleteCloneFix extends AbstractFixHeuristic {
         if (node.getEvent() instanceof GreenFlag) {
             insideGreenFlag = true;
         }
-        super.visit(node);
+        visitChildren(node);
         insideGreenFlag = wasInside;
     }
 
@@ -62,9 +63,9 @@ public class InappropriateHandlerDeleteCloneFix extends AbstractFixHeuristic {
         if (matchesBugLocation(node)) {
             // Fixed if NOT in a GreenFlag script
             if (!insideGreenFlag) {
-                addIssue(node, node.getMetadata());
+                addFix(node, node.getMetadata());
             }
         }
-        super.visit(node);
+        visitChildren(node);
     }
 }

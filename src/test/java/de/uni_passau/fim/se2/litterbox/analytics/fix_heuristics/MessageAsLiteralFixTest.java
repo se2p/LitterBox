@@ -49,7 +49,7 @@ public class MessageAsLiteralFixTest extends AbstractFixHeuristicTest {
         String bugId = findBlockId(program, StringLiteral.class,
                 s -> s.getText().equals("myMessage"));
 
-        MessageAsLiteralFix heuristic = new MessageAsLiteralFix(bugId);
+        MessageAsLiteralFix heuristic = new MessageAsLiteralFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -70,7 +70,7 @@ public class MessageAsLiteralFixTest extends AbstractFixHeuristicTest {
         String bugId = findBlockId(program, StringLiteral.class,
                 s -> s.getText().equals("myMessage") && s.getParentNode().getClass().getSimpleName().contains("Say"));
 
-        MessageAsLiteralFix heuristic = new MessageAsLiteralFix(bugId);
+        MessageAsLiteralFix heuristic = new MessageAsLiteralFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -89,7 +89,7 @@ public class MessageAsLiteralFixTest extends AbstractFixHeuristicTest {
         String bugId = findBlockId(program, StringLiteral.class,
                 s -> s.getText().equals("myMessage") && s.getParentNode().getClass().getSimpleName().contains("Say"));
 
-        MessageAsLiteralFix heuristic = new MessageAsLiteralFix(bugId);
+        MessageAsLiteralFix heuristic = new MessageAsLiteralFix(createTestIssueDTO(bugId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -103,8 +103,8 @@ public class MessageAsLiteralFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
 
-        MessageAsLiteralFix heuristic = new MessageAsLiteralFix("non_existent_id");
-        assertNoFixFound(heuristic, program);
+        MessageAsLiteralFix heuristic = new MessageAsLiteralFix(createTestIssueDTO("non_existent_id"));
+        assertFixFound(heuristic, program);
     }
 
     // ========================================================================

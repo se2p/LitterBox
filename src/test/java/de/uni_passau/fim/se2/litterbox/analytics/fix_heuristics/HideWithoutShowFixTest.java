@@ -51,7 +51,7 @@ public class HideWithoutShowFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, Hide.class);
 
-        HideWithoutShowFix finder = new HideWithoutShowFix(blockId);
+        HideWithoutShowFix finder = new HideWithoutShowFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -67,7 +67,7 @@ public class HideWithoutShowFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, Hide.class);
 
-        HideWithoutShowFix finder = new HideWithoutShowFix(blockId);
+        HideWithoutShowFix finder = new HideWithoutShowFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
@@ -82,7 +82,7 @@ public class HideWithoutShowFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        HideWithoutShowFix finder = new HideWithoutShowFix(blockId);
+        HideWithoutShowFix finder = new HideWithoutShowFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 

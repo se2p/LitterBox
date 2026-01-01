@@ -18,7 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +27,13 @@ import java.util.List;
 import java.util.Set;
 
 public class FixHeuristicRegistryTest {
+
+    private static IssueDTO createTestIssueDTO(String blockId) {
+        return new IssueDTO(
+                0, "TestFinder", "TestFinder", IssueType.BUG, 0, "Sprite1",
+                blockId, null, null, null, null, null, null, 0, null, null
+        );
+    }
 
     @Test
     public void testHeuristicCount() {
@@ -37,9 +45,9 @@ public class FixHeuristicRegistryTest {
     public void testAllHeuristicsCanBeInstantiated() {
         Set<String> supportedFinders = FixHeuristicRegistry.getSupportedBugFinders();
         for (String finderName : supportedFinders) {
-            List<IssueFinder> heuristics = FixHeuristicRegistry.getFixHeuristics(finderName, "test-id");
+            List<FixHeuristic> heuristics = FixHeuristicRegistry.getFixHeuristics(finderName, createTestIssueDTO("test-id"));
             Assertions.assertFalse(heuristics.isEmpty(), "No heuristics found for supported finder: " + finderName);
-            for (IssueFinder heuristic : heuristics) {
+            for (FixHeuristic heuristic : heuristics) {
                 Assertions.assertNotNull(heuristic, "Heuristic instance is null for: " + finderName);
                 Assertions.assertEquals(finderName, heuristic.getName(), "Heuristic name mismatch for: " + finderName);
             }

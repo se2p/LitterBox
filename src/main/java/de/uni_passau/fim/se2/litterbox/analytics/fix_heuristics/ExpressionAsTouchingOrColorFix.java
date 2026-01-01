@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ExpressionAsTouchingOrColor;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
  * Fix heuristic for the ExpressionAsTouchingOrColor bug.
@@ -40,8 +41,8 @@ public class ExpressionAsTouchingOrColorFix extends AbstractFixHeuristic impleme
 
     private final IssueFinder relatedBugFinder = new ExpressionAsTouchingOrColor();
 
-    public ExpressionAsTouchingOrColorFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public ExpressionAsTouchingOrColorFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -54,20 +55,20 @@ public class ExpressionAsTouchingOrColorFix extends AbstractFixHeuristic impleme
     public void visit(ColorTouchingColor node) {
         if (matchesBugLocation(node)) {
             if (node.getOperand1() instanceof ColorLiteral && node.getOperand2() instanceof ColorLiteral) {
-                addIssue(node, node.getMetadata());
+                addFix(node, node.getMetadata());
             }
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(SpriteTouchingColor node) {
         if (matchesBugLocation(node)) {
             if (node.getColor() instanceof ColorLiteral) {
-                addIssue(node, node.getMetadata());
+                addFix(node, node.getMetadata());
             }
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class ExpressionAsTouchingOrColorFix extends AbstractFixHeuristic impleme
             if (node.getTouchable() instanceof MousePointer
                     || node.getTouchable() instanceof Edge
                     || node.getTouchable() instanceof SpriteTouchable) {
-                addIssue(node, node.getMetadata());
+                addFix(node, node.getMetadata());
             }
         }
     }
@@ -85,9 +86,9 @@ public class ExpressionAsTouchingOrColorFix extends AbstractFixHeuristic impleme
     public void visit(SetPenColorToColorStmt node) {
         if (matchesBugLocation(node)) {
             if (node.getColorExpr() instanceof ColorLiteral) {
-                addIssue(node, node.getMetadata());
+                addFix(node, node.getMetadata());
             }
         }
-        PenExtensionVisitor.super.visit(node);
+        visitChildren(node);
     }
 }

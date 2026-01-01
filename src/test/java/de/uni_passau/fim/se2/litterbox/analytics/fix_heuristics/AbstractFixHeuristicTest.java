@@ -19,14 +19,13 @@
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import org.junit.jupiter.api.Assertions;
 
@@ -39,8 +38,8 @@ import java.util.Set;
  * <p>Tests can use either:
  * <ul>
  *   <li>{@link #parseProgram(String)} to parse ScratchBlocks code</li>
- *   <li>{@link #assertFixFound(AbstractIssueFinder, Program)} to verify a fix is detected</li>
- *   <li>{@link #assertNoFixFound(AbstractIssueFinder, Program)} to verify no fix is detected</li>
+ *   <li>{@link #assertFixFound(AbstractFixHeuristic, Program)} to verify a fix is detected</li>
+ *   <li>{@link #assertNoFixFound(AbstractFixHeuristic, Program)} to verify no fix is detected</li>
  * </ul>
  */
 public abstract class AbstractFixHeuristicTest implements JsonTest {
@@ -74,37 +73,35 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
     }
 
     /**
-     * Assert that the given finder reports at least one FIX issue.
+     * Assert that the given fix heuristic reports at least one fix.
      */
     protected void assertFixFound(AbstractFixHeuristic finder, Program program) {
-        Set<Issue> issues = finder.check(program);
-        Assertions.assertFalse(issues.isEmpty(),
-                "Expected at least one FIX issue to be found, but found none.");
+        Set<FixResult> fixes = finder.check(program);
+        Assertions.assertFalse(fixes.isEmpty(),
+                "Expected at least one fix to be found, but found none.");
 
-        Issue fixIssue = issues.stream()
-                .filter(i -> i.getIssueType() == IssueType.FIX)
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Expected an issue of type FIX, but found: " + issues));
+        FixResult fixResult = fixes.iterator().next();
 
-        // T4: Robust Assertions
-        Assertions.assertNotNull(fixIssue.getHint(), "FIX issue must have a Hint.");
+        // Verify the original issue is tracked
+        Assertions.assertNotNull(fixResult.originalIssue(),
+                "Fix result must have an original issue.");
 
         // Code location can be null if the block was deleted (which is a valid fix)
-        ASTNode loc = fixIssue.getCodeLocation();
+        ASTNode loc = fixResult.fixedNode();
 
         // Verify it matches the original bug location (if known and location exists)
-        if (loc != null && finder.bugLocationBlockId != null
-                && !finder.bugLocationBlockId.startsWith("__registry_init__")) {
-            boolean matches = AstNodeUtil.hasBlockId(loc, finder.bugLocationBlockId)
+        if (loc != null && finder.getBugLocationBlockId() != null
+                && !finder.getBugLocationBlockId().startsWith("__")) {
+            boolean matches = AstNodeUtil.hasBlockId(loc, finder.getBugLocationBlockId())
                     || loc == finder.semanticMatch;
             Assertions.assertTrue(matches,
-                    "FIX issue location does not match original bug location ID: " + finder.bugLocationBlockId);
+                    "Fix location does not match original bug location ID: " + finder.getBugLocationBlockId());
         }
         // If loc is null, the block was deleted - this is a valid fix scenario
     }
 
     /**
-     * Assert that the given finder reports at least one FIX issue.
+     * Assert that the given fix heuristic reports at least one fix.
      * (Backward-compatible overload for JSON string sources.)
      */
     protected void assertFixFound(AbstractFixHeuristic finder, String jsonSource) throws IOException, ParsingException {
@@ -113,19 +110,19 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
     }
 
     /**
-     * Assert that the given finder reports no FIX issues.
+     * Assert that the given fix heuristic reports no fixes.
      */
-    protected void assertNoFixFound(AbstractIssueFinder finder, Program program) {
-        Set<Issue> issues = finder.check(program);
-        Assertions.assertTrue(issues.stream().noneMatch(i -> i.getIssueType() == IssueType.FIX),
-                "Expected NO FIX issue to be found, but found: " + issues);
+    protected void assertNoFixFound(AbstractFixHeuristic finder, Program program) {
+        Set<FixResult> fixes = finder.check(program);
+        Assertions.assertTrue(fixes.isEmpty(),
+                "Expected NO fix to be found, but found: " + fixes);
     }
 
     /**
-     * Assert that the given finder reports no FIX issues.
+     * Assert that the given fix heuristic reports no fixes.
      * (Backward-compatible overload for JSON string sources.)
      */
-    protected void assertNoFixFound(AbstractIssueFinder finder, String jsonSource) throws IOException, ParsingException {
+    protected void assertNoFixFound(AbstractFixHeuristic finder, String jsonSource) throws IOException, ParsingException {
         Program program = new Scratch3Parser().parseString("test", jsonSource);
         assertNoFixFound(finder, program);
     }
@@ -169,5 +166,26 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
             }
         }
         return null;
+    }
+
+    /**
+     * Creates a minimal IssueDTO for testing purposes.
+     *
+     * @param blockId the block ID
+     * @param finderName the finder name
+     * @return a minimal IssueDTO
+     */
+    protected static IssueDTO createTestIssueDTO(String blockId, String finderName) {
+        return new IssueDTO(
+                0, finderName, finderName, IssueType.BUG, 0, "Sprite1",
+                blockId, null, null, null, null, null, null, 0, null, null
+        );
+    }
+
+    /**
+     * Creates a minimal IssueDTO for testing with just a block ID.
+     */
+    protected static IssueDTO createTestIssueDTO(String blockId) {
+        return createTestIssueDTO(blockId, "TestFinder");
     }
 }

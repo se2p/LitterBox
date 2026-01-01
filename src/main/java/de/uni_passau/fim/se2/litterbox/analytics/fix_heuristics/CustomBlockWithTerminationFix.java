@@ -18,12 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.CustomBlockWithTermination;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-
-import java.util.Set;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
  * Fix heuristic for the CustomBlockWithTermination bug.
@@ -36,8 +34,8 @@ public class CustomBlockWithTerminationFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new CustomBlockWithTermination();
 
-    public CustomBlockWithTerminationFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public CustomBlockWithTerminationFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -45,17 +43,13 @@ public class CustomBlockWithTerminationFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-    @Override
-    public Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> check(Program program) {
-        refreshBugInstances(program);
-        return super.check(program);
-    }
+
 
     @Override
     public void visit(CallStmt node) {
         if (matchesBugLocation(node) && !isBugStillPresent(node)) {
-            addIssue(node, node.getMetadata());
+            addFix(node, node.getMetadata());
         }
-        super.visit(node);
+        visitChildren(node);
     }
 }

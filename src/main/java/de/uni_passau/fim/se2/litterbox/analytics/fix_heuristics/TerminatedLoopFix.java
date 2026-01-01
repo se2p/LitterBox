@@ -18,11 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.TerminatedLoop;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
@@ -30,11 +29,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesSt
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Fix heuristic for the TerminatedLoop bug.
@@ -53,8 +49,8 @@ public class TerminatedLoopFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new TerminatedLoop();
 
-    public TerminatedLoopFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public TerminatedLoopFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -62,29 +58,19 @@ public class TerminatedLoopFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-    @Override
-    public Set<Issue> check(Program program) {
-        // Check if the buggy block was deleted - that's a valid fix
-        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
-        }
-        return super.check(program);
-    }
 
-    // Removed createFixIssueForDeletedBlock helper as it is just one line
 
 
     @Override
     public void visit(StopAll node) {
         checkStopBlock(node);
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(StopThisScript node) {
         checkStopBlock(node);
-        super.visit(node);
+        visitChildren(node);
     }
 
     private void checkStopBlock(Stmt node) {
@@ -96,7 +82,7 @@ public class TerminatedLoopFix extends AbstractFixHeuristic {
         ASTNode parent = node.getParentNode();
         if (!(parent instanceof StmtList stmtList)) {
             // Not in a statement list context - fixed!
-            addIssue(node, node.getMetadata());
+            addFix(node, node.getMetadata());
             return;
         }
 
@@ -107,7 +93,7 @@ public class TerminatedLoopFix extends AbstractFixHeuristic {
 
         if (!inLoop) {
             // Not in a loop - fixed!
-            addIssue(node, node.getMetadata());
+            addFix(node, node.getMetadata());
             return;
         }
 
@@ -115,7 +101,7 @@ public class TerminatedLoopFix extends AbstractFixHeuristic {
         List<Stmt> stmts = stmtList.getStmts();
         if (stmts.getLast() != node) {
             // No longer the last statement - fixed!
-            addIssue(node, node.getMetadata());
+            addFix(node, node.getMetadata());
         }
         // Otherwise, still buggy - don't report a fix
     }

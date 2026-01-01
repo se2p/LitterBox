@@ -58,7 +58,7 @@ public class KeySetPositionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, SetXTo.class);
 
-        KeySetPositionFix heuristic = new KeySetPositionFix(bugId);
+        KeySetPositionFix heuristic = new KeySetPositionFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -73,7 +73,7 @@ public class KeySetPositionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, SetXTo.class);
 
-        KeySetPositionFix heuristic = new KeySetPositionFix(bugId);
+        KeySetPositionFix heuristic = new KeySetPositionFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -88,7 +88,7 @@ public class KeySetPositionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, SetXTo.class);
 
-        KeySetPositionFix heuristic = new KeySetPositionFix(bugId);
+        KeySetPositionFix heuristic = new KeySetPositionFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -103,7 +103,7 @@ public class KeySetPositionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, SetYTo.class);
 
-        KeySetPositionFix heuristic = new KeySetPositionFix(bugId);
+        KeySetPositionFix heuristic = new KeySetPositionFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -118,7 +118,7 @@ public class KeySetPositionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, SetXTo.class);
 
-        KeySetPositionFix heuristic = new KeySetPositionFix(bugId);
+        KeySetPositionFix heuristic = new KeySetPositionFix(createTestIssueDTO(bugId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -133,7 +133,7 @@ public class KeySetPositionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, SetYTo.class);
 
-        KeySetPositionFix heuristic = new KeySetPositionFix(bugId);
+        KeySetPositionFix heuristic = new KeySetPositionFix(createTestIssueDTO(bugId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -150,7 +150,7 @@ public class KeySetPositionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, SetXTo.class);
 
-        KeySetPositionFix heuristic = new KeySetPositionFix(bugId);
+        KeySetPositionFix heuristic = new KeySetPositionFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -164,7 +164,7 @@ public class KeySetPositionFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
 
-        KeySetPositionFix heuristic = new KeySetPositionFix("non_existent_id");
+        KeySetPositionFix heuristic = new KeySetPositionFix(createTestIssueDTO("non_existent_id"));
         // Deleting the buggy block is a valid fix
         assertFixFound(heuristic, program);
     }
@@ -176,54 +176,58 @@ public class KeySetPositionFixTest extends AbstractFixHeuristicTest {
     /**
      * Injector-based test for KeySetPosition.
      *
-     * <p>NOTE: This test is disabled because the KeySetPosition bug finder has a design issue
-     * where it flags ALL motion statements (SetX/Y, ChangeX/Y, MoveSteps) in arrow key events
-     * as bugs, not just SetX/SetY. A "clean" program for this bug finder would need to use
-     * no arrow key handling at all.
+     * <p>The injector converts key-polling motion code (forever + if key pressed + motion)
+     * to event-driven code, which introduces the bug (SetX instead of ChangeX).
+     * The fix heuristic should detect when the original polling code is correct.
      */
-    @org.junit.jupiter.api.Disabled("KeySetPosition bug finder flags ChangeX/Y as bugs too")
     @Test
     public void testInjector_KeySetPosition() throws IOException, ParsingException {
-        // Start with valid program - use event-based key handling with ChangeX
+        // Start with correct polling-style program
+        // forever { if (right arrow pressed?) { change x by 10 } }
         String fixedCode = """
-                when [right arrow v] key pressed
+                when green flag clicked
+                forever
+                if <key (right arrow v) pressed?> then
                 change x by (10)
+                end
+                end
                 """;
 
         Program fixedProgram = parseProgram(fixedCode);
 
-        // Verify original has no bug
+        // Verify original has no bug (polling with ChangeX is correct)
         de.uni_passau.fim.se2.litterbox.analytics.bugs.KeySetPosition bugFinder =
                 new de.uni_passau.fim.se2.litterbox.analytics.bugs.KeySetPosition();
         java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues =
                 bugFinder.check(fixedProgram);
         org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(),
-                "Original program should be clean");
+                "Original polling program with ChangeX should be clean");
 
-        // Inject bug (extracts to key-pressed event with SetX)
+        // Inject bug - transforms polling to event-driven with SetX
         de.uni_passau.fim.se2.litterbox.injection.bugs.KeySetPositionInjector injector =
                 new de.uni_passau.fim.se2.litterbox.injection.bugs.KeySetPositionInjector();
         java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results =
                 injector.inject(fixedProgram);
 
-        // This injector may not find valid targets - skip if no injection occurred
-        org.junit.jupiter.api.Assumptions.assumeFalse(results.isEmpty(),
-                "Skipping - injector found no valid targets in this program");
+        org.junit.jupiter.api.Assertions.assertFalse(results.isEmpty(),
+                "Injector should transform polling to event-driven");
 
-        // Verify bug in mutated
+        // Verify bug in mutated program
         Program mutatedProgram = results.get(0).mutatedProgram();
         java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues =
                 bugFinder.check(mutatedProgram);
+        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(),
+                "Mutated event-driven program should have KeySetPosition bug");
 
-        if (!bugIssues.isEmpty()) {
-            // If we got bugs, verify fix detection works            
-            // The mutated SetX block won't exist in original - look for ChangeXBy instead
-            String existingBlockId = findBlockId(fixedProgram, 
-                    de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy.class);
-            if (existingBlockId != null) {
-                KeySetPositionFix fix = new KeySetPositionFix(existingBlockId);
-                assertFixFound(fix, fixedProgram);
-            }
-        }
+        // Find the ChangeXBy block ID in the original (correct) program
+        String changeXBlockId = findBlockId(fixedProgram, 
+                de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy.class);
+        org.junit.jupiter.api.Assertions.assertNotNull(changeXBlockId,
+                "Should find ChangeXBy block in original program");
+        
+        // Fix heuristic should detect fix on the original program
+        KeySetPositionFix fix = new KeySetPositionFix(createTestIssueDTO(changeXBlockId));
+        assertFixFound(fix, fixedProgram);
     }
 }
+

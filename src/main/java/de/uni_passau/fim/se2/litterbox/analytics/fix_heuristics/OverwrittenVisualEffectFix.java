@@ -29,15 +29,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.OverwrittenVisualEffect;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Fix heuristic for the OverwrittenVisualEffect bug.
@@ -49,8 +46,8 @@ public class OverwrittenVisualEffectFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new OverwrittenVisualEffect();
 
-    public OverwrittenVisualEffectFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public OverwrittenVisualEffectFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -58,15 +55,7 @@ public class OverwrittenVisualEffectFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-    @Override
-    public Set<Issue> check(Program program) {
-        // If the original buggy block is gone, we consider it fixed.
-        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
-        }
-        return super.check(program);
-    }
+
 
 
     @Override
@@ -135,7 +124,7 @@ public class OverwrittenVisualEffectFix extends AbstractFixHeuristic {
 
     private void reportIfTarget(Stmt stmt, boolean isBug) {
         if (matchesBugLocation(stmt) && !isBug) {
-            addIssue(stmt, stmt.getMetadata());
+            addFix(stmt, stmt.getMetadata());
         }
     }
 

@@ -44,7 +44,7 @@ public class AmbiguousCustomBlockSignatureFixTest extends AbstractFixHeuristicTe
         Program program = parseProgram(source);
         String bugId = findBlockId(program, ProcedureDefinition.class);
 
-        AmbiguousCustomBlockSignatureFix heuristic = new AmbiguousCustomBlockSignatureFix(bugId);
+        AmbiguousCustomBlockSignatureFix heuristic = new AmbiguousCustomBlockSignatureFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -67,7 +67,7 @@ public class AmbiguousCustomBlockSignatureFixTest extends AbstractFixHeuristicTe
         Program program = parseProgram(source);
         String bugId = findBlockId(program, ProcedureDefinition.class);
 
-        AmbiguousCustomBlockSignatureFix heuristic = new AmbiguousCustomBlockSignatureFix(bugId);
+        AmbiguousCustomBlockSignatureFix heuristic = new AmbiguousCustomBlockSignatureFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -81,7 +81,7 @@ public class AmbiguousCustomBlockSignatureFixTest extends AbstractFixHeuristicTe
 
         Program program = parseProgram(source);
 
-        AmbiguousCustomBlockSignatureFix heuristic = new AmbiguousCustomBlockSignatureFix("non_existent_id");
+        AmbiguousCustomBlockSignatureFix heuristic = new AmbiguousCustomBlockSignatureFix(createTestIssueDTO("non_existent_id"));
         assertFixFound(heuristic, program);
     }
 
@@ -110,7 +110,7 @@ public class AmbiguousCustomBlockSignatureFixTest extends AbstractFixHeuristicTe
         de.uni_passau.fim.se2.litterbox.analytics.Issue issue = issues.iterator().next();
         String bugID = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(issue.getNormalizedCodeLocation());
 
-        AmbiguousCustomBlockSignatureFix heuristic = new AmbiguousCustomBlockSignatureFix(bugID);
+        AmbiguousCustomBlockSignatureFix heuristic = new AmbiguousCustomBlockSignatureFix(createTestIssueDTO(bugID));
         assertFixFound(heuristic, fixedProgram);
     }
 }

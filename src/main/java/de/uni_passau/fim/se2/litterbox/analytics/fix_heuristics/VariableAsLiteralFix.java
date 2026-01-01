@@ -25,8 +25,13 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.VariableAsLiteral;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -44,42 +49,49 @@ public class VariableAsLiteralFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new VariableAsLiteral();
 
-    public VariableAsLiteralFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public VariableAsLiteralFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
 
 
 
     @Override
-    public Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> check(Program program) {
-        // If the original buggy block (likely StringLiteral) is gone, we consider it fixed.
-        java.util.Optional<de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder.NodeContext> foundOpt = de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder.find(program, bugLocationBlockId);
+    public Set<FixResult> check(Program program) {
+        if (program.getSymbolTable() != null) {
+            varMap = program.getSymbolTable().getVariables();
+            listMap = program.getSymbolTable().getLists();
+        } else {
+            varMap = Collections.emptyMap();
+            listMap = Collections.emptyMap();
+        }
+        this.program = program;
+
+        // Note: We intentionally avoid calling super.check(program) here to bypass
+        // the potentially unreliable deletion check in AbstractFixHeuristic (AstNodeUtil.hasBlockId).
+        // Instead, we use BlockIdNodeFinder which is more robust.
         
-        if (bugLocationBlockId != null) {
-            if (foundOpt.isEmpty()) {
-                addIssueWithLooseComment();
-                return java.util.Collections.unmodifiableSet(issues);
+        // 1. Check for deletion or type change
+        Optional<BlockIdNodeFinder.NodeContext> context = BlockIdNodeFinder.find(program, getBugLocationBlockId());
+        
+        if (getBugLocationBlockId() != null) {
+            if (context.isEmpty()) {
+                // Block deleted
+                addFixWithLooseComment();
+                return Collections.unmodifiableSet(fixes);
             }
             
-            // Also fixed if the node exists but is no longer a StringLiteral (e.g. reverted to Variable)
-            if (!(foundOpt.get().node() instanceof StringLiteral)) {
-                 addIssueWithLooseComment();
-                 return java.util.Collections.unmodifiableSet(issues);
+            if (!(context.get().node() instanceof StringLiteral)) {
+                // Type changed (e.g. reverted to parameter/variable)
+                addFixWithLooseComment();
+                return Collections.unmodifiableSet(fixes);
             }
         }
-    
-        if (program.getSymbolTable() == null) {
-            // Should typically not happen for parsed programs
-            return java.util.Collections.emptySet();
-        }
 
-        varMap = program.getSymbolTable().getVariables();
-        listMap = program.getSymbolTable().getLists();
-        this.program = program;
+        // 2. Visit to find semantic fix (variable not in scope)
+        visit(program);
         
-        super.visit(program); // Just visit children, don't re-init tables
-        return issues;
+        return Collections.unmodifiableSet(fixes);
     }
 
     @Override
@@ -120,7 +132,7 @@ public class VariableAsLiteralFix extends AbstractFixHeuristic {
         if (matchesBugLocation(node)) {
             // Check if parent is StrId (identifier context), ignore if so
             if (node.getParentNode() instanceof de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId) {
-                super.visit(node);
+                visitChildren(node);
                 return;
             }
             // Bug finder only checks when inside script or procedure context
@@ -128,9 +140,9 @@ public class VariableAsLiteralFix extends AbstractFixHeuristic {
             if ((currentScript != null || currentProcedure != null)
                     && variablesInScope != null
                     && !variablesInScope.contains(node.getText())) {
-                addIssue(node, node.getMetadata());
+                addFix(node, node.getMetadata());
             }
         }
-        super.visit(node);
+        visitChildren(node);
     }
 }

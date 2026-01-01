@@ -48,7 +48,7 @@ public class CustomBlockWithTerminationFixTest extends AbstractFixHeuristicTest 
         Program program = parseProgram(code);
         String blockId = findBlockId(program, CallStmt.class);
 
-        CustomBlockWithTerminationFix finder = new CustomBlockWithTerminationFix(blockId);
+        CustomBlockWithTerminationFix finder = new CustomBlockWithTerminationFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -67,12 +67,12 @@ public class CustomBlockWithTerminationFixTest extends AbstractFixHeuristicTest 
         Program program = parseProgram(code);
         String blockId = findBlockId(program, CallStmt.class);
 
-        CustomBlockWithTerminationFix finder = new CustomBlockWithTerminationFix(blockId);
+        CustomBlockWithTerminationFix finder = new CustomBlockWithTerminationFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing the call is gone
         String code = """
                 when green flag clicked
@@ -82,8 +82,8 @@ public class CustomBlockWithTerminationFixTest extends AbstractFixHeuristicTest 
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        CustomBlockWithTerminationFix finder = new CustomBlockWithTerminationFix(blockId);
-        assertNoFixFound(finder, program);
+        CustomBlockWithTerminationFix finder = new CustomBlockWithTerminationFix(createTestIssueDTO(blockId));
+        assertFixFound(finder, program);
     }
 
     // ========================================================================
@@ -132,7 +132,7 @@ public class CustomBlockWithTerminationFixTest extends AbstractFixHeuristicTest 
         String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil
                 .getBlockId(bugIssues.iterator().next().getCodeLocation());
 
-        CustomBlockWithTerminationFix fix = new CustomBlockWithTerminationFix(bugBlockId);
+        CustomBlockWithTerminationFix fix = new CustomBlockWithTerminationFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fix, fixedProgram);
     }
 }

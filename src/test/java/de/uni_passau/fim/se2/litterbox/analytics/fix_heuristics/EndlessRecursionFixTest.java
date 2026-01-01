@@ -45,7 +45,7 @@ public class EndlessRecursionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, CallStmt.class);
 
-        EndlessRecursionFix finder = new EndlessRecursionFix(blockId);
+        EndlessRecursionFix finder = new EndlessRecursionFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -60,12 +60,12 @@ public class EndlessRecursionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, CallStmt.class);
 
-        EndlessRecursionFix finder = new EndlessRecursionFix(blockId);
+        EndlessRecursionFix finder = new EndlessRecursionFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing the bug is gone
         String code = """
                 define other
@@ -75,8 +75,8 @@ public class EndlessRecursionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        EndlessRecursionFix finder = new EndlessRecursionFix(blockId);
-        assertNoFixFound(finder, program);
+        EndlessRecursionFix finder = new EndlessRecursionFix(createTestIssueDTO(blockId));
+        assertFixFound(finder, program);
     }
 
     // ========================================================================
@@ -131,7 +131,7 @@ public class EndlessRecursionFixTest extends AbstractFixHeuristicTest {
         org.junit.jupiter.api.Assertions.assertNotNull(existingRecursiveCallId,
                 "Should find recursive CallStmt in original program");
 
-        EndlessRecursionFix fix = new EndlessRecursionFix(existingRecursiveCallId);
+        EndlessRecursionFix fix = new EndlessRecursionFix(createTestIssueDTO(existingRecursiveCallId));
         assertFixFound(fix, fixedProgram);
     }
 }

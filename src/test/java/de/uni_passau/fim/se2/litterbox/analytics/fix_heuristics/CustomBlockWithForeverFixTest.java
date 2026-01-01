@@ -47,7 +47,7 @@ public class CustomBlockWithForeverFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, CallStmt.class);
 
-        CustomBlockWithForeverFix finder = new CustomBlockWithForeverFix(blockId);
+        CustomBlockWithForeverFix finder = new CustomBlockWithForeverFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -68,7 +68,7 @@ public class CustomBlockWithForeverFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, CallStmt.class);
 
-        CustomBlockWithForeverFix finder = new CustomBlockWithForeverFix(blockId);
+        CustomBlockWithForeverFix finder = new CustomBlockWithForeverFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
@@ -83,7 +83,7 @@ public class CustomBlockWithForeverFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        CustomBlockWithForeverFix finder = new CustomBlockWithForeverFix(blockId);
+        CustomBlockWithForeverFix finder = new CustomBlockWithForeverFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -118,7 +118,7 @@ public class CustomBlockWithForeverFixTest extends AbstractFixHeuristicTest {
         de.uni_passau.fim.se2.litterbox.analytics.Issue issue = issues.iterator().next();
         String bugID = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(issue.getNormalizedCodeLocation());
 
-        CustomBlockWithForeverFix heuristic = new CustomBlockWithForeverFix(bugID);
+        CustomBlockWithForeverFix heuristic = new CustomBlockWithForeverFix(createTestIssueDTO(bugID));
         assertFixFound(heuristic, fixedProgram);
     }
 }

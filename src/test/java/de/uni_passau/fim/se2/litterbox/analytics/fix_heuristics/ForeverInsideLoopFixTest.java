@@ -54,7 +54,7 @@ public class ForeverInsideLoopFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, RepeatForeverStmt.class);
 
-        ForeverInsideLoopFix heuristic = new ForeverInsideLoopFix(bugId);
+        ForeverInsideLoopFix heuristic = new ForeverInsideLoopFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -74,7 +74,7 @@ public class ForeverInsideLoopFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, RepeatForeverStmt.class);
 
-        ForeverInsideLoopFix heuristic = new ForeverInsideLoopFix(bugId);
+        ForeverInsideLoopFix heuristic = new ForeverInsideLoopFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -93,7 +93,7 @@ public class ForeverInsideLoopFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, RepeatForeverStmt.class);
 
-        ForeverInsideLoopFix heuristic = new ForeverInsideLoopFix(bugId);
+        ForeverInsideLoopFix heuristic = new ForeverInsideLoopFix(createTestIssueDTO(bugId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -107,7 +107,7 @@ public class ForeverInsideLoopFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
 
-        ForeverInsideLoopFix heuristic = new ForeverInsideLoopFix("non_existent_id");
+        ForeverInsideLoopFix heuristic = new ForeverInsideLoopFix(createTestIssueDTO("non_existent_id"));
         // Deleting the buggy block is a valid fix
         assertFixFound(heuristic, program);
     }
@@ -159,7 +159,7 @@ public class ForeverInsideLoopFixTest extends AbstractFixHeuristicTest {
         Assertions.assertNotNull(bugBlockId, "Bug issue should have a block ID");
 
         // The fix heuristic should detect this block is fixed (deleted) in original program
-        ForeverInsideLoopFix fixHeuristic = new ForeverInsideLoopFix(bugBlockId);
+        ForeverInsideLoopFix fixHeuristic = new ForeverInsideLoopFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.FloatingPointComparison;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
  * Fix heuristic for the FloatingPointComparison bug.
@@ -44,8 +45,8 @@ public class FloatingPointComparisonFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new FloatingPointComparison();
 
-    public FloatingPointComparisonFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public FloatingPointComparisonFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -57,13 +58,13 @@ public class FloatingPointComparisonFix extends AbstractFixHeuristic {
     @Override
     public void visit(Script node) {
         inCondition = false;
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(WaitUntil node) {
         inCondition = true;
-        super.visit(node);
+        visitChildren(node);
         inCondition = false;
     }
 
@@ -97,10 +98,10 @@ public class FloatingPointComparisonFix extends AbstractFixHeuristic {
         if (matchesBugLocation(node)) {
             // Fixed if not in condition OR operands are safe
             if (!inCondition || checkEquals(node)) {
-                addIssue(node, node.getMetadata());
+                addFix(node, node.getMetadata());
             }
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     private boolean checkEquals(Equals equals) {

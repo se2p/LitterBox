@@ -54,7 +54,7 @@ public class BlockingIfElseFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, IfElseStmt.class);
 
-        BlockingIfElseFix finder = new BlockingIfElseFix(blockId);
+        BlockingIfElseFix finder = new BlockingIfElseFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -76,7 +76,7 @@ public class BlockingIfElseFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, IfElseStmt.class);
 
-        BlockingIfElseFix finder = new BlockingIfElseFix(blockId);
+        BlockingIfElseFix finder = new BlockingIfElseFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
@@ -91,7 +91,7 @@ public class BlockingIfElseFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        BlockingIfElseFix finder = new BlockingIfElseFix(blockId);
+        BlockingIfElseFix finder = new BlockingIfElseFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 

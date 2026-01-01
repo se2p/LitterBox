@@ -52,7 +52,7 @@ public class MissingAskFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, Answer.class);
 
-        MissingAskFix finder = new MissingAskFix(blockId);
+        MissingAskFix finder = new MissingAskFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -67,12 +67,12 @@ public class MissingAskFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, Answer.class);
 
-        MissingAskFix finder = new MissingAskFix(blockId);
+        MissingAskFix finder = new MissingAskFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing the bug is gone
         String code = """
                 when green flag clicked
@@ -82,8 +82,8 @@ public class MissingAskFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        MissingAskFix finder = new MissingAskFix(blockId);
-        assertNoFixFound(finder, program);
+        MissingAskFix finder = new MissingAskFix(createTestIssueDTO(blockId));
+        assertFixFound(finder, program);
     }
 
     // ========================================================================
@@ -124,7 +124,7 @@ public class MissingAskFixTest extends AbstractFixHeuristicTest {
         Assertions.assertNotNull(bugBlockId, "Bug issue should have a block ID");
 
         // The fix heuristic should detect a fix in the original program
-        MissingAskFix fixHeuristic = new MissingAskFix(bugBlockId);
+        MissingAskFix fixHeuristic = new MissingAskFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

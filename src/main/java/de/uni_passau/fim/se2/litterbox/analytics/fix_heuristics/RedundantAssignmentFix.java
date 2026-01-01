@@ -18,12 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
+
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.RedundantAssignment;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.Set;
 
@@ -40,8 +40,8 @@ public class RedundantAssignmentFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new RedundantAssignment();
 
-    public RedundantAssignmentFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public RedundantAssignmentFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -49,47 +49,25 @@ public class RedundantAssignmentFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
     @Override
-    public Set<Issue> check(Program program) {
-        this.program = program;
-
-        // Check if the buggy block was deleted
-        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return java.util.Collections.unmodifiableSet(issues);
+    public Set<FixResult> check(Program program) {
+        Set<FixResult> results = super.check(program);
+        if (!results.isEmpty()) {
+            return results;
         }
 
-        // Use composition: create a new bug finder instance
-        RedundantAssignment bugFinder = new RedundantAssignment();
-        Set<Issue> foundBugs = bugFinder.check(program);
-
         // Find the target node using utility
-        BlockIdNodeFinder.find(program, bugLocationBlockId).ifPresent(context -> {
+        BlockIdNodeFinder.find(program, getBugLocationBlockId()).ifPresent(context -> {
             // Check if the bug still exists at this location
-            boolean bugPersists = foundBugs.stream()
-                    .anyMatch(issue -> issue.getCodeLocation() == context.node());
-
-            if (!bugPersists) {
+            if (!isBugStillPresent(context.node())) {
                 // Fixed! The block exists but is no longer redundant.
-                IssueBuilder builder = new IssueBuilder()
-                        .withFinder(this)
-                        .withCurrentNode(context.node())
-                        .withActor(context.actor())
-                        .withProgram(program)
-                        .withMetadata(context.node().getMetadata())
-                        .withHint(de.uni_passau.fim.se2.litterbox.analytics.Hint.fromKey(getName()));
-                
-                if (context.script() != null) {
-                    builder.withScript(context.script());
-                } else if (context.procedure() != null) {
-                    builder.withProcedure(context.procedure());
-                }
-                
-                issues.add(builder.build());
+                currentActor = context.actor();
+                currentScript = context.script();
+                currentProcedure = context.procedure();
+                addFix(context.node(), context.node().getMetadata());
             }
         });
 
-        return issues;
+        return java.util.Collections.unmodifiableSet(fixes);
     }
 }

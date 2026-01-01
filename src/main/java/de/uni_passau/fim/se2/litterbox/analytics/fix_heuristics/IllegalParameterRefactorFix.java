@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.IllegalParameterRefactor;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
  * Fix heuristic for the IllegalParameterRefactor bug.
@@ -44,8 +45,8 @@ public class IllegalParameterRefactorFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new IllegalParameterRefactor();
 
-    public IllegalParameterRefactorFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public IllegalParameterRefactorFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -60,13 +61,13 @@ public class IllegalParameterRefactorFix extends AbstractFixHeuristic {
         if (procMap.containsKey(node.getIdent())) {
             currentArguments = procMap.get(node.getIdent()).getArguments();
         }
-        super.visit(node);
+        visitChildren(node);
         insideProcedure = false;
     }
 
     private void checkBool(BoolExpr boolExpr) {
         if (boolExpr instanceof AsBool asBool && asBool.getOperand1() instanceof Parameter ident) {
-            if (AstNodeUtil.hasBlockId(ident, bugLocationBlockId)) {
+            if (AstNodeUtil.hasBlockId(ident, getBugLocationBlockId())) {
                 boolean isIllegal = false;
                 if (currentArguments != null) {
                     for (ArgumentInfo arg : currentArguments) {
@@ -78,7 +79,7 @@ public class IllegalParameterRefactorFix extends AbstractFixHeuristic {
                     }
                 }
                 if (!isIllegal) {
-                    addIssue(ident, ident.getMetadata());
+                    addFix(ident, ident.getMetadata());
                 }
             }
         }
@@ -89,7 +90,7 @@ public class IllegalParameterRefactorFix extends AbstractFixHeuristic {
         if (insideProcedure) {
             checkBool(node.getBoolExpr());
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -97,7 +98,7 @@ public class IllegalParameterRefactorFix extends AbstractFixHeuristic {
         if (insideProcedure) {
             checkBool(node.getBoolExpr());
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -105,7 +106,7 @@ public class IllegalParameterRefactorFix extends AbstractFixHeuristic {
         if (insideProcedure) {
             checkBool(node.getUntil());
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -113,7 +114,7 @@ public class IllegalParameterRefactorFix extends AbstractFixHeuristic {
         if (insideProcedure) {
             checkBool(node.getBoolExpr());
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -121,7 +122,7 @@ public class IllegalParameterRefactorFix extends AbstractFixHeuristic {
         if (insideProcedure) {
             checkBool(node.getOperand1());
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -130,7 +131,7 @@ public class IllegalParameterRefactorFix extends AbstractFixHeuristic {
             checkBool(node.getOperand1());
             checkBool(node.getOperand2());
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -139,6 +140,6 @@ public class IllegalParameterRefactorFix extends AbstractFixHeuristic {
             checkBool(node.getOperand1());
             checkBool(node.getOperand2());
         }
-        super.visit(node);
+        visitChildren(node);
     }
 }

@@ -27,9 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.NoWorkingScripts;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -55,8 +54,8 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new NoWorkingScripts();
 
-    public NoWorkingScriptsFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public NoWorkingScriptsFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -65,26 +64,20 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
     }
 
     @Override
-    public Set<Issue> check(Program program) {
+    public Set<FixResult> check(Program program) {
         this.program = program;
-        
+        targetNode = null;
+        targetScript = null;
+        targetActorOfBug = null;
+
         // 1. Find the buggy node and its context
-        BlockIdNodeFinder.find(program, bugLocationBlockId).ifPresent(ctx -> {
+        BlockIdNodeFinder.find(program, getBugLocationBlockId()).ifPresent(ctx -> {
             targetNode = ctx.node();
             targetScript = ctx.script();
             targetActorOfBug = ctx.actor();
         });
         
-        issues = new LinkedHashSet<>();
-        issues = new LinkedHashSet<>();
-        if (targetNode != null) {
-            program.accept(this);
-        } else {
-            // Fix: The buggy block/script is gone.
-            addIssueWithLooseComment();
-        }
-        
-        return Collections.unmodifiableSet(issues);
+        return super.check(program);
     }
 
     @Override
@@ -107,7 +100,7 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
             // Fixed!
             currentActor = targetActorOfBug;
             currentScript = targetScript;
-            addIssue(targetNode, targetNode.getMetadata());
+            addFix(targetNode, targetNode.getMetadata());
         }
     }
 
@@ -131,7 +124,7 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
             }
         }
 
-        super.visit(node);
+        visitChildren(node);
         currentScript = null;
     }
 }

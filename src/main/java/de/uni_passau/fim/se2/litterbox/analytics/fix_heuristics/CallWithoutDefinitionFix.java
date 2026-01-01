@@ -24,9 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.CallWithoutDefinition;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-
-import java.util.HashSet;
-import java.util.Set;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
  * Fix heuristic for the CallWithoutDefinition bug.
@@ -36,15 +34,14 @@ import java.util.Set;
  */
 public class CallWithoutDefinitionFix extends AbstractFixHeuristic {
 
-    private Set<String> proceduresDef;
     private CallStmt targetCall;
     private Script foundScript;
     private ProcedureDefinition foundProcedure;
 
     private final IssueFinder relatedBugFinder = new CallWithoutDefinition();
 
-    public CallWithoutDefinitionFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public CallWithoutDefinitionFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -53,25 +50,12 @@ public class CallWithoutDefinitionFix extends AbstractFixHeuristic {
     }
 
     @Override
-    public java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> check(de.uni_passau.fim.se2.litterbox.ast.model.Program program) {
-        this.program = program;
-        this.issues = new java.util.LinkedHashSet<>();
-        if (bugLocationBlockId != null && de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return java.util.Collections.unmodifiableSet(issues);
-        }
-        return super.check(program);
-    }
-
-
-    @Override
     public void visit(ActorDefinition actor) {
-        proceduresDef = new HashSet<>();
         targetCall = null;
         super.visit(actor);
 
         if (targetCall != null) {
-            boolean definitionExists = proceduresDef.contains(targetCall.getIdent().getName());
+            boolean definitionExists = procMap.containsKey(targetCall.getIdent());
             boolean isMalformed = program.getProcedureMapping().checkIfMalformed(
                     currentActor.getIdent().getName() + targetCall.getIdent().getName());
 
@@ -79,17 +63,9 @@ public class CallWithoutDefinitionFix extends AbstractFixHeuristic {
                 // Restore context for addIssue
                 this.currentScript = foundScript;
                 this.currentProcedure = foundProcedure;
-                addIssue(targetCall, targetCall.getMetadata());
+                addFix(targetCall, targetCall.getMetadata());
             }
         }
-    }
-
-    @Override
-    public void visit(ProcedureDefinition node) {
-        if (procMap.containsKey(node.getIdent())) {
-            proceduresDef.add(procMap.get(node.getIdent()).getName());
-        }
-        super.visit(node);
     }
 
     @Override
@@ -99,6 +75,6 @@ public class CallWithoutDefinitionFix extends AbstractFixHeuristic {
             foundScript = currentScript;
             foundProcedure = currentProcedure;
         }
-        super.visit(node);
+        visitChildren(node);
     }
 }

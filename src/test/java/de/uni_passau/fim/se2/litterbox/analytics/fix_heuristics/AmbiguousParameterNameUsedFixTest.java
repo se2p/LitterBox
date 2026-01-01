@@ -20,7 +20,7 @@ public class AmbiguousParameterNameUsedFixTest extends AbstractFixHeuristicTest 
             Program program = parseProgram(source);
             String bugLocationBlockId = findBlockId(program, ProcedureDefinition.class);
             
-            AmbiguousParameterNameUsedFix heuristic = new AmbiguousParameterNameUsedFix(bugLocationBlockId);
+            AmbiguousParameterNameUsedFix heuristic = new AmbiguousParameterNameUsedFix(createTestIssueDTO(bugLocationBlockId));
             assertFixFound(heuristic, program);
         } catch (ParsingException e) {
             // Fallback if ScratchBlocks parser doesn't support 'define' or fails
@@ -54,7 +54,7 @@ public class AmbiguousParameterNameUsedFixTest extends AbstractFixHeuristicTest 
             new de.uni_passau.fim.se2.litterbox.analytics.bugs.AmbiguousParameterNameUsed().check(buggyProgram);
         org.junit.jupiter.api.Assertions.assertFalse(bugs.isEmpty(), "Injection failed - bug not found in buggyProgram");
 
-        AmbiguousParameterNameUsedFix heuristic = new AmbiguousParameterNameUsedFix(bugLocationBlockId);
+        AmbiguousParameterNameUsedFix heuristic = new AmbiguousParameterNameUsedFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, buggyProgram);
     }
 
@@ -69,7 +69,7 @@ public class AmbiguousParameterNameUsedFixTest extends AbstractFixHeuristicTest 
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        AmbiguousParameterNameUsedFix heuristic = new AmbiguousParameterNameUsedFix(blockId);
+        AmbiguousParameterNameUsedFix heuristic = new AmbiguousParameterNameUsedFix(createTestIssueDTO(blockId));
         assertFixFound(heuristic, program);
     }
 
@@ -99,7 +99,7 @@ public class AmbiguousParameterNameUsedFixTest extends AbstractFixHeuristicTest 
         de.uni_passau.fim.se2.litterbox.analytics.Issue issue = issues.iterator().next();
         String bugID = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(issue.getNormalizedCodeLocation());
 
-        AmbiguousParameterNameUsedFix heuristic = new AmbiguousParameterNameUsedFix(bugID);
+        AmbiguousParameterNameUsedFix heuristic = new AmbiguousParameterNameUsedFix(createTestIssueDTO(bugID));
         assertFixFound(heuristic, fixedProgram);
     }
 }

@@ -26,15 +26,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopMousePosition;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
  * Fix heuristic for the MissingLoopMousePosition bug.
@@ -48,8 +42,8 @@ public class MissingLoopMousePositionFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new MissingLoopMousePosition();
 
-    public MissingLoopMousePositionFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public MissingLoopMousePositionFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -57,35 +51,26 @@ public class MissingLoopMousePositionFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-    @Override
-    public Set<Issue> check(Program program) {
-        // Check if block deleted
-        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            issues = new LinkedHashSet<>();
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
-        }
-        return super.check(program);
-    }
+
 
 
     @Override
     public void visit(RepeatForeverStmt node) {
         insideLoop = true;
-        super.visit(node);
+        visitChildren(node);
         insideLoop = false;
     }
 
     @Override
     public void visit(UntilStmt node) {
         insideLoop = true;
-        super.visit(node);
+        visitChildren(node);
         insideLoop = false;
     }
 
     private void check(ASTNode node) {
         if (matchesBugLocation(node) && insideLoop) {
-            addIssue(node, node.getMetadata());
+            addFix(node, node.getMetadata());
         }
     }
 
@@ -93,11 +78,11 @@ public class MissingLoopMousePositionFix extends AbstractFixHeuristic {
         if (matchesBugLocation(node)) {
             if (pos instanceof MousePos) {
                 if (insideLoop) {
-                    addIssue(node, node.getMetadata());
+                    addFix(node, node.getMetadata());
                 }
             } else {
                 // No longer MousePos - also fixed
-                addIssue(node, node.getMetadata());
+                addFix(node, node.getMetadata());
             }
         }
     }
@@ -105,19 +90,19 @@ public class MissingLoopMousePositionFix extends AbstractFixHeuristic {
     @Override
     public void visit(PointTowards node) {
         checkMotion(node, node.getPosition());
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(GlideSecsTo node) {
         checkMotion(node, node.getPosition());
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(GoToPos node) {
         checkMotion(node, node.getPosition());
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override

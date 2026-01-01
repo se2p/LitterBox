@@ -31,11 +31,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingCloneInitialization;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,8 +51,8 @@ public class MissingCloneInitializationFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new MissingCloneInitialization();
 
-    public MissingCloneInitializationFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public MissingCloneInitializationFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -68,7 +66,7 @@ public class MissingCloneInitializationFix extends AbstractFixHeuristic {
         if (currentActor != null) {
             whenStartsAsCloneActors.add(currentActor.getIdent().getName());
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -76,36 +74,34 @@ public class MissingCloneInitializationFix extends AbstractFixHeuristic {
         if (currentActor != null) {
             whenStartsAsCloneActors.add(currentActor.getIdent().getName());
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(Myself node) {
-        if (AstNodeUtil.hasBlockId(node.getParentNode(), bugLocationBlockId)) {
+        if (AstNodeUtil.hasBlockId(node.getParentNode(), getBugLocationBlockId())) {
             bugLocators.add(node);
         }
     }
 
     @Override
     public void visit(WithCloneExpr node) {
-        if (AstNodeUtil.hasBlockId(node.getParentNode(), bugLocationBlockId)) {
+        if (AstNodeUtil.hasBlockId(node.getParentNode(), getBugLocationBlockId())) {
             bugLocators.add(node);
         }
     }
 
     @Override
-    public Set<Issue> check(Program program) {
+    public Set<FixResult> check(Program program) {
         whenStartsAsCloneActors = new HashSet<>();
         bugLocators = new ArrayList<>();
         bugLocators = new ArrayList<>();
 
         // Check if block deleted
-        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
+        Set<FixResult> results = super.check(program);
+        if (!results.isEmpty()) {
+            return results;
         }
-
-        super.check(program);
 
         for (ASTNode bugNode : bugLocators) {
             ActorDefinition actor = AstNodeUtil.findActor(bugNode).orElse(null);
@@ -122,11 +118,11 @@ public class MissingCloneInitializationFix extends AbstractFixHeuristic {
                 }
                 
                 if (whenStartsAsCloneActors.contains(targetSprite)) {
-                    addIssue(bugNode.getParentNode(), bugNode.getParentNode().getMetadata());
+                    addFix(bugNode.getParentNode(), bugNode.getParentNode().getMetadata());
                 }
             }
         }
 
-        return issues;
+        return fixes;
     }
 }

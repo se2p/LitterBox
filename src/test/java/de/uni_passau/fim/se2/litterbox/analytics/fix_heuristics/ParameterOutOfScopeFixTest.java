@@ -45,7 +45,7 @@ public class ParameterOutOfScopeFixTest extends AbstractFixHeuristicTest {
         String blockId = findBlockId(program, Parameter.class,
                 param -> "x".equals(param.getName().getName()));
 
-        ParameterOutOfScopeFix finder = new ParameterOutOfScopeFix(blockId);
+        ParameterOutOfScopeFix finder = new ParameterOutOfScopeFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -61,7 +61,7 @@ public class ParameterOutOfScopeFixTest extends AbstractFixHeuristicTest {
         String blockId = findBlockId(program, Parameter.class,
                 param -> "x".equals(param.getName().getName()));
 
-        ParameterOutOfScopeFix finder = new ParameterOutOfScopeFix(blockId);
+        ParameterOutOfScopeFix finder = new ParameterOutOfScopeFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
@@ -76,7 +76,7 @@ public class ParameterOutOfScopeFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        ParameterOutOfScopeFix finder = new ParameterOutOfScopeFix(blockId);
+        ParameterOutOfScopeFix finder = new ParameterOutOfScopeFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -116,7 +116,7 @@ public class ParameterOutOfScopeFixTest extends AbstractFixHeuristicTest {
         // does not exist (it's inside the procedure).
         String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
         
-        ParameterOutOfScopeFix fix = new ParameterOutOfScopeFix(bugBlockId);
+        ParameterOutOfScopeFix fix = new ParameterOutOfScopeFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fix, fixedProgram);
     }
 }

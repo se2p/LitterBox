@@ -21,7 +21,7 @@ public class ExpressionAsTouchingOrColorFixTest extends AbstractFixHeuristicTest
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, ColorTouchingColor.class);
         
-        ExpressionAsTouchingOrColorFix heuristic = new ExpressionAsTouchingOrColorFix(bugLocationBlockId);
+        ExpressionAsTouchingOrColorFix heuristic = new ExpressionAsTouchingOrColorFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -37,12 +37,12 @@ public class ExpressionAsTouchingOrColorFixTest extends AbstractFixHeuristicTest
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, ColorTouchingColor.class);
         
-        ExpressionAsTouchingOrColorFix heuristic = new ExpressionAsTouchingOrColorFix(bugLocationBlockId);
+        ExpressionAsTouchingOrColorFix heuristic = new ExpressionAsTouchingOrColorFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing the bug is gone
         String code = """
                 when green flag clicked
@@ -52,8 +52,8 @@ public class ExpressionAsTouchingOrColorFixTest extends AbstractFixHeuristicTest
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        ExpressionAsTouchingOrColorFix heuristic = new ExpressionAsTouchingOrColorFix(blockId);
-        assertNoFixFound(heuristic, program);
+        ExpressionAsTouchingOrColorFix heuristic = new ExpressionAsTouchingOrColorFix(createTestIssueDTO(blockId));
+        assertFixFound(heuristic, program);
     }
 
     // ========================================================================
@@ -100,7 +100,7 @@ public class ExpressionAsTouchingOrColorFixTest extends AbstractFixHeuristicTest
         org.junit.jupiter.api.Assertions.assertNotNull(existingBlockId,
                 "Should find ColorTouchingColor in original program");
 
-        ExpressionAsTouchingOrColorFix fix = new ExpressionAsTouchingOrColorFix(existingBlockId);
+        ExpressionAsTouchingOrColorFix fix = new ExpressionAsTouchingOrColorFix(createTestIssueDTO(existingBlockId));
         assertFixFound(fix, fixedProgram);
     }
 }

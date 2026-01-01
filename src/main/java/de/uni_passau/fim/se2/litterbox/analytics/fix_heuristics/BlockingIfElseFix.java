@@ -18,13 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.BlockingIfElse;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
-
-import java.util.Collections;
-import java.util.Set;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.BlockingIfElse;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
  * Fix heuristic for the BlockingIfElse bug.
@@ -37,8 +34,8 @@ public class BlockingIfElseFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new BlockingIfElse();
 
-    public BlockingIfElseFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public BlockingIfElseFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -46,15 +43,7 @@ public class BlockingIfElseFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-    @Override
-    public Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> check(de.uni_passau.fim.se2.litterbox.ast.model.Program program) {
-        // Check if the buggy block was deleted - that's a valid fix
-        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
-        }
-        return super.check(program);
-    }
+
 
 
     @Override
@@ -65,7 +54,7 @@ public class BlockingIfElseFix extends AbstractFixHeuristic {
 
             // Fixed if NOT (stops in then AND stops in else)
             if (!(stopsThen && stopsElse)) {
-                addIssue(ifElse, ifElse.getMetadata());
+                addFix(ifElse, ifElse.getMetadata());
             }
         }
         super.visit(ifElse);

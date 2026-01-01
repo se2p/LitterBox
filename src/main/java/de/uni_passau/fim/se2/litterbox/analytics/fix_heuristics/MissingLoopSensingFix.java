@@ -27,15 +27,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopSensing;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.Stack;
 
@@ -53,8 +47,8 @@ public class MissingLoopSensingFix extends AbstractFixHeuristic {
     private boolean afterWaitUntil;
     private boolean afterAskAndWait;
 
-    public MissingLoopSensingFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public MissingLoopSensingFix(IssueDTO originalIssue) {
+        super(originalIssue);
         loopStack = new Stack<>();
     }
 
@@ -63,16 +57,7 @@ public class MissingLoopSensingFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-    @Override
-    public Set<Issue> check(Program program) {
-        // Check if block deleted
-        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            issues = new LinkedHashSet<>();
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
-        }
-        return super.check(program);
-    }
+
 
     @Override
     public void visit(Script node) {
@@ -80,40 +65,40 @@ public class MissingLoopSensingFix extends AbstractFixHeuristic {
         loopStack = new Stack<>();
         afterWaitUntil = false;
         afterAskAndWait = false;
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(RepeatForeverStmt node) {
         loopStack.push(node);
-        super.visit(node);
+        visitChildren(node);
         loopStack.pop();
     }
 
     @Override
     public void visit(UntilStmt node) {
         loopStack.push(node);
-        super.visit(node);
+        visitChildren(node);
         loopStack.pop();
     }
 
     @Override
     public void visit(WaitUntil node) {
         afterWaitUntil = true;
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(AskAndWait node) {
         afterAskAndWait = true;
-        super.visit(node);
+        visitChildren(node);
     }
 
     private void check(ASTNode node) {
         if (matchesBugLocation(node)) {
             // Fix: Inside a loop OR after a wait/ask
             if (!loopStack.isEmpty() || afterWaitUntil || afterAskAndWait) {
-                addIssue(node, node.getMetadata());
+                addFix(node, node.getMetadata());
             }
         }
     }
@@ -121,36 +106,36 @@ public class MissingLoopSensingFix extends AbstractFixHeuristic {
     @Override
     public void visit(IsKeyPressed node) {
         check(node);
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(Touching node) {
         check(node);
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(IsMouseDown node) {
         check(node);
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(ColorTouchingColor node) {
         check(node);
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(SpriteTouchingColor node) {
         check(node);
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(DistanceTo node) {
         check(node);
-        super.visit(node);
+        visitChildren(node);
     }
 }

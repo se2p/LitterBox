@@ -29,7 +29,7 @@ public class MissingPenUpFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, PenDownStmt.class);
         
-        MissingPenUpFix heuristic = new MissingPenUpFix(bugLocationBlockId);
+        MissingPenUpFix heuristic = new MissingPenUpFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -47,7 +47,7 @@ public class MissingPenUpFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, PenDownStmt.class);
         
-        MissingPenUpFix heuristic = new MissingPenUpFix(bugLocationBlockId);
+        MissingPenUpFix heuristic = new MissingPenUpFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -63,7 +63,7 @@ public class MissingPenUpFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, PenDownStmt.class);
         
-        MissingPenUpFix heuristic = new MissingPenUpFix(bugLocationBlockId);
+        MissingPenUpFix heuristic = new MissingPenUpFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -76,7 +76,7 @@ public class MissingPenUpFixTest extends AbstractFixHeuristicTest {
                 """;
 
         Program program = parseProgram(source);
-        MissingPenUpFix heuristic = new MissingPenUpFix("non-existent-id");
+        MissingPenUpFix heuristic = new MissingPenUpFix(createTestIssueDTO("non-existent-id"));
         assertFixFound(heuristic, program);
     }
 
@@ -118,7 +118,7 @@ public class MissingPenUpFixTest extends AbstractFixHeuristicTest {
         Assertions.assertNotNull(blockId, "Should find PenDownStmt block in original program");
 
         // The fix heuristic should detect this is fixed in the original program
-        MissingPenUpFix fixHeuristic = new MissingPenUpFix(blockId);
+        MissingPenUpFix fixHeuristic = new MissingPenUpFix(createTestIssueDTO(blockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

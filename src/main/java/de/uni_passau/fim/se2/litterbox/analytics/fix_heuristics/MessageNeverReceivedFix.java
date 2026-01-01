@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWa
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageNeverReceived;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.*;
 
@@ -43,8 +44,8 @@ public class MessageNeverReceivedFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new MessageNeverReceived();
 
-    public MessageNeverReceivedFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public MessageNeverReceivedFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -54,26 +55,26 @@ public class MessageNeverReceivedFix extends AbstractFixHeuristic {
 
 
     @Override
-    public Set<Issue> check(Program program) {
+    public Set<FixResult> check(Program program) {
         Preconditions.checkNotNull(program);
         this.program = program;
-        issues = new LinkedHashSet<>();
+        fixes = new LinkedHashSet<>();
         actorScriptsPerMessage = new LinkedHashMap<>();
-        // Check if block deleted
-        if (bugLocationBlockId != null && de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
-        }
+        buggyBroadcast = null;
+        message = null;
 
-        program.accept(this);
+        Set<FixResult> results = super.check(program);
+        if (!results.isEmpty()) {
+            return results;
+        }
 
         if (buggyBroadcast != null && message != null) {
             Map<ActorDefinition, List<Script>> actorEvents = actorScriptsPerMessage.get(message);
             if (actorEvents != null) {
-                addIssue(buggyBroadcast, buggyBroadcast.getMetadata());
+                addFix(buggyBroadcast, buggyBroadcast.getMetadata());
             }
         }
-        return Collections.unmodifiableSet(issues);
+        return Collections.unmodifiableSet(fixes);
     }
 
     @Override

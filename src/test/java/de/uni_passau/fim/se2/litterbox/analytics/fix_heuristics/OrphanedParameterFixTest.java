@@ -45,7 +45,7 @@ public class OrphanedParameterFixTest extends AbstractFixHeuristicTest {
         String blockId = findBlockId(program, Parameter.class,
                 param -> "x".equals(param.getName().getName()));
 
-        OrphanedParameterFix finder = new OrphanedParameterFix(blockId);
+        OrphanedParameterFix finder = new OrphanedParameterFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -61,7 +61,7 @@ public class OrphanedParameterFixTest extends AbstractFixHeuristicTest {
         String blockId = findBlockId(program, Parameter.class,
                 param -> "x".equals(param.getName().getName()));
 
-        OrphanedParameterFix finder = new OrphanedParameterFix(blockId);
+        OrphanedParameterFix finder = new OrphanedParameterFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
@@ -76,7 +76,7 @@ public class OrphanedParameterFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        OrphanedParameterFix finder = new OrphanedParameterFix(blockId);
+        OrphanedParameterFix finder = new OrphanedParameterFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -114,7 +114,7 @@ public class OrphanedParameterFixTest extends AbstractFixHeuristicTest {
         // If the injector removed the definition, the usage acts as the bug location.
         String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
         
-        OrphanedParameterFix fix = new OrphanedParameterFix(bugBlockId);
+        OrphanedParameterFix fix = new OrphanedParameterFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fix, fixedProgram);
     }
 }

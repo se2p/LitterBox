@@ -43,27 +43,27 @@ public class MessageNeverSentFixTest extends AbstractFixHeuristicTest {
     /**
      * Tests that fix is detected when message is now sent.
      *
-     * <p>NOTE: Disabled because the MessageNeverSent bug finder requires the broadcast to
-     * explicitly use a StringLiteral message that matches a defined message name.
-     * The ScratchBlocks syntax `broadcast (msg v)` produces StrId, but the bug finder's
-     * internal message tracking only captures StringLiteral-based broadcasts.
+     * <p>NOTE: Disabled - ScratchBlocks parser message handling doesn't produce
+     * the correct message name tracking that the bug finder/fix heuristic expects.
+     * This test would require a JSON fixture (similar to MissingResourceFixTest)
+     * that includes proper broadcast/receive message name definitions.
      */
-    @org.junit.jupiter.api.Disabled("Bug finder only tracks StringLiteral broadcasts")
+    @org.junit.jupiter.api.Disabled("Requires JSON fixture for proper message name tracking")
     @Test
     public void testFixFound_MessageNowSent() throws IOException, ParsingException {
         // Fix: Message handler's message is now sent via broadcast
         String source = """
                 when green flag clicked
-                broadcast (myMessage v)
-                
-                when I receive [myMessage v]
+                broadcast (myMsg v)
+
+                when I receive [myMsg v]
                 move (10) steps
                 """;
 
         Program program = parseProgram(source);
         String bugId = findBlockId(program, ReceptionOfMessage.class);
 
-        MessageNeverSentFix heuristic = new MessageNeverSentFix(bugId);
+        MessageNeverSentFix heuristic = new MessageNeverSentFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -78,7 +78,7 @@ public class MessageNeverSentFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, ReceptionOfMessage.class);
 
-        MessageNeverSentFix heuristic = new MessageNeverSentFix(bugId);
+        MessageNeverSentFix heuristic = new MessageNeverSentFix(createTestIssueDTO(bugId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -86,8 +86,8 @@ public class MessageNeverSentFixTest extends AbstractFixHeuristicTest {
     public void testNoFix_SenderInDetachedScript() throws IOException, ParsingException {
         // No Fix: Sender exists but is in a detached script (dead code)
         String source = """
-                broadcast [myMessage v]
-                
+                broadcast (myMessage v)
+
                 when I receive [myMessage v]
                 move (10) steps
                 """;
@@ -95,7 +95,7 @@ public class MessageNeverSentFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, ReceptionOfMessage.class);
 
-        MessageNeverSentFix heuristic = new MessageNeverSentFix(bugId);
+        MessageNeverSentFix heuristic = new MessageNeverSentFix(createTestIssueDTO(bugId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -109,7 +109,7 @@ public class MessageNeverSentFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
 
-        MessageNeverSentFix heuristic = new MessageNeverSentFix("non_existent_id");
+        MessageNeverSentFix heuristic = new MessageNeverSentFix(createTestIssueDTO("non_existent_id"));
         assertFixFound(heuristic, program);
     }
 
@@ -120,17 +120,17 @@ public class MessageNeverSentFixTest extends AbstractFixHeuristicTest {
     /**
      * Injector-based test for MessageNeverSent.
      *
-     * <p>NOTE: Disabled - same issue as testFixFound_MessageNowSent above.
+     * <p>NOTE: Disabled - same issue as testFixFound_MessageNowSent.
+     * ScratchBlocks parsing doesn't produce proper message name tracking.
      */
-    @org.junit.jupiter.api.Disabled("Bug finder only tracks StringLiteral broadcasts")
+    @org.junit.jupiter.api.Disabled("Requires JSON fixture for proper message name tracking")
     @Test
     public void testInjector_MessageNeverSent() throws IOException, ParsingException {
         // Fixed: A receiver whose message IS sent
-        // Why? Because the injector REMOVES the sender (Broadcast).
         String fixedCode = """
                 when green flag clicked
                 broadcast (msg1 v)
-                
+
                 when I receive [msg1 v]
                 move (10) steps
                 """;
@@ -161,7 +161,7 @@ public class MessageNeverSentFixTest extends AbstractFixHeuristicTest {
         Assertions.assertNotNull(bugId, "Should find Reception block in original program");
 
         // The fix heuristic should detect this block is in a fixed state
-        MessageNeverSentFix fixHeuristic = new MessageNeverSentFix(bugId);
+        MessageNeverSentFix fixHeuristic = new MessageNeverSentFix(createTestIssueDTO(bugId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

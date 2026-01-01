@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.InvalidNumberString;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.regex.Pattern;
 
@@ -39,8 +40,8 @@ public class InvalidNumberStringFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new InvalidNumberString();
 
-    public InvalidNumberStringFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public InvalidNumberStringFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -63,9 +64,9 @@ public class InvalidNumberStringFix extends AbstractFixHeuristic {
                 }
             }
             if (fixed) {
-                addIssue(node, node.getMetadata());
+                addFix(node, node.getMetadata());
             }
         }
-        super.visit(node);
+        visitChildren(node);
     }
 }

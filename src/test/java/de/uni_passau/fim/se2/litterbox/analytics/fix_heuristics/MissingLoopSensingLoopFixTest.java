@@ -47,7 +47,7 @@ public class MissingLoopSensingLoopFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, IsKeyPressed.class);
 
-        MissingLoopSensingLoopFix finder = new MissingLoopSensingLoopFix(blockId);
+        MissingLoopSensingLoopFix finder = new MissingLoopSensingLoopFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -64,12 +64,12 @@ public class MissingLoopSensingLoopFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, IsKeyPressed.class);
 
-        MissingLoopSensingLoopFix finder = new MissingLoopSensingLoopFix(blockId);
+        MissingLoopSensingLoopFix finder = new MissingLoopSensingLoopFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing sensing block is gone
         String code = """
                 when green flag clicked
@@ -79,8 +79,8 @@ public class MissingLoopSensingLoopFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        MissingLoopSensingLoopFix finder = new MissingLoopSensingLoopFix(blockId);
-        assertNoFixFound(finder, program);
+        MissingLoopSensingLoopFix finder = new MissingLoopSensingLoopFix(createTestIssueDTO(blockId));
+        assertFixFound(finder, program);
     }
 
     // ========================================================================
@@ -129,7 +129,7 @@ public class MissingLoopSensingLoopFixTest extends AbstractFixHeuristicTest {
         org.junit.jupiter.api.Assertions.assertNotNull(existingBlockId,
                 "Should find IsKeyPressed in original program");
 
-        MissingLoopSensingLoopFix fix = new MissingLoopSensingLoopFix(existingBlockId);
+        MissingLoopSensingLoopFix fix = new MissingLoopSensingLoopFix(createTestIssueDTO(existingBlockId));
         assertFixFound(fix, fixedProgram);
     }
 }

@@ -18,15 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.TypeError;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
-import java.util.Optional;
+
 import java.util.Set;
 
 /**
@@ -39,8 +38,8 @@ public class TypeErrorFix extends AbstractFixHeuristic {
 
     private final TypeError typeErrorFinder;
 
-    public TypeErrorFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public TypeErrorFix(IssueDTO originalIssue) {
+        super(originalIssue);
         this.typeErrorFinder = new TypeError();
     }
 
@@ -50,53 +49,23 @@ public class TypeErrorFix extends AbstractFixHeuristic {
     }
 
     @Override
-    public Set<Issue> check(Program program) {
-        super.check(program);
-
-        // Find the target node
-        Optional<BlockIdNodeFinder.NodeContext> contextOpt =
-                BlockIdNodeFinder.find(program, bugLocationBlockId);
-
-        if (bugLocationBlockId != null && contextOpt.isEmpty()) {
-            // Block was deleted - that's a valid fix
-            addIssueWithLooseComment();
-            return issues;
+    public Set<FixResult> check(Program program) {
+        Set<FixResult> results = super.check(program);
+        if (!results.isEmpty()) {
+            return results;
         }
 
-        contextOpt.ifPresent(context -> {
+        // Find the target node
+        BlockIdNodeFinder.find(program, getBugLocationBlockId()).ifPresent(context -> {
             ASTNode foundNode = context.node();
             if (!isBugStillPresent(foundNode)) {
-                IssueBuilder builder = new IssueBuilder()
-                        .withFinder(this)
-                        .withCurrentNode(foundNode)
-                        .withActor(context.actor())
-                        .withProgram(program)
-                        .withMetadata(foundNode.getMetadata())
-                        .withHint(getName());
-
-                if (context.script() != null) {
-                    builder.withScript(context.script());
-                } else {
-                    // Fallback using BlockIdNodeFinder context or manual find
-                    de.uni_passau.fim.se2.litterbox.ast.model.Script script = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.findParent(foundNode, de.uni_passau.fim.se2.litterbox.ast.model.Script.class);
-                    if (script != null) {
-                        builder.withScript(script);
-                    }
-                }
-
-                if (context.procedure() != null) {
-                    builder.withProcedure(context.procedure());
-                } else {
-                    de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition proc = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.findParent(foundNode, de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition.class);
-                    if (proc != null) {
-                        builder.withProcedure(proc);
-                    }
-                }
-
-                issues.add(builder.build());
+                currentActor = context.actor();
+                currentScript = context.script();
+                currentProcedure = context.procedure();
+                addFix(foundNode, foundNode.getMetadata());
             }
         });
 
-        return issues;
+        return java.util.Collections.unmodifiableSet(fixes);
     }
 }

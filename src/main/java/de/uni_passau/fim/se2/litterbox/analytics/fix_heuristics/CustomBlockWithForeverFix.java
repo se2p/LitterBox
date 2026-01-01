@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.CustomBlockWithForever;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
  * Fix heuristic for the CustomBlockWithForever bug.
@@ -33,8 +34,8 @@ public class CustomBlockWithForeverFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new CustomBlockWithForever();
 
-    public CustomBlockWithForeverFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public CustomBlockWithForeverFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -42,22 +43,13 @@ public class CustomBlockWithForeverFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-    @Override
-    public java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> check(de.uni_passau.fim.se2.litterbox.ast.model.Program program) {
-        this.program = program;
-        this.issues = new java.util.LinkedHashSet<>();
-        if (bugLocationBlockId != null && de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return java.util.Collections.unmodifiableSet(issues);
-        }
-        return super.check(program);
-    }
+
 
     @Override
     public void visit(CallStmt node) {
         if (matchesBugLocation(node) && !isBugStillPresent(node)) {
-            addIssue(node, node.getMetadata());
+            addFix(node, node.getMetadata());
         }
-        super.visit(node);
+        visitChildren(node);
     }
 }

@@ -28,7 +28,7 @@ public class MissingEraseAllFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, PenDownStmt.class);
         
-        MissingEraseAllFix heuristic = new MissingEraseAllFix(bugLocationBlockId);
+        MissingEraseAllFix heuristic = new MissingEraseAllFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -44,7 +44,7 @@ public class MissingEraseAllFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, PenDownStmt.class);
         
-        MissingEraseAllFix heuristic = new MissingEraseAllFix(bugLocationBlockId);
+        MissingEraseAllFix heuristic = new MissingEraseAllFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -62,7 +62,7 @@ public class MissingEraseAllFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, PenDownStmt.class);
         
-        MissingEraseAllFix heuristic = new MissingEraseAllFix(bugLocationBlockId);
+        MissingEraseAllFix heuristic = new MissingEraseAllFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -78,7 +78,7 @@ public class MissingEraseAllFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, PenDownStmt.class);
         
-        MissingEraseAllFix heuristic = new MissingEraseAllFix(bugLocationBlockId);
+        MissingEraseAllFix heuristic = new MissingEraseAllFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -91,7 +91,7 @@ public class MissingEraseAllFixTest extends AbstractFixHeuristicTest {
                 """;
 
         Program program = parseProgram(source);
-        MissingEraseAllFix heuristic = new MissingEraseAllFix("non-existent-id");
+        MissingEraseAllFix heuristic = new MissingEraseAllFix(createTestIssueDTO("non-existent-id"));
         assertFixFound(heuristic, program);
     }
 
@@ -133,7 +133,7 @@ public class MissingEraseAllFixTest extends AbstractFixHeuristicTest {
         Assertions.assertNotNull(blockId, "Should find PenDownStmt block in original program");
 
         // The fix heuristic should detect this is fixed in the original program
-        MissingEraseAllFix fixHeuristic = new MissingEraseAllFix(blockId);
+        MissingEraseAllFix fixHeuristic = new MissingEraseAllFix(createTestIssueDTO(blockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

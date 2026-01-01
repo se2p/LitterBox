@@ -52,7 +52,7 @@ public class MissingWaitUntilConditionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, WaitUntil.class);
 
-        MissingWaitUntilConditionFix finder = new MissingWaitUntilConditionFix(blockId);
+        MissingWaitUntilConditionFix finder = new MissingWaitUntilConditionFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -68,7 +68,7 @@ public class MissingWaitUntilConditionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, WaitUntil.class);
 
-        MissingWaitUntilConditionFix finder = new MissingWaitUntilConditionFix(blockId);
+        MissingWaitUntilConditionFix finder = new MissingWaitUntilConditionFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
@@ -83,7 +83,7 @@ public class MissingWaitUntilConditionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        MissingWaitUntilConditionFix finder = new MissingWaitUntilConditionFix(blockId);
+        MissingWaitUntilConditionFix finder = new MissingWaitUntilConditionFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -125,7 +125,7 @@ public class MissingWaitUntilConditionFixTest extends AbstractFixHeuristicTest {
         Assertions.assertNotNull(bugBlockId, "Bug issue should have a block ID");
 
         // The fix heuristic should detect a fix in the original program
-        MissingWaitUntilConditionFix fixHeuristic = new MissingWaitUntilConditionFix(bugBlockId);
+        MissingWaitUntilConditionFix fixHeuristic = new MissingWaitUntilConditionFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

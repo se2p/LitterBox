@@ -46,7 +46,7 @@ public class CallWithoutDefinitionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, CallStmt.class);
 
-        CallWithoutDefinitionFix finder = new CallWithoutDefinitionFix(blockId);
+        CallWithoutDefinitionFix finder = new CallWithoutDefinitionFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -61,7 +61,7 @@ public class CallWithoutDefinitionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, CallStmt.class);
 
-        CallWithoutDefinitionFix finder = new CallWithoutDefinitionFix(blockId);
+        CallWithoutDefinitionFix finder = new CallWithoutDefinitionFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
@@ -76,7 +76,7 @@ public class CallWithoutDefinitionFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        CallWithoutDefinitionFix finder = new CallWithoutDefinitionFix(blockId);
+        CallWithoutDefinitionFix finder = new CallWithoutDefinitionFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -108,7 +108,7 @@ public class CallWithoutDefinitionFixTest extends AbstractFixHeuristicTest {
         de.uni_passau.fim.se2.litterbox.analytics.Issue issue = issues.iterator().next();
         String bugID = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(issue.getNormalizedCodeLocation());
 
-        CallWithoutDefinitionFix heuristic = new CallWithoutDefinitionFix(bugID);
+        CallWithoutDefinitionFix heuristic = new CallWithoutDefinitionFix(createTestIssueDTO(bugID));
         assertFixFound(heuristic, fixedProgram);
     }
 }

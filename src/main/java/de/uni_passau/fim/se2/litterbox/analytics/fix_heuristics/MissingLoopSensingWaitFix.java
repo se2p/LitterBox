@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopSensing;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
@@ -37,8 +38,8 @@ public class MissingLoopSensingWaitFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new MissingLoopSensing();
 
-    public MissingLoopSensingWaitFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public MissingLoopSensingWaitFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -54,7 +55,7 @@ public class MissingLoopSensingWaitFix extends AbstractFixHeuristic {
                     ASTNode lastNode = stmtList.getStatement(stmtList.getNumberOfStatements() - 1);
                     ASTNode stmtListParent = stmtList.getParentNode();
                     if (lastNode instanceof StopAll || stmtListParent instanceof ScriptEntity) {
-                        addIssue(node, node.getMetadata());
+                        addFix(node, node.getMetadata());
                     }
                 }
             }

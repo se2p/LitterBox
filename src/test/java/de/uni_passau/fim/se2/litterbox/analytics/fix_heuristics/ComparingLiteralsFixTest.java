@@ -48,7 +48,7 @@ public class ComparingLiteralsFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, BiggerThan.class);
 
-        ComparingLiteralsFix heuristic = new ComparingLiteralsFix(bugId);
+        ComparingLiteralsFix heuristic = new ComparingLiteralsFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -65,7 +65,7 @@ public class ComparingLiteralsFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, LessThan.class);
 
-        ComparingLiteralsFix heuristic = new ComparingLiteralsFix(bugId);
+        ComparingLiteralsFix heuristic = new ComparingLiteralsFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -82,7 +82,7 @@ public class ComparingLiteralsFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, Equals.class);
 
-        ComparingLiteralsFix heuristic = new ComparingLiteralsFix(bugId);
+        ComparingLiteralsFix heuristic = new ComparingLiteralsFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -99,7 +99,7 @@ public class ComparingLiteralsFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, BiggerThan.class);
 
-        ComparingLiteralsFix heuristic = new ComparingLiteralsFix(bugId);
+        ComparingLiteralsFix heuristic = new ComparingLiteralsFix(createTestIssueDTO(bugId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -113,7 +113,7 @@ public class ComparingLiteralsFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
 
-        ComparingLiteralsFix heuristic = new ComparingLiteralsFix("non_existent_id");
+        ComparingLiteralsFix heuristic = new ComparingLiteralsFix(createTestIssueDTO("non_existent_id"));
         assertFixFound(heuristic, program);
     }
 
@@ -144,7 +144,7 @@ public class ComparingLiteralsFixTest extends AbstractFixHeuristicTest {
         de.uni_passau.fim.se2.litterbox.analytics.Issue issue = issues.iterator().next();
         String bugID = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(issue.getNormalizedCodeLocation());
 
-        ComparingLiteralsFix heuristic = new ComparingLiteralsFix(bugID);
+        ComparingLiteralsFix heuristic = new ComparingLiteralsFix(createTestIssueDTO(bugID));
         assertFixFound(heuristic, fixedProgram);
     }
 }

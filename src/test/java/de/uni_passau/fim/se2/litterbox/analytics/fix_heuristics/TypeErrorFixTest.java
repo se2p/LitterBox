@@ -51,7 +51,7 @@ public class TypeErrorFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, Add.class);
 
-        TypeErrorFix finder = new TypeErrorFix(blockId);
+        TypeErrorFix finder = new TypeErrorFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -66,7 +66,7 @@ public class TypeErrorFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo.class);
 
-        TypeErrorFix finder = new TypeErrorFix(blockId);
+        TypeErrorFix finder = new TypeErrorFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
@@ -81,7 +81,7 @@ public class TypeErrorFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        TypeErrorFix finder = new TypeErrorFix(blockId);
+        TypeErrorFix finder = new TypeErrorFix(createTestIssueDTO(blockId));
         // Deleting the buggy block is a valid fix
         assertFixFound(finder, program);
     }
@@ -123,7 +123,7 @@ public class TypeErrorFixTest extends AbstractFixHeuristicTest {
         Assertions.assertNotNull(bugBlockId, "Bug issue should have a block ID");
 
         // The fix heuristic should detect a fix in the original program
-        TypeErrorFix fixHeuristic = new TypeErrorFix(bugBlockId);
+        TypeErrorFix fixHeuristic = new TypeErrorFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

@@ -45,7 +45,7 @@ public class OverwrittenVisualEffectFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, SetGraphicEffectTo.class);
 
-        OverwrittenVisualEffectFix finder = new OverwrittenVisualEffectFix(blockId);
+        OverwrittenVisualEffectFix finder = new OverwrittenVisualEffectFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -61,7 +61,7 @@ public class OverwrittenVisualEffectFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, SetGraphicEffectTo.class);
 
-        OverwrittenVisualEffectFix finder = new OverwrittenVisualEffectFix(blockId);
+        OverwrittenVisualEffectFix finder = new OverwrittenVisualEffectFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
@@ -76,7 +76,7 @@ public class OverwrittenVisualEffectFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        OverwrittenVisualEffectFix finder = new OverwrittenVisualEffectFix(blockId);
+        OverwrittenVisualEffectFix finder = new OverwrittenVisualEffectFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -112,7 +112,7 @@ public class OverwrittenVisualEffectFixTest extends AbstractFixHeuristicTest {
         // or is not overwritten.
         String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
         
-        OverwrittenVisualEffectFix fix = new OverwrittenVisualEffectFix(bugBlockId);
+        OverwrittenVisualEffectFix fix = new OverwrittenVisualEffectFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fix, fixedProgram);
     }
 }

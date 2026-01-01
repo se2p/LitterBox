@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ComparingLiterals;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
  * Fix heuristic for the ComparingLiterals bug.
@@ -40,8 +41,8 @@ public class ComparingLiteralsFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new ComparingLiterals();
 
-    public ComparingLiteralsFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public ComparingLiteralsFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -49,34 +50,25 @@ public class ComparingLiteralsFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-    @Override
-    public java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> check(de.uni_passau.fim.se2.litterbox.ast.model.Program program) {
-        this.program = program;
-        this.issues = new java.util.LinkedHashSet<>();
-        if (bugLocationBlockId != null && de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return java.util.Collections.unmodifiableSet(issues);
-        }
-        return super.check(program);
-    }
+
 
 
     @Override
     public void visit(BiggerThan node) {
         checkComparisonFix(node, node.getOperand1(), node.getOperand2());
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(LessThan node) {
         checkComparisonFix(node, node.getOperand1(), node.getOperand2());
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(Equals node) {
         checkComparisonFix(node, node.getOperand1(), node.getOperand2());
-        super.visit(node);
+        visitChildren(node);
     }
 
     /**
@@ -88,7 +80,7 @@ public class ComparingLiteralsFix extends AbstractFixHeuristic {
      */
     private void checkComparisonFix(ASTNode node, ComparableExpr op1, ComparableExpr op2) {
         if (matchesBugLocation(node) && isNotStatic(op1, op2)) {
-            addIssue(node, node.getMetadata());
+            addFix(node, node.getMetadata());
         }
     }
 

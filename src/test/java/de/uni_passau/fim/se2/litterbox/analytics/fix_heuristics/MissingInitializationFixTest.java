@@ -53,7 +53,7 @@ public class MissingInitializationFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, ChangeVariableBy.class);
 
-        MissingInitializationFix heuristic = new MissingInitializationFix(bugId);
+        MissingInitializationFix heuristic = new MissingInitializationFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
     }
 
@@ -68,7 +68,7 @@ public class MissingInitializationFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugId = findBlockId(program, ChangeVariableBy.class);
 
-        MissingInitializationFix heuristic = new MissingInitializationFix(bugId);
+        MissingInitializationFix heuristic = new MissingInitializationFix(createTestIssueDTO(bugId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -82,7 +82,7 @@ public class MissingInitializationFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
 
-        MissingInitializationFix heuristic = new MissingInitializationFix("non_existent_id");
+        MissingInitializationFix heuristic = new MissingInitializationFix(createTestIssueDTO("non_existent_id"));
         assertFixFound(heuristic, program);
     }
 
@@ -124,7 +124,7 @@ public class MissingInitializationFixTest extends AbstractFixHeuristicTest {
         Assertions.assertNotNull(blockId, "Should find ChangeVariableBy block in original program");
 
         // The fix heuristic should detect this is fixed in the original program
-        MissingInitializationFix fixHeuristic = new MissingInitializationFix(blockId);
+        MissingInitializationFix fixHeuristic = new MissingInitializationFix(createTestIssueDTO(blockId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

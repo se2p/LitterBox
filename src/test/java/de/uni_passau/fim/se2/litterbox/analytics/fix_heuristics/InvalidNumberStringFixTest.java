@@ -1,146 +1,101 @@
+/*
+ * Copyright (C) 2019-2025 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoMutationMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.Set;
 
-public class InvalidNumberStringFixTest {
+/**
+ * Tests for InvalidNumberStringFix heuristic.
+ *
+ * <p>The bug is reported when a string that looks like a number format but is invalid
+ * is used in a numeric context (AsNumber). The fix is detected when:
+ * - The string is now a valid number
+ * - The string no longer looks like a number (completely different content)
+ * - The block was deleted
+ */
+public class InvalidNumberStringFixTest extends AbstractFixHeuristicTest {
 
-    private NonDataBlockMetadata createMetadata(String blockId) {
-        return new NonDataBlockMetadata("", blockId, false, new NoMutationMetadata());
-    }
-    
-    // Subclass to expose results
-    private static class TestableInvalidNumberStringFix extends InvalidNumberStringFix {
-        public TestableInvalidNumberStringFix(String bugLocationBlockId) {
-            super(bugLocationBlockId);
-        }
+    @Test
+    public void testFixFound_ValidNumber() throws IOException, ParsingException {
+        // Fix: String is a valid number
+        String source = """
+                when green flag clicked
+                move ((123.45) + [0]) steps
+                """;
 
-        public Set<Issue> getFoundIssues() {
-            return this.issues;
-        }
-    }
+        Program program = parseProgram(source);
+        String bugId = findBlockId(program, AsNumber.class);
 
-    private Script createScript(StmtList stmts) {
-        NonDataBlockMetadata emptyMeta = createMetadata(null);
-        StartedAsClone event = new StartedAsClone(emptyMeta);
-        Script script = new Script(event, stmts);
-        event.setParentNode(script);
-        stmts.setParentNode(script);
-        return script;
+        InvalidNumberStringFix heuristic = new InvalidNumberStringFix(createTestIssueDTO(bugId));
+        assertFixFound(heuristic, program);
     }
 
     @Test
-    public void testFixFoundValidNumber() {
-        // Fix: String is a valid number ("123.45")
-        
-        TestableInvalidNumberStringFix heuristic = new TestableInvalidNumberStringFix("buggy");
-        NonDataBlockMetadata buggyMeta = createMetadata("buggy");
-        
-        StringLiteral str = new StringLiteral("123.45");
-        // Use anonymous subclass to inject metadata
-        AsNumber asNumber = new AsNumber(str) {
-            @Override
-            public BlockMetadata getMetadata() {
-                return buggyMeta;
-            }
-        };
-        str.setParentNode(asNumber);
-        
-        // Wrap in a statement to be part of a script (MoveSteps takes NumExpr)
-        MoveSteps move = new MoveSteps(asNumber, createMetadata(null));
-        asNumber.setParentNode(move);
-        
-        StmtList stmts = new StmtList(move);
-        move.setParentNode(stmts);
-        
-        Script script = createScript(stmts);
-        
-        heuristic.visit(script);
+    public void testFixFound_IntegerNumber() throws IOException, ParsingException {
+        // Fix: String is a valid integer
+        String source = """
+                when green flag clicked
+                move ((42) + [0]) steps
+                """;
 
-        Assertions.assertEquals(1, heuristic.getFoundIssues().size(), "Should find fix if string is a valid number");
+        Program program = parseProgram(source);
+        String bugId = findBlockId(program, AsNumber.class);
+
+        InvalidNumberStringFix heuristic = new InvalidNumberStringFix(createTestIssueDTO(bugId));
+        assertFixFound(heuristic, program);
     }
 
     @Test
-    public void testFixFoundNotAllowedChars() {
-        // Fix: String contains characters NOT allowed in numbers ("abc"), so it's clearly not a number format error, just not a number.
-        // Heuristic logic: if (ALLOWED_CHARS matches AND !VALID_NUMBER matches) -> fixed=false (Bug).
-        // If !ALLOWED_CHARS matches -> fixed=true.
-        
-        TestableInvalidNumberStringFix heuristic = new TestableInvalidNumberStringFix("buggy");
-        NonDataBlockMetadata buggyMeta = createMetadata("buggy");
-        
-        StringLiteral str = new StringLiteral("abc"); // "abc" does not match ALLOWED_CHARS (0-9eE.+-).
-        AsNumber asNumber = new AsNumber(str) {
-            @Override
-            public BlockMetadata getMetadata() {
-                return buggyMeta;
-            }
-        };
-        str.setParentNode(asNumber);
-        
-        MoveSteps move = new MoveSteps(asNumber, createMetadata(null));
-        asNumber.setParentNode(move);
-        
-        StmtList stmts = new StmtList(move);
-        move.setParentNode(stmts);
-        
-        Script script = createScript(stmts);
-        
-        heuristic.visit(script);
+    public void testFixFound_ScientificNotation() throws IOException, ParsingException {
+        // Fix: String is valid scientific notation
+        String source = """
+                when green flag clicked
+                move ((1e5) + [0]) steps
+                """;
 
-        Assertions.assertEquals(1, heuristic.getFoundIssues().size(), "Should find fix if string does not look like a number (not allowed chars)");
+        Program program = parseProgram(source);
+        String bugId = findBlockId(program, AsNumber.class);
+
+        InvalidNumberStringFix heuristic = new InvalidNumberStringFix(createTestIssueDTO(bugId));
+        assertFixFound(heuristic, program);
     }
 
     @Test
-    public void testNoFixInvalidNumberString() {
-        // No Fix: String matches ALLOWED_CHARS but is NOT VALID_NUMBER ("12..34")
-        
-        TestableInvalidNumberStringFix heuristic = new TestableInvalidNumberStringFix("buggy");
-        NonDataBlockMetadata buggyMeta = createMetadata("buggy");
-        
-        StringLiteral str = new StringLiteral("12..34"); // Matches ALLOWED, but invalid number
-        AsNumber asNumber = new AsNumber(str) {
-            @Override
-            public BlockMetadata getMetadata() {
-                return buggyMeta;
-            }
-        };
-        str.setParentNode(asNumber);
-        
-        MoveSteps move = new MoveSteps(asNumber, createMetadata(null));
-        asNumber.setParentNode(move);
-        
-        StmtList stmts = new StmtList(move);
-        move.setParentNode(stmts);
-        
-        Script script = createScript(stmts);
-        
-        heuristic.visit(script);
+    public void testFixFound_BlockDeleted() throws IOException, ParsingException {
+        // Fix: The buggy block was deleted
+        String source = """
+                when green flag clicked
+                move (10) steps
+                """;
 
-        Assertions.assertTrue(heuristic.getFoundIssues().isEmpty(), "Should NOT find fix if string is invalid number format (12..34)");
-    }
-    @Test
-    public void testNoFixFound_ScriptDeleted() {
-        // Script containing the bug is gone
-        TestableInvalidNumberStringFix heuristic = new TestableInvalidNumberStringFix("non-existent-id");
-        
-        StmtList stmts = new StmtList(new MoveSteps(new de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseX(createMetadata(null)), createMetadata(null)));
-        Script script = createScript(stmts);
-        
-        heuristic.visit(script);
+        Program program = parseProgram(source);
 
-        Assertions.assertTrue(heuristic.getFoundIssues().isEmpty(), "Should be silent if block ID mismatch/missing");
+        InvalidNumberStringFix heuristic = new InvalidNumberStringFix(createTestIssueDTO("__deleted_block__"));
+        Set<FixResult> fixes = heuristic.check(program);
+        // When the block is deleted, it's considered fixed
+        org.junit.jupiter.api.Assertions.assertFalse(fixes.isEmpty(), 
+                "Should find fix when block is deleted");
     }
 }

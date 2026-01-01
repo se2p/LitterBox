@@ -33,8 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackd
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingBackdropSwitch;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -56,8 +55,8 @@ public class MissingBackdropSwitchFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new MissingBackdropSwitch();
 
-    public MissingBackdropSwitchFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public MissingBackdropSwitchFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -69,19 +68,19 @@ public class MissingBackdropSwitchFix extends AbstractFixHeuristic {
     @Override
     public void visit(SwitchBackdrop node) {
         recordSwitch(node.getElementChoice());
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(SwitchBackdropAndWait node) {
         recordSwitch(node.getElementChoice());
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(NextBackdrop node) {
         nextRandPrev = true;
-        super.visit(node);
+        visitChildren(node);
     }
 
     private void recordSwitch(ElementChoice choice) {
@@ -111,35 +110,31 @@ public class MissingBackdropSwitchFix extends AbstractFixHeuristic {
             foundActor = currentActor;
             foundScript = currentScript;
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
-    public Set<Issue> check(Program program) {
+    public Set<FixResult> check(Program program) {
         switchedBackdrops = new HashSet<>();
         nextRandPrev = false;
         targetEvent = null;
         foundActor = null;
         foundScript = null;
-        foundScript = null;
 
-        // Check if block deleted
-        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
+        Set<FixResult> results = super.check(program);
+        if (!results.isEmpty()) {
+            return results;
         }
-
-        super.check(program);
 
         if (targetEvent != null) {
             String backdrop = targetEvent.getBackdrop().getName();
             if (nextRandPrev || switchedBackdrops.contains(backdrop)) {
                 this.currentActor = foundActor;
                 this.currentScript = foundScript;
-                addIssue(targetEvent, targetEvent.getMetadata());
+                addFix(targetEvent, targetEvent.getMetadata());
             }
         }
 
-        return issues;
+        return Collections.unmodifiableSet(fixes);
     }
 }

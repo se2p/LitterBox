@@ -22,14 +22,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.OrphanedParameter;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Fix heuristic for the OrphanedParameter bug.
@@ -43,8 +40,8 @@ public class OrphanedParameterFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new OrphanedParameter();
 
-    public OrphanedParameterFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public OrphanedParameterFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -52,21 +49,13 @@ public class OrphanedParameterFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-    @Override
-    public Set<Issue> check(Program program) {
-        // If the original buggy block (Parameter) is gone, we consider it fixed.
-        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
-        }
-        return super.check(program);
-    }
+
 
 
     @Override
     public void visit(ProcedureDefinition node) {
         currentParameterDefinitions = node.getParameterDefinitionList().getParameterDefinitions();
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -85,9 +74,9 @@ public class OrphanedParameterFix extends AbstractFixHeuristic {
             }
 
             if (validParametername) {
-                addIssue(node, node.getMetadata());
+                addFix(node, node.getMetadata());
             }
         }
-        super.visit(node);
+        visitChildren(node);
     }
 }

@@ -23,14 +23,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingPenUp;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-
-import java.util.Collections;
-import java.util.Set;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
  * Fix heuristic for the MissingPenUp bug.
@@ -46,8 +41,8 @@ public class MissingPenUpFix extends AbstractFixHeuristic implements PenExtensio
 
     private final IssueFinder relatedBugFinder = new MissingPenUp();
 
-    public MissingPenUpFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public MissingPenUpFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -55,15 +50,7 @@ public class MissingPenUpFix extends AbstractFixHeuristic implements PenExtensio
         return relatedBugFinder;
     }
 
-    @Override
-    public Set<Issue> check(Program program) {
-        // If the original buggy block (PenDown) is gone, we consider it fixed.
-        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
-        }
-        return super.check(program);
-    }
+
 
 
     @Override
@@ -77,7 +64,7 @@ public class MissingPenUpFix extends AbstractFixHeuristic implements PenExtensio
             // Fix: PenUp is present in the actor.
             this.currentActor = actor;
             this.currentScript = foundScript;
-            addIssue(targetPenDown, targetPenDown.getMetadata());
+            addFix(targetPenDown, targetPenDown.getMetadata());
         }
     }
 

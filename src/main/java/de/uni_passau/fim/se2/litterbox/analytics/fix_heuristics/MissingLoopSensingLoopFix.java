@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopSensing;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
@@ -36,8 +37,8 @@ public class MissingLoopSensingLoopFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new MissingLoopSensing();
 
-    public MissingLoopSensingLoopFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public MissingLoopSensingLoopFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -51,7 +52,7 @@ public class MissingLoopSensingLoopFix extends AbstractFixHeuristic {
             if (stmtList != null) {
                 if (stmtList.getParentNode() instanceof UntilStmt
                         || stmtList.getParentNode() instanceof RepeatForeverStmt) {
-                    addIssue(node, node.getMetadata());
+                    addFix(node, node.getMetadata());
                 }
             }
         } else {

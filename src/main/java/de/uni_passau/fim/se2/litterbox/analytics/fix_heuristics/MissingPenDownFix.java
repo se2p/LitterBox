@@ -24,13 +24,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenUpStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingPenDown;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-
-import java.util.Collections;
-import java.util.Set;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
  * Fix heuristic for the MissingPenDown bug.
@@ -46,8 +42,8 @@ public class MissingPenDownFix extends AbstractFixHeuristic implements PenExtens
 
     private final IssueFinder relatedBugFinder = new MissingPenDown();
 
-    public MissingPenDownFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public MissingPenDownFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -55,15 +51,7 @@ public class MissingPenDownFix extends AbstractFixHeuristic implements PenExtens
         return relatedBugFinder;
     }
 
-    @Override
-    public Set<Issue> check(Program program) {
-        // If the original buggy block (PenUp) is gone, we consider it fixed (or at least the bug is gone).
-        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
-        }
-        return super.check(program);
-    }
+
 
 
     @Override
@@ -77,7 +65,7 @@ public class MissingPenDownFix extends AbstractFixHeuristic implements PenExtens
             // Fix: PenDown is present in the actor.
             this.currentActor = actor;
             this.currentScript = foundScript;
-            addIssue(targetPenUp, targetPenUp.getMetadata());
+            addFix(targetPenUp, targetPenUp.getMetadata());
         }
     }
 

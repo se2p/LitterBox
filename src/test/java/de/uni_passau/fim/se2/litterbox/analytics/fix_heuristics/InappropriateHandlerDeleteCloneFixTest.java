@@ -44,7 +44,7 @@ public class InappropriateHandlerDeleteCloneFixTest extends AbstractFixHeuristic
         Program program = parseProgram(code);
         String blockId = findBlockId(program, DeleteClone.class);
 
-        InappropriateHandlerDeleteCloneFix finder = new InappropriateHandlerDeleteCloneFix(blockId);
+        InappropriateHandlerDeleteCloneFix finder = new InappropriateHandlerDeleteCloneFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
 
@@ -59,12 +59,12 @@ public class InappropriateHandlerDeleteCloneFixTest extends AbstractFixHeuristic
         Program program = parseProgram(code);
         String blockId = findBlockId(program, DeleteClone.class);
 
-        InappropriateHandlerDeleteCloneFix finder = new InappropriateHandlerDeleteCloneFix(blockId);
+        InappropriateHandlerDeleteCloneFix finder = new InappropriateHandlerDeleteCloneFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing the bug is gone
         String code = """
                 when green flag clicked
@@ -74,8 +74,8 @@ public class InappropriateHandlerDeleteCloneFixTest extends AbstractFixHeuristic
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        InappropriateHandlerDeleteCloneFix finder = new InappropriateHandlerDeleteCloneFix(blockId);
-        assertNoFixFound(finder, program);
+        InappropriateHandlerDeleteCloneFix finder = new InappropriateHandlerDeleteCloneFix(createTestIssueDTO(blockId));
+        assertFixFound(finder, program);
     }
 
     // ========================================================================
@@ -128,7 +128,7 @@ public class InappropriateHandlerDeleteCloneFixTest extends AbstractFixHeuristic
         org.junit.jupiter.api.Assertions.assertNotNull(existingDeleteCloneId,
                 "Should find DeleteClone in original program");
 
-        InappropriateHandlerDeleteCloneFix fix = new InappropriateHandlerDeleteCloneFix(existingDeleteCloneId);
+        InappropriateHandlerDeleteCloneFix fix = new InappropriateHandlerDeleteCloneFix(createTestIssueDTO(existingDeleteCloneId));
         assertFixFound(fix, fixedProgram);
     }
 }

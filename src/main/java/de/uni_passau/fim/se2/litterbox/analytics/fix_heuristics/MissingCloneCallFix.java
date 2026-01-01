@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -27,15 +26,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingCloneCall;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
-
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
 
 /**
  * Fix heuristic for the MissingCloneCall bug.
@@ -52,8 +49,8 @@ public class MissingCloneCallFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new MissingCloneCall();
 
-    public MissingCloneCallFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public MissingCloneCallFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -61,11 +58,10 @@ public class MissingCloneCallFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
     @Override
     public void visit(Myself node) {
         clonedActors.add(currentActor.getIdent().getName());
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -75,7 +71,7 @@ public class MissingCloneCallFix extends AbstractFixHeuristic {
         } else if (node.getExpression() instanceof StringLiteral stringLiteral) {
             clonedActors.add(stringLiteral.getText());
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
@@ -85,33 +81,30 @@ public class MissingCloneCallFix extends AbstractFixHeuristic {
             foundActor = currentActor;
             foundScript = currentScript;
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
-    public Set<Issue> check(Program program) {
+    public Set<FixResult> check(Program program) {
         clonedActors = new HashSet<>();
         targetEvent = null;
         foundActor = null;
         foundScript = null;
-        foundScript = null;
 
         // Check if block deleted
-        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
+        Set<FixResult> results = super.check(program);
+        if (!results.isEmpty()) {
+            return results;
         }
-
-        super.check(program);
 
         if (targetEvent != null) {
             if (foundActor != null && clonedActors.contains(foundActor.getIdent().getName())) {
                 this.currentActor = foundActor;
                 this.currentScript = foundScript;
-                addIssue(targetEvent, targetEvent.getMetadata());
+                addFix(targetEvent, targetEvent.getMetadata());
             }
         }
 
-        return issues;
+        return fixes;
     }
 }

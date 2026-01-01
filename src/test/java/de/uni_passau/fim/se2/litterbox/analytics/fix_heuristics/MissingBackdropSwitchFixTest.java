@@ -30,7 +30,7 @@ public class MissingBackdropSwitchFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, BackdropSwitchTo.class);
         
-        MissingBackdropSwitchFix heuristic = new MissingBackdropSwitchFix(bugLocationBlockId);
+        MissingBackdropSwitchFix heuristic = new MissingBackdropSwitchFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -48,7 +48,7 @@ public class MissingBackdropSwitchFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, BackdropSwitchTo.class);
         
-        MissingBackdropSwitchFix heuristic = new MissingBackdropSwitchFix(bugLocationBlockId);
+        MissingBackdropSwitchFix heuristic = new MissingBackdropSwitchFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -66,7 +66,7 @@ public class MissingBackdropSwitchFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, BackdropSwitchTo.class);
         
-        MissingBackdropSwitchFix heuristic = new MissingBackdropSwitchFix(bugLocationBlockId);
+        MissingBackdropSwitchFix heuristic = new MissingBackdropSwitchFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -80,7 +80,7 @@ public class MissingBackdropSwitchFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         // The block is gone, so heuristic should report fix (deletion)
-        MissingBackdropSwitchFix heuristic = new MissingBackdropSwitchFix("non-existent-id");
+        MissingBackdropSwitchFix heuristic = new MissingBackdropSwitchFix(createTestIssueDTO("non-existent-id"));
         assertFixFound(heuristic, program);
     }
 
@@ -124,7 +124,7 @@ public class MissingBackdropSwitchFixTest extends AbstractFixHeuristicTest {
         Assertions.assertNotNull(bugId, "Should find BackdropSwitchTo block in original program");
 
         // The fix heuristic should detect this is fixed in the original program
-        MissingBackdropSwitchFix fixHeuristic = new MissingBackdropSwitchFix(bugId);
+        MissingBackdropSwitchFix fixHeuristic = new MissingBackdropSwitchFix(createTestIssueDTO(bugId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

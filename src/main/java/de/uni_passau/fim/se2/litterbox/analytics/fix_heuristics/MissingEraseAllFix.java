@@ -26,12 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingEraseAll;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * Fix heuristic for the MissingEraseAll bug.
@@ -47,20 +43,11 @@ public class MissingEraseAllFix extends AbstractFixHeuristic implements PenExten
 
     private final IssueFinder relatedBugFinder = new MissingEraseAll();
 
-    public MissingEraseAllFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public MissingEraseAllFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
-    @Override
-    public Set<Issue> check(Program program) {
-        // Check if block deleted
-        if (bugLocationBlockId != null && BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            issues = new LinkedHashSet<>();
-            addIssueWithLooseComment();
-            return Collections.unmodifiableSet(issues);
-        }
-        return super.check(program);
-    }
+
 
     @Override
     protected IssueFinder getRelatedBugFinder() {
@@ -79,7 +66,7 @@ public class MissingEraseAllFix extends AbstractFixHeuristic implements PenExten
             // Fixed: Erase All (PenClear) is present in the actor.
             this.currentActor = actor;
             this.currentScript = foundScript;
-            addIssue(targetPenDown, targetPenDown.getMetadata());
+            addFix(targetPenDown, targetPenDown.getMetadata());
         }
     }
 

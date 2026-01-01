@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ParameterAsLiteral;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.Collections;
 import java.util.Set;
@@ -42,8 +43,8 @@ public class ParameterAsLiteralFix extends AbstractFixHeuristic {
 
     private final IssueFinder relatedBugFinder = new ParameterAsLiteral();
 
-    public ParameterAsLiteralFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public ParameterAsLiteralFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -52,24 +53,24 @@ public class ParameterAsLiteralFix extends AbstractFixHeuristic {
     }
 
     @Override
-    public Set<Issue> check(Program program) {
-        // If the original buggy block (StringLiteral) is gone, we consider it fixed.
-        java.util.Optional<BlockIdNodeFinder.NodeContext> foundOpt = BlockIdNodeFinder.find(program, bugLocationBlockId);
-        
-        if (bugLocationBlockId != null) {
-            if (foundOpt.isEmpty()) {
-                addIssueWithLooseComment();
-                return Collections.unmodifiableSet(issues);
-            }
-            
-            // Also fixed if the node exists but is no longer a StringLiteral (e.g. reverted to Parameter)
-            if (!(foundOpt.get().node() instanceof StringLiteral)) {
-                 addIssueWithLooseComment();
-                 return Collections.unmodifiableSet(issues);
-            }
+    public Set<FixResult> check(Program program) {
+        Set<FixResult> results = super.check(program);
+        if (!results.isEmpty()) {
+            // Fix found by visitation or deletion check in super
+            return results;
+        }
+
+        // If the block exists (so not empty) but was not visited (because type changed from StringLiteral),
+        // we consider it fixed.
+        if (getBugLocationBlockId() != null) {
+            BlockIdNodeFinder.find(program, getBugLocationBlockId()).ifPresent(ctx -> {
+                if (!(ctx.node() instanceof StringLiteral)) {
+                     addFixWithLooseComment();
+                }
+            });
         }
         
-        return super.check(program);
+        return Collections.unmodifiableSet(fixes);
     }
 
 
@@ -79,7 +80,7 @@ public class ParameterAsLiteralFix extends AbstractFixHeuristic {
                 .map(p -> p.getIdent().getName())
                 .collect(Collectors.toSet());
 
-        super.visit(node);
+        visitChildren(node);
 
         parametersInScope = null;
     }
@@ -95,11 +96,11 @@ public class ParameterAsLiteralFix extends AbstractFixHeuristic {
             // If not in procedure scope, don't report (the code was moved/deleted, not fixed)
             if (parametersInScope != null) {
                 if (!parametersInScope.contains(node.getText())) {
-                    addIssue(node, node.getMetadata());
+                    addFix(node, node.getMetadata());
                 }
             }
         } else {
-             // System.out.println("Node mismatch: " + node + " ID: " + node.getMetadata().getBlockId() + " Expected: " + bugLocationBlockId);
+             // System.out.println("Node mismatch: " + node + " ID: " + node.getMetadata().getBlockId() + " Expected: " + getBugLocationBlockId());
         }
     }
 }

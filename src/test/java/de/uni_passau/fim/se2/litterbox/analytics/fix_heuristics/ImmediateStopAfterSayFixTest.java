@@ -44,7 +44,7 @@ public class ImmediateStopAfterSayFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, Say.class);
 
-        ImmediateStopAfterSayFix heuristic = new ImmediateStopAfterSayFix(blockId);
+        ImmediateStopAfterSayFix heuristic = new ImmediateStopAfterSayFix(createTestIssueDTO(blockId));
         assertFixFound(heuristic, program);
     }
 
@@ -60,7 +60,7 @@ public class ImmediateStopAfterSayFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, Say.class);
 
-        ImmediateStopAfterSayFix heuristic = new ImmediateStopAfterSayFix(blockId);
+        ImmediateStopAfterSayFix heuristic = new ImmediateStopAfterSayFix(createTestIssueDTO(blockId));
         assertFixFound(heuristic, program);
     }
 
@@ -76,7 +76,7 @@ public class ImmediateStopAfterSayFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, Say.class);
 
-        ImmediateStopAfterSayFix heuristic = new ImmediateStopAfterSayFix(blockId);
+        ImmediateStopAfterSayFix heuristic = new ImmediateStopAfterSayFix(createTestIssueDTO(blockId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -91,12 +91,12 @@ public class ImmediateStopAfterSayFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = findBlockId(program, Think.class);
 
-        ImmediateStopAfterSayFix heuristic = new ImmediateStopAfterSayFix(blockId);
+        ImmediateStopAfterSayFix heuristic = new ImmediateStopAfterSayFix(createTestIssueDTO(blockId));
         assertFixFound(heuristic, program);
     }
 
     @Test
-    public void testNoFixFound_ScriptDeleted() throws IOException, ParsingException {
+    public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Script containing the bug is gone
         String code = """
                 when green flag clicked
@@ -106,8 +106,8 @@ public class ImmediateStopAfterSayFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(code);
         String blockId = "non-existent-id";
 
-        ImmediateStopAfterSayFix heuristic = new ImmediateStopAfterSayFix(blockId);
-        assertNoFixFound(heuristic, program);
+        ImmediateStopAfterSayFix heuristic = new ImmediateStopAfterSayFix(createTestIssueDTO(blockId));
+        assertFixFound(heuristic, program);
     }
 
     // ========================================================================
@@ -153,7 +153,7 @@ public class ImmediateStopAfterSayFixTest extends AbstractFixHeuristicTest {
         org.junit.jupiter.api.Assertions.assertNotNull(existingBlockId,
                 "Should find Say in original program");
 
-        ImmediateStopAfterSayFix fix = new ImmediateStopAfterSayFix(existingBlockId);
+        ImmediateStopAfterSayFix fix = new ImmediateStopAfterSayFix(createTestIssueDTO(existingBlockId));
         assertFixFound(fix, fixedProgram);
     }
 }

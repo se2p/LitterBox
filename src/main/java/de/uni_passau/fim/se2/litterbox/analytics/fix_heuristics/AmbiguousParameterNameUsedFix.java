@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.AmbiguousParameterNameUsed;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
  * Fix heuristic for the AmbiguousParameterNameUsed bug.
@@ -31,8 +32,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
  */
 public class AmbiguousParameterNameUsedFix extends AbstractFixHeuristic {
 
-    public AmbiguousParameterNameUsedFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public AmbiguousParameterNameUsedFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -40,25 +41,16 @@ public class AmbiguousParameterNameUsedFix extends AbstractFixHeuristic {
         return new AmbiguousParameterNameUsed();
     }
 
-    @Override
-    public java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> check(de.uni_passau.fim.se2.litterbox.ast.model.Program program) {
-        this.program = program;
-        this.issues = new java.util.LinkedHashSet<>();
-        if (bugLocationBlockId != null && de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder.find(program, bugLocationBlockId).isEmpty()) {
-            addIssueWithLooseComment();
-            return java.util.Collections.unmodifiableSet(issues);
-        }
-        return super.check(program);
-    }
+
 
     @Override
     public void visit(ProcedureDefinition node) {
-        super.visit(node);
+        visitChildren(node);
         if (matchesBugLocation(node)) {
             boolean stillPresent = isBugStillPresent(node);
             
             if (!stillPresent) {
-                addIssue(node, node.getMetadata());
+                addFix(node, node.getMetadata());
             }
         }
     }

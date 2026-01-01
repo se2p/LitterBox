@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ImmediateDeleteCloneAfterBroadcast;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.List;
 
@@ -39,8 +40,8 @@ public class ImmediateDeleteCloneAfterBroadcastFix extends AbstractFixHeuristic 
 
     private final IssueFinder relatedBugFinder = new ImmediateDeleteCloneAfterBroadcast();
 
-    public ImmediateDeleteCloneAfterBroadcastFix(String bugLocationBlockId) {
-        super(bugLocationBlockId);
+    public ImmediateDeleteCloneAfterBroadcastFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
@@ -67,7 +68,7 @@ public class ImmediateDeleteCloneAfterBroadcastFix extends AbstractFixHeuristic 
                             foundDelete = true;
                             break;
                         }
-                        if (de.uni_passau.fim.se2.litterbox.ast.util.AstBlockUtil.isYielding(s)) {
+                        if (de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.isYielding(s)) {
                             foundYielding = true;
                             break;
                         }
@@ -75,20 +76,20 @@ public class ImmediateDeleteCloneAfterBroadcastFix extends AbstractFixHeuristic 
                     
                     if (!foundDelete || foundYielding) {
                         // Fixed: Either removed DeleteClone entirely, or inserted a yielding statement
-                        addIssue(node, node.getMetadata());
+                        addFix(node, node.getMetadata());
                     }
                 }
             }
         }
-        super.visit(node);
+        visitChildren(node);
     }
 
     @Override
     public void visit(BroadcastAndWait node) {
         // If changed to BroadcastAndWait, that's also a fix
         if (matchesBugLocation(node)) {
-            addIssue(node, node.getMetadata());
+            addFix(node, node.getMetadata());
         }
-        super.visit(node);
+        visitChildren(node);
     }
 }

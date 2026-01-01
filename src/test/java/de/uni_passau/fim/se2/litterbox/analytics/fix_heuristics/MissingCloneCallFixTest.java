@@ -30,7 +30,7 @@ public class MissingCloneCallFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, StartedAsClone.class);
         
-        MissingCloneCallFix heuristic = new MissingCloneCallFix(bugLocationBlockId);
+        MissingCloneCallFix heuristic = new MissingCloneCallFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -48,7 +48,7 @@ public class MissingCloneCallFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, StartedAsClone.class);
         
-        MissingCloneCallFix heuristic = new MissingCloneCallFix(bugLocationBlockId);
+        MissingCloneCallFix heuristic = new MissingCloneCallFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
 
@@ -66,7 +66,7 @@ public class MissingCloneCallFixTest extends AbstractFixHeuristicTest {
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, StartedAsClone.class);
         
-        MissingCloneCallFix heuristic = new MissingCloneCallFix(bugLocationBlockId);
+        MissingCloneCallFix heuristic = new MissingCloneCallFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
 
@@ -80,7 +80,7 @@ public class MissingCloneCallFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         // The block is gone, so heuristic should report fix (deletion)
-        MissingCloneCallFix heuristic = new MissingCloneCallFix("non-existent-id");
+        MissingCloneCallFix heuristic = new MissingCloneCallFix(createTestIssueDTO("non-existent-id"));
         assertFixFound(heuristic, program);
     }
 
@@ -124,7 +124,7 @@ public class MissingCloneCallFixTest extends AbstractFixHeuristicTest {
         Assertions.assertNotNull(bugId, "Should find StartedAsClone block in original program");
 
         // The fix heuristic should detect this is fixed in the original program
-        MissingCloneCallFix fixHeuristic = new MissingCloneCallFix(bugId);
+        MissingCloneCallFix fixHeuristic = new MissingCloneCallFix(createTestIssueDTO(bugId));
         assertFixFound(fixHeuristic, fixedProgram);
     }
 }

@@ -18,7 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.*;
 import java.util.function.Function;
@@ -32,14 +32,19 @@ import java.util.logging.Logger;
  * which fix heuristic(s) should be used for a given bug finder.
  *
  * <p>The registry is built by instantiating each fix heuristic with a dummy
- * block ID and querying its name (which delegates to the related bug finder).
+ * IssueDTO and querying its name (which delegates to the related bug finder).
  */
 public final class FixHeuristicRegistry {
 
     private static final Logger log = Logger.getLogger(FixHeuristicRegistry.class.getName());
-    private static final String DUMMY_BLOCK_ID = "__registry_init__";
 
-    private static final Map<String, List<Function<String, IssueFinder>>> REGISTRY;
+    /** Dummy IssueDTO used only during registry initialization. */
+    private static final IssueDTO DUMMY_ISSUE = new IssueDTO(
+            0, "__registry_init__", "__dummy__", null, 0, null,
+            "__registry_init__", null, null, null, null, null, null, 0, null, null
+    );
+
+    private static final Map<String, List<Function<IssueDTO, FixHeuristic>>> REGISTRY;
 
     static {
         REGISTRY = buildRegistry();
@@ -52,8 +57,8 @@ public final class FixHeuristicRegistry {
     /**
      * Builds the registry by instantiating each heuristic and querying its name.
      */
-    private static Map<String, List<Function<String, IssueFinder>>> buildRegistry() {
-        Map<String, List<Function<String, IssueFinder>>> registry = new LinkedHashMap<>();
+    private static Map<String, List<Function<IssueDTO, FixHeuristic>>> buildRegistry() {
+        Map<String, List<Function<IssueDTO, FixHeuristic>>> registry = new LinkedHashMap<>();
 
         // Register all fix heuristics
         registerHeuristic(registry, AmbiguousCustomBlockSignatureFix::new);
@@ -101,7 +106,6 @@ public final class FixHeuristicRegistry {
         registerHeuristic(registry, ParameterOutOfScopeFix::new);
         registerHeuristic(registry, RecursiveCloningFix::new);
         registerHeuristic(registry, RedundantAssignmentFix::new);
-        registerHeuristic(registry, StutteringMovementFix::new);
         registerHeuristic(registry, TerminatedLoopFix::new);
         registerHeuristic(registry, TypeErrorFix::new);
         registerHeuristic(registry, VariableAsLiteralFix::new);
@@ -114,17 +118,17 @@ public final class FixHeuristicRegistry {
     }
 
     private static void registerHeuristic(
-            Map<String, List<Function<String, IssueFinder>>> registry,
-            Function<String, ? extends AbstractFixHeuristic> factory
+            Map<String, List<Function<IssueDTO, FixHeuristic>>> registry,
+            Function<IssueDTO, ? extends AbstractFixHeuristic> factory
     ) {
         try {
-            // Instantiate with dummy ID to get the finder name
-            AbstractFixHeuristic heuristic = factory.apply(DUMMY_BLOCK_ID);
+            // Instantiate with dummy issue to get the finder name
+            AbstractFixHeuristic heuristic = factory.apply(DUMMY_ISSUE);
             String finderName = heuristic.getName();
 
-            // Cast to IssueFinder function type
-            Function<String, IssueFinder> issueFinderFactory = blockId -> factory.apply(blockId);
-            registry.computeIfAbsent(finderName, k -> new ArrayList<>()).add(issueFinderFactory);
+            // Cast to FixHeuristic function type
+            Function<IssueDTO, FixHeuristic> fixHeuristicFactory = issue -> factory.apply(issue);
+            registry.computeIfAbsent(finderName, k -> new ArrayList<>()).add(fixHeuristicFactory);
 
             log.fine(() -> "Registered fix heuristic for: " + finderName);
         } catch (Exception e) {
@@ -136,16 +140,16 @@ public final class FixHeuristicRegistry {
      * Returns the fix heuristics for a given bug finder.
      *
      * @param bugFinderName the name of the bug finder
-     * @param bugLocationBlockId the block ID where the bug was originally reported
+     * @param originalIssue the original issue DTO
      * @return a list of fix heuristics to check, or empty if none are registered
      */
-    public static List<IssueFinder> getFixHeuristics(String bugFinderName, String bugLocationBlockId) {
-        List<Function<String, IssueFinder>> factories = REGISTRY.get(bugFinderName);
+    public static List<FixHeuristic> getFixHeuristics(String bugFinderName, IssueDTO originalIssue) {
+        List<Function<IssueDTO, FixHeuristic>> factories = REGISTRY.get(bugFinderName);
         if (factories == null) {
             return List.of();
         }
         return factories.stream()
-                .map(factory -> factory.apply(bugLocationBlockId))
+                .map(factory -> factory.apply(originalIssue))
                 .toList();
     }
 
