@@ -217,7 +217,10 @@ public class KeySetPositionInjector extends AbstractBugInjector {
             IsKeyPressed keyPressed = (IsKeyPressed) cond;
             KeyPressed event = new KeyPressed(
                     apply(keyPressed.getKey()), TopNonDataBlockMetadata.emptyTopNonBlockMetadata());
-            Script newScript = new Script(event, apply(ifStmt.getThenStmts()));
+            
+            // Convert relative motion to absolute motion to inject the bug
+            StmtList convertedBody = convertToAbsoluteMotion(ifStmt.getThenStmts());
+            Script newScript = new Script(event, convertedBody);
             extraScripts.add(newScript);
 
             if (!extractedAny) {
@@ -225,6 +228,26 @@ public class KeySetPositionInjector extends AbstractBugInjector {
                 firstModifiedReplacement = newScript;
             }
             extractedAny = true;
+        }
+
+        /**
+         * Converts relative motion statements to absolute motion statements.
+         * ChangeXBy -> SetXTo, ChangeYBy -> SetYTo
+         */
+        private StmtList convertToAbsoluteMotion(StmtList original) {
+            List<Stmt> convertedStmts = new ArrayList<>();
+            for (Stmt stmt : original.getStmts()) {
+                if (stmt instanceof ChangeXBy changeX) {
+                    // Convert "change x by (N)" to "set x to (N)"
+                    convertedStmts.add(new SetXTo(apply(changeX.getNum()), apply(changeX.getMetadata())));
+                } else if (stmt instanceof ChangeYBy changeY) {
+                    // Convert "change y by (N)" to "set y to (N)"
+                    convertedStmts.add(new SetYTo(apply(changeY.getNum()), apply(changeY.getMetadata())));
+                } else {
+                    convertedStmts.add((Stmt) stmt.accept(this));
+                }
+            }
+            return new StmtList(convertedStmts);
         }
     }
 }
