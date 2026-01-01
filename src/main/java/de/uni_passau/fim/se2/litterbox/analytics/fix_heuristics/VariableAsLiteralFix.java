@@ -18,16 +18,15 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.VariableAsLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.VariableAsLiteral;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
-
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.Collections;
 import java.util.Map;

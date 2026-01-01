@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageNeverSent;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
@@ -28,13 +30,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageNeverSent;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
 
@@ -66,7 +65,8 @@ public class MessageNeverSentFix extends AbstractFixHeuristic {
         }
 
         // 1. Find the buggy node using the block ID
-        Optional<BlockIdNodeFinder.NodeContext> bugContextOpt = BlockIdNodeFinder.find(program, getBugLocationBlockId());
+        Optional<BlockIdNodeFinder.NodeContext> bugContextOpt = 
+                BlockIdNodeFinder.find(program, getBugLocationBlockId());
         
         // If not empty (handled by super), get node
         if (bugContextOpt.isPresent()) {
@@ -87,8 +87,10 @@ public class MessageNeverSentFix extends AbstractFixHeuristic {
 
                     if (senderFinder.foundSender != null) {
                         ASTNode sender = senderFinder.foundSender;
-                        // Use helper to set current context if needed for addFix (though addFix uses foundSender context if available? 
-                        // Wait, addFix uses 'this.currentActor' etc. which might not be set because we didn't visit normally!)
+                        // Use helper to set current context if needed for addFix 
+                        // (though addFix uses foundSender context if available? 
+                        // Wait, addFix uses 'this.currentActor' etc. which might not be set 
+                        // because we didn't visit normally!)
                         // We must set currentActor/Script manually as in old code.
                         currentActor = AstNodeUtil.findParent(sender, ActorDefinition.class);
                         ScriptEntity scriptEntity = AstNodeUtil.findParent(sender, ScriptEntity.class);

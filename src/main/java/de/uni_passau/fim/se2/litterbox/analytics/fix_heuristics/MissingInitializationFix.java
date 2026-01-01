@@ -18,11 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import java.util.Set;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingInitialization;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingInitialization;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
+
+import java.util.Set;
 
 /**
  * Fix heuristic for the MissingInitialization bug.

@@ -18,12 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ParameterAsLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.ParameterAsLiteral;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.Collections;
@@ -69,7 +69,7 @@ public class ParameterAsLiteralFix extends AbstractFixHeuristic {
         if (getBugLocationBlockId() != null) {
             BlockIdNodeFinder.find(program, getBugLocationBlockId()).ifPresent(ctx -> {
                 if (!(ctx.node() instanceof StringLiteral)) {
-                     addFixWithLooseComment();
+                    addFixWithLooseComment();
                 }
             });
         }
@@ -104,7 +104,8 @@ public class ParameterAsLiteralFix extends AbstractFixHeuristic {
                 }
             }
         } else {
-             // System.out.println("Node mismatch: " + node + " ID: " + node.getMetadata().getBlockId() + " Expected: " + getBugLocationBlockId());
+             // System.out.println("Node mismatch: " + node + " ID: " + node.getMetadata().getBlockId() + 
+             //                    " Expected: " + getBugLocationBlockId());
         }
     }
 }
