@@ -70,38 +70,44 @@ public class KeySetPositionTest implements FinderTest, JsonTest {
     // ==================== WASD Tests ====================
 
     @Test
-    void testWASDPolling() throws IOException, ParsingException {
+    void testWASDPolling_CorrectUsage() throws IOException, ParsingException {
+        // ChangeYBy is correct usage - no bug
         Program program = parseScratchBlocks("when green flag clicked\nforever\nif <key (w v) pressed?> then\nchange y by (10)\nend\nend\n");
-        Assertions.assertEquals(1, new KeySetPosition().check(program).size(), "WASD polling should be a bug");
+        Assertions.assertEquals(0, new KeySetPosition().check(program).size(), "ChangeYBy is correct, not a bug");
     }
 
     @Test
-    void testWEvent() throws IOException, ParsingException {
+    void testWEvent_CorrectUsage() throws IOException, ParsingException {
+        // ChangeYBy is correct usage - no bug
         Program program = parseScratchBlocks("when [w v] key pressed\nchange y by (10)\n");
-        Assertions.assertEquals(1, new KeySetPosition().check(program).size(), "W event should be a bug");
+        Assertions.assertEquals(0, new KeySetPosition().check(program).size(), "ChangeYBy is correct, not a bug");
     }
 
     @Test
-    void testAEvent() throws IOException, ParsingException {
+    void testAEvent_CorrectUsage() throws IOException, ParsingException {
+        // ChangeXBy is correct usage - no bug
         Program program = parseScratchBlocks("when [a v] key pressed\nchange x by (-10)\n");
-        Assertions.assertEquals(1, new KeySetPosition().check(program).size(), "A event should be a bug");
+        Assertions.assertEquals(0, new KeySetPosition().check(program).size(), "ChangeXBy is correct, not a bug");
     }
 
     @Test
-    void testSEvent() throws IOException, ParsingException {
+    void testSEvent_CorrectUsage() throws IOException, ParsingException {
+        // ChangeYBy is correct usage - no bug
         Program program = parseScratchBlocks("when [s v] key pressed\nchange y by (-10)\n");
-        Assertions.assertEquals(1, new KeySetPosition().check(program).size(), "S event should be a bug");
+        Assertions.assertEquals(0, new KeySetPosition().check(program).size(), "ChangeYBy is correct, not a bug");
     }
 
     @Test
-    void testDEvent() throws IOException, ParsingException {
+    void testDEvent_CorrectUsage() throws IOException, ParsingException {
+        // ChangeXBy is correct usage - no bug
         Program program = parseScratchBlocks("when [d v] key pressed\nchange x by (10)\n");
-        Assertions.assertEquals(1, new KeySetPosition().check(program).size(), "D event should be a bug");
+        Assertions.assertEquals(0, new KeySetPosition().check(program).size(), "ChangeXBy is correct, not a bug");
     }
 
     @Test
-    void testArrowEvent() throws IOException, ParsingException {
+    void testArrowEvent_CorrectUsage() throws IOException, ParsingException {
+        // ChangeYBy is correct usage - no bug
         Program program = parseScratchBlocks("when [up arrow v] key pressed\nchange y by (10)\n");
-        Assertions.assertEquals(1, new KeySetPosition().check(program).size(), "Arrow event should be a bug");
+        Assertions.assertEquals(0, new KeySetPosition().check(program).size(), "ChangeYBy is correct, not a bug");
     }
 }

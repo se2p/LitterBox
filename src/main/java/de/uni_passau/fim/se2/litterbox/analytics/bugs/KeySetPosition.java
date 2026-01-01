@@ -32,9 +32,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
@@ -114,11 +111,13 @@ public class KeySetPosition extends AbstractIssueFinder {
     }
 
     private boolean isVerticalMotion(Stmt stmt) {
-        return stmt instanceof SetYTo || stmt instanceof ChangeYBy || stmt instanceof MoveSteps;
+        // Only flag absolute positioning - relative motion (ChangeYBy) is the correct approach
+        return stmt instanceof SetYTo;
     }
 
     private boolean isHorizontalMotion(Stmt stmt) {
-        return stmt instanceof SetXTo || stmt instanceof ChangeXBy || stmt instanceof MoveSteps;
+        // Only flag absolute positioning - relative motion (ChangeXBy) is the correct approach
+        return stmt instanceof SetXTo;
     }
 
     private boolean isVerticalKey(int key) {
