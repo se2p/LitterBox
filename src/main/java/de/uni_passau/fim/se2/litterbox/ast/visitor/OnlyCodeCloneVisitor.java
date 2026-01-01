@@ -24,6 +24,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 public class OnlyCodeCloneVisitor extends CloneVisitor {
 
+    public OnlyCodeCloneVisitor() {
+        this(false);
+    }
+
+    public OnlyCodeCloneVisitor(boolean freshBlockIds) {
+        super(freshBlockIds);
+    }
+
     /**
      * Default implementation of visit method for ActorDefinition.
      *
@@ -62,6 +70,6 @@ public class OnlyCodeCloneVisitor extends CloneVisitor {
     }
 
     public static <T extends ASTNode> T copy(T node) {
-        return new OnlyCodeCloneVisitor().apply(node);
+        return new OnlyCodeCloneVisitor(true).apply(node);
     }
 }

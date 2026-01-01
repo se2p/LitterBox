@@ -3060,7 +3060,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(CommentMetadata node) {
-        return new CommentMetadata(node.getCommentId(), generateUID(), node.getX(), node.getY(), node.getWidth(), node.getHeight(), node.isMinimized(), node.getText());
+        return new CommentMetadata(node.getCommentId(), node.getBlockId(), node.getX(), node.getY(), node.getWidth(), node.getHeight(), node.isMinimized(), node.getText());
     }
 
     /**
@@ -3170,8 +3170,28 @@ public class CloneVisitor {
      *             be iterated
      * @return the copy of the visited node
      */
+    private final boolean freshBlockIds;
+
+    public CloneVisitor() {
+        this(false);
+    }
+
+    public CloneVisitor(boolean freshBlockIds) {
+        this.freshBlockIds = freshBlockIds;
+    }
+
+    /**
+     * Helper to generate a new block ID or keep the old one based on configuration.
+     */
+    private String processBlockId(String oldId) {
+        if (freshBlockIds) {
+            return generateUID();
+        }
+        return oldId;
+    }
+
     public ASTNode visit(DataBlockMetadata node) {
-        return new DataBlockMetadata(generateUID(), node.getCommentId(), node.getX(), node.getY());
+        return new DataBlockMetadata(processBlockId(node.getBlockId()), node.getCommentId(), node.getX(), node.getY());
     }
 
     /**
@@ -3186,7 +3206,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(NonDataBlockMetadata node) {
-        return new NonDataBlockMetadata(node.getCommentId(), generateUID(),
+        return new NonDataBlockMetadata(node.getCommentId(), processBlockId(node.getBlockId()),
                 node.isShadow(), apply(node.getMutation()));
     }
 
@@ -3202,7 +3222,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(TopNonDataBlockMetadata node) {
-        return new TopNonDataBlockMetadata(node.getCommentId(), generateUID(),
+        return new TopNonDataBlockMetadata(node.getCommentId(), node.getBlockId(),
                 node.isShadow(), apply(node.getMutation()),
                 node.getXPos(), node.getYPos());
     }
