@@ -22,6 +22,8 @@ import java.util.Objects;
 
 public class Definition implements DataflowFact {
 
+    private final int cachedHash;
+
     private final CFGNode source;
 
     private final Defineable defineable;
@@ -29,6 +31,7 @@ public class Definition implements DataflowFact {
     public Definition(CFGNode source, Defineable defineable) {
         this.source = source;
         this.defineable = defineable;
+        this.cachedHash = getCachedHash();
     }
 
     @Override
@@ -63,6 +66,10 @@ public class Definition implements DataflowFact {
 
     @Override
     public int hashCode() {
+        return cachedHash;
+    }
+
+    private int getCachedHash() {
         int result = source != null ? source.hashCode() : 0;
         result = 31 * result + (defineable != null ? defineable.hashCode() : 0);
         return result;

@@ -29,9 +29,11 @@ public class Attribute implements Defineable {
 
     // TODO: This should be replaced with a FixedAttribute?
 
-    private LocalIdentifier actorIdentifier;
-    private AttributeType attribute;
-    private String parameter; // e.g. for specific graphic/sound effects
+    private final LocalIdentifier actorIdentifier;
+    private final AttributeType attribute;
+    private final String parameter; // e.g. for specific graphic/sound effects
+
+    private final int cachedHash;
 
     public Attribute(LocalIdentifier actorIdentifier, AttributeType attribute) {
         this(actorIdentifier, attribute, null);
@@ -41,6 +43,8 @@ public class Attribute implements Defineable {
         this.actorIdentifier = actorIdentifier;
         this.attribute = attribute;
         this.parameter = parameter;
+
+        this.cachedHash = getCachedHash();
     }
 
     public static Attribute positionXOf(LocalIdentifier actorIdentifier) {
@@ -138,6 +142,10 @@ public class Attribute implements Defineable {
 
     @Override
     public int hashCode() {
+        return cachedHash;
+    }
+
+    private int getCachedHash() {
         return Objects.hash(actorIdentifier, attribute, parameter);
     }
 

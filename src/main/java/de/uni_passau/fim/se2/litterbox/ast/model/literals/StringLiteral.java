@@ -29,11 +29,14 @@ import java.util.Objects;
 
 public class StringLiteral extends AbstractNode implements StringExpr, ASTLeaf {
 
+    private final int cachedHash;
+
     private final String text;
 
     public StringLiteral(String text) {
         super();
         this.text = text;
+        this.cachedHash = getCachedHash();
     }
 
     public String getText() {
@@ -64,6 +67,10 @@ public class StringLiteral extends AbstractNode implements StringExpr, ASTLeaf {
 
     @Override
     public int hashCode() {
+        return cachedHash;
+    }
+
+    private int getCachedHash() {
         return Objects.hash(text);
     }
 }
