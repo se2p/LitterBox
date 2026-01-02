@@ -56,12 +56,6 @@ public class CommandlineTest extends CliTest {
     }
 
     @Test
-    public void testExportWithoutOutput() {
-        commandLine.execute("export", "--format", "leila", "--path", "foobar");
-        assertStdErrContains("Output path option '--output' required");
-    }
-
-    @Test
     public void testExportWithoutPath() {
         commandLine.execute("export", "--format", "leila", "--output", "foobar");
         assertStdErrContains("Input path option '--path' required");

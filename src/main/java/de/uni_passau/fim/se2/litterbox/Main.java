@@ -378,12 +378,15 @@ public class Main implements Callable<Integer> {
         )
         boolean nonDeterministic;
 
+        @CommandLine.Option(
+                names = {"--full-project"},
+                description = "For Goboscript: create a full project structure with separate files and assets."
+        )
+        boolean fullProject;
+
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
-            if (format != ExportFormat.SCRATCHBLOCKS) {
-                requireOutputPath();
-            }
         }
 
         @Override
@@ -392,7 +395,8 @@ public class Main implements Callable<Integer> {
                     format,
                     commonOptions.outputPath,
                     commonOptions.deleteProject,
-                    nonDeterministic
+                    nonDeterministic,
+                    fullProject
             );
         }
     }

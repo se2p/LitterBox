@@ -1,0 +1,71 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "event_flag": {
+          "opcode": "event_whenflagclicked",
+          "next": "block_glide_to",
+          "parent": null,
+          "topLevel": true,
+          "x": 0,
+          "y": 0,
+          "inputs": {},
+          "fields": {},
+          "shadow": false
+        },
+        "block_glide_to": {
+          "opcode": "motion_glideto",
+          "next": "block_glide_xy",
+          "parent": "event_flag",
+          "inputs": {
+            "SECS": [1, [4, "1"]],
+            "TO": [1, "menu_glide"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "menu_glide": {
+          "opcode": "motion_glideto_menu",
+          "parent": "block_glide_to",
+          "next": null,
+          "inputs": {},
+          "fields": {
+            "TO": ["_random_", null]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "block_glide_xy": {
+          "opcode": "motion_glidesecstoxy",
+          "next": null,
+          "parent": "block_glide_to",
+          "inputs": {
+            "SECS": [1, [4, "2"]],
+            "X": [1, [4, "100"]],
+            "Y": [1, [4, "50"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [],
+      "sounds": []
+    }
+  ],
+  "monitors": [],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0",
+    "agent": ""
+  }
+}

@@ -1,0 +1,178 @@
+{
+  "targets": [
+    {
+      "isStage": true,
+      "name": "Stage",
+      "variables": {},
+      "lists": {},
+      "broadcasts": {},
+      "blocks": {
+        "event_flag": {
+          "opcode": "event_whenflagclicked",
+          "next": "block_say_dist",
+          "parent": null,
+          "topLevel": true,
+          "x": 0,
+          "y": 0,
+          "inputs": {},
+          "fields": {},
+          "shadow": false
+        },
+        "block_say_dist": {
+          "opcode": "looks_say",
+          "next": "block_say_days",
+          "parent": "event_flag",
+          "inputs": {
+            "MESSAGE": [3, "block_dist", [10, ""]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "block_dist": {
+          "opcode": "sensing_distanceto",
+          "parent": "block_say_dist",
+          "next": null,
+          "inputs": {
+            "DISTANCETOMENU": [1, "menu_dist"]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "menu_dist": {
+          "opcode": "sensing_distancetomenu",
+          "parent": "block_dist",
+          "next": null,
+          "inputs": {},
+          "fields": {
+            "DISTANCETOMENU": ["_mouse_", null]
+          },
+          "shadow": true,
+          "topLevel": false
+        },
+        "block_say_days": {
+          "opcode": "looks_say",
+          "next": "block_say_current",
+          "parent": "block_say_dist",
+          "inputs": {
+            "MESSAGE": [3, "block_days", [10, ""]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "block_days": {
+          "opcode": "sensing_dayssince2000",
+          "parent": "block_say_days",
+          "next": null,
+          "inputs": {},
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "block_say_current": {
+          "opcode": "looks_say",
+          "next": "block_say_contains",
+          "parent": "block_say_days",
+          "inputs": {
+            "MESSAGE": [3, "block_current", [10, ""]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "block_current": {
+          "opcode": "sensing_current",
+          "parent": "block_say_current",
+          "next": null,
+          "inputs": {},
+          "fields": {
+            "CURRENTMENU": ["YEAR", null]
+          },
+          "shadow": false,
+          "topLevel": false
+        },
+        "block_say_contains": {
+          "opcode": "looks_say",
+          "next": "block_say_length",
+          "parent": "block_say_current",
+          "inputs": {
+            "MESSAGE": [3, "block_contains", [10, ""]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "block_contains": {
+          "opcode": "operator_contains",
+          "parent": "block_say_contains",
+          "next": null,
+          "inputs": {
+            "STRING1": [1, [10, "apple"]],
+            "STRING2": [1, [10, "a"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "block_say_length": {
+          "opcode": "looks_say",
+          "next": "block_say_letter",
+          "parent": "block_say_contains",
+          "inputs": {
+            "MESSAGE": [3, "block_length", [10, ""]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "block_length": {
+          "opcode": "operator_length",
+          "parent": "block_say_length",
+          "next": null,
+          "inputs": {
+            "STRING": [1, [10, "apple"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "block_say_letter": {
+          "opcode": "looks_say",
+          "next": null,
+          "parent": "block_say_length",
+          "inputs": {
+            "MESSAGE": [3, "block_letter", [10, ""]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        },
+        "block_letter": {
+          "opcode": "operator_letter_of",
+          "parent": "block_say_letter",
+          "next": null,
+          "inputs": {
+            "LETTER": [1, [4, "1"]],
+            "STRING": [1, [10, "apple"]]
+          },
+          "fields": {},
+          "shadow": false,
+          "topLevel": false
+        }
+      },
+      "comments": {},
+      "currentCostume": 0,
+      "costumes": [],
+      "sounds": []
+    }
+  ],
+  "monitors": [],
+  "extensions": [],
+  "meta": {
+    "semver": "3.0.0",
+    "vm": "0.2.0",
+    "agent": ""
+  }
+}

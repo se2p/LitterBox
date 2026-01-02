@@ -124,7 +124,7 @@ public class GoboscriptVisitorTest implements JsonTest {
         assertThat(result).contains("*");
         assertThat(result).contains("/");
         assertThat(result).contains("round");
-        assertThat(result).contains("pick_random");
+        assertThat(result).contains("random");
     }
 
     @Test
@@ -186,5 +186,63 @@ public class GoboscriptVisitorTest implements JsonTest {
         assertThat(result).isNotEmpty();
         assertThat(result).contains("onflag");
         assertThat(result).contains("move");
+    }
+
+    @Test
+    public void testSensingStatements() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/sensingblocks.json");
+        GoboscriptVisitor visitor = new GoboscriptVisitor();
+        program.accept(visitor);
+        String result = visitor.getOutput();
+
+        // Statements
+        assertThat(result).contains("ask \"What's your name?\";");
+        assertThat(result).contains("set_drag_mode \"draggable\";");
+        assertThat(result).contains("reset_timer;");
+    }
+
+    @Test
+    public void testSensingReporters() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/sensingreporters.json");
+        GoboscriptVisitor visitor = new GoboscriptVisitor();
+        program.accept(visitor);
+        String result = visitor.getOutput();
+
+        assertThat(result).contains("distance_to(");
+        assertThat(result).contains("days_since_2000");
+        assertThat(result).contains("current_year");
+        assertThat(result).contains("contains(");
+        assertThat(result).contains("length(");
+        assertThat(result).contains("letter(");
+    }
+
+    @Test
+    public void testGlideBlocks() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/glideblocks.json");
+        GoboscriptVisitor visitor = new GoboscriptVisitor();
+        program.accept(visitor);
+        String result = visitor.getOutput();
+
+        assertThat(result).contains("glide 1, \"random position\";");
+        assertThat(result).contains("glide 2, 100, 50;");
+    }
+
+    @Test
+    public void testCostumeAndSounds() throws IOException, ParsingException {
+        Program program = getAST("src/test/fixtures/scratchblocks/sensingblocks.json");
+        GoboscriptVisitor visitor = new GoboscriptVisitor();
+        program.accept(visitor);
+        String result = visitor.getOutput();
+
+        // Stage
+        assertThat(result).contains("stage Stage");
+        assertThat(result).contains("costumes \"cd21514d0531fdffb22204e0ec5ed84a.svg\" as \"backdrop1\";");
+        assertThat(result).contains("sounds \"83a9787d4cb6f3b7632b4ddfebf74367.wav\" as \"pop\";");
+
+        // Sprite1
+        assertThat(result).contains("sprite Sprite1");
+        assertThat(result).contains("costumes \"b7853f557e4426412e64bb3da6531a99.svg\" as \"costume1\";");
+        assertThat(result).contains("costumes \"e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg\" as \"costume2\";");
+        assertThat(result).contains("sounds \"83c36d806dc92327b9e7049a565c6bff.wav\" as \"Meow\";");
     }
 }

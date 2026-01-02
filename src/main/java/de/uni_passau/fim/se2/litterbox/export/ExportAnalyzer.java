@@ -112,6 +112,7 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
             // Leila needs its visitor with PrintStream
             LeilaVisitor visitor = new LeilaVisitor(System.out, nonDet, false);
             visitor.visit(program);
+            System.out.println();
         } else {
             // ScratchBlocks and Goboscript use pre-computed result
             System.out.println(result);

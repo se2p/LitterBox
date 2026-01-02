@@ -19,6 +19,16 @@
 package de.uni_passau.fim.se2.litterbox.export.goboscript;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationIdentAsTypeStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationAttributeAsTypeStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.SoundMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.ListType;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.CloneChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
@@ -92,6 +102,7 @@ import java.util.List;
 public class GoboscriptVisitor extends AbstractExportVisitor {
 
     private boolean inScript = false;
+    private String assetPrefix = "";
 
     /**
      * Creates a new Goboscript visitor with internal buffering.
@@ -107,6 +118,10 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
      */
     public GoboscriptVisitor(PrintStream printStream) {
         super(printStream);
+    }
+
+    public void setAssetPrefix(String prefix) {
+        this.assetPrefix = prefix;
     }
 
     /**
@@ -137,14 +152,60 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     public void visit(ActorDefinition node) {
         currentActor = node;
         String actorType = node.isStage() ? "stage" : "sprite";
-        emitNoSpace(actorType + " " + escapeIdentifier(node.getIdent().getName()));
+        emitNoSpace("# " + actorType + " " + escapeIdentifier(node.getIdent().getName()));
         newLine();
         newLine();
+
+        node.getDecls().accept(this);
+
+        if (node.getActorMetadata() != null) {
+            for (ImageMetadata costume : node.getActorMetadata().getCostumes().getList()) {
+                emitNoSpace("costumes \"");
+                emitNoSpace(assetPrefix + escapeString(costume.getMd5ext()));
+                emitNoSpace("\" as \"");
+                emitNoSpace(escapeString(costume.getName()));
+                emitNoSpace("\";");
+                newLine();
+            }
+            for (SoundMetadata sound : node.getActorMetadata().getSounds().getList()) {
+                emitNoSpace("sounds \"");
+                emitNoSpace(assetPrefix + escapeString(sound.getMd5ext()));
+                emitNoSpace("\" as \"");
+                emitNoSpace(escapeString(sound.getName()));
+                emitNoSpace("\";");
+                newLine();
+            }
+        }
 
         node.getProcedureDefinitionList().accept(this);
         node.getScripts().accept(this);
 
         currentActor = null;
+    }
+
+    @Override
+    public void visit(DeclarationStmtList node) {
+        for (DeclarationStmt stmt : node.getDeclarationStmts()) {
+            stmt.accept(this);
+        }
+    }
+
+    @Override
+    public void visit(DeclarationIdentAsTypeStmt node) {
+        Type type = node.getType();
+        if (type instanceof ListType) {
+            emitNoSpace("list ");
+        } else {
+            emitNoSpace("var ");
+        }
+        emitNoSpace(escapeIdentifier(node.getIdent().getName().getName()));
+        emitNoSpace(";");
+        newLine();
+    }
+
+    @Override
+    public void visit(DeclarationAttributeAsTypeStmt node) {
+        // Built-in attributes are implicitly declared in Goboscript
     }
 
     @Override
@@ -399,7 +460,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     public void visit(GlideSecsTo node) {
         emitNoSpace("glide ");
         node.getSecs().accept(this);
-        emitNoSpace(" to ");
+        emitNoSpace(", ");
         visitPosition(node.getPosition());
         emitNoSpace(";");
         newLine();
@@ -409,7 +470,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     public void visit(GlideSecsToXY node) {
         emitNoSpace("glide ");
         node.getSecs().accept(this);
-        emitNoSpace(" to ");
+        emitNoSpace(", ");
         node.getX().accept(this);
         emitNoSpace(", ");
         node.getY().accept(this);
@@ -609,12 +670,43 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     }
 
     // ---------------------------------------------------------------
+    // Sensing Blocks
+    // ---------------------------------------------------------------
+
+    @Override
+    public void visit(AskAndWait node) {
+        emitNoSpace("ask ");
+        node.getQuestion().accept(this);
+        emitNoSpace(";");
+        newLine();
+    }
+
+    @Override
+    public void visit(ResetTimer node) {
+        emitNoSpace("reset_timer;");
+        newLine();
+    }
+
+    @Override
+    public void visit(SetDragMode node) {
+        emitNoSpace("set_drag_mode \"");
+        emitNoSpace(node.getDrag().getTypeName());
+        emitNoSpace("\";");
+        newLine();
+    }
+
+    // ---------------------------------------------------------------
     // Variables
     // ---------------------------------------------------------------
 
     @Override
     public void visit(SetVariableTo node) {
-        node.getIdentifier().accept(this);
+        Identifier id = node.getIdentifier();
+        if (id instanceof Qualified q) {
+            q.getSecond().accept(this);
+        } else {
+            id.accept(this);
+        }
         emitNoSpace(" = ");
         node.getExpr().accept(this);
         emitNoSpace(";");
@@ -623,7 +715,12 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(ChangeVariableBy node) {
-        node.getIdentifier().accept(this);
+        Identifier id = node.getIdentifier();
+        if (id instanceof Qualified q) {
+            q.getSecond().accept(this);
+        } else {
+            id.accept(this);
+        }
         emitNoSpace(" += ");
         node.getExpr().accept(this);
         emitNoSpace(";");
@@ -871,10 +968,11 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(PickRandom node) {
-        emitNoSpace("pick_random ");
+        emitNoSpace("random(");
         node.getOperand1().accept(this);
-        emitNoSpace(" to ");
+        emitNoSpace(", ");
         node.getOperand2().accept(this);
+        emitNoSpace(")");
     }
 
     @Override
@@ -894,32 +992,65 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(PositionX node) {
-        emitNoSpace("x_position");
+        emitNoSpace("x_position()");
     }
 
     @Override
     public void visit(PositionY node) {
-        emitNoSpace("y_position");
+        emitNoSpace("y_position()");
     }
 
     @Override
     public void visit(Direction node) {
-        emitNoSpace("direction");
+        emitNoSpace("direction()");
     }
 
     @Override
     public void visit(Size node) {
-        emitNoSpace("size");
+        emitNoSpace("size()");
     }
 
     @Override
     public void visit(Volume node) {
-        emitNoSpace("volume");
+        emitNoSpace("volume()");
     }
 
     @Override
     public void visit(Loudness node) {
         emitNoSpace("loudness");
+    }
+
+    @Override
+    public void visit(DistanceTo node) {
+        emitNoSpace("distance_to(");
+        visitPosition(node.getPosition());
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(AttributeOf node) {
+        emitNoSpace("[");
+        node.getAttribute().accept(this);
+        emitNoSpace(" v] of ");
+        node.getElementChoice().accept(this);
+    }
+
+    @Override
+    public void visit(DaysSince2000 node) {
+        emitNoSpace("days_since_2000");
+    }
+
+    @Override
+    public void visit(Current node) {
+        emitNoSpace("current_");
+        emitNoSpace(node.getTimeComp().getType().name().toLowerCase());
+    }
+
+    @Override
+    public void visit(LengthOfString node) {
+        emitNoSpace("length(");
+        node.getStringExpr().accept(this);
+        emitNoSpace(")");
     }
 
     // ---------------------------------------------------------------
@@ -947,6 +1078,15 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(Username node) {
         emitNoSpace("username");
+    }
+
+    @Override
+    public void visit(LetterOf node) {
+        emitNoSpace("letter(");
+        node.getNum().accept(this);
+        emitNoSpace(", ");
+        node.getStringExpr().accept(this);
+        emitNoSpace(")");
     }
 
     // ---------------------------------------------------------------
@@ -1006,8 +1146,18 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(Touching node) {
-        emitNoSpace("touching ");
+        emitNoSpace("touching(");
         node.getTouchable().accept(this);
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(StringContains node) {
+        emitNoSpace("contains(");
+        node.getContaining().accept(this);
+        emitNoSpace(", ");
+        node.getContained().accept(this);
+        emitNoSpace(")");
     }
 
     @Override
@@ -1017,12 +1167,13 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(IsKeyPressed node) {
-        emitNoSpace("key_pressed ");
+        emitNoSpace("key_pressed(");
         if (node.getKey().getKey() instanceof NumberLiteral num) {
             emitNoSpace("\"" + getKeyName((int) num.getValue()) + "\"");
         } else {
             node.getKey().getKey().accept(this);
         }
+        emitNoSpace(")");
     }
 
     // ---------------------------------------------------------------
