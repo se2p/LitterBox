@@ -47,6 +47,9 @@ public class IdVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpe
     private String id;
 
     public String getBlockId(Stmt stmt) {
+        // Reset id to prevent stale value from previous visit being returned
+        // for nodes without a specific visit method (e.g., UnspecifiedStmt)
+        id = null;
         stmt.accept(this);
         return id;
     }

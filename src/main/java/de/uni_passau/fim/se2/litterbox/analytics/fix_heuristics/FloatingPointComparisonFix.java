@@ -22,7 +22,9 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.FloatingPointComparison;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
@@ -104,6 +106,24 @@ public class FloatingPointComparisonFix extends AbstractFixHeuristic {
             if (!inCondition || checkEquals(node)) {
                 addFix(node, node.getMetadata());
             }
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(LessThan node) {
+        if (matchesBugLocation(node)) {
+            // LessThan is safe regarding floating point equality issues
+            addFix(node, node.getMetadata());
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(BiggerThan node) {
+        if (matchesBugLocation(node)) {
+            // BiggerThan is safe regarding floating point equality issues
+            addFix(node, node.getMetadata());
         }
         visitChildren(node);
     }

@@ -61,10 +61,18 @@ public class CallWithoutDefinitionFix extends AbstractFixHeuristic {
         targetCall = null;
         super.visit(actor);
 
-        if (targetCall != null) {
-            boolean definitionExists = procMap.containsKey(targetCall.getIdent());
-            boolean isMalformed = program.getProcedureMapping().checkIfMalformed(
+        if (targetCall != null && targetCall.getIdent() != null && currentActor != null) {
+            boolean definitionExists = false;
+            if (procMap != null) {
+                definitionExists = procMap.values().stream()
+                    .anyMatch(info -> info.getName().equals(targetCall.getIdent().getName()));
+            }
+            
+            boolean isMalformed = false;
+            if (program.getProcedureMapping() != null) {
+                isMalformed = program.getProcedureMapping().checkIfMalformed(
                     currentActor.getIdent().getName() + targetCall.getIdent().getName());
+            }
 
             if (definitionExists || isMalformed) {
                 // Restore context for addIssue

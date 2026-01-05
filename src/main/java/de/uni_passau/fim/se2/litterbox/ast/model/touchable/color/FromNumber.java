@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.touchable.color;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -31,6 +32,11 @@ public class FromNumber extends AbstractNode implements Color {
 
     public FromNumber(NumExpr value) {
         super(value);
+        this.value = Preconditions.checkNotNull(value);
+    }
+
+    public FromNumber(NumExpr value, BlockMetadata metadata) {
+        super(metadata, value);
         this.value = Preconditions.checkNotNull(value);
     }
 

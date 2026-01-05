@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
@@ -81,12 +82,18 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         expressionJSONCreator = new ExpressionJSONCreator();
         fixedExprCreator = new FixedExpressionJSONCreator();
         expression.accept(this);
+        
         StringBuilder jsonString = new StringBuilder();
-        for (int i = 0; i < finishedJSONStrings.size() - 1; i++) {
-            jsonString.append(finishedJSONStrings.get(i)).append(",");
+        // Filter out empty/null strings to prevent double-comma JSON corruption
+        List<String> validJsonStrings = finishedJSONStrings.stream()
+            .filter(s -> s != null && !s.isEmpty())
+            .toList();
+            
+        for (int i = 0; i < validJsonStrings.size() - 1; i++) {
+            jsonString.append(validJsonStrings.get(i)).append(",");
         }
-        if (!finishedJSONStrings.isEmpty()) {
-            jsonString.append(finishedJSONStrings.getLast());
+        if (!validJsonStrings.isEmpty()) {
+            jsonString.append(validJsonStrings.getLast());
         }
         return new IdJsonStringTuple(topExpressionId, jsonString.toString());
     }
@@ -103,6 +110,12 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(UnspecifiedBoolExpr node) {
+        finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, TEXT_PRIMITIVE, ""));
+    }
+
+    @Override
+    public void visit(UnspecifiedExpression node) {
+        // Generic unspecified expression - use empty text as fallback
         finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, TEXT_PRIMITIVE, ""));
     }
 
@@ -135,7 +148,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     @Override
     public void visit(StringLiteral node) {
         finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, TEXT_PRIMITIVE,
-                escape(node.getText())));
+                node.getText()));
     }
 
     @Override
@@ -620,8 +633,8 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
             BlockMetadata metadata = list.getMetadata();
             if (metadata instanceof DataBlockMetadata dataBlockMetadata) {
                 createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(LIST_PRIMITIVE);
-                jsonString.append(",\"").append(listName).append("\",\"");
-                jsonString.append(listId);
+                jsonString.append(",\"").append(BlockJsonCreatorHelper.escape(listName)).append("\",\"");
+                jsonString.append(BlockJsonCreatorHelper.escape(listId));
                 if (dataBlockMetadata.getCommentId() != null) {
                     jsonString.append("\",\"")
                             .append(dataBlockMetadata.getCommentId())
@@ -634,7 +647,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
                         .append(dataBlockMetadata.getY())
                         .append("]");
             } else {
-                jsonString.append(createReferenceType(INPUT_DIFF_BLOCK_SHADOW, LIST_PRIMITIVE, listName, listId,
+                jsonString.append(createReferenceType(INPUT_DIFF_BLOCK_SHADOW, LIST_PRIMITIVE, BlockJsonCreatorHelper.escape(listName), BlockJsonCreatorHelper.escape(listId),
                         true));
             }
         } else if (node.getSecond() instanceof Variable variable) {
@@ -643,8 +656,8 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
             BlockMetadata metadata = variable.getMetadata();
             if (metadata instanceof DataBlockMetadata dataBlockMetadata) {
                 createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(VAR_PRIMITIVE);
-                jsonString.append(",\"").append(variableName).append("\",\"");
-                jsonString.append(variableId);
+                jsonString.append(",\"").append(BlockJsonCreatorHelper.escape(variableName)).append("\",\"");
+                jsonString.append(BlockJsonCreatorHelper.escape(variableId));
                 if (dataBlockMetadata.getCommentId() != null) {
                     jsonString.append("\",\"")
                             .append(dataBlockMetadata.getCommentId())
@@ -657,7 +670,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
                         .append(dataBlockMetadata.getY())
                         .append("]");
             } else {
-                jsonString.append(createReferenceType(INPUT_DIFF_BLOCK_SHADOW, VAR_PRIMITIVE, variableName, variableId,
+                jsonString.append(createReferenceType(INPUT_DIFF_BLOCK_SHADOW, VAR_PRIMITIVE, BlockJsonCreatorHelper.escape(variableName), BlockJsonCreatorHelper.escape(variableId),
                         true));
             }
         }

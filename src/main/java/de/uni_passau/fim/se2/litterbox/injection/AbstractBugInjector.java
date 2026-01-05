@@ -575,7 +575,14 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     protected boolean hasSuccessorStatements(Stmt stmt) {
         if (stmt.getParentNode() instanceof StmtList stmtList) {
             List<Stmt> stmts = stmtList.getStmts();
-            int index = stmts.indexOf(stmt);
+            // Use identity comparison instead of indexOf() to avoid equals() issues
+            int index = -1;
+            for (int i = 0; i < stmts.size(); i++) {
+                if (stmts.get(i) == stmt) {
+                    index = i;
+                    break;
+                }
+            }
             return index >= 0 && index < stmts.size() - 1;
         }
         return false;

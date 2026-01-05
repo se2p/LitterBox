@@ -20,12 +20,10 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.NoWorkingScripts;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.Set;
@@ -46,10 +44,6 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
     private boolean stillFullfilledEmptyScript;
     private boolean deadCodeFound;
     private boolean foundEvent;
-    
-    private ASTNode targetNode;
-    private Script targetScript;
-    private ActorDefinition targetActorOfBug;
 
     private final NoWorkingScripts relatedBugFinder = new NoWorkingScripts();
 
@@ -67,15 +61,6 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
         stillFullfilledEmptyScript = false;
         deadCodeFound = false;
         foundEvent = false;
-        targetNode = null;
-        targetScript = null;
-        targetActorOfBug = null;
-
-        BlockIdNodeFinder.find(program, getBugLocationBlockId()).ifPresent(ctx -> {
-            targetNode = ctx.node();
-            targetScript = ctx.script();
-            targetActorOfBug = ctx.actor();
-        });
     }
 
     @Override
@@ -85,10 +70,11 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
 
     @Override
     public void visit(ActorDefinition actor) {
-        if (targetActorOfBug == null || actor != targetActorOfBug) {
+        // Match by actor name since this bug has no block ID
+        if (!actor.getIdent().getName().equals(originalIssue.sprite())) {
             return;
         }
-        
+
         stillFullfilledEmptyScript = true;
         deadCodeFound = false;
         foundEvent = false;
@@ -101,9 +87,7 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
 
         if (!bugPresent) {
             // Fixed!
-            currentActor = targetActorOfBug;
-            currentScript = targetScript;
-            addFix(targetNode, targetNode.getMetadata());
+            addFixWithLooseComment(actor);
         }
     }
 

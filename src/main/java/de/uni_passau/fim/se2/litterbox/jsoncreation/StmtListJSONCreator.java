@@ -117,12 +117,18 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
             stmt.accept(this);
             counter++;
         }
+
         StringBuilder jsonString = new StringBuilder();
-        for (int i = 0; i < finishedJSONStrings.size() - 1; i++) {
-            jsonString.append(finishedJSONStrings.get(i)).append(",");
+        // Filter out empty/null strings to prevent double-comma JSON corruption
+        List<String> validJsonStrings = finishedJSONStrings.stream()
+            .filter(s -> s != null && !s.isEmpty())
+            .toList();
+
+        for (int i = 0; i < validJsonStrings.size() - 1; i++) {
+            jsonString.append(validJsonStrings.get(i)).append(",");
         }
-        if (!finishedJSONStrings.isEmpty()) {
-            jsonString.append(finishedJSONStrings.getLast());
+        if (!validJsonStrings.isEmpty()) {
+            jsonString.append(validJsonStrings.getLast());
         }
         return jsonString.toString();
     }
@@ -246,7 +252,11 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
 
     @Override
     public void visit(DeleteAllOf node) {
-        getListDataFields(node.getIdentifier());
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        String fieldsString = getListDataFields(node.getIdentifier());
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, EMPTY_VALUE, fieldsString, node.getOpcode()));
+        previousBlockId = metadata.getBlockId();
     }
 
     @Override
@@ -973,7 +983,11 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
             insideBlockId = idVis.getBlockId(stmtList.getStmts().getFirst());
         }
         if (creator != null) {
-            finishedJSONStrings.add(creator.createStmtListJSONString());
+            String substackJson = creator.createStmtListJSONString();
+            // Only add non-empty strings to avoid double commas in output
+            if (!substackJson.isEmpty()) {
+                finishedJSONStrings.add(substackJson);
+            }
         }
         return insideBlockId;
     }

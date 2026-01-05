@@ -20,23 +20,29 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.InvalidNumberString;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
-
-import java.util.regex.Pattern;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.util.NumberUtil;
 
 /**
  * Fix heuristic for the InvalidNumberString bug.
  *
  * <p>The bug is reported when a string that looks like a number but is invalid
- * is used in a numeric context.
- * The bug is fixed if the string is now a valid number or no longer looks like one.
+ * is used in a numeric context. The bug is reported on the parent node that has a block ID,
+ * not directly on the AsNumber expression.
+ * 
+ * <p>The bug is fixed if:
+ * <ul>
+ *   <li>The block with the bug location ID is deleted, OR</li>
+ *   <li>The string is now a valid number, OR</li>
+ *   <li>The string no longer looks like a number</li>
+ * </ul>
  */
 public class InvalidNumberStringFix extends AbstractFixHeuristic {
-    private static final Pattern ALLOWED_CHARS = Pattern.compile("^[0-9eE.+\\-]+$");
-    private static final Pattern VALID_NUMBER =
-            Pattern.compile("^[+-]?(\\d+(\\.\\d*)?|\\.\\d+)([eE][+-]?\\d+)?$");
 
     private final InvalidNumberString relatedBugFinder = new InvalidNumberString();
 
@@ -49,24 +55,58 @@ public class InvalidNumberStringFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
     @Override
-    public void visit(AsNumber node) {
+    public void visit(ASTNode node) {
         if (matchesBugLocation(node)) {
-            boolean fixed = true;
-            if (node.getOperand1() instanceof StringLiteral stringLiteral) {
-                String text = stringLiteral.getText();
-                // Bug: matches ALLOWED_CHARS but NOT VALID_NUMBER
-                // Fixed: !ALLOWED_CHARS OR VALID_NUMBER
-                if (ALLOWED_CHARS.matcher(text).matches()
-                        && !VALID_NUMBER.matcher(text).matches()) {
-                    fixed = false;
-                }
-            }
-            if (fixed) {
+            // Found the node that matches the bug location
+            // Check if all AsNumber children have valid numbers now
+            InvalidNumberChecker checker = new InvalidNumberChecker();
+            node.accept(checker);
+            
+            if (!checker.hasInvalidNumber) {
+                // The bug is fixed - no invalid numbers found in this subtree
                 addFix(node, node.getMetadata());
             }
+        } else {
+            visitChildren(node);
         }
-        visitChildren(node);
+    }
+
+    /**
+     * Inner visitor to check if any AsNumber in a subtree still has an invalid number string.
+     * Prevents traversing into next statements or substacks to keep the check local.
+     */
+    private static final class InvalidNumberChecker implements ScratchVisitor {
+        boolean hasInvalidNumber = false;
+
+        @Override
+        public void visit(ASTNode node) {
+            if (node instanceof AsNumber asNumber) {
+                if (asNumber.getOperand1() instanceof StringLiteral stringLiteral) {
+                    String text = stringLiteral.getText();
+                    if (NumberUtil.isInvalidNumberString(text)) {
+                        hasInvalidNumber = true;
+                    }
+                }
+            }
+            if (!hasInvalidNumber) {
+                visitChildren(node);
+            }
+        }
+
+        @Override
+        public void visitChildren(ASTNode node) {
+            for (ASTNode child : node.getChildren()) {
+                if (child == null) {
+                    continue;
+                }
+                // Skip traversing into other statements (next blocks) or statement lists (substacks)
+                // This ensures we only check the expressions (parameters) of the current block
+                if (child instanceof StmtList) {
+                    continue;
+                }
+                child.accept(this);
+            }
+        }
     }
 }

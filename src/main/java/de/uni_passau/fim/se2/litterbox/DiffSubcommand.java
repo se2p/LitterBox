@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox;
 import de.uni_passau.fim.se2.litterbox.analytics.DiffAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.DiffResult;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import picocli.CommandLine;
 
@@ -163,7 +164,8 @@ public class DiffSubcommand implements Callable<Integer> {
 
         out.println(header + ":");
         for (Issue issue : issues) {
-            String blockId = AstNodeUtil.getBlockId(issue.getCodeLocation());
+            ASTNode codeLocation = issue.getCodeLocation();
+            String blockId = codeLocation != null ? AstNodeUtil.getBlockId(codeLocation) : null;
             out.printf("  %s %s in %s (block: %s)%n",
                     marker,
                     issue.getFinderName(),
@@ -203,7 +205,8 @@ public class DiffSubcommand implements Callable<Integer> {
         StringBuilder sb = new StringBuilder("[\n");
         for (int i = 0; i < issues.size(); i++) {
             Issue issue = issues.get(i);
-            String blockId = AstNodeUtil.getBlockId(issue.getCodeLocation());
+            ASTNode codeLocation = issue.getCodeLocation();
+            String blockId = codeLocation != null ? AstNodeUtil.getBlockId(codeLocation) : null;
             sb.append("    {\n");
             sb.append(String.format("      \"finder\": \"%s\",%n", escapeJson(issue.getFinderName())));
             sb.append(String.format("      \"actor\": \"%s\",%n", escapeJson(issue.getActorName())));

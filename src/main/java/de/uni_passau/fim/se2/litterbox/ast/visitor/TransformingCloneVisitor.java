@@ -64,6 +64,11 @@ public class TransformingCloneVisitor extends CloneVisitor {
 
     private final Map<ASTNode, Function<ASTNode, ASTNode>> transformations = new IdentityHashMap<>();
     private final Map<ASTNode, ASTNode> replacements = new IdentityHashMap<>();
+    private final Map<ASTNode, ASTNode> mapping = new IdentityHashMap<>();
+
+    public TransformingCloneVisitor() {
+        super(true);
+    }
 
     /**
      * Registers a transformation for a specific node.
@@ -89,6 +94,15 @@ public class TransformingCloneVisitor extends CloneVisitor {
      */
     public ASTNode getReplacement(ASTNode original) {
         return replacements.get(original);
+    }
+
+    /**
+     * Returns the mapping from original AST nodes to their cloned counterparts.
+     *
+     * @return The original-to-cloned node mapping
+     */
+    public Map<ASTNode, ASTNode> getMapping() {
+        return mapping;
     }
 
     /**
@@ -118,13 +132,22 @@ public class TransformingCloneVisitor extends CloneVisitor {
         if (node == null) {
             return null;
         }
+
+        T cloned;
         // If this node has a transformation, apply it and return the result
         // without the type check (since the type may change)
         if (hasTransformation(node)) {
-            return (T) applyTransformation(node);
+            cloned = (T) applyTransformation(node);
+        } else {
+            // Otherwise, use the default behavior
+            cloned = super.apply(node);
         }
-        // Otherwise, use the default behavior
-        return super.apply(node);
+
+        if (cloned != null) {
+            mapping.put(node, cloned);
+        }
+
+        return cloned;
     }
 
     // --- Motion Blocks ---

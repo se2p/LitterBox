@@ -68,6 +68,9 @@ public class AstNodeUtil {
      * @return The block id of the node if it has one, {@code null} otherwise.
      */
     public static String getBlockId(final ASTNode node) {
+        if (node == null) {
+            return null;
+        }
         if (node.getMetadata() instanceof DataBlockMetadata block) {
             return block.getBlockId();
         } else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
@@ -88,6 +91,27 @@ public class AstNodeUtil {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Finds the nearest ancestor of the node (including the node itself) that has a block ID.
+     *
+     * <p>This is useful for expression nodes (like {@code AsNumber}) which typically don't have
+     * their own block ID. In Scratch, block IDs are assigned to statement-level blocks, not to
+     * nested expressions.
+     *
+     * @param node Some node in the AST.
+     * @return The nearest node (including itself) that has a block ID, or {@code null} if none found.
+     */
+    public static ASTNode findNearestNodeWithBlockId(final ASTNode node) {
+        ASTNode current = node;
+        while (current != null) {
+            if (getBlockId(current) != null) {
+                return current;
+            }
+            current = current.getParentNode();
+        }
+        return null;
     }
 
     public static boolean isMetadata(final ASTNode node) {

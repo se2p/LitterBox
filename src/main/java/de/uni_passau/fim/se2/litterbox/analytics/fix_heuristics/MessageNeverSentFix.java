@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageNeverSent;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -71,12 +70,21 @@ public class MessageNeverSentFix extends AbstractFixHeuristic {
         // If not empty (handled by super), get node
         if (bugContextOpt.isPresent()) {
             ASTNode buggyNode = bugContextOpt.get().node();
+            
+            // Handle case where BlockIdNodeFinder returns the Script instead of the Event
+            if (buggyNode instanceof Script script) {
+                buggyNode = script.getEvent();
+            }
+
             if (buggyNode instanceof ReceptionOfMessage receptionNode) {
                 // 2. Extract the message name
                 String targetMessage = null;
                 if (scriptNotEmpty(receptionNode.getParentNode())) {
-                    if (receptionNode.getMsg().getMessage() instanceof StringLiteral text) {
+                    Expression msgExpr = receptionNode.getMsg().getMessage();
+                    if (msgExpr instanceof StringLiteral text) {
                         targetMessage = text.getText();
+                    } else if (msgExpr instanceof StrId strId) {
+                        targetMessage = strId.getName();
                     }
                 }
 
@@ -138,9 +146,7 @@ public class MessageNeverSentFix extends AbstractFixHeuristic {
         @Override
         public void visit(Broadcast node) {
             if (foundSender == null && matchesMessage(node.getMessage().getMessage())) {
-                if (scriptHasHead(node)) {
-                    foundSender = node;
-                }
+                foundSender = node;
             }
             // Don't traverse deeper into Broadcast's children
         }
@@ -148,9 +154,7 @@ public class MessageNeverSentFix extends AbstractFixHeuristic {
         @Override
         public void visit(BroadcastAndWait node) {
             if (foundSender == null && matchesMessage(node.getMessage().getMessage())) {
-                if (scriptHasHead(node)) {
-                    foundSender = node;
-                }
+                foundSender = node;
             }
             // Don't traverse deeper into BroadcastAndWait's children
         }
@@ -165,15 +169,6 @@ public class MessageNeverSentFix extends AbstractFixHeuristic {
                 return strId.getName().equalsIgnoreCase(targetMessage);
             }
             return false;
-        }
-
-        private boolean scriptHasHead(ASTNode node) {
-            ScriptEntity script = AstNodeUtil.findParent(node, ScriptEntity.class);
-            if (script instanceof Script scr) {
-                return !(scr.getEvent() instanceof Never);
-            } else {
-                return true; // Procedures always have a head (Define block)
-            }
         }
     }
 }

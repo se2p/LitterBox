@@ -27,11 +27,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RGB;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.Tempo;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.NumExprOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.*;
+import de.uni_passau.fim.se2.litterbox.ast.util.NumberUtil;
 
 final class NumExprConverter extends ExprConverter {
 
@@ -96,12 +98,7 @@ final class NumExprConverter extends ExprConverter {
         if (exprBlock.input() instanceof BlockRef.Block(RawBlock.ArrayBlock exprInput)
                 && exprInput instanceof RawBlock.RawStringLiteral(String s)
         ) {
-            try {
-                Double.parseDouble(s);
-                canBeParsedAsNumber = true;
-            } catch (NumberFormatException e) {
-                // ignored, canBeParsedAsNumber false by default
-            }
+            canBeParsedAsNumber = NumberUtil.isNumberLike(s);
         }
 
         return hasCorrectShadow(exprBlock) && (canBeParsedAsNumber || hasCorrectType);
@@ -136,6 +133,9 @@ final class NumExprConverter extends ExprConverter {
                     double parsed = Double.parseDouble(s);
                     yield new NumberLiteral(parsed);
                 } catch (NumberFormatException e) {
+                    if (NumberUtil.isInvalidNumberString(s)) {
+                        yield new AsNumber(new StringLiteral(s));
+                    }
                     // note: if the parseable as number check works, we should never end up here
                     throw new InternalParsingException("Cannot parse number: " + s, e);
                 }

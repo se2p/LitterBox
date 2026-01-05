@@ -27,6 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
@@ -43,6 +45,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
@@ -208,7 +211,8 @@ public class RedundantAssignmentInjector extends AbstractBugInjector {
             GoToPosXY.class, PointInDirection.class, SetSizeTo.class,
             SetGraphicEffectTo.class, SetSoundEffectTo.class, SetVolumeTo.class,
             SwitchCostumeTo.class, SwitchBackdrop.class, SwitchBackdropAndWait.class,
-            GoToPos.class, PointTowards.class
+            GoToPos.class, PointTowards.class,
+            Show.class, Hide.class
     );
 
     /**
@@ -231,8 +235,14 @@ public class RedundantAssignmentInjector extends AbstractBugInjector {
                 Stmt original = clonedList.getStmts().get(index);
 
                 // Clone the statement to create a duplicate
-                Stmt duplicate = (Stmt) original.accept(new CloneVisitor());
+                // Use freshBlockIds=true so the duplicate has a unique block ID
+                // (otherwise JSON serialization overwrites blocks with the same ID)
+                Stmt duplicate = (Stmt) original.accept(new CloneVisitor(true));
                 duplicate.setParentNode(clonedList);
+
+                // Link all nested parent references - required for JSON serialization
+                // which checks parent node types (e.g., FixedExpressionJSONCreator.visit(WithExpr))
+                AstNodeUtil.linkParents(duplicate);
 
                 // Insert the duplicate immediately BEFORE the original (at the same index)
                 // This makes the duplicate redundant, not the original

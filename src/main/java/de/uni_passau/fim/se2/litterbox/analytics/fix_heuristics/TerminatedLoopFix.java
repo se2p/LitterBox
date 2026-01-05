@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.TerminatedLoop;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
@@ -35,15 +34,10 @@ import java.util.List;
 /**
  * Fix heuristic for the TerminatedLoop bug.
  *
- * <p>The bug is reported when a loop has an unconditional StopAll or StopThisScript
- * as its last statement, causing the loop to execute only once.
+ * <p>The bug is reported on loop nodes (forever, repeat, until) when they have an
+ * unconditional StopAll or StopThisScript as the last statement.
  *
- * <p>The bug is considered fixed if:
- * <ul>
- *   <li>The stop block is no longer inside a loop</li>
- *   <li>The stop block is no longer the last statement in the loop</li>
- *   <li>The stop block was removed or replaced (deleted block = fix)</li>
- * </ul>
+ * <p>The bug is considered fixed if the loop no longer ends with a stop block.
  */
 public class TerminatedLoopFix extends AbstractFixHeuristic {
 
@@ -58,50 +52,47 @@ public class TerminatedLoopFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
-
-
     @Override
-    public void visit(StopAll node) {
-        checkStopBlock(node);
+    public void visit(RepeatForeverStmt node) {
+        checkLoopNode(node, node.getStmtList());
         visitChildren(node);
     }
 
     @Override
-    public void visit(StopThisScript node) {
-        checkStopBlock(node);
+    public void visit(RepeatTimesStmt node) {
+        checkLoopNode(node, node.getStmtList());
         visitChildren(node);
     }
 
-    private void checkStopBlock(Stmt node) {
-        if (!matchesBugLocation(node)) {
+    @Override
+    public void visit(UntilStmt node) {
+        checkLoopNode(node, node.getStmtList());
+        visitChildren(node);
+    }
+
+    /**
+     * Checks if a loop node matches the bug location and if the bug is fixed.
+     * The bug is fixed if the loop no longer ends with a stop block.
+     */
+    private void checkLoopNode(Stmt loopNode, StmtList children) {
+        if (!matchesBugLocation(loopNode)) {
             return;
         }
 
-        // The block exists. Check if it's still buggy (last in a loop).
-        ASTNode parent = node.getParentNode();
-        if (!(parent instanceof StmtList stmtList)) {
-            // Not in a statement list context - fixed!
-            addFix(node, node.getMetadata());
+        // Found the loop that matches the bug location
+        // Check if it's still buggy (ends with stop block)
+        if (!children.hasStatements()) {
+            // Empty loop - fixed (no stop block)
+            addFix(loopNode, loopNode.getMetadata());
             return;
         }
 
-        ASTNode grandParent = parent.getParentNode();
-        boolean inLoop = grandParent instanceof RepeatForeverStmt
-                || grandParent instanceof RepeatTimesStmt
-                || grandParent instanceof UntilStmt;
+        List<Stmt> stmts = children.getStmts();
+        Stmt last = stmts.getLast();
 
-        if (!inLoop) {
-            // Not in a loop - fixed!
-            addFix(node, node.getMetadata());
-            return;
-        }
-
-        // Check if still the last statement
-        List<Stmt> stmts = stmtList.getStmts();
-        if (stmts.getLast() != node) {
-            // No longer the last statement - fixed!
-            addFix(node, node.getMetadata());
+        if (!(last instanceof StopAll) && !(last instanceof StopThisScript)) {
+            // Last statement is not a stop block - fixed!
+            addFix(loopNode, loopNode.getMetadata());
         }
         // Otherwise, still buggy - don't report a fix
     }

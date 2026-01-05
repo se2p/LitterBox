@@ -23,7 +23,9 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugs.ImmediateStopAfterSayThink
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
@@ -57,8 +59,28 @@ public class ImmediateStopAfterSayFix extends AbstractFixHeuristic {
     }
 
     @Override
+    public void visit(SayForSecs node) {
+        // If the bug location points to a SayForSecs, it means the Say block
+        // was converted to SayForSecs, which is a valid fix (it waits).
+        // So we can immediately mark it as fixed.
+        if (matchesBugLocation(node)) {
+            addFix(node, node.getMetadata());
+        }
+        visitChildren(node);
+    }
+
+    @Override
     public void visit(Think node) {
         checkFixed(node);
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(ThinkForSecs node) {
+        // Same logic as SayForSecs
+        if (matchesBugLocation(node)) {
+            addFix(node, node.getMetadata());
+        }
         visitChildren(node);
     }
 

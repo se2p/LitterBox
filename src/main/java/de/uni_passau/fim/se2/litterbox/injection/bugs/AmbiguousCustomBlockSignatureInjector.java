@@ -23,12 +23,14 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugs.AmbiguousCustomBlockSignat
 import de.uni_passau.fim.se2.litterbox.ast.builder.ProcedureBuilder;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
@@ -139,6 +141,8 @@ public class AmbiguousCustomBlockSignatureInjector extends AbstractBugInjector {
         StopAll stopAll = new StopAll(NonDataBlockMetadata.emptyNonBlockMetadata());
         return new ProcedureBuilder()
                 .from(original)
+                .withFreshMetadata()
+                .withIdent(new StrId(CloneVisitor.generateUID()))
                 .withBody(stopAll)
                 .build();
     }

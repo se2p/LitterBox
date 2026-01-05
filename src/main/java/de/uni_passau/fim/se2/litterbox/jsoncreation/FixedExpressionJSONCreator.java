@@ -86,14 +86,22 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
         topExpressionId = null;
         previousBlockId = parentId;
         this.dependantOpcode = dependantOpcode;
+
         expression.accept(this);
+
         StringBuilder jsonString = new StringBuilder();
-        for (int i = 0; i < finishedJSONStrings.size() - 1; i++) {
-            jsonString.append(finishedJSONStrings.get(i)).append(",");
+        // Filter out empty/null strings to prevent double-comma JSON corruption
+        List<String> validJsonStrings = finishedJSONStrings.stream()
+            .filter(s -> s != null && !s.isEmpty())
+            .toList();
+
+        for (int i = 0; i < validJsonStrings.size() - 1; i++) {
+            jsonString.append(validJsonStrings.get(i)).append(",");
         }
-        if (!finishedJSONStrings.isEmpty()) {
-            jsonString.append(finishedJSONStrings.getLast());
+        if (!validJsonStrings.isEmpty()) {
+            jsonString.append(validJsonStrings.getLast());
         }
+
         return new IdJsonStringTuple(topExpressionId, jsonString.toString());
     }
 

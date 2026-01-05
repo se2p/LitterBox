@@ -104,7 +104,7 @@ final class ConverterUtilities {
         if (BoolExprOpcode.sensing_touchingobject.name().equals(opcode)) {
             final RawInput touched = block.getInput(KnownInputs.TOUCHINGOBJECTMENU);
 
-            if (ShadowType.SHADOW == touched.shadowType()) {
+            if (ShadowType.SHADOW == touched.shadowType() && touched.input() instanceof BlockRef.IdRef) {
                 return convertTouchableMenuOption(state.getCurrentTarget(), touched);
             } else {
                 final Expression expr = ExprConverter.convertExpr(state, block, touched);

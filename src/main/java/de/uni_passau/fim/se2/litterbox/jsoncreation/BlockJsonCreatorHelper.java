@@ -109,7 +109,7 @@ public abstract class BlockJsonCreatorHelper {
             //No " needed because it should represent the value null
             jsonString.append((String) null);
         } else {
-            jsonString.append("\"").append(fieldReference).append("\"");
+            jsonString.append("\"").append(escape(fieldReference)).append("\"");
         }
         jsonString.append("]}");
         return jsonString.toString();
@@ -202,7 +202,7 @@ public abstract class BlockJsonCreatorHelper {
             //In this case no " are needed around the null because it represents the value null
             jsonString.append((String) null);
         } else {
-            jsonString.append("\"").append(reference).append("\"");
+            jsonString.append("\"").append(escape(reference)).append("\"");
         }
         if (withDefault) {
             jsonString.append(",").append(DEFAULT_VALUE);
@@ -237,7 +237,7 @@ public abstract class BlockJsonCreatorHelper {
                 + ",["
                 + typeNumber
                 + ",\""
-                + value
+                + escape(value)
                 + "\"]]";
     }
 

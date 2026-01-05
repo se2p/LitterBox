@@ -18,13 +18,12 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.FixHeuristic;
 import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.FixHeuristicRegistry;
 import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.FixResult;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
@@ -144,9 +143,36 @@ public class DiffAnalyzer {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
+        // For issues without block IDs, track by sprite name
+        Set<String> afterSprites = afterIssues.stream()
+                .map(Issue::getActorName)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
         for (IssueDTO beforeIssue : beforeIssues) {
             String blockId = beforeIssue.issueLocationBlockId();
+
             if (blockId == null || blockId.isEmpty()) {
+                // Issue without block ID (e.g., NoWorkingScripts uses addIssueWithLooseComment)
+                // Match by sprite name instead
+                String sprite = beforeIssue.sprite();
+                boolean stillPresent = afterSprites.contains(sprite);
+
+                if (stillPresent) {
+                    // Check if same finder+sprite still has an issue
+                    afterIssues.stream()
+                            .filter(i -> sprite != null && sprite.equals(i.getActorName()))
+                            .findFirst()
+                            .ifPresent(persisting::add);
+                } else {
+                    // No issue for this sprite anymore - check if fixed
+                    List<FixResult> fixResults = checkIfFixed(finderName, beforeIssue, afterProgram);
+                    if (!fixResults.isEmpty()) {
+                        fixed.addAll(fixResults);
+                    } else {
+                        removed.add(new RemovedIssueInfo(finderName, sprite, "N/A"));
+                    }
+                }
                 continue;
             }
 
@@ -184,13 +210,25 @@ public class DiffAnalyzer {
         // For backward compatibility, convert FixResults to Issue objects
         List<Issue> issues = new ArrayList<>();
         for (FixResult fix : fixResults) {
-            if (fix.fixedNode() != null) {
-                Issue issue = new IssueBuilder()
-                        .withFinder(new AbstractIssueFinder() {
-                            @Override
-                            public String getName() {
-                                return fix.getOriginalBugFinder();
-                            }
+            ActorDefinition actor = fix.actor();
+            ASTNode node = fix.fixedNode();
+
+            // Handle deleted blocks (null fixedNode) - still a valid fix
+            if (actor == null && !program.getActorDefinitionList().getDefinitions().isEmpty()) {
+                actor = program.getActorDefinitionList().getDefinitions().get(0);
+            }
+
+            if (actor == null) {
+                // No actors at all - skip this fix result (shouldn't happen)
+                continue;
+            }
+
+            IssueBuilder builder = new IssueBuilder()
+                    .withFinder(new AbstractIssueFinder() {
+                        @Override
+                        public String getName() {
+                            return fix.getOriginalBugFinder();
+                        }
 
                             @Override
                             public IssueType getIssueType() {
@@ -207,6 +245,32 @@ public class DiffAnalyzer {
                         .build();
                 issues.add(issue);
             }
+                        @Override
+                        public IssueType getIssueType() {
+                            return IssueType.BUG;
+                        }
+                    })
+                    .withProgram(program)
+                    .withActor(actor)
+                    .withMetadata(fix.metadata())
+                    .withSeverity(IssueSeverity.LOW)
+                    .withHint(fix.getOriginalBugFinder());
+
+            // IssueBuilder requires both currentNode and script to be set, or both null
+            if (node != null) {
+                // Use the script from FixResult if available, otherwise try to find parent
+                ScriptEntity script = fix.script();
+                if (script == null) {
+                    script = AstNodeUtil.findParent(node, ScriptEntity.class);
+                }
+                if (script != null) {
+                    builder.withCurrentNode(node).withScriptOrProcedure(script);
+                }
+                // If both node and script would be set incorrectly, leave node null too
+            }
+            // For deleted blocks (node == null), leave both currentNode and script null
+
+            issues.add(builder.build());
         }
         return issues;
     }
@@ -276,7 +340,8 @@ public class DiffAnalyzer {
     }
 
     private String getBlockId(Issue issue) {
-        return AstNodeUtil.getBlockId(issue.getCodeLocation());
+        ASTNode codeLocation = issue.getCodeLocation();
+        return codeLocation != null ? AstNodeUtil.getBlockId(codeLocation) : null;
     }
 
     private Set<String> extractBlockIds(Map<String, List<IssueDTO>> issuesByFinder) {

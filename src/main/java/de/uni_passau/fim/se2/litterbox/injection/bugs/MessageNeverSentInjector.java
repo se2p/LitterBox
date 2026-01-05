@@ -195,6 +195,13 @@ public class MessageNeverSentInjector extends AbstractBugInjector {
         }
 
         @Override
+        public void visit(Script node) {
+            // Don't skip Never-event scripts - we need to collect ALL broadcasts
+            // including loose/dead code blocks so we can mutate all instances
+            visitChildren(node);
+        }
+
+        @Override
         public void visit(Broadcast node) {
             collectIfMatches(node, node.getMessage());
         }

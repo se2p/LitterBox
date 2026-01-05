@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.TerminatedLoop;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.injection.bugs.TerminatedLoopInjector;
@@ -36,21 +36,24 @@ import java.util.Set;
 /**
  * Tests for TerminatedLoopFix.
  * Bug: Loop has StopAll/StopThisScript as last statement (only executes once).
- * Fix: Stop block no longer in loop, or not last statement.
+ * Fix: Loop no longer ends with a stop block.
+ * Note: The bug is reported on the LOOP node (which has a block ID), not the stop block.
  */
 public class TerminatedLoopFixTest extends AbstractFixHeuristicTest {
 
     @Test
-    public void testFixFound_StopNotInLoop() throws IOException, ParsingException {
-        // StopAll not inside a loop - fixed
+    public void testFixFound_LoopNoLongerEndsWithStop() throws IOException, ParsingException {
+        // The loop exists but no longer ends with a stop block - fixed
         String code = """
                 when green flag clicked
-                move (10) steps
-                stop [all v]
+                forever
+                    move (10) steps
+                end
                 """;
 
         Program program = parseProgram(code);
-        String blockId = findBlockId(program, StopAll.class);
+        // Use any loop block ID as the bug location (since bug is reported on loop)
+        String blockId = findBlockId(program, RepeatForeverStmt.class);
 
         TerminatedLoopFix finder = new TerminatedLoopFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
@@ -68,7 +71,8 @@ public class TerminatedLoopFixTest extends AbstractFixHeuristicTest {
                 """;
 
         Program program = parseProgram(code);
-        String blockId = findBlockId(program, StopAll.class);
+        // Bug is reported on the loop node, not the stop block
+        String blockId = findBlockId(program, RepeatForeverStmt.class);
 
         TerminatedLoopFix finder = new TerminatedLoopFix(createTestIssueDTO(blockId));
         assertNoFixFound(finder, program);
@@ -76,17 +80,17 @@ public class TerminatedLoopFixTest extends AbstractFixHeuristicTest {
 
     @Test
     public void testFixFound_BlockDeleted() throws IOException, ParsingException {
-        // Bug was fixed by deleting the stop block
+        // Bug was fixed by deleting the loop (loop no longer exists)
         String code = """
                 when green flag clicked
                 move (10) steps
                 """;
 
         Program program = parseProgram(code);
-        String blockId = "non-existent-id";
+        String blockId = "non-existent-loop-id";
 
         TerminatedLoopFix finder = new TerminatedLoopFix(createTestIssueDTO(blockId));
-        // Deleting the buggy block is a valid fix
+        // Deleting the buggy loop is a valid fix
         assertFixFound(finder, program);
     }
 

@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
@@ -97,18 +98,18 @@ public class MessageNeverSent extends AbstractIssueFinder {
 
     @Override
     public void visit(Broadcast node) {
-        if (node.getMessage().getMessage() instanceof StringLiteral stringLiteral && !addComment) {
+        String msgName = extractMessageName(node.getMessage().getMessage());
+        if (msgName != null && !addComment) {
             final String actorName = currentActor.getIdent().getName();
-            final String msgName = stringLiteral.getText();
             messageSent.add(new Pair<>(actorName, msgName));
         }
     }
 
     @Override
     public void visit(BroadcastAndWait node) {
-        if (node.getMessage().getMessage() instanceof StringLiteral stringLiteral && !addComment) {
+        String msgName = extractMessageName(node.getMessage().getMessage());
+        if (msgName != null && !addComment) {
             final String actorName = currentActor.getIdent().getName();
-            final String msgName = stringLiteral.getText();
             messageSent.add(new Pair<>(actorName, msgName));
         }
     }
@@ -121,14 +122,14 @@ public class MessageNeverSent extends AbstractIssueFinder {
         }
         currentScript = node;
         if (!node.getStmtList().getStmts().isEmpty() && node.getEvent() instanceof ReceptionOfMessage event) {
-            if (event.getMsg().getMessage() instanceof StringLiteral message) {
-                final String msgName = message.getText();
+            String msgName = extractMessageName(event.getMsg().getMessage());
+            if (msgName != null) {
                 if (!addComment) {
                     final String actorName = currentActor.getIdent().getName();
                     messageReceived.add(new Pair<>(actorName, msgName));
                 } else if (notSentMessages.contains(msgName)) {
                     Hint hint = MessageNeverSentHintFactory.generateHint(
-                            message.getText(),
+                            msgName,
                             sayText,
                             thinkText,
                             touchedSprites
@@ -139,6 +140,15 @@ public class MessageNeverSent extends AbstractIssueFinder {
         }
         visitChildren(node);
         currentScript = null;
+    }
+
+    private String extractMessageName(de.uni_passau.fim.se2.litterbox.ast.model.ASTNode node) {
+        if (node instanceof StringLiteral stringLiteral) {
+            return stringLiteral.getText();
+        } else if (node instanceof StrId strId) {
+            return strId.getName();
+        }
+        return null;
     }
 
     @Override

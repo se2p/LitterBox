@@ -37,6 +37,9 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoMutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
 
@@ -136,14 +139,15 @@ public class ProcedureJSONCreator {
         List<ParameterInfo> parameterInfos = new ArrayList<>();
         int i = 0;
         for (ParameterDefinition parameterDefinition : parameterDefinitions) {
-            if (!(parameterDefinition.getMetadata() instanceof NoBlockMetadata)) {
-                parameterInfos.add(createParameters(jsonString, protoId, parameterDefinition));
-                String argumentId = procInfo.getName().replace(" ", "_") + "_argument_" + i;
-                argumentIds.add(argumentId);
+            // Always serialize parameters - generate synthetic block ID if needed
+            parameterInfos.add(createParameters(jsonString, protoId, parameterDefinition));
+            String argumentId = procInfo.getName().replace(" ", "_") + "_argument_" + i;
+            argumentIds.add(argumentId);
+            if (!parameterInfos.isEmpty()) {
                 jsonString.append(",");
-                inputs.add(createReferenceInput(argumentId,
-                        INPUT_SAME_BLOCK_SHADOW, parameterInfos.get(i).getId(), false));
             }
+            inputs.add(createReferenceInput(argumentId,
+                    INPUT_SAME_BLOCK_SHADOW, parameterInfos.get(i).getId(), false));
             i++;
         }
 
@@ -166,7 +170,13 @@ public class ProcedureJSONCreator {
 
     private static ParameterInfo createParameters(StringBuilder jsonString, String prototypeId,
                                                   ParameterDefinition parameterDefinition) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) parameterDefinition.getMetadata();
+        NonDataBlockMetadata metadata;
+        if (parameterDefinition.getMetadata() instanceof NoBlockMetadata) {
+            metadata = NonDataBlockMetadata.emptyNonBlockMetadata();
+        } else {
+            metadata = (NonDataBlockMetadata) parameterDefinition.getMetadata();
+        }
+
         jsonString.append(createBlockWithoutMutationString(metadata,
                 null,
                 prototypeId, EMPTY_VALUE, createFields(VALUE_KEY,

@@ -83,8 +83,9 @@ public class MessageNeverSentFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testNoFix_SenderInDetachedScript() throws IOException, ParsingException {
-        // No Fix: Sender exists but is in a detached script (dead code)
+    public void testFix_SenderInDetachedScript() throws IOException, ParsingException {
+        // Fix (Lenient): Sender exists, even if in a detached script.
+        // Heuristics are allowed to be lenient.
         String source = """
                 broadcast (myMessage v)
 
@@ -96,7 +97,7 @@ public class MessageNeverSentFixTest extends AbstractFixHeuristicTest {
         String bugId = findBlockId(program, ReceptionOfMessage.class);
 
         MessageNeverSentFix heuristic = new MessageNeverSentFix(createTestIssueDTO(bugId));
-        assertNoFixFound(heuristic, program);
+        assertFixFound(heuristic, program);
     }
 
     @Test

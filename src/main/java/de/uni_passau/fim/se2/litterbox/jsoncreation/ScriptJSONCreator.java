@@ -156,8 +156,11 @@ public class ScriptJSONCreator {
             if (!script.getStmtList().getStmts().isEmpty()) {
                 assert blockId != null;
                 stmtListJSONCreator = new StmtListJSONCreator(blockId, stmtList, symbol);
-                jsonString.append(",");
-                jsonString.append(stmtListJSONCreator.createStmtListJSONString());
+                String stmtListJson = stmtListJSONCreator.createStmtListJSONString();
+                if (!stmtListJson.isEmpty()) {
+                    jsonString.append(",");
+                    jsonString.append(stmtListJson);
+                }
             }
         }
         return jsonString.toString();

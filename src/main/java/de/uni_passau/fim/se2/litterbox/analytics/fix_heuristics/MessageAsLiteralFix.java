@@ -22,9 +22,12 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageAsLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
@@ -43,6 +46,10 @@ public class MessageAsLiteralFix extends AbstractFixHeuristic {
 
     private Set<String> sentMessages;
     private StringLiteral foundLiteral;
+    // Context captured when foundLiteral was found (for addFix)
+    private ActorDefinition foundActor;
+    private Script foundScript;
+    private ProcedureDefinition foundProcedure;
 
     private final MessageAsLiteral relatedBugFinder = new MessageAsLiteral();
 
@@ -54,6 +61,9 @@ public class MessageAsLiteralFix extends AbstractFixHeuristic {
     protected void resetState() {
         sentMessages = new LinkedHashSet<>();
         foundLiteral = null;
+        foundActor = null;
+        foundScript = null;
+        foundProcedure = null;
     }
 
     @Override
@@ -83,6 +93,10 @@ public class MessageAsLiteralFix extends AbstractFixHeuristic {
         // not on StringLiteral which has no block ID. Check ancestors too.
         if (matchesOrAncestorMatches(node)) {
             foundLiteral = node;
+            // Capture context for later use in addFix
+            foundActor = currentActor;
+            foundScript = currentScript;
+            foundProcedure = currentProcedure;
         }
     }
 
@@ -118,7 +132,9 @@ public class MessageAsLiteralFix extends AbstractFixHeuristic {
             boolean isSent = sentMessages.contains(text);
 
             if (!isDefined || isSent) {
-                addFix(foundLiteral, getMetadata(foundLiteral));
+                // Use explicit context overload instead of mutating parent fields
+                addFix(foundLiteral, getMetadata(foundLiteral),
+                       foundActor, foundScript != null ? foundScript : foundProcedure);
             }
         }
 

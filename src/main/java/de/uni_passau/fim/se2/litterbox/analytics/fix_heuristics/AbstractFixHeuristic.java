@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -271,18 +272,52 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
     }
 
     /**
-     * Adds a fix result with a "loose comment" - for cases where the buggy block
-     * was deleted entirely.
+     * Adds a fix result for the given node with explicit context.
+     *
+     * <p>Use this overload when calling addFix outside of the visitor traversal
+     * (e.g., in check() after super.check() returns) where currentActor/currentScript
+     * may not be set to the correct values.
+     *
+     * @param fixedNode the node where the fix was detected
+     * @param metadata the metadata associated with the node
+     * @param actor the actor containing the fixed code
+     * @param scriptOrProcedure the script or procedure containing the fixed code
      */
-    protected void addFixWithLooseComment() {
+    protected void addFix(ASTNode fixedNode, Metadata metadata,
+                          ActorDefinition actor, ScriptEntity scriptOrProcedure) {
+        fixes.add(new FixResult(
+                program,
+                fixedNode,
+                originalIssue,
+                actor,
+                scriptOrProcedure,
+                metadata
+        ));
+    }
+
+    /**
+     * Adds a fix result with a "loose comment" - for cases where the buggy block
+     * was deleted entirely or for bugs not tied to a specific block.
+     *
+     * @param actor the actor where the fix was detected
+     */
+    protected void addFixWithLooseComment(ActorDefinition actor) {
         fixes.add(new FixResult(
                 program,
                 null,
                 originalIssue,
-                null,
+                actor,
                 null,
                 null
         ));
+    }
+
+    /**
+     * Adds a fix result with a "loose comment" - for cases where the buggy block
+     * was deleted entirely.
+     */
+    protected void addFixWithLooseComment() {
+        addFixWithLooseComment(null);
     }
 
     // Visitor methods to track context (similar to AbstractIssueFinder)

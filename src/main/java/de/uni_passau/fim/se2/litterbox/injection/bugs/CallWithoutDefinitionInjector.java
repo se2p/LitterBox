@@ -74,14 +74,14 @@ public class CallWithoutDefinitionInjector extends AbstractBugInjector {
         // Collect all existing procedure names for unique typo generation
         Set<String> existingProcedures = collectAllProcedureNames();
 
-        modifyClonedNode(node, clonedCall -> {
-            String uniqueTypo = generateUniqueTypo(clonedCall.getIdent().getName(), existingProcedures);
-            CallStmt newCall = new CallStmt(
+
+        replaceNodeImmutably(node, originalCall -> {
+            String uniqueTypo = generateUniqueTypo(originalCall.getIdent().getName(), existingProcedures);
+            return new CallStmt(
                     new StrId(uniqueTypo),
-                    clonedCall.getExpressions(),
-                    clonedCall.getMetadata()
+                    originalCall.getExpressions(),
+                    originalCall.getMetadata()
             );
-            replaceInParent(clonedCall, newCall);
         });
         super.visit(node);
     }

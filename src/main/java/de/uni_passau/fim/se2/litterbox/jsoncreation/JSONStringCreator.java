@@ -145,20 +145,20 @@ public class JSONStringCreator {
         if (metadata.getSpriteName() == null) {
             jsonString.append(metadata.getSpriteName()).append(",");
         } else {
-            jsonString.append("\"").append(metadata.getSpriteName()).append("\",");
+            jsonString.append("\"").append(BlockJsonCreatorHelper.escape(metadata.getSpriteName())).append("\",");
         }
 
         createField(jsonString, VALUE_LOWER_KEY);
         if (isSlider) {
-            jsonString.append("\"").append(slider.getValue()).append("\"");
+            jsonString.append("\"").append(BlockJsonCreatorHelper.escape(slider.getValue())).append("\"");
         } else {
             jsonString.append("[");
             List<String> values = list.getValues();
             for (int i = 0; i < values.size() - 1; i++) {
-                jsonString.append("\"").append(values.get(i)).append("\"").append(",");
+                jsonString.append("\"").append(BlockJsonCreatorHelper.escape(values.get(i))).append("\"").append(",");
             }
             if (!values.isEmpty()) {
-                jsonString.append("\"").append(values.getLast()).append("\"");
+                jsonString.append("\"").append(BlockJsonCreatorHelper.escape(values.getLast())).append("\"");
             }
             jsonString.append("]");
         }

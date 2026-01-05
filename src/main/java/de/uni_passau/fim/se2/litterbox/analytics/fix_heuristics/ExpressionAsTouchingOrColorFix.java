@@ -20,22 +20,21 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ExpressionAsTouchingOrColor;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
-import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
+
+import java.util.Set;
 
 /**
  * Fix heuristic for the ExpressionAsTouchingOrColor bug.
  *
  * <p>The bug is reported when an expression slot is filled with a value rather than a reporter.
  * The bug is fixed if the expression is now a proper value (literal, sprite, etc).
+ *
+ * <p>This implementation delegates to {@link AbstractFixHeuristic#checkWithNodeFinder(Program)}
+ * which runs the related bug finder and checks whether the bug is still reported at the
+ * original location. This avoids duplicating the bug detection logic.
  */
 public class ExpressionAsTouchingOrColorFix extends AbstractFixHeuristic implements PenExtensionVisitor {
 
@@ -52,43 +51,7 @@ public class ExpressionAsTouchingOrColorFix extends AbstractFixHeuristic impleme
 
 
     @Override
-    public void visit(ColorTouchingColor node) {
-        if (matchesBugLocation(node)) {
-            if (node.getOperand1() instanceof ColorLiteral && node.getOperand2() instanceof ColorLiteral) {
-                addFix(node, node.getMetadata());
-            }
-        }
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(SpriteTouchingColor node) {
-        if (matchesBugLocation(node)) {
-            if (node.getColor() instanceof ColorLiteral) {
-                addFix(node, node.getMetadata());
-            }
-        }
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(Touching node) {
-        if (matchesBugLocation(node)) {
-            if (node.getTouchable() instanceof MousePointer
-                    || node.getTouchable() instanceof Edge
-                    || node.getTouchable() instanceof SpriteTouchable) {
-                addFix(node, node.getMetadata());
-            }
-        }
-    }
-
-    @Override
-    public void visit(SetPenColorToColorStmt node) {
-        if (matchesBugLocation(node)) {
-            if (node.getColorExpr() instanceof ColorLiteral) {
-                addFix(node, node.getMetadata());
-            }
-        }
-        visitChildren(node);
+    public Set<FixResult> check(Program program) {
+        return checkWithNodeFinder(program);
     }
 }

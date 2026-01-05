@@ -21,11 +21,14 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingEraseAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import java.util.Collections;
+import java.util.Set;
 
 
 /**
@@ -38,7 +41,8 @@ public class MissingEraseAllFix extends AbstractFixHeuristic implements PenExten
 
     private boolean penClearSet;
     private PenDownStmt targetPenDown;
-    private Script foundScript;
+    private ScriptEntity foundScriptOrProc;
+    private ActorDefinition foundActor;
 
     private final MissingEraseAll relatedBugFinder = new MissingEraseAll();
 
@@ -50,7 +54,8 @@ public class MissingEraseAllFix extends AbstractFixHeuristic implements PenExten
     protected void resetState() {
         penClearSet = false;
         targetPenDown = null;
-        foundScript = null;
+        foundScriptOrProc = null;
+        foundActor = null;
     }
 
     @Override
@@ -58,29 +63,21 @@ public class MissingEraseAllFix extends AbstractFixHeuristic implements PenExten
         return relatedBugFinder;
     }
 
-
     @Override
-    public void visit(ActorDefinition actor) {
-        // Reset actor-specific state
-        penClearSet = false;
-        targetPenDown = null;
-        foundScript = null;
-
-        super.visit(actor);
-
+    public Set<FixResult> check(Program program) {
+        super.check(program);
         if (targetPenDown != null && penClearSet) {
-            // Fixed: Erase All (PenClear) is present in the actor.
-            this.currentActor = actor;
-            this.currentScript = foundScript;
-            addFix(targetPenDown, targetPenDown.getMetadata());
+            addFix(targetPenDown, targetPenDown.getMetadata(), foundActor, foundScriptOrProc);
         }
+        return Collections.unmodifiableSet(fixes);
     }
 
     @Override
     public void visit(PenDownStmt node) {
         if (matchesBugLocation(node)) {
             targetPenDown = node;
-            foundScript = currentScript;
+            foundActor = currentActor;
+            foundScriptOrProc = currentScript != null ? currentScript : currentProcedure;
         }
         visitChildren(node);
     }

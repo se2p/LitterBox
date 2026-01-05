@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
@@ -43,33 +44,48 @@ public class ComparingLiterals extends AbstractIssueFinder {
     public static final String NAME = "comparing_literals";
     private boolean inWait;
 
+    private ComparableExpr resolveLiteral(ComparableExpr expr) {
+        if (expr instanceof AsNumber asNumber) {
+            // AsNumber can wrap any Expression, but we only recurse if it's a ComparableExpr
+            if (asNumber.getOperand1() instanceof ComparableExpr comparableOperand) {
+                return resolveLiteral(comparableOperand);
+            }
+            // If the operand is not ComparableExpr (e.g., Parameter, Variable), 
+            // return expr as-is - we're only interested in resolving literals
+        }
+        return expr;
+    }
+
     @Override
     public void visit(Equals node) {
-        if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
-                && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
+        ComparableExpr op1 = resolveLiteral(node.getOperand1());
+        ComparableExpr op2 = resolveLiteral(node.getOperand2());
+
+        if ((op1 instanceof StringLiteral || op1 instanceof NumberLiteral)
+                && (op2 instanceof StringLiteral || op2 instanceof NumberLiteral)) {
             Hint hint;
             ASTNode parent = node.getParentNode();
 
-            if (node.getOperand1() instanceof NumberLiteral operand1
-                    && node.getOperand2() instanceof NumberLiteral operand2) {
+            if (op1 instanceof NumberLiteral operand1
+                    && op2 instanceof NumberLiteral operand2) {
                 double text1 = operand1.getValue();
                 double text2 = operand2.getValue();
                 hint = ComparingLiteralsHintFactory.generateHint(text1 == text2, inWait, parent, null, null, node,
                         currentActor, program, currentProcedure, currentScript);
-            } else if (node.getOperand1() instanceof StringLiteral operand1
-                    && node.getOperand2() instanceof StringLiteral operand2) {
-                String text1 = getLiteralValue(node.getOperand1());
-                String text2 = getLiteralValue(node.getOperand2());
+            } else if (op1 instanceof StringLiteral operand1
+                    && op2 instanceof StringLiteral operand2) {
+                String text1 = getLiteralValue(op1);
+                String text2 = getLiteralValue(op2);
 
                 int result = text1.compareTo(text2);
                 hint = ComparingLiteralsHintFactory.generateHint(result == 0, inWait, parent, operand1.getText(),
                         operand2.getText(), node, currentActor, program, currentProcedure, currentScript);
             } else {
-                String text1 = getLiteralValue(node.getOperand1());
-                String text2 = getLiteralValue(node.getOperand2());
+                String text1 = getLiteralValue(op1);
+                String text2 = getLiteralValue(op2);
 
                 int result = text1.compareTo(text2);
-                String variableName = possibleVariableName(node.getOperand1(), node.getOperand2());
+                String variableName = possibleVariableName(op1, op2);
                 hint = ComparingLiteralsHintFactory.generateHint(result == 0, inWait, parent, variableName, null, node,
                         currentActor, program, currentProcedure, currentScript);
             }
@@ -106,29 +122,32 @@ public class ComparingLiterals extends AbstractIssueFinder {
 
     @Override
     public void visit(LessThan node) {
-        if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
-                && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
+        ComparableExpr op1 = resolveLiteral(node.getOperand1());
+        ComparableExpr op2 = resolveLiteral(node.getOperand2());
+
+        if ((op1 instanceof StringLiteral || op1 instanceof NumberLiteral)
+                && (op2 instanceof StringLiteral || op2 instanceof NumberLiteral)) {
             Hint hint;
             ASTNode parent = node.getParentNode();
 
-            if (node.getOperand1() instanceof NumberLiteral operand1
-                    && node.getOperand2() instanceof NumberLiteral operand2) {
+            if (op1 instanceof NumberLiteral operand1
+                    && op2 instanceof NumberLiteral operand2) {
                 double text1 = operand1.getValue();
                 double text2 = operand2.getValue();
                 hint = ComparingLiteralsHintFactory.generateHint(text1 < text2, inWait, parent, null, null, node,
                         currentActor, program, currentProcedure, currentScript);
-            } else if (node.getOperand1() instanceof StringLiteral operand1
-                    && node.getOperand2() instanceof StringLiteral operand2) {
-                String text1 = getLiteralValue(operand1);
-                String text2 = getLiteralValue(operand2);
+            } else if (op1 instanceof StringLiteral operand1
+                    && op2 instanceof StringLiteral operand2) {
+                String text1 = getLiteralValue(op1);
+                String text2 = getLiteralValue(op2);
                 int result = text1.compareTo(text2);
                 hint = ComparingLiteralsHintFactory.generateHint(result < 0, inWait, parent, operand1.getText(),
                         operand2.getText(), node, currentActor, program, currentProcedure, currentScript);
             } else {
-                String text1 = getLiteralValue(node.getOperand1());
-                String text2 = getLiteralValue(node.getOperand2());
+                String text1 = getLiteralValue(op1);
+                String text2 = getLiteralValue(op2);
                 int result = text1.compareTo(text2);
-                String variableName = possibleVariableName(node.getOperand1(), node.getOperand2());
+                String variableName = possibleVariableName(op1, op2);
                 hint = ComparingLiteralsHintFactory.generateHint(result < 0, inWait, parent, variableName, null, node,
                         currentActor, program, currentProcedure, currentScript);
             }
@@ -139,31 +158,34 @@ public class ComparingLiterals extends AbstractIssueFinder {
 
     @Override
     public void visit(BiggerThan node) {
-        if ((node.getOperand1() instanceof StringLiteral || node.getOperand1() instanceof NumberLiteral)
-                && (node.getOperand2() instanceof StringLiteral || node.getOperand2() instanceof NumberLiteral)) {
+        ComparableExpr op1 = resolveLiteral(node.getOperand1());
+        ComparableExpr op2 = resolveLiteral(node.getOperand2());
+
+        if ((op1 instanceof StringLiteral || op1 instanceof NumberLiteral)
+                && (op2 instanceof StringLiteral || op2 instanceof NumberLiteral)) {
             Hint hint;
             ASTNode parent = node.getParentNode();
 
-            if (node.getOperand1() instanceof NumberLiteral operand1
-                    && node.getOperand2() instanceof NumberLiteral operand2) {
+            if (op1 instanceof NumberLiteral operand1
+                    && op2 instanceof NumberLiteral operand2) {
                 double text1 = operand1.getValue();
                 double text2 = operand2.getValue();
                 hint = ComparingLiteralsHintFactory.generateHint(text1 > text2, inWait, parent, null, null, node,
                         currentActor, program, currentProcedure, currentScript);
-            } else if (node.getOperand1() instanceof StringLiteral operand1
-                    && node.getOperand2() instanceof StringLiteral operand2) {
-                String text1 = getLiteralValue(operand1);
-                String text2 = getLiteralValue(operand2);
+            } else if (op1 instanceof StringLiteral operand1
+                    && op2 instanceof StringLiteral operand2) {
+                String text1 = getLiteralValue(op1);
+                String text2 = getLiteralValue(op2);
                 int result = text1.compareTo(text2);
 
                 hint = ComparingLiteralsHintFactory.generateHint(result > 0, inWait, parent, operand1.getText(),
                         operand2.getText(), node, currentActor, program, currentProcedure, currentScript);
             } else {
-                String text1 = getLiteralValue(node.getOperand1());
-                String text2 = getLiteralValue(node.getOperand2());
+                String text1 = getLiteralValue(op1);
+                String text2 = getLiteralValue(op2);
 
                 int result = text1.compareTo(text2);
-                String variableName = possibleVariableName(node.getOperand1(), node.getOperand2());
+                String variableName = possibleVariableName(op1, op2);
                 hint = ComparingLiteralsHintFactory.generateHint(result > 0, inWait, parent, variableName, null, node,
                         currentActor, program, currentProcedure, currentScript);
             }

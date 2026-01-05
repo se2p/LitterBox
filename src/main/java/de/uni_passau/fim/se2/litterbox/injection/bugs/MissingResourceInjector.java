@@ -21,17 +21,23 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingResource;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.injection.util.ResourceValidator;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
@@ -62,6 +68,20 @@ public class MissingResourceInjector extends AbstractBugInjector {
         this.currentActor = actor;
         super.visit(actor);
         this.currentActor = null;
+    }
+
+    @Override
+    public List<InjectionResult> inject(Program program) {
+        // Create a strict deep copy of the program to prevent any mutation of the original AST
+        // during the injection process. This addresses the issue where "innocent bystander" blocks
+        // were disappearing or the original AST was being mutated in complex statements.
+        CloneVisitor cloner = new CloneVisitor();
+        Program workingCopy = cloner.apply(program);
+
+        // Ensure parent links are correctly established in the working copy
+        workingCopy.accept(new de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor());
+
+        return super.inject(workingCopy);
     }
 
     @Override
@@ -127,18 +147,32 @@ public class MissingResourceInjector extends AbstractBugInjector {
 
         modifyClonedNode(node, clonedNode -> {
             WithExpr newWithExpr = createInvalidWithExpr(originalWithExpr, invalidName);
-            T newStmt = constructor.apply(newWithExpr, metadata);
+            T newStmt = constructor.apply(newWithExpr, (BlockMetadata) clonedNode.getMetadata());
             newWithExpr.setParentNode(newStmt);
+            AstNodeUtil.linkParents(newStmt);
+
             replaceInParent(clonedNode, newStmt);
         });
     }
 
     /**
-     * Creates a new WithExpr with an invalid resource name.
+     * Creates a new WithExpr with an invalid resource name and fresh metadata.
+     * Using fresh metadata (with a new block ID) prevents duplicate block IDs in serialized JSON.
      */
     private WithExpr createInvalidWithExpr(WithExpr originalWithExpr, String invalidName) {
         StrId invalidStrId = new StrId(invalidName);
-        WithExpr newWithExpr = new WithExpr(invalidStrId, originalWithExpr.getMetadata());
+
+        // Create new metadata with a fresh block ID to avoid duplicate IDs in serialization
+        BlockMetadata newMetadata;
+        if (originalWithExpr.getMetadata() instanceof NonDataBlockMetadata originalMeta) {
+            // Use createArtificialNonBlockMetadata to generate fresh metadata with proper shadow flag
+            newMetadata = NonDataBlockMetadata.createArtificialNonBlockMetadata(originalMeta.isShadow());
+        } else {
+            // Fallback: use original metadata if not NonDataBlockMetadata
+            newMetadata = originalWithExpr.getMetadata();
+        }
+
+        WithExpr newWithExpr = new WithExpr(invalidStrId, newMetadata);
         invalidStrId.setParentNode(newWithExpr);
         return newWithExpr;
     }
