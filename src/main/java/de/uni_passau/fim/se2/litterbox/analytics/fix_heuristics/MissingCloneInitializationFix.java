@@ -32,11 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Fix heuristic for the MissingCloneInitialization bug.
@@ -65,7 +61,6 @@ public class MissingCloneInitializationFix extends AbstractFixHeuristic {
     protected IssueFinder getRelatedBugFinder() {
         return relatedBugFinder;
     }
-
 
     @Override
     public void visit(StartedAsClone node) {
@@ -112,7 +107,7 @@ public class MissingCloneInitializationFix extends AbstractFixHeuristic {
 
             if (actor != null) {
                 String targetSprite = actor.getIdent().getName();
-                
+
                 if (bugNode instanceof WithCloneExpr withClone) {
                     if (withClone.getExpression() instanceof StrId strId) {
                         targetSprite = strId.getName();
@@ -120,7 +115,7 @@ public class MissingCloneInitializationFix extends AbstractFixHeuristic {
                         targetSprite = strLit.getText();
                     }
                 }
-                
+
                 if (whenStartsAsCloneActors.contains(targetSprite)) {
                     addFix(bugNode.getParentNode(), bugNode.getParentNode().getMetadata());
                 }

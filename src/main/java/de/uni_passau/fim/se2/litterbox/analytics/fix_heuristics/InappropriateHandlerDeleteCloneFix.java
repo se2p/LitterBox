@@ -52,7 +52,6 @@ public class InappropriateHandlerDeleteCloneFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
     @Override
     public void visit(Script node) {
         boolean wasInside = insideGreenFlag;

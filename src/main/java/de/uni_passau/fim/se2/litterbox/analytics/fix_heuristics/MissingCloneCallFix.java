@@ -33,7 +33,6 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import java.util.HashSet;
 import java.util.Set;
 
-
 /**
  * Fix heuristic for the MissingCloneCall bug.
  *

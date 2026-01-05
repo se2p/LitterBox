@@ -23,7 +23,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugs.TypeError;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
-
 import java.util.Set;
 
 /**

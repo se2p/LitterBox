@@ -130,7 +130,7 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
      * Find and return the block ID of the first node matching the given predicate.
      * Useful for dynamically finding block IDs in parsed programs.
      *
-     * @param program the program to search
+     * @param program   the program to search
      * @param nodeClass the class of node to find
      * @return the block ID of the first matching node, or null if not found
      */
@@ -142,7 +142,7 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
      * Find and return the block ID of the first node matching the given predicate.
      */
     protected <T extends ASTNode> String findBlockId(Program program, Class<T> nodeClass,
-                                                      java.util.function.Predicate<T> predicate) {
+                                                     java.util.function.Predicate<T> predicate) {
         for (ASTNode node : program.getActorDefinitionList().getDefinitions()) {
             String id = findBlockIdRecursive(node, nodeClass, predicate);
             if (id != null) {
@@ -154,7 +154,7 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
 
     @SuppressWarnings("unchecked")
     private <T extends ASTNode> String findBlockIdRecursive(ASTNode node, Class<T> nodeClass,
-                                                             java.util.function.Predicate<T> predicate) {
+                                                            java.util.function.Predicate<T> predicate) {
         if (nodeClass.isInstance(node) && predicate.test((T) node)) {
             return AstNodeUtil.getBlockId(node);
         }
@@ -170,7 +170,7 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
     /**
      * Creates a minimal IssueDTO for testing purposes.
      *
-     * @param blockId the block ID
+     * @param blockId    the block ID
      * @param finderName the finder name
      * @return a minimal IssueDTO
      */

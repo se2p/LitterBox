@@ -29,7 +29,7 @@ import java.io.IOException;
 
 /**
  * Tests for KeySetPositionFix heuristic.
-
+ *
  *
  * <p>The bug is reported when an arrow key event uses SetX/SetY (absolute positioning)
  * instead of ChangeX/ChangeY (relative movement). Specifically:
@@ -221,11 +221,11 @@ public class KeySetPositionFixTest extends AbstractFixHeuristicTest {
                 "Mutated event-driven program should have KeySetPosition bug");
 
         // Find the ChangeXBy block ID in the original (correct) program
-        String changeXBlockId = findBlockId(fixedProgram, 
+        String changeXBlockId = findBlockId(fixedProgram,
                 de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy.class);
         Assertions.assertNotNull(changeXBlockId,
                 "Should find ChangeXBy block in original program");
-        
+
         // Fix heuristic should detect fix on the original program
         KeySetPositionFix fix = new KeySetPositionFix(createTestIssueDTO(changeXBlockId));
         assertFixFound(fix, fixedProgram);

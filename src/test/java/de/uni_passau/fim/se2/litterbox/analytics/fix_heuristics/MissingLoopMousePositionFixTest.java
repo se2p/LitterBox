@@ -18,20 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopMousePosition;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.MouseX;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingLoopMousePosition;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.injection.bugs.MissingLoopMousePositionInjector;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-
-import java.io.IOException;
 
 public class MissingLoopMousePositionFixTest extends AbstractFixHeuristicTest {
 
@@ -47,7 +46,7 @@ public class MissingLoopMousePositionFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, MouseX.class);
-        
+
         MissingLoopMousePositionFix heuristic = new MissingLoopMousePositionFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -62,7 +61,7 @@ public class MissingLoopMousePositionFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, MouseX.class);
-        
+
         MissingLoopMousePositionFix heuristic = new MissingLoopMousePositionFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
@@ -76,7 +75,7 @@ public class MissingLoopMousePositionFixTest extends AbstractFixHeuristicTest {
                 """;
 
         Program program = parseProgram(source);
-        
+
         MissingLoopMousePositionFix heuristic = new MissingLoopMousePositionFix(createTestIssueDTO("non_existent_id"));
         assertFixFound(heuristic, program);
     }

@@ -28,6 +28,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.LetterOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
@@ -866,5 +869,15 @@ public class AstNodeUtil {
                 || stmt instanceof PlaySoundUntilDone
                 || stmt instanceof AskAndWait
                 || stmt instanceof BroadcastAndWait;
+    }
+
+    /**
+     * Checks if an expression is a literal value (string or number).
+     *
+     * @param expr the expression to check
+     * @return true if the expression is a StringLiteral or NumberLiteral
+     */
+    public static boolean isLiteral(Expression expr) {
+        return expr instanceof StringLiteral || expr instanceof NumberLiteral;
     }
 }

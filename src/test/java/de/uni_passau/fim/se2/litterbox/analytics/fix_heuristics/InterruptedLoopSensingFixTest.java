@@ -30,22 +30,22 @@ public class InterruptedLoopSensingFixTest extends AbstractFixHeuristicTest {
     public void testFixFound() throws IOException, ParsingException {
         // Bug: wait in loop sensing
         String code = "when green flag clicked\n" +
-                      "forever\n" +
-                      "  if <key [space] pressed?> then\n" +
-                      "    wait (1) seconds\n" +
-                      "  end\n" +
-                      "end";
+                "forever\n" +
+                "  if <key [space] pressed?> then\n" +
+                "    wait (1) seconds\n" +
+                "  end\n" +
+                "end";
         Program program = parseProgram(code);
         String blockId = findBlockId(program, de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds.class);
-        
+
         // Fixed: Remove sensing logic from this loop so wait no longer interrupts it
         String fixedCode = "when green flag clicked\n" +
-                           "forever\n" +
-                           "  move (10) steps\n" +
-                           "  wait (1) seconds\n" +
-                           "end";
+                "forever\n" +
+                "  move (10) steps\n" +
+                "  wait (1) seconds\n" +
+                "end";
         Program fixedProgram = parseProgram(fixedCode);
-        
+
         InterruptedLoopSensingFix heuristic = new InterruptedLoopSensingFix(createTestIssueDTO(blockId));
         assertFixFound(heuristic, fixedProgram);
     }
@@ -53,14 +53,14 @@ public class InterruptedLoopSensingFixTest extends AbstractFixHeuristicTest {
     @Test
     public void testNoFixIfStillBuggy() throws IOException, ParsingException {
         String code = "when green flag clicked\n" +
-                      "forever\n" +
-                      "  if <key [space] pressed?> then\n" +
-                      "    wait (1) seconds\n" +
-                      "  end\n" +
-                      "end";
+                "forever\n" +
+                "  if <key [space] pressed?> then\n" +
+                "    wait (1) seconds\n" +
+                "  end\n" +
+                "end";
         Program program = parseProgram(code);
         String blockId = findBlockId(program, de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds.class);
-        
+
         InterruptedLoopSensingFix heuristic = new InterruptedLoopSensingFix(createTestIssueDTO(blockId));
         assertNoFixFound(heuristic, program);
     }
@@ -69,22 +69,22 @@ public class InterruptedLoopSensingFixTest extends AbstractFixHeuristicTest {
     public void testFixFoundWithSemanticMatch() throws IOException, ParsingException {
         // T1 & C3: Semantic match when block ID is lost due to refactoring
         String code = "when green flag clicked\n" +
-                      "forever\n" +
-                      "  if <key [space] pressed?> then\n" +
-                      "    wait (1) seconds\n" +
-                      "  end\n" +
-                      "end";
+                "forever\n" +
+                "  if <key [space] pressed?> then\n" +
+                "    wait (1) seconds\n" +
+                "  end\n" +
+                "end";
         Program program = parseProgram(code);
-        // We simulate losing the ID by using a different ID that doesn't exist, 
+        // We simulate losing the ID by using a different ID that doesn't exist,
         // but the heuristic should find a similar node.
-        
+
         String fixedCode = "when green flag clicked\n" +
-                           "forever\n" +
-                           "  move (10) steps\n" +
-                           "  wait (1) seconds\n" +
-                           "end";
+                "forever\n" +
+                "  move (10) steps\n" +
+                "  wait (1) seconds\n" +
+                "end";
         Program fixedProgram = parseProgram(fixedCode);
-        
+
         // Use a dummy ID, semantic matching should kick in.
         InterruptedLoopSensingFix heuristic = new InterruptedLoopSensingFix(createTestIssueDTO("lost-id"));
         assertFixFound(heuristic, fixedProgram);
@@ -132,7 +132,7 @@ public class InterruptedLoopSensingFixTest extends AbstractFixHeuristicTest {
                 new de.uni_passau.fim.se2.litterbox.injection.bugs.InterruptedLoopSensingInjector();
         java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results =
                 injector.inject(fixedProgram);
-        
+
         // This injector may not find valid targets in all programs - skip if no injection occurred
         org.junit.jupiter.api.Assumptions.assumeFalse(results.isEmpty(),
                 "Skipping - injector found no valid targets in this program");
@@ -145,7 +145,7 @@ public class InterruptedLoopSensingFixTest extends AbstractFixHeuristicTest {
                 "Mutated program should have bugs");
 
         // Use SayForSecs block ID from original program (the blocking statement)
-        String existingBlockId = findBlockId(fixedProgram, 
+        String existingBlockId = findBlockId(fixedProgram,
                 de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs.class);
         org.junit.jupiter.api.Assertions.assertNotNull(existingBlockId,
                 "Should find SayForSecs in original program");

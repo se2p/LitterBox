@@ -22,6 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.VariableAsLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
@@ -78,17 +79,17 @@ public class VariableAsLiteralFix extends AbstractFixHeuristic {
         // Note: We intentionally avoid calling super.check(program) here to bypass
         // the potentially unreliable deletion check in AbstractFixHeuristic (AstNodeUtil.hasBlockId).
         // Instead, we use BlockIdNodeFinder which is more robust.
-        
+
         // 1. Check for deletion or type change
         Optional<BlockIdNodeFinder.NodeContext> context = BlockIdNodeFinder.find(program, getBugLocationBlockId());
-        
+
         if (getBugLocationBlockId() != null) {
             if (context.isEmpty()) {
                 // Block deleted
                 addFixWithLooseComment();
                 return Collections.unmodifiableSet(fixes);
             }
-            
+
             if (!(context.get().node() instanceof StringLiteral)) {
                 // Type changed (e.g. reverted to parameter/variable)
                 addFixWithLooseComment();
@@ -98,7 +99,7 @@ public class VariableAsLiteralFix extends AbstractFixHeuristic {
 
         // 2. Visit to find semantic fix (variable not in scope)
         visit(program);
-        
+
         return Collections.unmodifiableSet(fixes);
     }
 
@@ -134,7 +135,7 @@ public class VariableAsLiteralFix extends AbstractFixHeuristic {
     public void visit(StringLiteral node) {
         if (matchesBugLocation(node)) {
             // Check if parent is StrId (identifier context), ignore if so
-            if (node.getParentNode() instanceof de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId) {
+            if (node.getParentNode() instanceof StrId) {
                 visitChildren(node);
                 return;
             }

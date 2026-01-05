@@ -32,12 +32,12 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
  * Unlike {@link de.uni_passau.fim.se2.litterbox.analytics.Issue}, which represents
  * a problem, a FixResult represents the confirmation that a problem was fixed.
  *
- * @param program the program that was analyzed
- * @param fixedNode the AST node where the fix was detected
+ * @param program       the program that was analyzed
+ * @param fixedNode     the AST node where the fix was detected
  * @param originalIssue the original issue that was fixed (contains bug finder info, block ID, etc.)
- * @param actor the actor containing the fixed code
- * @param script the script or procedure containing the fixed code
- * @param metadata the metadata associated with the fixed node
+ * @param actor         the actor containing the fixed code
+ * @param script        the script or procedure containing the fixed code
+ * @param metadata      the metadata associated with the fixed node
  */
 public record FixResult(
         Program program,

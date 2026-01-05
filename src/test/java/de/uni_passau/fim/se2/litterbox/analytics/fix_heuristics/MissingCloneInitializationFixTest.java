@@ -18,20 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingCloneInitialization;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.injection.bugs.MissingCloneInitializationInjector;
 import org.junit.jupiter.api.Assertions;
-
-import java.util.List;
-import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Tests for MissingCloneInitializationFix.
@@ -46,7 +45,7 @@ public class MissingCloneInitializationFixTest extends AbstractFixHeuristicTest 
         String code = """
                 when green flag clicked
                 create clone of (myself v)
-                
+
                 when I start as a clone
                 move (10) steps
                 """;
@@ -98,7 +97,7 @@ public class MissingCloneInitializationFixTest extends AbstractFixHeuristicTest 
         String fixedCode = """
                 when green flag clicked
                 create clone of (myself v)
-                
+
                 when I start as a clone
                 move (10) steps
                 """;

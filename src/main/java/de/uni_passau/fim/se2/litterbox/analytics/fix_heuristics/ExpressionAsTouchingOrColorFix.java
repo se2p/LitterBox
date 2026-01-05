@@ -49,7 +49,6 @@ public class ExpressionAsTouchingOrColorFix extends AbstractFixHeuristic impleme
         return relatedBugFinder;
     }
 
-
     @Override
     public Set<FixResult> check(Program program) {
         return checkWithNodeFinder(program);

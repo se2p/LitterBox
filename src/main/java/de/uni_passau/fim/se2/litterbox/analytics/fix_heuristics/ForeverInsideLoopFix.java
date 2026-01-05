@@ -18,7 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideLoop;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -29,7 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForever
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
-
 
 /**
  * Fix heuristic for the ForeverInsideLoop bug.
@@ -57,8 +55,6 @@ public class ForeverInsideLoopFix extends AbstractFixHeuristic {
     protected IssueFinder getRelatedBugFinder() {
         return relatedBugFinder;
     }
-
-
 
     @Override
     protected void resetState() {

@@ -40,14 +40,14 @@ public class MissingCloneCallFixTest extends AbstractFixHeuristicTest {
         String source = """
                 when I start as a clone
                 move (10) steps
-                
+
                 when green flag clicked
                 create clone of (Sprite1 v)
                 """;
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, StartedAsClone.class);
-        
+
         MissingCloneCallFix heuristic = new MissingCloneCallFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -58,14 +58,14 @@ public class MissingCloneCallFixTest extends AbstractFixHeuristicTest {
         String source = """
                 when I start as a clone
                 move (10) steps
-                
+
                 when green flag clicked
                 create clone of (myself v)
                 """;
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, StartedAsClone.class);
-        
+
         MissingCloneCallFix heuristic = new MissingCloneCallFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -76,14 +76,14 @@ public class MissingCloneCallFixTest extends AbstractFixHeuristicTest {
         String source = """
                 when I start as a clone
                 move (10) steps
-                
+
                 when green flag clicked
                 move (10) steps
                 """;
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, StartedAsClone.class);
-        
+
         MissingCloneCallFix heuristic = new MissingCloneCallFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
@@ -112,7 +112,7 @@ public class MissingCloneCallFixTest extends AbstractFixHeuristicTest {
         String fixedCode = """
                 when I start as a clone
                 move (10) steps
-                
+
                 when green flag clicked
                 create clone of (myself v)
                 """;

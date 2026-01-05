@@ -54,8 +54,13 @@ public class OverwrittenVisualEffectFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
-
+    private static final String KEY_CLEAR = "CLEAR";
+    private static final String KEY_COSTUME = "COSTUME";
+    private static final String KEY_BACKDROP = "BACKDROP";
+    private static final String KEY_SIZE = "SIZE";
+    private static final String KEY_VISIBILITY = "VISIBILITY";
+    private static final String KEY_LAYER = "LAYER";
+    private static final String KEY_BUBBLE = "BUBBLE";
 
     @Override
     public void visit(StmtList node) {
@@ -66,16 +71,17 @@ public class OverwrittenVisualEffectFix extends AbstractFixHeuristic {
             String effectKey = getEffectKey(stmt);
 
             if (stmt instanceof ClearGraphicEffects) {
-                if (lastEffectStmt.containsKey("CLEAR")) {
-                    reportIfTarget(lastEffectStmt.get("CLEAR"), true);
+                if (lastEffectStmt.containsKey(KEY_CLEAR)) {
+                    reportIfTarget(lastEffectStmt.get(KEY_CLEAR), true);
                 }
-                for (var entry : lastEffectStmt.entrySet()) {
-                    if (entry.getKey().startsWith("EFFECT_")) {
-                        reportIfTarget(entry.getValue(), true);
+                for (GraphicEffect.GraphicEffectType type : GraphicEffect.GraphicEffectType.values()) {
+                    String key = getGraphicEffectKey(type);
+                    if (lastEffectStmt.containsKey(key)) {
+                        reportIfTarget(lastEffectStmt.get(key), true);
                     }
                 }
                 lastEffectStmt.clear();
-                lastEffectStmt.put("CLEAR", stmt);
+                lastEffectStmt.put(KEY_CLEAR, stmt);
                 effectKey = null;
             }
 
@@ -102,21 +108,25 @@ public class OverwrittenVisualEffectFix extends AbstractFixHeuristic {
         visitChildren(node);
     }
 
+    private String getGraphicEffectKey(GraphicEffect.GraphicEffectType type) {
+        return "EFFECT_" + type.name();
+    }
+
     private String getEffectKey(Stmt stmt) {
         if (stmt instanceof SwitchCostumeTo || stmt instanceof NextCostume) {
-            return "COSTUME";
+            return KEY_COSTUME;
         } else if (stmt instanceof SwitchBackdrop || stmt instanceof NextBackdrop) {
-            return "BACKDROP";
+            return KEY_BACKDROP;
         } else if (stmt instanceof SetSizeTo) {
-            return "SIZE";
+            return KEY_SIZE;
         } else if (stmt instanceof Show || stmt instanceof Hide) {
-            return "VISIBILITY";
+            return KEY_VISIBILITY;
         } else if (stmt instanceof GoToLayer || stmt instanceof ChangeLayerBy) {
-            return "LAYER";
+            return KEY_LAYER;
         } else if (stmt instanceof Say || stmt instanceof Think) {
-            return "BUBBLE";
+            return KEY_BUBBLE;
         } else if (stmt instanceof SetGraphicEffectTo setEffect) {
-            return "EFFECT_" + setEffect.getEffect().getTypeName();
+            return getGraphicEffectKey(setEffect.getEffect().getType());
         }
         return null;
     }

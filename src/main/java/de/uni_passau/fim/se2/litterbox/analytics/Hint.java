@@ -67,6 +67,10 @@ public class Hint {
 
     protected final Map<String, HintPlaceholder> parameters = new HashMap<>();
 
+    public String getKey() {
+        return hintKey;
+    }
+
     private Hint(String hintKey, String hintText) {
         this.hintKey = hintKey;
         this.hintText = hintText;

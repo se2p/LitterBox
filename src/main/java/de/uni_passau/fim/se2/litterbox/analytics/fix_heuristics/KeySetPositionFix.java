@@ -35,11 +35,7 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Fix heuristic for the KeySetPosition bug.
@@ -114,7 +110,6 @@ public class KeySetPositionFix extends AbstractFixHeuristic {
 
         return Collections.unmodifiableSet(fixes);
     }
-
 
     @Override
     public void visit(Script node) {
@@ -197,7 +192,7 @@ public class KeySetPositionFix extends AbstractFixHeuristic {
     /**
      * Check if the bug is fixed for the given node.
      *
-     * @param node the SetX/SetY node
+     * @param node   the SetX/SetY node
      * @param isSetX true if SetXTo, false if SetYTo
      */
     private void checkIfFixed(Stmt node, boolean isSetX) {

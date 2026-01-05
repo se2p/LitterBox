@@ -21,15 +21,15 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingEraseAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+
 import java.util.Collections;
 import java.util.Set;
-
 
 /**
  * Fix heuristic for the MissingEraseAll bug.

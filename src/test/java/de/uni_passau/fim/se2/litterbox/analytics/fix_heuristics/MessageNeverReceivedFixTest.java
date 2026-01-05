@@ -46,7 +46,7 @@ public class MessageNeverReceivedFixTest extends AbstractFixHeuristicTest {
         String source = """
                 when green flag clicked
                 broadcast (myMessage v)
-                
+
                 when I receive [myMessage v]
                 move (10) steps
                 """;
@@ -94,13 +94,13 @@ public class MessageNeverReceivedFixTest extends AbstractFixHeuristicTest {
         Program base = getAST("src/test/fixtures/smells/raceConditionDifferentActors.json");
         Program program = new de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser()
                 .extendProject(base, "Sprite2", "when I receive [hello v]\nmove (10) steps");
-        
+
         // Also need a broadcast in Sprite1
         program = new de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser()
                 .extendProject(program, "Sprite1", "when green flag clicked\nbroadcast (hello v)");
 
         de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.linkParents(program);
-        
+
         String bugId = findBlockId(program, Broadcast.class);
         MessageNeverReceivedFix heuristic = new MessageNeverReceivedFix(createTestIssueDTO(bugId));
         assertFixFound(heuristic, program);
@@ -117,7 +117,7 @@ public class MessageNeverReceivedFixTest extends AbstractFixHeuristicTest {
         String fixedCode = """
                 when green flag clicked
                 broadcast (msg1 v)
-                
+
                 when I receive [msg1 v]
                 move (10) steps
                 """;

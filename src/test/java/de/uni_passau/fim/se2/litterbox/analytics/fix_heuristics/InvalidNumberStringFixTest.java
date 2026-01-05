@@ -96,7 +96,7 @@ public class InvalidNumberStringFixTest extends AbstractFixHeuristicTest {
         InvalidNumberStringFix heuristic = new InvalidNumberStringFix(createTestIssueDTO("__deleted_block__"));
         Set<FixResult> fixes = heuristic.check(program);
         // When the block is deleted, it's considered fixed
-        Assertions.assertFalse(fixes.isEmpty(), 
+        Assertions.assertFalse(fixes.isEmpty(),
                 "Should find fix when block is deleted");
     }
 }

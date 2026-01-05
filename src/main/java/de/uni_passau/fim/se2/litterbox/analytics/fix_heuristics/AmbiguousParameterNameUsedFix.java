@@ -42,14 +42,12 @@ public class AmbiguousParameterNameUsedFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
-
     @Override
     public void visit(ProcedureDefinition node) {
         visitChildren(node);
         if (matchesBugLocation(node)) {
             boolean stillPresent = isBugStillPresent(node);
-            
+
             if (!stillPresent) {
                 addFix(node, node.getMetadata());
             }

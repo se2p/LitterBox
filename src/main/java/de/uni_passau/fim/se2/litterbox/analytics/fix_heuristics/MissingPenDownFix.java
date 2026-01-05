@@ -62,10 +62,8 @@ public class MissingPenDownFix extends AbstractFixHeuristic implements PenExtens
         super.visit(actor);
 
         if (targetPenUp != null && penDownSet) {
-            // Fix: PenDown is present in the actor.
-            this.currentActor = actor;
-            this.currentScript = foundScript;
-            addFix(targetPenUp, targetPenUp.getMetadata());
+            // Fix: PenDown is present in the actor. Use explicit context overload.
+            addFix(targetPenUp, targetPenUp.getMetadata(), actor, foundScript);
         }
     }
 

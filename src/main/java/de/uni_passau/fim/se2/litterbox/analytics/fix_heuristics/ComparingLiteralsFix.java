@@ -25,8 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
@@ -50,9 +49,6 @@ public class ComparingLiteralsFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
-
-
     @Override
     public void visit(BiggerThan node) {
         checkComparisonFix(node, node.getOperand1(), node.getOperand2());
@@ -75,8 +71,8 @@ public class ComparingLiteralsFix extends AbstractFixHeuristic {
      * Check if a comparison operation has been fixed.
      *
      * @param node the comparison node
-     * @param op1 first operand
-     * @param op2 second operand
+     * @param op1  first operand
+     * @param op2  second operand
      */
     private void checkComparisonFix(ASTNode node, ComparableExpr op1, ComparableExpr op2) {
         if (matchesBugLocation(node) && isNotStatic(op1, op2)) {
@@ -88,8 +84,6 @@ public class ComparingLiteralsFix extends AbstractFixHeuristic {
      * Returns true if at least one operand is NOT a literal (meaning the bug is fixed).
      */
     private boolean isNotStatic(ComparableExpr op1, ComparableExpr op2) {
-        boolean op1IsLiteral = op1 instanceof StringLiteral || op1 instanceof NumberLiteral;
-        boolean op2IsLiteral = op2 instanceof StringLiteral || op2 instanceof NumberLiteral;
-        return !(op1IsLiteral && op2IsLiteral);
+        return !(AstNodeUtil.isLiteral(op1) && AstNodeUtil.isLiteral(op2));
     }
 }

@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
@@ -37,10 +38,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveStep
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
-import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
-
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -304,8 +303,8 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
      */
     private NumExpr createInvalidNumExpr(double value) {
         return new AsNumber(
-            new StringLiteral(makeInvalidNumber(value)),
-            new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
+                new StringLiteral(makeInvalidNumber(value)),
+                new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
         );
     }
 

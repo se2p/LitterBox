@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -39,7 +38,7 @@ public class RecursiveCloningFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, CreateCloneOf.class);
-        
+
         RecursiveCloningFix heuristic = new RecursiveCloningFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -54,7 +53,7 @@ public class RecursiveCloningFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, CreateCloneOf.class);
-        
+
         RecursiveCloningFix heuristic = new RecursiveCloningFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
@@ -69,7 +68,7 @@ public class RecursiveCloningFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         // bugLocationBlockId is gone
-        
+
         RecursiveCloningFix heuristic = new RecursiveCloningFix(createTestIssueDTO("non_existent_id"));
         assertFixFound(heuristic, program);
     }
@@ -106,7 +105,7 @@ public class RecursiveCloningFixTest extends AbstractFixHeuristicTest {
 
         // Fix check: The bug is the 'create clone' call. In the original, it doesn't exist.
         String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
-        
+
         RecursiveCloningFix fix = new RecursiveCloningFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fix, fixedProgram);
     }

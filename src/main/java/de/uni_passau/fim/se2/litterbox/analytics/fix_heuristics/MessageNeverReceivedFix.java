@@ -54,7 +54,6 @@ public class MessageNeverReceivedFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
     @Override
     protected void resetState() {
         message = null;

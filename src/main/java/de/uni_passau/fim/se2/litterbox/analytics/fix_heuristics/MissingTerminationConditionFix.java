@@ -43,9 +43,6 @@ public class MissingTerminationConditionFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
-
-
     @Override
     public void visit(UntilStmt node) {
         if (matchesBugLocation(node)) {

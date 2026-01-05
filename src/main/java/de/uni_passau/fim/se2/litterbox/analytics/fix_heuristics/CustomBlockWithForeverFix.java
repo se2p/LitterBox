@@ -43,8 +43,6 @@ public class CustomBlockWithForeverFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
-
     @Override
     public void visit(CallStmt node) {
         if (matchesBugLocation(node) && !isBugStillPresent(node)) {

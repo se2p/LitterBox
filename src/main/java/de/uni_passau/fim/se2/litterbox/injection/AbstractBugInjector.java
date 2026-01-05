@@ -561,7 +561,14 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     protected void replaceInParent(Stmt oldStmt, Stmt newStmt) {
         if (oldStmt.getParentNode() instanceof StmtList stmtList) {
             List<Stmt> stmts = stmtList.getStmts();
-            int index = stmts.indexOf(oldStmt);
+            int index = -1;
+            for (int i = 0; i < stmts.size(); i++) {
+                if (stmts.get(i) == oldStmt) {
+                    index = i;
+                    break;
+                }
+            }
+            //int index = stmts.indexOf(oldStmt);
             if (index >= 0) {
                 stmts.set(index, newStmt);
                 newStmt.setParentNode(stmtList);

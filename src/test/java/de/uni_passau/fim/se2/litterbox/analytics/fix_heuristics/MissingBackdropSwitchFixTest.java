@@ -40,14 +40,14 @@ public class MissingBackdropSwitchFixTest extends AbstractFixHeuristicTest {
         String source = """
                 when backdrop switches to [backdrop1 v]
                 move (10) steps
-                
+
                 when green flag clicked
                 switch backdrop to (backdrop1 v)
                 """;
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, BackdropSwitchTo.class);
-        
+
         MissingBackdropSwitchFix heuristic = new MissingBackdropSwitchFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -58,14 +58,14 @@ public class MissingBackdropSwitchFixTest extends AbstractFixHeuristicTest {
         String source = """
                 when backdrop switches to [backdrop1 v]
                 move (10) steps
-                
+
                 when green flag clicked
                 next backdrop
                 """;
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, BackdropSwitchTo.class);
-        
+
         MissingBackdropSwitchFix heuristic = new MissingBackdropSwitchFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -76,14 +76,14 @@ public class MissingBackdropSwitchFixTest extends AbstractFixHeuristicTest {
         String source = """
                 when backdrop switches to [backdrop1 v]
                 move (10) steps
-                
+
                 when green flag clicked
                 switch backdrop to (backdrop2 v)
                 """;
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, BackdropSwitchTo.class);
-        
+
         MissingBackdropSwitchFix heuristic = new MissingBackdropSwitchFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
@@ -112,7 +112,7 @@ public class MissingBackdropSwitchFixTest extends AbstractFixHeuristicTest {
         String fixedCode = """
                 when backdrop switches to [backdrop1 v]
                 move (10) steps
-                
+
                 when green flag clicked
                 switch backdrop to (backdrop1 v)
                 """;

@@ -129,18 +129,25 @@ public class ActorJSONCreator {
             jsonString.append(ProcedureJSONCreator.createProcedureJSONString(procedures.get(i),
                     actor.getIdent().getName(), symbol, procDefNameMapping)).append(",");
         }
+        // Pre-collect script JSON strings and filter out empty ones to prevent double commas
+        List<String> scriptJsonStrings = scripts.stream()
+                .map(s -> ScriptJSONCreator.createScriptJSONString(s, symbol))
+                .filter(json -> json != null && !json.isEmpty())
+                .toList();
+
         if (!procedures.isEmpty()) {
             jsonString.append(ProcedureJSONCreator.createProcedureJSONString(procedures.getLast(),
                     actor.getIdent().getName(), symbol, procDefNameMapping));
-            if (!scripts.isEmpty()) {
+            // Only add comma if there are non-empty scripts to follow
+            if (!scriptJsonStrings.isEmpty()) {
                 jsonString.append(",");
             }
         }
-        for (int i = 0; i < scripts.size() - 1; i++) {
-            jsonString.append(ScriptJSONCreator.createScriptJSONString(scripts.get(i), symbol)).append(",");
+        for (int i = 0; i < scriptJsonStrings.size() - 1; i++) {
+            jsonString.append(scriptJsonStrings.get(i)).append(",");
         }
-        if (!scripts.isEmpty()) {
-            jsonString.append(ScriptJSONCreator.createScriptJSONString(scripts.getLast(), symbol));
+        if (!scriptJsonStrings.isEmpty()) {
+            jsonString.append(scriptJsonStrings.getLast());
         }
         jsonString.append("},");
 

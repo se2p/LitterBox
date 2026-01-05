@@ -39,7 +39,7 @@ public class FloatingPointComparisonFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Equals.class);
-        
+
         FloatingPointComparisonFix heuristic = new FloatingPointComparisonFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -55,7 +55,7 @@ public class FloatingPointComparisonFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Equals.class);
-        
+
         FloatingPointComparisonFix heuristic = new FloatingPointComparisonFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -71,7 +71,7 @@ public class FloatingPointComparisonFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Equals.class);
-        
+
         FloatingPointComparisonFix heuristic = new FloatingPointComparisonFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }

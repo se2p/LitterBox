@@ -18,20 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingPenUp;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingPenUp;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.injection.bugs.MissingPenUpInjector;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-
-import java.io.IOException;
 
 public class MissingPenUpFixTest extends AbstractFixHeuristicTest {
 
@@ -46,7 +45,7 @@ public class MissingPenUpFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, PenDownStmt.class);
-        
+
         MissingPenUpFix heuristic = new MissingPenUpFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -57,14 +56,14 @@ public class MissingPenUpFixTest extends AbstractFixHeuristicTest {
         String source = """
                 when green flag clicked
                 pen down
-                
+
                 when I receive [start v]
                 pen up
                 """;
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, PenDownStmt.class);
-        
+
         MissingPenUpFix heuristic = new MissingPenUpFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -80,7 +79,7 @@ public class MissingPenUpFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, PenDownStmt.class);
-        
+
         MissingPenUpFix heuristic = new MissingPenUpFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }

@@ -53,9 +53,6 @@ public class OrphanedParameterFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
-
-
     @Override
     public void visit(ProcedureDefinition node) {
         currentParameterDefinitions = node.getParameterDefinitionList().getParameterDefinitions();

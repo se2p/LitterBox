@@ -143,7 +143,6 @@ public class BlockingIfElseFixTest extends AbstractFixHeuristicTest {
         String ifElseBlockId = findBlockId(fixedProgram, IfElseStmt.class);
         Assertions.assertNotNull(ifElseBlockId,
                 "Should find IfElseStmt block in original program");
-
     }
 }
 

@@ -28,7 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLook
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
-
 /**
  * Fix heuristic for the HideWithoutShow bug.
  *

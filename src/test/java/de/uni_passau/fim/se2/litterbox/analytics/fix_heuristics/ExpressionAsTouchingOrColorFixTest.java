@@ -38,7 +38,7 @@ public class ExpressionAsTouchingOrColorFixTest extends AbstractFixHeuristicTest
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, ColorTouchingColor.class);
-        
+
         ExpressionAsTouchingOrColorFix heuristic = new ExpressionAsTouchingOrColorFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -54,7 +54,7 @@ public class ExpressionAsTouchingOrColorFixTest extends AbstractFixHeuristicTest
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, ColorTouchingColor.class);
-        
+
         ExpressionAsTouchingOrColorFix heuristic = new ExpressionAsTouchingOrColorFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }

@@ -21,12 +21,12 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.InvalidNumberString;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.util.NumberUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.util.NumberUtil;
 
 /**
  * Fix heuristic for the InvalidNumberString bug.
@@ -34,7 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.util.NumberUtil;
  * <p>The bug is reported when a string that looks like a number but is invalid
  * is used in a numeric context. The bug is reported on the parent node that has a block ID,
  * not directly on the AsNumber expression.
- * 
+ *
  * <p>The bug is fixed if:
  * <ul>
  *   <li>The block with the bug location ID is deleted, OR</li>
@@ -62,7 +62,7 @@ public class InvalidNumberStringFix extends AbstractFixHeuristic {
             // Check if all AsNumber children have valid numbers now
             InvalidNumberChecker checker = new InvalidNumberChecker();
             node.accept(checker);
-            
+
             if (!checker.hasInvalidNumber) {
                 // The bug is fixed - no invalid numbers found in this subtree
                 addFix(node, node.getMetadata());

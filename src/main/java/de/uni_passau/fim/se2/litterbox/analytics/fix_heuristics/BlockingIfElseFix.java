@@ -43,9 +43,6 @@ public class BlockingIfElseFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
-
-
     @Override
     public void visit(IfElseStmt ifElse) {
         if (matchesBugLocation(ifElse)) {

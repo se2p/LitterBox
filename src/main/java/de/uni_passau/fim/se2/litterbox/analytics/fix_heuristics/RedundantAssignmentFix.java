@@ -18,10 +18,11 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.RedundantAssignment;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.Set;
@@ -51,5 +52,30 @@ public class RedundantAssignmentFix extends AbstractFixHeuristic {
     @Override
     public Set<FixResult> check(Program program) {
         return checkWithNodeFinder(program);
+    }
+
+    @Override
+    protected boolean isBugStillPresent(ASTNode node) {
+        String originalBlockId = getBugLocationBlockId();
+
+        for (de.uni_passau.fim.se2.litterbox.analytics.Issue issue : currentBugInstances) {
+            // If the issue is only "possible" redundant, we consider the "always" redundant bug fixed.
+            if (RedundantAssignment.HINT_POSSIBLE.equals(issue.getHint().getKey())) {
+                continue;
+            }
+
+            ASTNode bugLoc = issue.getCodeLocation();
+
+            if (originalBlockId != null && !originalBlockId.isBlank()) {
+                if (AstNodeUtil.hasBlockId(bugLoc, originalBlockId)) {
+                    return true;
+                }
+            }
+
+            if (isSelfOrDescendant(bugLoc, node)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

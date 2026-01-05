@@ -38,7 +38,7 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Broadcast.class);
-        
+
         ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -54,7 +54,7 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Broadcast.class);
-        
+
         ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -70,7 +70,7 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Broadcast.class);
-        
+
         ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
@@ -85,7 +85,7 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, BroadcastAndWait.class);
-        
+
         ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -104,6 +104,7 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
         ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(createTestIssueDTO(blockId));
         assertFixFound(heuristic, program);
     }
+
     @Test
     public void testNoFix_MultipleNonYieldingStmts() throws IOException, ParsingException {
         // No Fix: Multiple non-yielding statements between Broadcast and DeleteClone
@@ -117,7 +118,7 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Broadcast.class);
-        
+
         ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
@@ -134,7 +135,7 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Broadcast.class);
-        
+
         ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -149,7 +150,7 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
         String fixedCode = """
                 when green flag clicked
                 create clone of (myself v)
-                
+
                 when I start as a clone
                 broadcast (hello v)
                 wait (1) secs

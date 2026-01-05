@@ -37,10 +37,10 @@ public class IllegalParameterRefactorFixTest extends AbstractFixHeuristicTest {
                 """;
 
         Program program = parseProgram(source);
-        // Find the Parameter node usage, not definition. 
+        // Find the Parameter node usage, not definition.
         // Usage is inside the If statement.
         String bugLocationBlockId = findBlockId(program, Parameter.class);
-        
+
         IllegalParameterRefactorFix heuristic = new IllegalParameterRefactorFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -54,13 +54,13 @@ public class IllegalParameterRefactorFixTest extends AbstractFixHeuristicTest {
                 if <myParam> then
                 end
                 """;
-        // Note: "<myParam>" usage refers to the parameter. If defined as (myParam), 
-        // ScratchBlocks parser might parse usage as <myParam> if it fits the slot, 
+        // Note: "<myParam>" usage refers to the parameter. If defined as (myParam),
+        // ScratchBlocks parser might parse usage as <myParam> if it fits the slot,
         // but the SymbolTable record for "myParam" comes from definition (String).
-        
+
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, Parameter.class);
-        
+
         IllegalParameterRefactorFix heuristic = new IllegalParameterRefactorFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }
@@ -92,7 +92,7 @@ public class IllegalParameterRefactorFixTest extends AbstractFixHeuristicTest {
                 if <myParam> then
                     say [True!]
                 end
-                
+
                 when green flag clicked
                 myProc <key (space v) pressed?>
                 """;

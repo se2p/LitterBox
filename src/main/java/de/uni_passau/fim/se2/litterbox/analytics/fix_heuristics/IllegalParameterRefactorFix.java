@@ -60,7 +60,6 @@ public class IllegalParameterRefactorFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
     @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;

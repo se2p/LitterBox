@@ -49,7 +49,6 @@ public class EndlessRecursionFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
     @Override
     protected void resetState() {
         loopIfCounter = 0;

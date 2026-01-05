@@ -132,7 +132,6 @@ public class HideWithoutShowFixTest extends AbstractFixHeuristicTest {
         String hideBlockId = findBlockId(fixedProgram, Hide.class);
         Assertions.assertNotNull(hideBlockId,
                 "Should find Hide block in original program");
-
     }
 }
 

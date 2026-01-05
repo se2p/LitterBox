@@ -48,9 +48,6 @@ public class InterruptedLoopSensingFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
-
-
     private void check(ASTNode node) {
         if (matchesBugLocation(node) && !isBugStillPresent(node)) {
             addFix(node, node.getMetadata());

@@ -101,7 +101,7 @@ public class HideWithoutShowInjector extends AbstractBugInjector {
 
                         @Override
                         public void visit(Script script) {
-                            if (!found && !script.getStmtList().getStmts().isEmpty() && !(script.getEvent() instanceof Never)) {
+                            if (!found && !script.getStmtList().getStmts().isEmpty()) {
                                 Hide hide = new Hide(NonDataBlockMetadata.emptyNonBlockMetadata());
                                 script.getStmtList().getStmts().addFirst(hide);
                                 found = true;
@@ -111,12 +111,6 @@ public class HideWithoutShowInjector extends AbstractBugInjector {
                 }
             }, scriptId);
         }
-    }
-
-    @Override
-    public void visit(StmtList node) {
-        // We handle mutation at the ActorDefinition level now
-        visitChildren(node);
     }
 
     private void checkActorPrerequisites(ActorDefinition node) {
@@ -132,13 +126,11 @@ public class HideWithoutShowInjector extends AbstractBugInjector {
             @Override
             public void visit(Show show) {
                 hasShow = true;
-                // visit((SpriteLookStmt) show); // Don't call, matching detector logic
             }
 
             @Override
             public void visit(Hide hide) {
                 hasHide = true;
-                // visit((SpriteLookStmt) hide); // Don't call, matching detector logic
             }
 
             @Override

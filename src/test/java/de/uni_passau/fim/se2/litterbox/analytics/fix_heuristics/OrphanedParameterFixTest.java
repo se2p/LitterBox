@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -114,7 +113,7 @@ public class OrphanedParameterFixTest extends AbstractFixHeuristicTest {
         // If the injector modified an existing block to be orphaned, we target that block.
         // If the injector removed the definition, the usage acts as the bug location.
         String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
-        
+
         OrphanedParameterFix fix = new OrphanedParameterFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fix, fixedProgram);
     }

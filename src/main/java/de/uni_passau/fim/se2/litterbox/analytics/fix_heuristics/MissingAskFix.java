@@ -55,7 +55,6 @@ public class MissingAskFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
     @Override
     public void visit(AskAndWait node) {
         askUsed = true;

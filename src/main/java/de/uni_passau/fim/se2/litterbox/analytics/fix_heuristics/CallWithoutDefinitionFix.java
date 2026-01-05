@@ -65,20 +65,19 @@ public class CallWithoutDefinitionFix extends AbstractFixHeuristic {
             boolean definitionExists = false;
             if (procMap != null) {
                 definitionExists = procMap.values().stream()
-                    .anyMatch(info -> info.getName().equals(targetCall.getIdent().getName()));
+                        .anyMatch(info -> info.getName().equals(targetCall.getIdent().getName()));
             }
-            
+
             boolean isMalformed = false;
             if (program.getProcedureMapping() != null) {
                 isMalformed = program.getProcedureMapping().checkIfMalformed(
-                    currentActor.getIdent().getName() + targetCall.getIdent().getName());
+                        currentActor.getIdent().getName() + targetCall.getIdent().getName());
             }
 
             if (definitionExists || isMalformed) {
-                // Restore context for addIssue
-                this.currentScript = foundScript;
-                this.currentProcedure = foundProcedure;
-                addFix(targetCall, targetCall.getMetadata());
+                // Use explicit context overload instead of mutating parent fields
+                addFix(targetCall, targetCall.getMetadata(), currentActor,
+                        foundScript != null ? foundScript : foundProcedure);
             }
         }
     }

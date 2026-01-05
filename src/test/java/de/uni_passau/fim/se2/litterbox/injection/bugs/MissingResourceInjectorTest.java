@@ -128,5 +128,40 @@ public class MissingResourceInjectorTest implements JsonTest {
              // but checking the original AST is the most direct proof.
         }
     }
+
+    @Test
+    public void testMissingResourceBackdropInjector() throws IOException, ParsingException {
+        // Script with switch backdrop and when backdrop switches to
+        String script = """
+                when green flag clicked
+                switch backdrop to (backdrop1 v)
+                switch backdrop to (backdrop1 v) and wait
+                """;
+        // Note: scratchblocks parser might not fully support "when backdrop switches to" syntax if it's not standard
+        // But let's try standard syntax:
+        String eventScript = """
+                when backdrop switches to (backdrop1 v)
+                """;
+
+        Program program = parseScratchBlocks(script + "\\n" + eventScript);
+
+        MissingResourceInjector injector = new MissingResourceInjector();
+        List<InjectionResult> injected = injector.inject(program);
+
+        // We expect injection for:
+        // 1. switch backdrop to
+        // 2. switch backdrop and wait
+        // 3. when backdrop switches to
+        // verify at least 1 injection
+        Assertions.assertFalse(injected.isEmpty(), "Should inject bugs for backdrop blocks");
+
+        // Verification: Check detector finds the issue
+        MissingResource detector = new MissingResource();
+        for (InjectionResult result : injected) {
+            Program mutated = result.mutatedProgram();
+            Set<Issue> issues = detector.check(mutated);
+            Assertions.assertFalse(issues.isEmpty(), "Detector should find MissingResource issue for backdrop");
+        }
+    }
 }
 

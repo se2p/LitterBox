@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingResource;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -112,5 +113,37 @@ public class MissingResourceFixTest implements FinderTest, JsonTest {
         Set<FixResult> fixResults = heuristic.check(program);
         Assertions.assertFalse(fixResults.isEmpty(),
                 "Fix heuristic should report fix on deleted block");
+    }
+
+    @Test
+    public void testFixDetection_BackdropFix() throws IOException, ParsingException {
+        // Create a valid program using scratchblocks (Stage has backdrop1 by default)
+        String script = """
+                when backdrop switches to [backdrop1 v]
+                """;
+        Program program = parseScratchBlocks(script);
+
+        // Find the block ID of the event
+        String blockId = null;
+        for (de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
+            for (de.uni_passau.fim.se2.litterbox.ast.model.Script s : actor.getScripts().getScriptList()) {
+                if (s.getEvent() instanceof BackdropSwitchTo) {
+                    blockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(s.getEvent());
+                    break;
+                }
+            }
+            if (blockId != null) {
+                break;
+            }
+        }
+
+        Assertions.assertNotNull(blockId, "Block ID should be found for BackdropSwitchTo");
+
+        // Simulate that this block WAS buggy (e.g. refering to missing resource)
+        // But now in 'program', it refers to 'backdrop1' which exists.
+        MissingResourceFix fixHeuristic = new MissingResourceFix(createTestIssueDTO(blockId));
+        Set<FixResult> fixResults = fixHeuristic.check(program);
+
+        Assertions.assertFalse(fixResults.isEmpty(), "Should detect fix for valid backdrop reference");
     }
 }

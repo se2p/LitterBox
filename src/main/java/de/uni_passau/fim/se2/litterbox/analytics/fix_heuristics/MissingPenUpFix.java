@@ -57,18 +57,13 @@ public class MissingPenUpFix extends AbstractFixHeuristic implements PenExtensio
         return relatedBugFinder;
     }
 
-
-
-
     @Override
     public void visit(ActorDefinition actor) {
         super.visit(actor);
 
         if (targetPenDown != null && penUpSet) {
-            // Fix: PenUp is present in the actor.
-            this.currentActor = actor;
-            this.currentScript = foundScript;
-            addFix(targetPenDown, targetPenDown.getMetadata());
+            // Fix: PenUp is present in the actor. Use explicit context overload.
+            addFix(targetPenDown, targetPenDown.getMetadata(), actor, foundScript);
         }
     }
 

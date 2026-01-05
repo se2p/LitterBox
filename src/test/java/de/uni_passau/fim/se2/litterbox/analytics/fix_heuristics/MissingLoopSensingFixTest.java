@@ -78,6 +78,22 @@ public class MissingLoopSensingFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
+    public void testFixFound_InsideWaitUntilCondition() throws IOException, ParsingException {
+        // Sensing block used AS the condition for WaitUntil - fix reported
+        String code = """
+                when green flag clicked
+                wait until <key (space v) pressed?>
+                stop [all v]
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, IsKeyPressed.class);
+
+        MissingLoopSensingFix finder = new MissingLoopSensingFix(createTestIssueDTO(blockId));
+        assertFixFound(finder, program);
+    }
+
+    @Test
     public void testFixFound_ScriptDeleted() throws IOException, ParsingException {
         // Fix: Script containing the bug is gone
         String code = """

@@ -32,6 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackd
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 
 import java.util.List;
 import java.util.Set;
@@ -108,6 +109,14 @@ public class MissingResource extends AbstractIssueFinder {
         if (node.getElementChoice() instanceof WithExpr withExpr && withExpr.getExpression() instanceof StrId strId) {
             String sound = strId.getName();
             checkSoundIssue(node, sound);
+        }
+    }
+
+    @Override
+    public void visit(BackdropSwitchTo node) {
+        if (node.getBackdrop() != null) {
+            String backdropName = node.getBackdrop().getName();
+            checkBackdropIssue(node, backdropName);
         }
     }
 

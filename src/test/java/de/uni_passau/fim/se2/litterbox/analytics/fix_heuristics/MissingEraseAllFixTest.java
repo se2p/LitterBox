@@ -18,19 +18,19 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingEraseAll;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingEraseAll;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.injection.bugs.MissingEraseAllInjector;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import java.util.List;
-import java.util.Set;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 public class MissingEraseAllFixTest extends AbstractFixHeuristicTest {
 
@@ -45,7 +45,7 @@ public class MissingEraseAllFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, PenDownStmt.class);
-        
+
         MissingEraseAllFix heuristic = new MissingEraseAllFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -61,7 +61,7 @@ public class MissingEraseAllFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, PenDownStmt.class);
-        
+
         MissingEraseAllFix heuristic = new MissingEraseAllFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -72,14 +72,14 @@ public class MissingEraseAllFixTest extends AbstractFixHeuristicTest {
         String source = """
                 when green flag clicked
                 pen down
-                
+
                 when I receive [start v]
                 erase all
                 """;
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, PenDownStmt.class);
-        
+
         MissingEraseAllFix heuristic = new MissingEraseAllFix(createTestIssueDTO(bugLocationBlockId));
         assertFixFound(heuristic, program);
     }
@@ -95,7 +95,7 @@ public class MissingEraseAllFixTest extends AbstractFixHeuristicTest {
 
         Program program = parseProgram(source);
         String bugLocationBlockId = findBlockId(program, PenDownStmt.class);
-        
+
         MissingEraseAllFix heuristic = new MissingEraseAllFix(createTestIssueDTO(bugLocationBlockId));
         assertNoFixFound(heuristic, program);
     }

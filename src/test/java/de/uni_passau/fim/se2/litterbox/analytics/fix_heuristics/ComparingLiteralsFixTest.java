@@ -21,8 +21,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

@@ -38,7 +38,9 @@ public final class FixHeuristicRegistry {
 
     private static final Logger log = Logger.getLogger(FixHeuristicRegistry.class.getName());
 
-    /** Dummy IssueDTO used only during registry initialization. */
+    /**
+     * Dummy IssueDTO used only during registry initialization.
+     */
     private static final IssueDTO DUMMY_ISSUE = new IssueDTO(
             0, "__registry_init__", "__dummy__", null, 0, null,
             "__registry_init__", null, null, null, null, null, null, 0, null, null
@@ -92,8 +94,7 @@ public final class FixHeuristicRegistry {
         registerHeuristic(registry, MissingInitializationFix::new);
         registerHeuristic(registry, MissingLoopMousePositionFix::new);
         registerHeuristic(registry, MissingLoopSensingFix::new);
-        registerHeuristic(registry, MissingLoopSensingLoopFix::new);
-        registerHeuristic(registry, MissingLoopSensingWaitFix::new);
+
         registerHeuristic(registry, MissingPenDownFix::new);
         registerHeuristic(registry, MissingPenUpFix::new);
         registerHeuristic(registry, MissingResourceFix::new);
@@ -127,7 +128,7 @@ public final class FixHeuristicRegistry {
             String finderName = heuristic.getName();
 
             // Cast to FixHeuristic function type
-            Function<IssueDTO, FixHeuristic> fixHeuristicFactory = issue -> factory.apply(issue);
+            Function<IssueDTO, FixHeuristic> fixHeuristicFactory = factory::apply;
             registry.computeIfAbsent(finderName, k -> new ArrayList<>()).add(fixHeuristicFactory);
 
             log.fine(() -> "Registered fix heuristic for: " + finderName);

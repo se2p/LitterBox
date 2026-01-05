@@ -50,7 +50,6 @@ public class ImmediateDeleteCloneAfterBroadcastFix extends AbstractFixHeuristic 
         return relatedBugFinder;
     }
 
-
     @Override
     public void visit(Broadcast node) {
         if (matchesBugLocation(node)) {
@@ -58,7 +57,7 @@ public class ImmediateDeleteCloneAfterBroadcastFix extends AbstractFixHeuristic 
             if (list != null) {
                 List<Stmt> stmts = list.getStmts();
                 int index = stmts.indexOf(node);
-                
+
                 boolean foundDelete = false;
                 boolean foundYielding = false;
 
@@ -69,12 +68,12 @@ public class ImmediateDeleteCloneAfterBroadcastFix extends AbstractFixHeuristic 
                             foundDelete = true;
                             break;
                         }
-                        if (de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.isYielding(s)) {
+                        if (AstNodeUtil.isYielding(s)) {
                             foundYielding = true;
                             break;
                         }
                     }
-                    
+
                     if (!foundDelete || foundYielding) {
                         // Fixed: Either removed DeleteClone entirely, or inserted a yielding statement
                         addFix(node, node.getMetadata());

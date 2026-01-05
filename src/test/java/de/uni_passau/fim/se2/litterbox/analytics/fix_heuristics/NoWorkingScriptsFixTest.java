@@ -18,20 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.NoWorkingScripts;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.injection.bugs.NoWorkingScriptsInjector;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-
-import java.io.IOException;
 
 /**
  * Tests for NoWorkingScriptsFix.
@@ -61,8 +59,6 @@ public class NoWorkingScriptsFixTest extends AbstractFixHeuristicTest {
         NoWorkingScriptsFix finder = new NoWorkingScriptsFix(createTestIssueDTO(blockId));
         assertFixFound(finder, program);
     }
-
-
 
     @Test
     public void testFixFound_ScriptDeleted() throws IOException, ParsingException {

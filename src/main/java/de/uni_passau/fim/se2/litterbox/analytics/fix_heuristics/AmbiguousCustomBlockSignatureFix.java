@@ -46,9 +46,6 @@ public class AmbiguousCustomBlockSignatureFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
-
-
     @Override
     public void visit(ProcedureDefinition node) {
         visitChildren(node);

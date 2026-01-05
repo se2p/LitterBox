@@ -34,7 +34,9 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Fix heuristic for the MessageNeverSent bug.
@@ -57,20 +59,20 @@ public class MessageNeverSentFix extends AbstractFixHeuristic {
     @Override
     public Set<FixResult> check(Program program) {
         Preconditions.checkNotNull(program);
-        
+
         Set<FixResult> results = super.check(program);
         if (!results.isEmpty()) {
             return results;
         }
 
         // 1. Find the buggy node using the block ID
-        Optional<BlockIdNodeFinder.NodeContext> bugContextOpt = 
+        Optional<BlockIdNodeFinder.NodeContext> bugContextOpt =
                 BlockIdNodeFinder.find(program, getBugLocationBlockId());
-        
+
         // If not empty (handled by super), get node
         if (bugContextOpt.isPresent()) {
             ASTNode buggyNode = bugContextOpt.get().node();
-            
+
             // Handle case where BlockIdNodeFinder returns the Script instead of the Event
             if (buggyNode instanceof Script script) {
                 buggyNode = script.getEvent();
@@ -95,11 +97,6 @@ public class MessageNeverSentFix extends AbstractFixHeuristic {
 
                     if (senderFinder.foundSender != null) {
                         ASTNode sender = senderFinder.foundSender;
-                        // Use helper to set current context if needed for addFix 
-                        // (though addFix uses foundSender context if available? 
-                        // Wait, addFix uses 'this.currentActor' etc. which might not be set 
-                        // because we didn't visit normally!)
-                        // We must set currentActor/Script manually as in old code.
                         currentActor = AstNodeUtil.findParent(sender, ActorDefinition.class);
                         ScriptEntity scriptEntity = AstNodeUtil.findParent(sender, ScriptEntity.class);
 

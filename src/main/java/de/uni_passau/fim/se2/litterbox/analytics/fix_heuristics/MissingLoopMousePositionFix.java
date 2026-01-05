@@ -27,7 +27,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointTowards;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
@@ -55,9 +58,6 @@ public class MissingLoopMousePositionFix extends AbstractFixHeuristic {
     protected IssueFinder getRelatedBugFinder() {
         return relatedBugFinder;
     }
-
-
-
 
     @Override
     public void visit(RepeatForeverStmt node) {

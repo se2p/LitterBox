@@ -51,7 +51,6 @@ public class ImmediateStopAfterSayFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
     @Override
     public void visit(Say node) {
         checkFixed(node);

@@ -21,7 +21,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -92,7 +91,7 @@ public class ParameterOutOfScopeFixTest extends AbstractFixHeuristicTest {
         String fixedCode = """
                 define myBlock (x)
                 say (x)
-                
+
                 when green flag clicked
                 move (10) steps
                 """;
@@ -116,7 +115,7 @@ public class ParameterOutOfScopeFixTest extends AbstractFixHeuristicTest {
         // Fix check: The bug is the usage of 'x' outside scope. In the original program, that usage block
         // does not exist (it's inside the procedure).
         String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
-        
+
         ParameterOutOfScopeFix fix = new ParameterOutOfScopeFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fix, fixedProgram);
     }

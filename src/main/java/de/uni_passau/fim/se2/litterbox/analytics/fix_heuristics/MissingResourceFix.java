@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ResourceMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
@@ -67,13 +68,12 @@ public class MissingResourceFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
     @Override
     public void visit(Program node) {
         // Collect backdrops from Stage
         for (ActorDefinition actor : node.getActorDefinitionList().getDefinitions()) {
             if (actor.getActorType().isStage()) {
-                backdrops = collectResourceNames(actor.getActorMetadata().getCostumes().getList());
+                backdrops = getCostumeNames(actor);
                 break;
             }
         }
@@ -82,18 +82,41 @@ public class MissingResourceFix extends AbstractFixHeuristic {
 
     @Override
     public void visit(ActorDefinition actor) {
-        images = collectResourceNames(actor.getActorMetadata().getCostumes().getList());
-        sounds = collectResourceNames(actor.getActorMetadata().getSounds().getList());
+        images = getCostumeNames(actor);
+        sounds = getSoundNames(actor);
         if (actor.getActorType().isStage()) {
-            backdrops = collectResourceNames(actor.getActorMetadata().getCostumes().getList());
+            backdrops = getCostumeNames(actor);
         }
         super.visit(actor);
     }
 
     private Set<String> collectResourceNames(List<? extends ResourceMetadata> resources) {
+        if (resources == null) {
+            return Set.of();
+        }
         return resources.stream()
                 .map(ResourceMetadata::getName)
                 .collect(Collectors.toUnmodifiableSet());
+    }
+
+    /**
+     * Safely get costume names from an actor, handling null metadata.
+     */
+    private Set<String> getCostumeNames(ActorDefinition actor) {
+        if (actor.getActorMetadata() == null || actor.getActorMetadata().getCostumes() == null) {
+            return Set.of();
+        }
+        return collectResourceNames(actor.getActorMetadata().getCostumes().getList());
+    }
+
+    /**
+     * Safely get sound names from an actor, handling null metadata.
+     */
+    private Set<String> getSoundNames(ActorDefinition actor) {
+        if (actor.getActorMetadata() == null || actor.getActorMetadata().getSounds() == null) {
+            return Set.of();
+        }
+        return collectResourceNames(actor.getActorMetadata().getSounds().getList());
     }
 
     private void check(ASTNode node, String name, Set<String> resources) {
@@ -118,6 +141,13 @@ public class MissingResourceFix extends AbstractFixHeuristic {
         if (node.getElementChoice() instanceof WithExpr withExpr
                 && withExpr.getExpression() instanceof StrId strId) {
             check(node, strId.getName(), backdrops);
+        }
+    }
+
+    @Override
+    public void visit(BackdropSwitchTo node) {
+        if (node.getBackdrop() != null) {
+            check(node, node.getBackdrop().getName(), backdrops);
         }
     }
 

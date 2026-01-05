@@ -31,13 +31,23 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ResourceMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.injection.util.ResourceValidator;
-import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
 import java.util.List;
+import java.util.Set;
+import java.util.Collections;
+import java.util.stream.Collectors;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
@@ -54,6 +64,7 @@ import static de.uni_passau.fim.se2.litterbox.injection.util.InjectionConstants.
 public class MissingResourceInjector extends AbstractBugInjector {
 
     private ActorDefinition currentActor;
+    private Set<String> stageBackdrops = Collections.emptySet();
 
     private final IssueFinder issueFinder = new MissingResource();
 
@@ -79,9 +90,23 @@ public class MissingResourceInjector extends AbstractBugInjector {
         Program workingCopy = cloner.apply(program);
 
         // Ensure parent links are correctly established in the working copy
-        workingCopy.accept(new de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor());
+        workingCopy.accept(new ParentVisitor());
 
         return super.inject(workingCopy);
+    }
+
+    @Override
+    public void visit(Program node) {
+        // Collect backdrops from Stage
+        for (ActorDefinition actor : node.getActorDefinitionList().getDefinitions()) {
+            if (actor.getActorType().isStage()) {
+                stageBackdrops = actor.getActorMetadata().getCostumes().getList().stream()
+                        .map(ResourceMetadata::getName)
+                        .collect(Collectors.toUnmodifiableSet());
+                break;
+            }
+        }
+        super.visit(node);
     }
 
     @Override
@@ -90,6 +115,35 @@ public class MissingResourceInjector extends AbstractBugInjector {
                 name -> ResourceValidator.hasCostume(currentActor.getActorMetadata(), name),
                 SwitchCostumeTo::new,
                 INVALID_COSTUME_NAME);
+        super.visit(node);
+    }
+
+    @Override
+    public void visit(SwitchBackdrop node) {
+        handleResourceStmt(node, node.getElementChoice(),
+                name -> stageBackdrops.contains(name),
+                SwitchBackdrop::new,
+                INVALID_COSTUME_NAME);
+        super.visit(node);
+    }
+
+    @Override
+    public void visit(SwitchBackdropAndWait node) {
+        handleResourceStmt(node, node.getElementChoice(),
+                name -> stageBackdrops.contains(name),
+                SwitchBackdropAndWait::new,
+                INVALID_COSTUME_NAME);
+        super.visit(node);
+    }
+
+    @Override
+    public void visit(BackdropSwitchTo node) {
+        if (node.getBackdrop() instanceof StrId strId) {
+            String backdropName = strId.getName();
+            if (stageBackdrops.contains(backdropName)) {
+                injectBackdropEvent(node, INVALID_COSTUME_NAME);
+            }
+        }
         super.visit(node);
     }
 
@@ -175,5 +229,29 @@ public class MissingResourceInjector extends AbstractBugInjector {
         WithExpr newWithExpr = new WithExpr(invalidStrId, newMetadata);
         invalidStrId.setParentNode(newWithExpr);
         return newWithExpr;
+    }
+
+    private void injectBackdropEvent(BackdropSwitchTo node, String invalidName) {
+        modifyClonedNode(node, clonedNode -> {
+            StrId invalidId = new StrId(invalidName);
+            // Use existing metadata
+            BackdropSwitchTo newEvent = new BackdropSwitchTo(invalidId, (BlockMetadata) clonedNode.getMetadata());
+            invalidId.setParentNode(newEvent);
+
+            if (clonedNode.getParentNode() instanceof Script oldScript
+                    && oldScript.getParentNode() instanceof ScriptList scriptList) {
+                
+                Script newScript = new Script(newEvent, oldScript.getStmtList());
+                newEvent.setParentNode(newScript);
+                oldScript.getStmtList().setParentNode(newScript);
+
+                List<Script> scripts = scriptList.getScriptList();
+                int idx = scripts.indexOf(oldScript);
+                if (idx != -1) {
+                    scripts.set(idx, newScript);
+                    newScript.setParentNode(scriptList);
+                }
+            }
+        });
     }
 }

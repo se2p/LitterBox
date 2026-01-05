@@ -113,7 +113,7 @@ public class ParameterAsLiteralFixTest extends AbstractFixHeuristicTest {
         // Since we are simulating "deletion" or "replacement back to variable", if we look for the *literal*
         // in the original (where it was a variable), it won't be found as that specific literal node.
         String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
-        
+
         ParameterAsLiteralFix fix = new ParameterAsLiteralFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fix, fixedProgram);
     }

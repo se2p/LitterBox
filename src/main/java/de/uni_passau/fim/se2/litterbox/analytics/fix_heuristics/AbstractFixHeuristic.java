@@ -20,11 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -34,11 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Abstract base class for fix heuristics that check whether a previously reported bug
@@ -53,13 +45,19 @@ import java.util.Set;
  */
 public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisitor {
 
-    /** The original issue that this heuristic is checking for a fix. */
+    /**
+     * The original issue that this heuristic is checking for a fix.
+     */
     protected final IssueDTO originalIssue;
 
-    /** The set of fix results found during the check. */
+    /**
+     * The set of fix results found during the check.
+     */
     protected Set<FixResult> fixes = new LinkedHashSet<>();
 
-    /** The bug instances found by the related bug finder in the current program. */
+    /**
+     * The bug instances found by the related bug finder in the current program.
+     */
     protected Set<Issue> currentBugInstances = Collections.emptySet();
 
     // Context fields (similar to AbstractIssueFinder)
@@ -127,6 +125,27 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
      */
     protected boolean matchesBugLocation(ASTNode node) {
         return AstNodeUtil.hasBlockId(node, getBugLocationBlockId());
+    }
+
+    /**
+     * Checks if the given node or any of its ancestors matches the bug location block ID.
+     *
+     * <p>This is useful for expression nodes (like {@code StringLiteral}) which typically
+     * don't have their own block ID. In Scratch, block IDs are assigned to statement-level
+     * blocks, not to nested expressions.
+     *
+     * @param node the AST node to check
+     * @return true if this node or any ancestor matches the original bug location
+     */
+    protected boolean matchesBugLocationOrAncestor(ASTNode node) {
+        ASTNode current = node;
+        while (current != null) {
+            if (matchesBugLocation(current)) {
+                return true;
+            }
+            current = current.getParentNode();
+        }
+        return false;
     }
 
     /**
@@ -258,7 +277,7 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
      * Adds a fix result for the given node.
      *
      * @param fixedNode the node where the fix was detected
-     * @param metadata the metadata associated with the node
+     * @param metadata  the metadata associated with the node
      */
     protected void addFix(ASTNode fixedNode, Metadata metadata) {
         fixes.add(new FixResult(
@@ -278,9 +297,9 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
      * (e.g., in check() after super.check() returns) where currentActor/currentScript
      * may not be set to the correct values.
      *
-     * @param fixedNode the node where the fix was detected
-     * @param metadata the metadata associated with the node
-     * @param actor the actor containing the fixed code
+     * @param fixedNode         the node where the fix was detected
+     * @param metadata          the metadata associated with the node
+     * @param actor             the actor containing the fixed code
      * @param scriptOrProcedure the script or procedure containing the fixed code
      */
     protected void addFix(ASTNode fixedNode, Metadata metadata,

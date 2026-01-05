@@ -26,8 +26,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
-
-
 /**
  * Fix heuristic for the RecursiveCloning bug.
  *
@@ -56,9 +54,6 @@ public class RecursiveCloningFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
-
-
     @Override
     public void visit(Script node) {
         if (node.getEvent() instanceof StartedAsClone) {
@@ -67,14 +62,14 @@ public class RecursiveCloningFix extends AbstractFixHeuristic {
 
             // First pass: check if DeleteClone exists in the script
             visitChildren(node);
-            
+
             // Second pass: if DeleteClone was found, report the fix at the buggy block location
             if (foundDelete) {
                 secondVisit = true;
                 visitChildren(node);
                 secondVisit = false;
             }
-            
+
             foundDelete = false; // Reset state
         }
     }

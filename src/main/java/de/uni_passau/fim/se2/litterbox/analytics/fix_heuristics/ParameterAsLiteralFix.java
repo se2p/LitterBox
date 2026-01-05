@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ParameterAsLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
@@ -73,10 +74,9 @@ public class ParameterAsLiteralFix extends AbstractFixHeuristic {
                 }
             });
         }
-        
+
         return Collections.unmodifiableSet(fixes);
     }
-
 
     @Override
     public void visit(ProcedureDefinition node) {
@@ -93,7 +93,7 @@ public class ParameterAsLiteralFix extends AbstractFixHeuristic {
     public void visit(StringLiteral node) {
         if (matchesBugLocation(node)) {
             // Check if parent is StrId (identifier context), ignore if so
-            if (node.getParentNode() instanceof de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId) {
+            if (node.getParentNode() instanceof StrId) {
                 return;
             }
             // Only report fix if inside a procedure AND text no longer matches parameter
@@ -103,9 +103,6 @@ public class ParameterAsLiteralFix extends AbstractFixHeuristic {
                     addFix(node, node.getMetadata());
                 }
             }
-        } else {
-             // System.out.println("Node mismatch: " + node + " ID: " + node.getMetadata().getBlockId() + 
-             //                    " Expected: " + getBugLocationBlockId());
         }
     }
 }

@@ -72,7 +72,6 @@ public class MissingBackdropSwitchFix extends AbstractFixHeuristic {
         return relatedBugFinder;
     }
 
-
     @Override
     public void visit(SwitchBackdrop node) {
         recordSwitch(node.getElementChoice());
