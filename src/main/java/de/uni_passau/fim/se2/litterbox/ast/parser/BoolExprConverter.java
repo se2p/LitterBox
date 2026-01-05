@@ -20,7 +20,9 @@ package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
@@ -234,12 +236,19 @@ final class BoolExprConverter extends ExprConverter {
             final KnownInputs inputKey
     ) {
         final RawInput rawInput = containingBlock.getInput(inputKey);
-        final NumExpr input = NumExprConverter.convertNumExpr(state, containingBlock, rawInput);
 
-        if (input instanceof UnspecifiedNumExpr) {
+        if (NumExprConverter.parseableAsNumExpr(state.getCurrentTarget(), rawInput)) {
+            return NumExprConverter.convertNumExpr(state, containingBlock, rawInput);
+        } else if (StringExprConverter.parseableAsStringExpr(state.getCurrentTarget(), rawInput)) {
             return StringExprConverter.convertStringExpr(state, containingBlock, rawInput);
         }
 
-        return input;
+        final Expression input = ExprConverter.convertExpr(state, containingBlock, rawInput);
+
+        if (input instanceof ComparableExpr comparableExpr) {
+            return comparableExpr;
+        }
+
+        return new AsNumber(input);
     }
 }

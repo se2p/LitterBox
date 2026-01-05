@@ -63,9 +63,27 @@ public class MessageNeverSentInjector extends AbstractBugInjector {
         // No point in changing broadcasts for messages that are already not received
         for (Map.Entry<String, List<Stmt>> entry : broadcastsByMessage.entrySet()) {
             if (receivedMessages.contains(entry.getKey())) {
-                modifyClonedNode(entry.getValue().getFirst(), this::applyTypoToAllBroadcasts);
+                // Only inject if at least one broadcast is reachable
+                boolean hasReachableBroadcast = entry.getValue().stream().anyMatch(this::isReachable);
+                if (hasReachableBroadcast) {
+                    modifyClonedNode(entry.getValue().getFirst(), this::applyTypoToAllBroadcasts);
+                }
             }
         }
+    }
+
+    private boolean isReachable(Stmt stmt) {
+        // Traverse parents to find Script
+        de.uni_passau.fim.se2.litterbox.ast.model.ASTNode current = stmt;
+        while (current != null && !(current instanceof Script)) {
+            current = current.getParentNode();
+        }
+
+        if (current instanceof Script script) {
+            // Check if event is Never (detached)
+            return !(script.getEvent() instanceof de.uni_passau.fim.se2.litterbox.ast.model.event.Never);
+        }
+        return false;
     }
 
     /**

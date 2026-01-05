@@ -94,7 +94,9 @@ public class TypeErrorTest implements FinderTest, JsonTest {
         Program booleanEquals = JsonTest.parseProgram("./src/test/fixtures/bugs/comparingTouching.json");
         TypeError parameterName = new TypeError();
         Set<Issue> issues = parameterName.check(booleanEquals);
-        Assertions.assertEquals(1, issues.size());
+        // Expecting 2 issues: each Touching block (Boolean) is wrapped in AsNumber by the parser,
+        // and the type checker correctly flags each as a type error (Boolean where Number expected).
+        Assertions.assertEquals(2, issues.size());
         for (Issue issue : issues) {
             Assertions.assertNotNull(issue.getCodeLocation());
         }

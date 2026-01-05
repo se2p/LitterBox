@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
@@ -88,7 +88,7 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
         }
     }
 
-    private boolean isBooleanTrueLiteral(ComparableExpr expr) {
+    private boolean isBooleanTrueLiteral(Expression expr) {
         if (expr instanceof StringLiteral literal) {
             if (literal.getText().equalsIgnoreCase("true")) {
                 return true;
@@ -97,12 +97,14 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
             if (((int) literal.getValue()) == 1) {
                 return true;
             }
+        } else if (expr instanceof de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber asNumber) {
+            return isBooleanTrueLiteral(asNumber.getOperand1()); // Recursive check
         }
 
         return false;
     }
 
-    private boolean isBooleanFalseLiteral(ComparableExpr expr) {
+    private boolean isBooleanFalseLiteral(Expression expr) {
         if (expr instanceof StringLiteral literal) {
             if (literal.getText().equalsIgnoreCase("false")) {
                 return true;
@@ -111,30 +113,45 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
             if (((int) literal.getValue()) == 0) {
                 return true;
             }
+        } else if (expr instanceof de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber asNumber) {
+            return isBooleanFalseLiteral(asNumber.getOperand1()); // Recursive check
         }
 
         return false;
     }
 
-    private String getBooleanLiteral(ComparableExpr expr) {
+    private String getBooleanLiteral(Expression expr) {
         if (expr instanceof StringLiteral literal) {
             return literal.getText();
         } else if (expr instanceof NumberLiteral literal) {
             return Integer.toString((int) literal.getValue());
+        } else if (expr instanceof de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber asNumber) {
+            return getBooleanLiteral(asNumber.getOperand1()); // Recursive extraction
         }
-        throw new RuntimeException("Unknown literal type");
+        throw new RuntimeException("Unknown literal type: " + expr.getClass().getName());
     }
 
-    private boolean isBooleanExpression(ComparableExpr expr) {
+    private boolean isBooleanExpression(Expression expr) {
         if (expr instanceof AsString asString) {
             if (asString.getOperand1() instanceof BoolExpr) {
+                return true;
+            }
+        }
+        if (expr instanceof de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber asNumber) {
+            if (asNumber.getOperand1() instanceof BoolExpr) {
                 return true;
             }
         }
         return false;
     }
 
-    private BoolExpr getBooleanExpression(ComparableExpr expr) {
+    private BoolExpr getBooleanExpression(Expression expr) {
+        if (expr instanceof AsString asString) {
+            return (BoolExpr) asString.getOperand1();
+        }
+        if (expr instanceof de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber asNumber) {
+            return (BoolExpr) asNumber.getOperand1();
+        }
         return (BoolExpr) ((AsString) expr).getOperand1();
     }
 
