@@ -230,21 +230,6 @@ public class DiffAnalyzer {
                             return fix.getOriginalBugFinder();
                         }
 
-                            @Override
-                            public IssueType getIssueType() {
-                                return IssueType.BUG;
-                            }
-                        })
-                        .withProgram(program)
-                        .withActor(fix.actor())
-                        .withCurrentNode(fix.fixedNode())
-                        .withScriptOrProcedure(AstNodeUtil.findParent(fix.fixedNode(), ScriptEntity.class))
-                        .withMetadata(fix.metadata())
-                        .withSeverity(IssueSeverity.LOW)
-                        .withHint(fix.getOriginalBugFinder())
-                        .build();
-                issues.add(issue);
-            }
                         @Override
                         public IssueType getIssueType() {
                             return IssueType.BUG;
