@@ -83,13 +83,13 @@ import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.cre
 
 public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor {
     private String previousBlockId = null;
-    private List<String> finishedJSONStrings;
-    private List<Stmt> stmtList;
+    private final List<String> finishedJSONStrings;
+    private final List<Stmt> stmtList;
     private int counter;
-    private IdVisitor idVis;
-    private SymbolTable symbolTable;
-    private ExpressionJSONCreator exprCreator;
-    private FixedExpressionJSONCreator fixedExprCreator;
+    private final IdVisitor idVis;
+    private final SymbolTable symbolTable;
+    private final ExpressionJSONCreator exprCreator;
+    private final FixedExpressionJSONCreator fixedExprCreator;
 
     public StmtListJSONCreator(String parentId, StmtList stmtList, SymbolTable symbolTable) {
         previousBlockId = parentId;
@@ -977,11 +977,11 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
 
     private String createSubstackJSON(StmtList stmtList, NonDataBlockMetadata metadata) {
         String insideBlockId = null;
-        
+
         StmtListJSONCreator creator = null;
         if (!stmtList.getStmts().isEmpty()) {
             creator = new StmtListJSONCreator(metadata.getBlockId(), stmtList, symbolTable);
-            
+
             // Find the first statement that has a valid ID (i.e. is not an UnspecifiedStmt or comment)
             for (Stmt stmt : stmtList.getStmts()) {
                 String id = idVis.getBlockId(stmt);

@@ -18,13 +18,21 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ImmediateDeleteCloneAfterBroadcast;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.ImmediateDeleteCloneAfterBroadcastInjector;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuristicTest {
 
@@ -160,31 +168,26 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
         Program fixedProgram = parseProgram(fixedCode);
 
         // Verify original has no bug
-        de.uni_passau.fim.se2.litterbox.analytics.bugs.ImmediateDeleteCloneAfterBroadcast bugFinder =
-                new de.uni_passau.fim.se2.litterbox.analytics.bugs.ImmediateDeleteCloneAfterBroadcast();
-        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues =
-                bugFinder.check(fixedProgram);
-        org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(),
+        ImmediateDeleteCloneAfterBroadcast bugFinder = new ImmediateDeleteCloneAfterBroadcast();
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
+        Assertions.assertTrue(originalIssues.isEmpty(),
                 "Original program should be clean");
 
         // Inject bug (adds DeleteClone after Broadcast)
-        de.uni_passau.fim.se2.litterbox.injection.bugs.ImmediateDeleteCloneAfterBroadcastInjector injector =
-                new de.uni_passau.fim.se2.litterbox.injection.bugs.ImmediateDeleteCloneAfterBroadcastInjector();
-        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results =
-                injector.inject(fixedProgram);
-        org.junit.jupiter.api.Assertions.assertFalse(results.isEmpty(),
+        ImmediateDeleteCloneAfterBroadcastInjector injector =
+                new ImmediateDeleteCloneAfterBroadcastInjector();
+        List<InjectionResult> results = injector.inject(fixedProgram);
+        Assertions.assertFalse(results.isEmpty(),
                 "Injector should produce results");
 
         // Verify bug in mutated
-        Program mutatedProgram = results.get(0).mutatedProgram();
-        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues =
-                bugFinder.check(mutatedProgram);
-        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(),
+        Program mutatedProgram = results.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
+        Assertions.assertFalse(bugIssues.isEmpty(),
                 "Mutated program should have bugs");
 
         // Fix check: Get bug location and verify fix heuristic identifies original as fixed
-        String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil
-                .getBlockId(bugIssues.iterator().next().getCodeLocation());
+        String bugBlockId = AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
 
         ImmediateDeleteCloneAfterBroadcastFix fix = new ImmediateDeleteCloneAfterBroadcastFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fix, fixedProgram);

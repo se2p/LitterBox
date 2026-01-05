@@ -18,12 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.OverwrittenVisualEffect;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.OverwrittenVisualEffectInjector;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Tests for OverwrittenVisualEffectFix.
@@ -94,23 +102,23 @@ public class OverwrittenVisualEffectFixTest extends AbstractFixHeuristicTest {
         Program fixedProgram = parseProgram(fixedCode);
 
         // Verify clean
-        de.uni_passau.fim.se2.litterbox.analytics.bugs.OverwrittenVisualEffect bugFinder = new de.uni_passau.fim.se2.litterbox.analytics.bugs.OverwrittenVisualEffect();
-        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues = bugFinder.check(fixedProgram);
+        OverwrittenVisualEffect bugFinder = new OverwrittenVisualEffect();
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
         org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(), "Original program should be clean");
 
         // Inject bug (likely adds another set effect immediately after)
-        de.uni_passau.fim.se2.litterbox.injection.bugs.OverwrittenVisualEffectInjector injector = new de.uni_passau.fim.se2.litterbox.injection.bugs.OverwrittenVisualEffectInjector();
-        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results = injector.inject(fixedProgram);
-        org.junit.jupiter.api.Assertions.assertFalse(results.isEmpty(), "Injector should produce results");
+        OverwrittenVisualEffectInjector injector = new OverwrittenVisualEffectInjector();
+        List<InjectionResult> results = injector.inject(fixedProgram);
+        Assertions.assertFalse(results.isEmpty(), "Injector should produce results");
 
         // Verify bug in mutated
-        Program mutatedProgram = results.get(0).mutatedProgram();
-        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues = bugFinder.check(mutatedProgram);
-        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(), "Mutated program should have bugs");
+        Program mutatedProgram = results.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
+        Assertions.assertFalse(bugIssues.isEmpty(), "Mutated program should have bugs");
 
         // Fix check: The bug is the overwritten effect. In the original program, that block doesn't exist (if added)
         // or is not overwritten.
-        String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
+        String bugBlockId = AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
 
         OverwrittenVisualEffectFix fix = new OverwrittenVisualEffectFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fix, fixedProgram);

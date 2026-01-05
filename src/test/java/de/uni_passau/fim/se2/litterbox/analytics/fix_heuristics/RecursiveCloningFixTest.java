@@ -18,12 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.RecursiveCloning;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.RecursiveCloningInjector;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 public class RecursiveCloningFixTest extends AbstractFixHeuristicTest {
 
@@ -89,22 +97,22 @@ public class RecursiveCloningFixTest extends AbstractFixHeuristicTest {
         Program fixedProgram = parseProgram(fixedCode);
 
         // Verify clean
-        de.uni_passau.fim.se2.litterbox.analytics.bugs.RecursiveCloning bugFinder = new de.uni_passau.fim.se2.litterbox.analytics.bugs.RecursiveCloning();
-        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues = bugFinder.check(fixedProgram);
-        org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(), "Original program should be clean");
+        RecursiveCloning bugFinder = new RecursiveCloning();
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
+        Assertions.assertTrue(originalIssues.isEmpty(), "Original program should be clean");
 
         // Inject bug (adds 'create clone of myself' without delete, or just adds the loop)
-        de.uni_passau.fim.se2.litterbox.injection.bugs.RecursiveCloningInjector injector = new de.uni_passau.fim.se2.litterbox.injection.bugs.RecursiveCloningInjector();
-        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results = injector.inject(fixedProgram);
-        org.junit.jupiter.api.Assertions.assertFalse(results.isEmpty(), "Injector should produce results");
+        RecursiveCloningInjector injector = new RecursiveCloningInjector();
+        List<InjectionResult> results = injector.inject(fixedProgram);
+        Assertions.assertFalse(results.isEmpty(), "Injector should produce results");
 
         // Verify bug in mutated
-        Program mutatedProgram = results.get(0).mutatedProgram();
-        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues = bugFinder.check(mutatedProgram);
-        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(), "Mutated program should have bugs");
+        Program mutatedProgram = results.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
+        Assertions.assertFalse(bugIssues.isEmpty(), "Mutated program should have bugs");
 
         // Fix check: The bug is the 'create clone' call. In the original, it doesn't exist.
-        String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
+        String bugBlockId = AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
 
         RecursiveCloningFix fix = new RecursiveCloningFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fix, fixedProgram);

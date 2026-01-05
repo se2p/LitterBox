@@ -201,7 +201,7 @@ public class MissingResourceInjector extends AbstractBugInjector {
 
         modifyClonedNode(node, clonedNode -> {
             WithExpr newWithExpr = createInvalidWithExpr(originalWithExpr, invalidName);
-            T newStmt = constructor.apply(newWithExpr, (BlockMetadata) clonedNode.getMetadata());
+            T newStmt = constructor.apply(newWithExpr, clonedNode.getMetadata());
             newWithExpr.setParentNode(newStmt);
             AstNodeUtil.linkParents(newStmt);
 
@@ -235,12 +235,12 @@ public class MissingResourceInjector extends AbstractBugInjector {
         modifyClonedNode(node, clonedNode -> {
             StrId invalidId = new StrId(invalidName);
             // Use existing metadata
-            BackdropSwitchTo newEvent = new BackdropSwitchTo(invalidId, (BlockMetadata) clonedNode.getMetadata());
+            BackdropSwitchTo newEvent = new BackdropSwitchTo(invalidId, clonedNode.getMetadata());
             invalidId.setParentNode(newEvent);
 
             if (clonedNode.getParentNode() instanceof Script oldScript
                     && oldScript.getParentNode() instanceof ScriptList scriptList) {
-                
+
                 Script newScript = new Script(newEvent, oldScript.getStmtList());
                 newEvent.setParentNode(newScript);
                 oldScript.getStmtList().setParentNode(newScript);

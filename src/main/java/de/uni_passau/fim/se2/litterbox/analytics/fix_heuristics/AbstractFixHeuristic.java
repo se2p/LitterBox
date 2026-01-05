@@ -213,10 +213,10 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
         resetState();
 
         String blockId = getBugLocationBlockId();
-        boolean blockExists = true;
+        boolean blockExists;
 
         if (blockId != null && !blockId.isBlank()) {
-            blockExists = !BlockIdNodeFinder.find(program, blockId).isEmpty();
+            blockExists = BlockIdNodeFinder.find(program, blockId).isPresent();
 
             // If the block is not found, it implies the buggy block was deleted,
             // which is considered a valid fix.

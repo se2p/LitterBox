@@ -18,12 +18,18 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.AmbiguousParameterNameUsed;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.AmbiguousParameterNameUsedInjector;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class AmbiguousParameterNameUsedFixTest extends AbstractFixHeuristicTest {
 
@@ -63,7 +69,7 @@ public class AmbiguousParameterNameUsedFixTest extends AbstractFixHeuristicTest 
         de.uni_passau.fim.se2.litterbox.injection.bugs.AmbiguousParameterNameUsedInjector injector =
                 new de.uni_passau.fim.se2.litterbox.injection.bugs.AmbiguousParameterNameUsedInjector();
 
-        Program buggyProgram = injector.inject(program).get(0).mutatedProgram();
+        Program buggyProgram = injector.inject(program).getFirst().mutatedProgram();
 
         String bugLocationBlockId = findBlockId(buggyProgram, ProcedureDefinition.class);
 
@@ -103,19 +109,17 @@ public class AmbiguousParameterNameUsedFixTest extends AbstractFixHeuristicTest 
         Program fixedProgram = parseProgram(fixedCode);
 
         // Inject the bug: Duplicate parameter names
-        de.uni_passau.fim.se2.litterbox.injection.bugs.AmbiguousParameterNameUsedInjector injector =
-                new de.uni_passau.fim.se2.litterbox.injection.bugs.AmbiguousParameterNameUsedInjector();
+        AmbiguousParameterNameUsedInjector injector = new AmbiguousParameterNameUsedInjector();
 
-        Program buggyProgram = injector.inject(fixedProgram).get(0).mutatedProgram();
+        Program buggyProgram = injector.inject(fixedProgram).getFirst().mutatedProgram();
 
         // Verify the bug is found
-        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> issues =
-                new de.uni_passau.fim.se2.litterbox.analytics.bugs.AmbiguousParameterNameUsed().check(buggyProgram);
-        org.junit.jupiter.api.Assertions.assertFalse(issues.isEmpty(), "Injector should create at least one bug");
+        Set<Issue> issues = new AmbiguousParameterNameUsed().check(buggyProgram);
+        Assertions.assertFalse(issues.isEmpty(), "Injector should create at least one bug");
 
         // Verify the fix heuristic finds the fix (original program)
-        de.uni_passau.fim.se2.litterbox.analytics.Issue issue = issues.iterator().next();
-        String bugID = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(issue.getNormalizedCodeLocation());
+        Issue issue = issues.iterator().next();
+        String bugID = AstNodeUtil.getBlockId(issue.getNormalizedCodeLocation());
 
         AmbiguousParameterNameUsedFix heuristic = new AmbiguousParameterNameUsedFix(createTestIssueDTO(bugID));
         assertFixFound(heuristic, fixedProgram);

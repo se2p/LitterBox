@@ -151,7 +151,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      *
      * @param originalNode The node in the original AST that triggered the injection
      * @param mutator      Logic to apply to the cloned node
-     * @param scriptId     The script ID to associate with this injection
+     * @param originalScriptId     The script ID to associate with this injection
      * @param <T>          The type of the AST node
      */
     @SuppressWarnings("unchecked")

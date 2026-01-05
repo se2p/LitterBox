@@ -23,6 +23,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.MissingResource;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -91,16 +93,15 @@ public class MissingResourceInjectorTest implements JsonTest {
                 """;
 
         Program originalProgram = parseScratchBlocks(script);
-        
+
         // Count statements in original program before injection
-        de.uni_passau.fim.se2.litterbox.ast.model.Script targetScript = originalProgram.getActorDefinitionList().getDefinitions().stream()
+        Script targetScript = originalProgram.getActorDefinitionList().getDefinitions().stream()
             .flatMap(a -> a.getScripts().getScriptList().stream())
             .findFirst()
             .orElseThrow(() -> new RuntimeException("No scripts found in parsed program"));
 
-        int originalStmtCount = ((de.uni_passau.fim.se2.litterbox.ast.model.StmtList) 
-            targetScript.getStmtList()).getStmts().size();
-                
+        int originalStmtCount = targetScript.getStmtList().getNumberOfStatements();
+
         Assertions.assertEquals(3, originalStmtCount, "Should have 3 statements initially");
 
         MissingResourceInjector injector = new MissingResourceInjector();
@@ -108,23 +109,21 @@ public class MissingResourceInjectorTest implements JsonTest {
 
         // Verify that the original AST nodes are NOT mutated
         // The first statement should still be "move (10) steps"
-        de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps firstStmt = 
-            (de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps) 
-            ((de.uni_passau.fim.se2.litterbox.ast.model.StmtList)targetScript.getStmtList()).getStmts().get(0);
-            
+        MoveSteps firstStmt = (MoveSteps) targetScript.getStmtList().getStmts().getFirst();
+
         Assertions.assertNotNull(firstStmt, "First statement should be preserved");
-                
+
         // Also verify size
-        int afterInjectionStmtCount = ((de.uni_passau.fim.se2.litterbox.ast.model.StmtList) 
+        int afterInjectionStmtCount = ((de.uni_passau.fim.se2.litterbox.ast.model.StmtList)
             targetScript.getStmtList()).getStmts().size();
 
-        Assertions.assertEquals(originalStmtCount, afterInjectionStmtCount, 
+        Assertions.assertEquals(originalStmtCount, afterInjectionStmtCount,
             "Original AST statement count changed! Mutation detected.");
-            
+
         // Also verify the second injection result didn't start with a mutated AST
         if (injected.size() > 1) {
              System.out.println("Checking injection result 2...");
-             // You'd need more complex checks here to see if result 2 has the bug from result 1, 
+             // You'd need more complex checks here to see if result 2 has the bug from result 1,
              // but checking the original AST is the most direct proof.
         }
     }

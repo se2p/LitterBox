@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -90,14 +91,10 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
 
     private boolean isBooleanTrueLiteral(Expression expr) {
         if (expr instanceof StringLiteral literal) {
-            if (literal.getText().equalsIgnoreCase("true")) {
-                return true;
-            }
+            return literal.getText().equalsIgnoreCase("true");
         } else if (expr instanceof NumberLiteral literal) {
-            if (((int) literal.getValue()) == 1) {
-                return true;
-            }
-        } else if (expr instanceof de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber asNumber) {
+            return ((int) literal.getValue()) == 1;
+        } else if (expr instanceof AsNumber asNumber) {
             return isBooleanTrueLiteral(asNumber.getOperand1()); // Recursive check
         }
 
@@ -106,14 +103,10 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
 
     private boolean isBooleanFalseLiteral(Expression expr) {
         if (expr instanceof StringLiteral literal) {
-            if (literal.getText().equalsIgnoreCase("false")) {
-                return true;
-            }
+            return literal.getText().equalsIgnoreCase("false");
         } else if (expr instanceof NumberLiteral literal) {
-            if (((int) literal.getValue()) == 0) {
-                return true;
-            }
-        } else if (expr instanceof de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber asNumber) {
+            return ((int) literal.getValue()) == 0;
+        } else if (expr instanceof AsNumber asNumber) {
             return isBooleanFalseLiteral(asNumber.getOperand1()); // Recursive check
         }
 
@@ -125,7 +118,7 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
             return literal.getText();
         } else if (expr instanceof NumberLiteral literal) {
             return Integer.toString((int) literal.getValue());
-        } else if (expr instanceof de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber asNumber) {
+        } else if (expr instanceof AsNumber asNumber) {
             return getBooleanLiteral(asNumber.getOperand1()); // Recursive extraction
         }
         throw new RuntimeException("Unknown literal type: " + expr.getClass().getName());
@@ -137,10 +130,8 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
                 return true;
             }
         }
-        if (expr instanceof de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber asNumber) {
-            if (asNumber.getOperand1() instanceof BoolExpr) {
-                return true;
-            }
+        if (expr instanceof AsNumber asNumber) {
+            return asNumber.getOperand1() instanceof BoolExpr;
         }
         return false;
     }
@@ -149,10 +140,10 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
         if (expr instanceof AsString asString) {
             return (BoolExpr) asString.getOperand1();
         }
-        if (expr instanceof de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber asNumber) {
+        if (expr instanceof AsNumber asNumber) {
             return (BoolExpr) asNumber.getOperand1();
         }
-        return (BoolExpr) ((AsString) expr).getOperand1();
+        throw new IllegalArgumentException("Unknown boolean expression type: " + expr.getClass().getName());
     }
 
     @Override

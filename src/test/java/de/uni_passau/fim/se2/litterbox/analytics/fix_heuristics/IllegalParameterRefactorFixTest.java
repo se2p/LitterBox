@@ -116,7 +116,7 @@ public class IllegalParameterRefactorFixTest extends AbstractFixHeuristicTest {
                 "Injector should produce results");
 
         // Verify bug in mutated
-        Program mutatedProgram = results.get(0).mutatedProgram();
+        Program mutatedProgram = results.getFirst().mutatedProgram();
         java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues =
                 bugFinder.check(mutatedProgram);
         org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(),

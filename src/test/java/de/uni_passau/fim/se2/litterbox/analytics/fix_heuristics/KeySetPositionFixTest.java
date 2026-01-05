@@ -18,14 +18,21 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.KeySetPosition;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.KeySetPositionInjector;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Tests for KeySetPositionFix heuristic.
@@ -197,32 +204,26 @@ public class KeySetPositionFixTest extends AbstractFixHeuristicTest {
         Program fixedProgram = parseProgram(fixedCode);
 
         // Verify original has no bug (polling with ChangeX is correct)
-        de.uni_passau.fim.se2.litterbox.analytics.bugs.KeySetPosition bugFinder =
-                new de.uni_passau.fim.se2.litterbox.analytics.bugs.KeySetPosition();
-        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues =
-                bugFinder.check(fixedProgram);
+        KeySetPosition bugFinder = new KeySetPosition();
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
         Assertions.assertTrue(originalIssues.isEmpty(),
                 "Original polling program with ChangeX should be clean");
 
         // Inject bug - transforms polling to event-driven with SetX
-        de.uni_passau.fim.se2.litterbox.injection.bugs.KeySetPositionInjector injector =
-                new de.uni_passau.fim.se2.litterbox.injection.bugs.KeySetPositionInjector();
-        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results =
-                injector.inject(fixedProgram);
+        KeySetPositionInjector injector = new KeySetPositionInjector();
+        List<InjectionResult> results = injector.inject(fixedProgram);
 
         Assertions.assertFalse(results.isEmpty(),
                 "Injector should transform polling to event-driven");
 
         // Verify bug in mutated program
-        Program mutatedProgram = results.get(0).mutatedProgram();
-        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues =
-                bugFinder.check(mutatedProgram);
+        Program mutatedProgram = results.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
         Assertions.assertFalse(bugIssues.isEmpty(),
                 "Mutated event-driven program should have KeySetPosition bug");
 
         // Find the ChangeXBy block ID in the original (correct) program
-        String changeXBlockId = findBlockId(fixedProgram,
-                de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy.class);
+        String changeXBlockId = findBlockId(fixedProgram, ChangeXBy.class);
         Assertions.assertNotNull(changeXBlockId,
                 "Should find ChangeXBy block in original program");
 

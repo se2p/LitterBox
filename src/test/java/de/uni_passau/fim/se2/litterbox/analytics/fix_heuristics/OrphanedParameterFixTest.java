@@ -18,12 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.OrphanedParameter;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.OrphanedParameterInjector;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Tests for OrphanedParameterFix.
@@ -94,25 +102,25 @@ public class OrphanedParameterFixTest extends AbstractFixHeuristicTest {
         Program fixedProgram = parseProgram(fixedCode);
 
         // Verify clean
-        de.uni_passau.fim.se2.litterbox.analytics.bugs.OrphanedParameter bugFinder = new de.uni_passau.fim.se2.litterbox.analytics.bugs.OrphanedParameter();
-        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> originalIssues = bugFinder.check(fixedProgram);
-        org.junit.jupiter.api.Assertions.assertTrue(originalIssues.isEmpty(), "Original program should be clean");
+        OrphanedParameter bugFinder = new OrphanedParameter();
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
+        Assertions.assertTrue(originalIssues.isEmpty(), "Original program should be clean");
 
         // Inject bug
-        de.uni_passau.fim.se2.litterbox.injection.bugs.OrphanedParameterInjector injector = new de.uni_passau.fim.se2.litterbox.injection.bugs.OrphanedParameterInjector();
-        java.util.List<de.uni_passau.fim.se2.litterbox.injection.InjectionResult> results = injector.inject(fixedProgram);
-        org.junit.jupiter.api.Assertions.assertFalse(results.isEmpty(), "Injector should produce results");
+        OrphanedParameterInjector injector = new OrphanedParameterInjector();
+        List<InjectionResult> results = injector.inject(fixedProgram);
+        Assertions.assertFalse(results.isEmpty(), "Injector should produce results");
 
         // Verify bug in mutated
-        Program mutatedProgram = results.get(0).mutatedProgram();
-        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues = bugFinder.check(mutatedProgram);
-        org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(), "Mutated program should have bugs");
+        Program mutatedProgram = results.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
+        Assertions.assertFalse(bugIssues.isEmpty(), "Mutated program should have bugs");
 
         // Fix check: The bug is likely a parameter usage that is orphaned.
         // In the original program, that usage was valid (or didn't exist in that form).
         // If the injector modified an existing block to be orphaned, we target that block.
         // If the injector removed the definition, the usage acts as the bug location.
-        String bugBlockId = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
+        String bugBlockId = AstNodeUtil.getBlockId(bugIssues.iterator().next().getCodeLocation());
 
         OrphanedParameterFix fix = new OrphanedParameterFix(createTestIssueDTO(bugBlockId));
         assertFixFound(fix, fixedProgram);

@@ -18,14 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ComparingLiterals;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.injection.bugs.ComparingLiteralsInjector;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * Tests for ComparingLiteralsFix heuristic.
@@ -130,19 +136,17 @@ public class ComparingLiteralsFixTest extends AbstractFixHeuristicTest {
         Program fixedProgram = parseProgram(fixedCode);
 
         // Inject the bug: Change comparison to use literals e.g. 5 > 10
-        de.uni_passau.fim.se2.litterbox.injection.bugs.ComparingLiteralsInjector injector =
-                new de.uni_passau.fim.se2.litterbox.injection.bugs.ComparingLiteralsInjector();
+        ComparingLiteralsInjector injector = new ComparingLiteralsInjector();
 
-        Program buggyProgram = injector.inject(fixedProgram).get(0).mutatedProgram();
+        Program buggyProgram = injector.inject(fixedProgram).getFirst().mutatedProgram();
 
         // Verify the bug is found
-        java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> issues =
-                new de.uni_passau.fim.se2.litterbox.analytics.bugs.ComparingLiterals().check(buggyProgram);
-        org.junit.jupiter.api.Assertions.assertFalse(issues.isEmpty(), "Injector should create at least one bug");
+        Set<Issue> issues = new ComparingLiterals().check(buggyProgram);
+        Assertions.assertFalse(issues.isEmpty(), "Injector should create at least one bug");
 
         // Verify the fix heuristic finds the fix (original program uses variable)
-        de.uni_passau.fim.se2.litterbox.analytics.Issue issue = issues.iterator().next();
-        String bugID = de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.getBlockId(issue.getNormalizedCodeLocation());
+        Issue issue = issues.iterator().next();
+        String bugID = AstNodeUtil.getBlockId(issue.getNormalizedCodeLocation());
 
         ComparingLiteralsFix heuristic = new ComparingLiteralsFix(createTestIssueDTO(bugID));
         assertFixFound(heuristic, fixedProgram);
