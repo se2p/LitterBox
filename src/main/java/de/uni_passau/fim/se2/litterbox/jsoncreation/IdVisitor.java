@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
@@ -39,11 +40,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 
-public class IdVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor {
+public class IdVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor {
     private String id;
 
     public String getBlockId(Stmt stmt) {
@@ -490,6 +492,38 @@ public class IdVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpe
 
     @Override
     public void visit(Speak node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    // Music Extension
+
+    @Override
+    public void visit(ChangeTempoBy node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(SetTempoTo node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(SetInstrumentTo node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(PlayDrumForBeats node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(PlayNoteForBeats node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(RestForBeats node) {
         id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 }

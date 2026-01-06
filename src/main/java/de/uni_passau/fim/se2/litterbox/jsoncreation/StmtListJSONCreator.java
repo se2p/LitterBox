@@ -28,6 +28,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.ExprDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.ExprInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.FixedInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.ExprNote;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.Note;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
@@ -64,8 +72,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisS
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
@@ -81,7 +91,7 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.createField;
 
-public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor {
+public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor {
     private String previousBlockId = null;
     private final List<String> finishedJSONStrings;
     private final List<Stmt> stmtList;
@@ -325,7 +335,12 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     @Override
     public void visit(StopThisScript node) {
         String fieldsString = createFields(STOP_OPTION, "this script", null);
-        getStopMutation(fieldsString, (NonDataBlockMetadata) node.getMetadata(), node.getOpcode(), false);
+        String mutationString = createStopMetadata(false);
+        String json = createBlockWithMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+                previousBlockId, EMPTY_VALUE, fieldsString, mutationString, node.getOpcode());
+
+        finishedJSONStrings.add(json);
+        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 
     @Override
@@ -1164,6 +1179,78 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     @Override
     public void visit(Speak node) {
         createSingleStringExprBlock((NonDataBlockMetadata) node.getMetadata(), WORDS_KEY, node.getText(), node.getOpcode());
+    }
+
+    // Music Extension
+
+    @Override
+    public void visit(ChangeTempoBy node) {
+        createSingleNumExprBlock((NonDataBlockMetadata) node.getMetadata(), TEMPO_INPUT, node.getTempo(), MATH_NUM_PRIMITIVE, node.getOpcode());
+    }
+
+    @Override
+    public void visit(SetTempoTo node) {
+        createSingleNumExprBlock((NonDataBlockMetadata) node.getMetadata(), TEMPO_INPUT, node.getTempo(), MATH_NUM_PRIMITIVE, node.getOpcode());
+    }
+
+    @Override
+    public void visit(SetInstrumentTo node) {
+
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        List<String> inputs = new ArrayList<>();
+        if (node.getInstrument() instanceof FixedInstrument) {
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node.getInstrument(), node.getMenuInstrumentOpcode());
+            finishedJSONStrings.add(tuple.getJsonString());
+            inputs.add(createReferenceInput(INSTRUMENT, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+        } else {
+            inputs.add(createExpr(metadata, INSTRUMENT, ((ExprInstrument) node.getInstrument()).getExpr()));
+        }
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE, node.getOpcode()));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(PlayDrumForBeats node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createNumExpr(metadata, BEATS, node.getBeats(), MATH_NUM_PRIMITIVE));
+
+        if (node.getDrum() instanceof FixedDrum) {
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node.getDrum(), node.getMenuDrumOpcode());
+            finishedJSONStrings.add(tuple.getJsonString());
+            inputs.add(createReferenceInput(DRUM, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+        } else {
+            inputs.add(createExpr(metadata, DRUM, ((ExprDrum) node.getDrum()).getExpr()));
+        }
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE, node.getOpcode()));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(PlayNoteForBeats node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createNumExpr(metadata, BEATS, node.getBeats(), MATH_NUM_PRIMITIVE));
+
+        Note note = node.getNote();
+        if (note instanceof FixedNote) {
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), (FixedNote) note, DependentBlockOpcode.note);
+            finishedJSONStrings.add(tuple.getJsonString());
+            inputs.add(createReferenceInput(NOTE, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+        } else {
+            inputs.add(createExpr(metadata, NOTE, ((ExprNote) note).getExpr()));
+        }
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE, node.getOpcode()));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(RestForBeats node) {
+        createSingleNumExprBlock((NonDataBlockMetadata) node.getMetadata(), BEATS, node.getBeats(), MATH_NUM_PRIMITIVE, node.getOpcode());
     }
 }
 

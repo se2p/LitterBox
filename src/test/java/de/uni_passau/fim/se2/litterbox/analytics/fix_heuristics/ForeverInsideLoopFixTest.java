@@ -39,10 +39,10 @@ import java.util.Set;
  * <p>The bug is reported when a forever/until/repeat loop is nested inside another loop.
  * The fix is detected when the loop is no longer nested, or was deleted.
  */
-public class ForeverInsideLoopFixTest extends AbstractFixHeuristicTest {
+class ForeverInsideLoopFixTest extends AbstractFixHeuristicTest {
 
     @Test
-    public void testFixFound_ForeverNotNested() throws IOException, ParsingException {
+    void testFixFound_ForeverNotNested() throws IOException, ParsingException {
         // Fix: Forever loop is at top level (not nested inside another loop)
         String source = """
                 when green flag clicked
@@ -59,7 +59,7 @@ public class ForeverInsideLoopFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testFixFound_ForeverMovedOut() throws IOException, ParsingException {
+    void testFixFound_ForeverMovedOut() throws IOException, ParsingException {
         // Fix: Forever loop was nested, but is now at top level
         String source = """
                 when green flag clicked
@@ -79,7 +79,7 @@ public class ForeverInsideLoopFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testNoFix_ForeverNestedInRepeat() throws IOException, ParsingException {
+    void testNoFix_ForeverNestedInRepeat() throws IOException, ParsingException {
         // No Fix: Forever loop is nested inside a repeat loop
         String source = """
                 when green flag clicked
@@ -98,7 +98,7 @@ public class ForeverInsideLoopFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testFixFound_BlockDeleted() throws IOException, ParsingException {
+    void testFixFound_BlockDeleted() throws IOException, ParsingException {
         // Bug was fixed by deleting the forever loop entirely
         String source = """
                 when green flag clicked
@@ -117,7 +117,7 @@ public class ForeverInsideLoopFixTest extends AbstractFixHeuristicTest {
     // ========================================================================
 
     @Test
-    public void testNoFix_ForeverDeeplyNested() throws IOException, ParsingException {
+    void testNoFix_ForeverDeeplyNested() throws IOException, ParsingException {
         // No Fix: Forever loop deeply nested inside multiple loops
         String source = """
                 when green flag clicked
@@ -138,7 +138,7 @@ public class ForeverInsideLoopFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testNoFix_ForeverInsideLoopInsideIf() throws IOException, ParsingException {
+    void testNoFix_ForeverInsideLoopInsideIf() throws IOException, ParsingException {
         // No Fix: Forever inside if inside loop - still nested in loop context
         String source = """
                 when green flag clicked
@@ -159,7 +159,7 @@ public class ForeverInsideLoopFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testFixFound_ForeverInsideIfNotInLoop() throws IOException, ParsingException {
+    void testFixFound_ForeverInsideIfNotInLoop() throws IOException, ParsingException {
         // Fix: Forever is inside an if, but not inside a loop
         String source = """
                 when green flag clicked
@@ -189,7 +189,7 @@ public class ForeverInsideLoopFixTest extends AbstractFixHeuristicTest {
      * the injected forever inside the loop) represents a fixed state.
      */
     @Test
-    public void testInjector_RepeatWithStatements() throws IOException, ParsingException {
+    void testInjector_RepeatWithStatements() throws IOException, ParsingException {
         // Start with a fixed program - repeat with statements but no forever inside
         String fixedCode = """
                 when green flag clicked

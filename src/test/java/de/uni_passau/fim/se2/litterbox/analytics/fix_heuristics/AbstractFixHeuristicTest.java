@@ -134,7 +134,7 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
      * Assert that the given fix heuristic reports at least one fix.
      * (Backward-compatible overload for JSON string sources.)
      */
-    protected void assertFixFound(AbstractFixHeuristic finder, String jsonSource) throws IOException, ParsingException {
+    protected void assertFixFound(AbstractFixHeuristic finder, String jsonSource) throws ParsingException {
         Program program = new Scratch3Parser().parseString("test", jsonSource);
         assertFixFound(finder, program);
     }
@@ -152,7 +152,7 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
      * Assert that the given fix heuristic reports no fixes.
      * (Backward-compatible overload for JSON string sources.)
      */
-    protected void assertNoFixFound(AbstractFixHeuristic finder, String jsonSource) throws IOException, ParsingException {
+    protected void assertNoFixFound(AbstractFixHeuristic finder, String jsonSource) throws ParsingException {
         Program program = new Scratch3Parser().parseString("test", jsonSource);
         assertNoFixFound(finder, program);
     }

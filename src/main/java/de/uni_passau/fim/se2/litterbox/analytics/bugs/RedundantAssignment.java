@@ -23,6 +23,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.PlayDrumForBeats;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.PlayNoteForBeats;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.RestForBeats;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
@@ -392,7 +395,10 @@ public class RedundantAssignment extends AbstractIssueFinder {
                 || stmt instanceof GlideSecsToXY
                 || stmt instanceof GlideSecsTo
                 || stmt instanceof LoopStmt
+                || stmt instanceof PlayDrumForBeats
+                || stmt instanceof PlayNoteForBeats
                 || stmt instanceof PlaySoundUntilDone
+                || stmt instanceof RestForBeats
                 || stmt instanceof SayForSecs
                 || stmt instanceof Speak
                 || stmt instanceof StopThisScript

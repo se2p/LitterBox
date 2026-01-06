@@ -18,15 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import de.uni_passau.fim.se2.litterbox.analytics.DiffAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.DiffResult;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import picocli.CommandLine;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -195,8 +194,9 @@ public class DiffSubcommand implements Callable<Integer> {
                 issuesToJson(result.removed())
         );
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        JsonMapper mapper = JsonMapper.builder()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .build();
         mapper.writeValue(outputPath.toFile(), report);
 
         spec.commandLine().getOut().println("Diff report written to: " + outputPath);
@@ -226,7 +226,7 @@ public class DiffSubcommand implements Callable<Integer> {
 
     private record SummaryJson(
             int fixed,
-            @JsonProperty("new") int newCount,
+            int newBugs,
             int persisting,
             int removed
     ) {

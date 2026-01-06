@@ -104,12 +104,6 @@ public class VariableAsLiteralFix extends AbstractFixHeuristic {
     }
 
     @Override
-    public void visit(Program program) {
-        // Already handled in check() or via super.visit()
-        super.visit(program);
-    }
-
-    @Override
     public void visit(ActorDefinition actor) {
         currentActor = actor;
         if (currentActor.getIdent() == null) {

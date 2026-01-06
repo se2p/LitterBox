@@ -43,10 +43,8 @@ public class HideWithoutShow extends AbstractIssueFinder {
         hasShow = false;
         firstHide = null;
         super.visit(node);
-        if (hasHide && !hasShow) {
-            if (hasVisibleChange) {
-                addIssue(firstHide, firstHide.getMetadata());
-            }
+        if (hasHide && !hasShow && hasVisibleChange) {
+            addIssue(firstHide, firstHide.getMetadata());
         }
     }
 

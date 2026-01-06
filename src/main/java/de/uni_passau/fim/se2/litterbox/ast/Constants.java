@@ -200,6 +200,13 @@ public final class Constants {
     public static final String LANGUAGE_INPUT_KEY = "LANGUAGE";
     public static final String LANGUAGE_FIELDS_KEY = "languages";
 
+    // Music Extension Constants
+    public static final String DRUM = "DRUM";
+    public static final String NOTE = "NOTE";
+    public static final String BEATS = "BEATS";
+    public static final String INSTRUMENT = "INSTRUMENT";
+    public static final String TEMPO_INPUT = "TEMPO";
+
     /**
      * The default sprite names in the various languages in lowercase.
      *

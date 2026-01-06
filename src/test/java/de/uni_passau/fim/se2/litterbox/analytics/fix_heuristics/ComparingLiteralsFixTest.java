@@ -39,10 +39,10 @@ import java.util.Set;
  * <p>The bug is reported when a comparison compares two literals (always the same result).
  * The fix is detected when at least one operand is no longer a literal.
  */
-public class ComparingLiteralsFixTest extends AbstractFixHeuristicTest {
+class ComparingLiteralsFixTest extends AbstractFixHeuristicTest {
 
     @Test
-    public void testFixFound_BiggerThanWithVariable() throws IOException, ParsingException {
+    void testFixFound_BiggerThanWithVariable() throws IOException, ParsingException {
         // Fix: One operand is now a variable (x position)
         String source = """
                 when green flag clicked
@@ -59,7 +59,7 @@ public class ComparingLiteralsFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testFixFound_LessThanWithVariable() throws IOException, ParsingException {
+    void testFixFound_LessThanWithVariable() throws IOException, ParsingException {
         // Fix: One operand is now a variable
         String source = """
                 when green flag clicked
@@ -76,7 +76,7 @@ public class ComparingLiteralsFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testFixFound_EqualsWithVariable() throws IOException, ParsingException {
+    void testFixFound_EqualsWithVariable() throws IOException, ParsingException {
         // Fix: One operand is now a variable
         String source = """
                 when green flag clicked
@@ -93,7 +93,7 @@ public class ComparingLiteralsFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testNoFix_BothLiterals() throws IOException, ParsingException {
+    void testNoFix_BothLiterals() throws IOException, ParsingException {
         // No Fix: Both operands are still literals
         String source = """
                 when green flag clicked
@@ -110,7 +110,7 @@ public class ComparingLiteralsFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testFixFound_BlockDeleted() throws IOException, ParsingException {
+    void testFixFound_BlockDeleted() throws IOException, ParsingException {
         // Silent: The buggy comparison was deleted
         String source = """
                 when green flag clicked
@@ -128,7 +128,7 @@ public class ComparingLiteralsFixTest extends AbstractFixHeuristicTest {
     // ========================================================================
 
     @Test
-    public void testNoFix_BothLiteralsInNestedIf() throws IOException, ParsingException {
+    void testNoFix_BothLiteralsInNestedIf() throws IOException, ParsingException {
         // No Fix: Comparison with both literals inside nested structure
         String source = """
                 when green flag clicked
@@ -147,7 +147,7 @@ public class ComparingLiteralsFixTest extends AbstractFixHeuristicTest {
     }
 
     @Test
-    public void testFixFound_NestedComparisonWithVariable() throws IOException, ParsingException {
+    void testFixFound_NestedComparisonWithVariable() throws IOException, ParsingException {
         // Fix: Comparison now uses variable, even when deeply nested
         String source = """
                 when green flag clicked
@@ -172,7 +172,7 @@ public class ComparingLiteralsFixTest extends AbstractFixHeuristicTest {
     // ========================================================================
 
     @Test
-    public void testInjector_ComparingLiterals() throws IOException, ParsingException {
+    void testInjector_ComparingLiterals() throws IOException, ParsingException {
         // Start with a valid program (comparisons involving variables)
         String fixedCode = """
                 when green flag clicked

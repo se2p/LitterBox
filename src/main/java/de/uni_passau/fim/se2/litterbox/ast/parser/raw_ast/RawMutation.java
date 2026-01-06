@@ -35,6 +35,9 @@ public record RawMutation(
         @JsonDeserialize(using = RawMutationDeserializer.ArgumentDefaultValuesParser.class)
         List<ArgumentDefault<?>> argumentdefaults
 ) {
+    public RawMutation {
+    }
+
     public sealed interface ArgumentDefault<T> {
         T value();
 

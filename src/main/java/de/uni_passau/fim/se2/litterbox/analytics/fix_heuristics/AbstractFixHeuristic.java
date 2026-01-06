@@ -220,10 +220,10 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
             ASTNode bugLoc = issue.getCodeLocation();
 
             // If we have a block ID, try to match specifically on that
-            if (originalBlockId != null && !originalBlockId.isBlank()) {
-                if (AstNodeUtil.hasBlockId(bugLoc, originalBlockId)) {
-                    return true;
-                }
+            if (originalBlockId != null && !originalBlockId.isBlank() &&
+                    AstNodeUtil.hasBlockId(bugLoc, originalBlockId)) {
+                return true;
+
             }
 
             // Fallback: check if the bug location is a descendant of the given node

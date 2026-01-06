@@ -505,6 +505,9 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
 
         @Override
         public <T extends ASTNode> T apply(T node) {
+            if (node != null && mapping.containsKey(node)) {
+                return (T) mapping.get(node);
+            }
             T cloned = super.apply(node);
             if (node != null && cloned != null) {
                 mapping.put(node, cloned);

@@ -103,33 +103,25 @@ public class MessageNeverReceivedFix extends AbstractFixHeuristic {
     @Override
     public void visit(ReceptionOfMessage node) {
         if (node.getMsg().getMessage() instanceof StringLiteral text) {
-            if (scriptNotEmpty(node.getParentNode())) {
-                if (actorScriptsPerMessage.containsKey(text.getText())) {
-                    Map<ActorDefinition, List<Script>> actorScripts = actorScriptsPerMessage.get(text.getText());
-                    if (actorScripts.containsKey(currentActor)) {
-                        actorScripts.get(currentActor).add(currentScript);
-                    } else {
-                        List<Script> scripts = new ArrayList<>();
-                        scripts.add(currentScript);
-                        actorScripts.put(currentActor, scripts);
-                    }
+            String msg = text.getText();
+            if (actorScriptsPerMessage.containsKey(msg)) {
+                Map<ActorDefinition, List<Script>> actorScripts = actorScriptsPerMessage.get(msg);
+                if (actorScripts.containsKey(currentActor)) {
+                    actorScripts.get(currentActor).add(currentScript);
                 } else {
                     List<Script> scripts = new ArrayList<>();
                     scripts.add(currentScript);
-                    Map<ActorDefinition, List<Script>> actorScripts = new LinkedHashMap<>();
                     actorScripts.put(currentActor, scripts);
-                    actorScriptsPerMessage.put(text.getText(), actorScripts);
                 }
+            } else {
+                List<Script> scripts = new ArrayList<>();
+                scripts.add(currentScript);
+                Map<ActorDefinition, List<Script>> actorScripts = new LinkedHashMap<>();
+                actorScripts.put(currentActor, scripts);
+                actorScriptsPerMessage.put(msg, actorScripts);
             }
         }
 
         visitChildren(node);
-    }
-
-    private boolean scriptNotEmpty(ASTNode parentNode) {
-        if (!(parentNode instanceof Script script)) {
-            return false;
-        }
-        return script.getStmtList().hasStatements();
     }
 }

@@ -22,16 +22,19 @@ import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.LetterOf;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.PlayDrumForBeats;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.PlayNoteForBeats;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.RestForBeats;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetadataList;
@@ -293,7 +296,7 @@ public class AstNodeUtil {
 
     private static class ParentLinkingVisitor implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor,
             TextToSpeechExtensionVisitor, TranslateExtensionVisitor {
-        
+
         private ParentLinkingVisitor() {
         }
 
@@ -868,7 +871,14 @@ public class AstNodeUtil {
                 || stmt instanceof GlideSecsToXY
                 || stmt instanceof PlaySoundUntilDone
                 || stmt instanceof AskAndWait
-                || stmt instanceof BroadcastAndWait;
+                || stmt instanceof BroadcastAndWait
+                || stmt instanceof WaitUntil
+                || stmt instanceof RepeatTimesStmt
+                || stmt instanceof RepeatForeverStmt
+                || stmt instanceof UntilStmt
+                || stmt instanceof PlayDrumForBeats
+                || stmt instanceof PlayNoteForBeats
+                || stmt instanceof RestForBeats;
     }
 
     /**

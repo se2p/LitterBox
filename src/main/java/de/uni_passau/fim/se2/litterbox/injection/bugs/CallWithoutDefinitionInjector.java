@@ -74,7 +74,6 @@ public class CallWithoutDefinitionInjector extends AbstractBugInjector {
         // Collect all existing procedure names for unique typo generation
         Set<String> existingProcedures = collectAllProcedureNames();
 
-
         replaceNodeImmutably(node, originalCall -> {
             String uniqueTypo = generateUniqueTypo(originalCall.getIdent().getName(), existingProcedures);
             return new CallStmt(

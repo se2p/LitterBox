@@ -34,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Tests for {@link DiffAnalyzer}.
  */
-public class DiffAnalyzerTest implements JsonTest {
+class DiffAnalyzerTest implements JsonTest {
 
     private static final String BUGS_DETECTORS = "bugs";
 
     @Test
-    public void testAnalyzeSameProject_AllPersisting() throws IOException, ParsingException {
+    void testAnalyzeSameProject_AllPersisting() throws IOException, ParsingException {
         // When comparing a project to itself, all issues should be PERSISTING
         // Note: DiffAnalyzer expects .sb3 files for comparison
         Path projectPath = Path.of("src/test/fixtures/emptyProject.sb3");
@@ -58,7 +58,7 @@ public class DiffAnalyzerTest implements JsonTest {
     }
 
     @Test
-    public void testAnalyzeEmptyProject() throws IOException, ParsingException {
+    void testAnalyzeEmptyProject() throws IOException, ParsingException {
         // Empty .sb3 project should not crash
         Path emptyProject = Path.of("src/test/fixtures/emptyProject.sb3");
 
@@ -74,7 +74,7 @@ public class DiffAnalyzerTest implements JsonTest {
     }
 
     @Test
-    public void testDiffResultCounts() throws IOException, ParsingException {
+    void testDiffResultCounts() throws IOException, ParsingException {
         Path projectPath = Path.of("src/test/fixtures/emptyProject.sb3");
 
         DiffAnalyzer analyzer = new DiffAnalyzer(BUGS_DETECTORS, false);
@@ -88,7 +88,7 @@ public class DiffAnalyzerTest implements JsonTest {
     }
 
     @Test
-    public void testFixHeuristicRegistryInitialization() {
+    void testFixHeuristicRegistryInitialization() {
         // Verify all fix heuristics registered successfully
         assertTrue(FixHeuristicRegistry.allRegistrationsSucceeded(),
                 "All fix heuristics should register successfully. Failed: "
@@ -105,7 +105,7 @@ public class DiffAnalyzerTest implements JsonTest {
     }
 
     @Test
-    public void testAnalyzeIgnoreLooseBlocks() throws IOException, ParsingException {
+    void testAnalyzeIgnoreLooseBlocks() throws IOException, ParsingException {
         Path projectPath = Path.of("src/test/fixtures/emptyProject.sb3");
 
         // Both with and without ignoring loose blocks should work
@@ -119,7 +119,7 @@ public class DiffAnalyzerTest implements JsonTest {
     }
 
     @Test
-    public void testProgramBugAnalyzer() throws ParsingException {
+    void testProgramBugAnalyzer() throws ParsingException {
         // Test the underlying ProgramBugAnalyzer directly
         Scratch3Parser parser = new Scratch3Parser();
         Program program = parser.parseFile(new File("src/test/fixtures/emptyProject.sb3"));

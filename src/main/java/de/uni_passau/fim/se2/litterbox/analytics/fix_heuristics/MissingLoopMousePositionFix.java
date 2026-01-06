@@ -61,16 +61,18 @@ public class MissingLoopMousePositionFix extends AbstractFixHeuristic {
 
     @Override
     public void visit(RepeatForeverStmt node) {
+        boolean wasInsideLoop = insideLoop;
         insideLoop = true;
         visitChildren(node);
-        insideLoop = false;
+        insideLoop = wasInsideLoop;
     }
 
     @Override
     public void visit(UntilStmt node) {
+        boolean wasInsideLoop = insideLoop;
         insideLoop = true;
         visitChildren(node);
-        insideLoop = false;
+        insideLoop = wasInsideLoop;
     }
 
     private void check(ASTNode node) {
