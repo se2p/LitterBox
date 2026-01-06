@@ -33,6 +33,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.PlayDrumForBea
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.PlayNoteForBeats;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.RestForBeats;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
@@ -376,7 +380,7 @@ public class AstNodeUtil {
         return visitor.inputs.containsKey(inputKind) && visitor.inputs.get(inputKind) == child;
     }
 
-    private static class IsInputOfVisitor implements ScratchVisitor, PenExtensionVisitor {
+    private static class IsInputOfVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor, TranslateExtensionVisitor {
         private final Map<String, ASTNode> inputs = new LinkedHashMap<>();
 
         private IsInputOfVisitor() {
@@ -851,6 +855,35 @@ public class AstNodeUtil {
         public void visit(final SetPenColorToColorStmt node) {
             inputs.put(COLOR_KEY, node.getColorExpr());
         }
+
+        /*
+         * Text to Speech blocks
+         */
+
+        @Override
+        public void visit(final Speak node) {
+            inputs.put(WORDS_KEY, node.getText());
+        }
+
+        @Override
+        public void visit(final SetVoice node) {
+            inputs.put(VOICE_INPUT_KEY, node.getVoice());
+        }
+
+        @Override
+        public void visit(final SetLanguage node) {
+            inputs.put(LANGUAGE_INPUT_KEY, node.getLanguage());
+        }
+
+        /*
+         * Translate blocks
+         */
+
+        @Override
+        public void visit(final TranslateTo node) {
+            inputs.put(WORDS_KEY, node.getText());
+            inputs.put(LANGUAGE_INPUT_KEY, node.getLanguage());
+        }
     }
 
     /**
@@ -878,7 +911,9 @@ public class AstNodeUtil {
                 || stmt instanceof UntilStmt
                 || stmt instanceof PlayDrumForBeats
                 || stmt instanceof PlayNoteForBeats
-                || stmt instanceof RestForBeats;
+                || stmt instanceof RestForBeats
+                || stmt instanceof Speak
+                || stmt instanceof TranslateTo;
     }
 
     /**

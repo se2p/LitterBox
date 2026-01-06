@@ -49,6 +49,7 @@ public class MissingResourceFix extends AbstractFixHeuristic {
     private Set<String> images;
     private Set<String> backdrops;
     private Set<String> sounds;
+    private Set<String> stageSounds;
 
     private final MissingResource relatedBugFinder = new MissingResource();
 
@@ -61,6 +62,7 @@ public class MissingResourceFix extends AbstractFixHeuristic {
         images = null;
         backdrops = null;
         sounds = null;
+        stageSounds = null;
     }
 
     @Override
@@ -74,6 +76,7 @@ public class MissingResourceFix extends AbstractFixHeuristic {
         for (ActorDefinition actor : node.getActorDefinitionList().getDefinitions()) {
             if (actor.getActorType().isStage()) {
                 backdrops = getCostumeNames(actor);
+                stageSounds = getSoundNames(actor);
                 break;
             }
         }
@@ -122,7 +125,10 @@ public class MissingResourceFix extends AbstractFixHeuristic {
     private void check(ASTNode node, String name, Set<String> resources) {
         if (matchesBugLocation(node)) {
             // Fix: Resource IS present
-            if (resources != null && resources.contains(name)) {
+            boolean present = (resources != null && resources.contains(name));
+            boolean presentInStage = (stageSounds != null && stageSounds.contains(name));
+
+            if (present || presentInStage) {
                 addFix(node, node.getMetadata());
             }
         }

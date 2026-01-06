@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ResourceMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
@@ -32,7 +33,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackd
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.BackdropSwitchTo;
 
 import java.util.List;
 import java.util.Set;
@@ -48,12 +48,14 @@ public class MissingResource extends AbstractIssueFinder {
     private Set<String> images;
     private Set<String> backdrops;
     private Set<String> sounds;
+    private Set<String> stageSounds;
 
     @Override
     public void visit(Program node) {
         for (ActorDefinition actor : node.getActorDefinitionList().getDefinitions()) {
             if (actor.getActorType().isStage()) {
                 backdrops = collectResourceNames(actor.getActorMetadata().getCostumes().getList());
+                stageSounds = collectResourceNames(actor.getActorMetadata().getSounds().getList());
                 break;
             }
         }
@@ -133,7 +135,7 @@ public class MissingResource extends AbstractIssueFinder {
     }
 
     private void checkSoundIssue(final ASTNode node, final String soundName) {
-        if (!sounds.contains(soundName)) {
+        if (!sounds.contains(soundName) && (stageSounds == null || !stageSounds.contains(soundName))) {
             addIssue(node, node.getMetadata(), IssueSeverity.LOW);
         }
     }
