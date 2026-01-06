@@ -53,7 +53,7 @@ public class KeySetPositionFix extends AbstractFixHeuristic {
 
     // Context tracking
     private int currentArrowKey = -1;
-    private boolean inKeyContext = false;
+    private boolean isInKeyContext = false;
 
     private final KeySetPosition relatedBugFinder = new KeySetPosition();
 
@@ -69,7 +69,7 @@ public class KeySetPositionFix extends AbstractFixHeuristic {
     @Override
     protected void resetState() {
         currentArrowKey = -1;
-        inKeyContext = false;
+        isInKeyContext = false;
     }
 
     @Override
@@ -114,7 +114,7 @@ public class KeySetPositionFix extends AbstractFixHeuristic {
     @Override
     public void visit(Script node) {
         currentArrowKey = -1;
-        inKeyContext = false;
+        isInKeyContext = false;
 
         if (node.getEvent() instanceof KeyPressed keyPressed
                 && !node.getStmtList().getStmts().isEmpty()) {
@@ -123,12 +123,12 @@ public class KeySetPositionFix extends AbstractFixHeuristic {
                 int key = (int) keyNum.getValue();
                 if (isArrowKey(key)) {
                     currentArrowKey = key;
-                    inKeyContext = true;
+                    isInKeyContext = true;
                 }
             }
         }
         visitChildren(node);
-        inKeyContext = false;
+        isInKeyContext = false;
         currentArrowKey = -1;
     }
 
@@ -136,7 +136,7 @@ public class KeySetPositionFix extends AbstractFixHeuristic {
     public void visit(IfThenStmt node) {
         // Check for if(key pressed?) context
         int savedArrowKey = currentArrowKey;
-        boolean savedInKeyContext = inKeyContext;
+        boolean savedInKeyContext = isInKeyContext;
 
         if (node.getBoolExpr() instanceof IsKeyPressed isKeyPressed) {
             Key keyNode = isKeyPressed.getKey();
@@ -144,7 +144,7 @@ public class KeySetPositionFix extends AbstractFixHeuristic {
                 int key = (int) keyNum.getValue();
                 if (isArrowKey(key)) {
                     currentArrowKey = key;
-                    inKeyContext = true;
+                    isInKeyContext = true;
                 }
             }
         }
@@ -155,7 +155,7 @@ public class KeySetPositionFix extends AbstractFixHeuristic {
 
         // Restore context
         currentArrowKey = savedArrowKey;
-        inKeyContext = savedInKeyContext;
+        isInKeyContext = savedInKeyContext;
     }
 
     @Override
@@ -205,7 +205,7 @@ public class KeySetPositionFix extends AbstractFixHeuristic {
         // - SetY is used but NOT with UP/DOWN, OR
         // - SetX is used but NOT with LEFT/RIGHT
 
-        if (!inKeyContext) {
+        if (!isInKeyContext) {
             // Not in any arrow key context - fixed!
             addFix(node, node.getMetadata());
             return;

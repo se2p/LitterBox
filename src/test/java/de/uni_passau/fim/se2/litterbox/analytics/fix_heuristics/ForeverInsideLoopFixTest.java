@@ -113,6 +113,71 @@ public class ForeverInsideLoopFixTest extends AbstractFixHeuristicTest {
     }
 
     // ========================================================================
+    // NESTED STRUCTURE TESTS
+    // ========================================================================
+
+    @Test
+    public void testNoFix_ForeverDeeplyNested() throws IOException, ParsingException {
+        // No Fix: Forever loop deeply nested inside multiple loops
+        String source = """
+                when green flag clicked
+                repeat (10)
+                    repeat (5)
+                        forever
+                            move (10) steps
+                        end
+                    end
+                end
+                """;
+
+        Program program = parseProgram(source);
+        String bugId = findBlockId(program, RepeatForeverStmt.class);
+
+        ForeverInsideLoopFix heuristic = new ForeverInsideLoopFix(createTestIssueDTO(bugId));
+        assertNoFixFound(heuristic, program);
+    }
+
+    @Test
+    public void testNoFix_ForeverInsideLoopInsideIf() throws IOException, ParsingException {
+        // No Fix: Forever inside if inside loop - still nested in loop context
+        String source = """
+                when green flag clicked
+                repeat (10)
+                    if <touching (edge v)?> then
+                        forever
+                            move (10) steps
+                        end
+                    end
+                end
+                """;
+
+        Program program = parseProgram(source);
+        String bugId = findBlockId(program, RepeatForeverStmt.class);
+
+        ForeverInsideLoopFix heuristic = new ForeverInsideLoopFix(createTestIssueDTO(bugId));
+        assertNoFixFound(heuristic, program);
+    }
+
+    @Test
+    public void testFixFound_ForeverInsideIfNotInLoop() throws IOException, ParsingException {
+        // Fix: Forever is inside an if, but not inside a loop
+        String source = """
+                when green flag clicked
+                if <touching (edge v)?> then
+                    forever
+                        move (10) steps
+                    end
+                end
+                """;
+
+        Program program = parseProgram(source);
+        String bugId = findBlockId(program, RepeatForeverStmt.class);
+
+        ForeverInsideLoopFix heuristic = new ForeverInsideLoopFix(createTestIssueDTO(bugId));
+        assertFixFound(heuristic, program);
+    }
+
+    // ========================================================================
     // INJECTOR-BASED TESTS
     // ========================================================================
 

@@ -121,8 +121,8 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
         StringBuilder jsonString = new StringBuilder();
         // Filter out empty/null strings to prevent double-comma JSON corruption
         List<String> validJsonStrings = finishedJSONStrings.stream()
-            .filter(s -> s != null && !s.isEmpty())
-            .toList();
+                .filter(s -> s != null && !s.isEmpty())
+                .toList();
 
         for (int i = 0; i < validJsonStrings.size() - 1; i++) {
             jsonString.append(validJsonStrings.get(i)).append(",");
@@ -136,7 +136,12 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
     private String getNextId() {
         String nextId = null;
         if (counter < stmtList.size() - 1) {
-            nextId = idVis.getBlockId(stmtList.get(counter + 1));
+            for (int i = counter + 1; i < stmtList.size(); i++) {
+                nextId = idVis.getBlockId(stmtList.get(i));
+                if (nextId != null) {
+                    break;
+                }
+            }
         }
         return nextId;
     }

@@ -154,6 +154,10 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
             Set<Issue> originalIssues
     ) throws IOException {
         IssueFinder finder = injector.getIssueFinder();
+        if (finder == null) {
+            log.warning("Injector " + injector.getName() + " returned null IssueFinder, skipping CSV row");
+            return;
+        }
         String originalProjectName = original.getIdent().getName();
 
         // Get mutated issues
@@ -221,7 +225,7 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
         }
 
         // Return first new issue's hint
-        return getHintText(newIssues.get(0));
+        return getHintText(newIssues.getFirst());
     }
 
     /**
@@ -272,7 +276,7 @@ public class InjectorAnalyzer extends FileAnalyzer<Map<BugInjector, List<Injecti
                     if (!injected.isEmpty()) {
                         result.put(injector, injected);
                     }
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     log.log(Level.SEVERE, "Injector " + injector.getName()
                             + " failed on project " + program.getIdent().getName(), e);
                 }

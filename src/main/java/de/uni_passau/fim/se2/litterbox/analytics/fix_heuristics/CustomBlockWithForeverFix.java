@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.CustomBlockWithForever;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
@@ -29,8 +28,10 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
  * <p>The bug is reported when a call to a procedure containing RepeatForever
  * is not in the last position, blocking subsequent code.
  * The bug is fixed if the procedure no longer contains forever, or the call is now last.
+ *
+ * @see SimpleCallStmtFix
  */
-public class CustomBlockWithForeverFix extends AbstractFixHeuristic {
+public class CustomBlockWithForeverFix extends SimpleCallStmtFix {
 
     private final CustomBlockWithForever relatedBugFinder = new CustomBlockWithForever();
 
@@ -41,13 +42,5 @@ public class CustomBlockWithForeverFix extends AbstractFixHeuristic {
     @Override
     protected IssueFinder getRelatedBugFinder() {
         return relatedBugFinder;
-    }
-
-    @Override
-    public void visit(CallStmt node) {
-        if (matchesBugLocation(node) && !isBugStillPresent(node)) {
-            addFix(node, node.getMetadata());
-        }
-        visitChildren(node);
     }
 }

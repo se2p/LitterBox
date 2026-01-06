@@ -18,6 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import de.uni_passau.fim.se2.litterbox.analytics.DiffAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.DiffResult;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
@@ -177,59 +180,58 @@ public class DiffSubcommand implements Callable<Integer> {
     }
 
     private void writeJsonOutput(DiffResult result) throws IOException {
-        StringBuilder json = new StringBuilder();
-        json.append("{\n");
-        json.append(String.format("  \"beforeProject\": \"%s\",%n", escapeJson(result.beforeSource())));
-        json.append(String.format("  \"afterProject\": \"%s\",%n", escapeJson(result.afterSource())));
-        json.append("  \"summary\": {\n");
-        json.append(String.format("    \"fixed\": %d,%n", result.fixedCount()));
-        json.append(String.format("    \"new\": %d,%n", result.newCount()));
-        json.append(String.format("    \"persisting\": %d,%n", result.persistingCount()));
-        json.append(String.format("    \"removed\": %d%n", result.removedCount()));
-        json.append("  },\n");
-        json.append("  \"fixed\": ").append(issuesToJsonArray(result.fixed())).append(",\n");
-        json.append("  \"new\": ").append(issuesToJsonArray(result.newIssues())).append(",\n");
-        json.append("  \"persisting\": ").append(issuesToJsonArray(result.persisting())).append(",\n");
-        json.append("  \"removed\": ").append(issuesToJsonArray(result.removed())).append("\n");
-        json.append("}\n");
+        DiffReportJson report = new DiffReportJson(
+                result.beforeSource(),
+                result.afterSource(),
+                new SummaryJson(
+                        result.fixedCount(),
+                        result.newCount(),
+                        result.persistingCount(),
+                        result.removedCount()
+                ),
+                issuesToJson(result.fixed()),
+                issuesToJson(result.newIssues()),
+                issuesToJson(result.persisting()),
+                issuesToJson(result.removed())
+        );
 
-        Files.writeString(outputPath, json.toString());
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        mapper.writeValue(outputPath.toFile(), report);
+
         spec.commandLine().getOut().println("Diff report written to: " + outputPath);
     }
 
-    private String issuesToJsonArray(List<Issue> issues) {
-        if (issues.isEmpty()) {
-            return "[]";
-        }
-
-        StringBuilder sb = new StringBuilder("[\n");
-        for (int i = 0; i < issues.size(); i++) {
-            Issue issue = issues.get(i);
-            ASTNode codeLocation = issue.getCodeLocation();
-            String blockId = codeLocation != null ? AstNodeUtil.getBlockId(codeLocation) : null;
-            sb.append("    {\n");
-            sb.append(String.format("      \"finder\": \"%s\",%n", escapeJson(issue.getFinderName())));
-            sb.append(String.format("      \"actor\": \"%s\",%n", escapeJson(issue.getActorName())));
-            sb.append(String.format("      \"blockId\": %s%n",
-                    blockId != null ? "\"" + escapeJson(blockId) + "\"" : "null"));
-            sb.append("    }");
-            if (i < issues.size() - 1) {
-                sb.append(",");
-            }
-            sb.append("\n");
-        }
-        sb.append("  ]");
-        return sb.toString();
+    private List<IssueJson> issuesToJson(List<Issue> issues) {
+        return issues.stream()
+                .map(issue -> {
+                    ASTNode codeLocation = issue.getCodeLocation();
+                    String blockId = codeLocation != null ? AstNodeUtil.getBlockId(codeLocation) : null;
+                    return new IssueJson(issue.getFinderName(), issue.getActorName(), blockId);
+                })
+                .toList();
     }
 
-    private String escapeJson(String value) {
-        if (value == null) {
-            return "";
-        }
-        return value.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t");
+    // JSON DTOs for Jackson serialization
+    private record DiffReportJson(
+            String beforeProject,
+            String afterProject,
+            SummaryJson summary,
+            List<IssueJson> fixed,
+            List<IssueJson> newIssues,
+            List<IssueJson> persisting,
+            List<IssueJson> removed
+    ) {
+    }
+
+    private record SummaryJson(
+            int fixed,
+            @JsonProperty("new") int newCount,
+            int persisting,
+            int removed
+    ) {
+    }
+
+    private record IssueJson(String finder, String actor, String blockId) {
     }
 }

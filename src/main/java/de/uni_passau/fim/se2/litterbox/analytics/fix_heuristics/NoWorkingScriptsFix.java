@@ -21,12 +21,9 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.NoWorkingScripts;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
-
-import java.util.Set;
 
 /**
  * Fix heuristic for the NoWorkingScripts bug.
@@ -61,11 +58,6 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
         stillFullfilledEmptyScript = false;
         deadCodeFound = false;
         foundEvent = false;
-    }
-
-    @Override
-    public Set<FixResult> check(Program program) {
-        return super.check(program);
     }
 
     @Override

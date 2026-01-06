@@ -43,8 +43,8 @@ import java.util.stream.Collectors;
  */
 public class VariableAsLiteralFix extends AbstractFixHeuristic {
 
-    private Map<String, VariableInfo> varMap;
-    private Map<String, ExpressionListInfo> listMap;
+    private Map<String, VariableInfo> variableInfoMap;
+    private Map<String, ExpressionListInfo> listInfoMap;
     private Set<String> variablesInScope;
 
     private final VariableAsLiteral relatedBugFinder = new VariableAsLiteral();
@@ -56,8 +56,8 @@ public class VariableAsLiteralFix extends AbstractFixHeuristic {
     @Override
     protected void resetState() {
         variablesInScope = null;
-        varMap = null;
-        listMap = null;
+        variableInfoMap = null;
+        listInfoMap = null;
     }
 
     @Override
@@ -68,11 +68,11 @@ public class VariableAsLiteralFix extends AbstractFixHeuristic {
     @Override
     public Set<FixResult> check(Program program) {
         if (program.getSymbolTable() != null) {
-            varMap = program.getSymbolTable().getVariables();
-            listMap = program.getSymbolTable().getLists();
+            variableInfoMap = program.getSymbolTable().getVariables();
+            listInfoMap = program.getSymbolTable().getLists();
         } else {
-            varMap = Collections.emptyMap();
-            listMap = Collections.emptyMap();
+            variableInfoMap = Collections.emptyMap();
+            listInfoMap = Collections.emptyMap();
         }
         this.program = program;
 
@@ -118,12 +118,12 @@ public class VariableAsLiteralFix extends AbstractFixHeuristic {
         }
         String actorName = currentActor.getIdent().getName();
 
-        variablesInScope = varMap.values().stream()
+        variablesInScope = variableInfoMap.values().stream()
                 .filter(v -> v.global() || (v.actor() != null && v.actor().equals(actorName)))
                 .map(VariableInfo::variableName)
                 .collect(Collectors.toSet());
 
-        variablesInScope.addAll(listMap.values().stream()
+        variablesInScope.addAll(listInfoMap.values().stream()
                 .filter(v -> v.global() || (v.actor() != null && v.actor().equals(actorName)))
                 .map(ExpressionListInfo::variableName)
                 .collect(Collectors.toSet()));

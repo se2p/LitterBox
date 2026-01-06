@@ -42,6 +42,56 @@ import java.util.*;
  *
  * <p>Each fix heuristic is associated with a specific bug finder. The heuristic's name
  * is derived from the related bug finder's name (following the injector pattern).
+ *
+ * <h2>Implementation Patterns</h2>
+ *
+ * <p>Subclasses can use one of three implementation patterns:
+ *
+ * <h3>Pattern A: checkWithNodeFinder (Recommended for simple cases)</h3>
+ *
+ * <p>Override {@link #checkWithNodeFinder(ASTNode)} to check if the bug condition is fixed
+ * at the found node location. The base class handles deletion detection automatically.
+ * <pre>{@code
+ * protected boolean checkWithNodeFinder(ASTNode node) {
+ *     if (node instanceof MyBuggyNode buggyNode) {
+ *         return !isBuggyCondition(buggyNode); // true = fixed
+ *     }
+ *     return false;
+ * }
+ * }</pre>
+ *
+ * <h3>Pattern B: Visitor with state tracking (Most common)</h3>
+ *
+ * <p>Override visitor methods to track state and call {@link #addFix} when the fix is detected.
+ * <pre>{@code
+ * public void visit(ActorDefinition actor) {
+ *     super.visit(actor);
+ *     if (targetNode != null && conditionFixed) {
+ *         addFix(targetNode, targetNode.getMetadata());
+ *     }
+ * }
+ * }</pre>
+ *
+ * <h3>Pattern C: Custom check() (For special cases)</h3>
+ *
+ * <p>Override {@link #check(Program)} for bugs that don't have block IDs (actor-level bugs)
+ * or need custom deletion detection. Use {@link BlockIdNodeFinder} for robust node finding.
+ * <pre>{@code
+ * public Set<FixResult> check(Program program) {
+ *     // Custom logic for actor-level bugs or special deletion handling
+ *     if (actorNoLongerHasBug) {
+ *         addFixWithLooseComment(actor);
+ *     }
+ *     return Collections.unmodifiableSet(fixes);
+ * }
+ * }</pre>
+ *
+ * <h3>Examples by Pattern</h3>
+ * <ul>
+ *   <li><b>Pattern A:</b> ComparingLiteralsFix, MissingPenDownFix</li>
+ *   <li><b>Pattern B:</b> MessageNeverSentFix, MissingCloneCallFix (most implementations)</li>
+ *   <li><b>Pattern C:</b> NoWorkingScriptsFix (actor-level), VariableAsLiteralFix (custom deletion)</li>
+ * </ul>
  */
 public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisitor {
 

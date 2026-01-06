@@ -28,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutatio
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
@@ -36,9 +37,6 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoMutationMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
@@ -116,7 +114,12 @@ public class ProcedureJSONCreator {
 
         if (!stmtList.getStmts().isEmpty()) {
             IdVisitor vis = new IdVisitor();
-            nextId = vis.getBlockId(stmtList.getStmts().getFirst());
+            for (Stmt stmt : stmtList.getStmts()) {
+                nextId = vis.getBlockId(stmt);
+                if (nextId != null) {
+                    break;
+                }
+            }
         }
 
         StrId id = (StrId) definition.getIdent();

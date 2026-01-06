@@ -123,6 +123,54 @@ public class ComparingLiteralsFixTest extends AbstractFixHeuristicTest {
         assertFixFound(heuristic, program);
     }
 
+    // ========================================================================
+    // NESTED STRUCTURE TESTS
+    // ========================================================================
+
+    @Test
+    public void testNoFix_BothLiteralsInNestedIf() throws IOException, ParsingException {
+        // No Fix: Comparison with both literals inside nested structure
+        String source = """
+                when green flag clicked
+                if <touching (edge v)?> then
+                    if <(100) > (50)> then
+                        move (10) steps
+                    end
+                end
+                """;
+
+        Program program = parseProgram(source);
+        String bugId = findBlockId(program, BiggerThan.class);
+
+        ComparingLiteralsFix heuristic = new ComparingLiteralsFix(createTestIssueDTO(bugId));
+        assertNoFixFound(heuristic, program);
+    }
+
+    @Test
+    public void testFixFound_NestedComparisonWithVariable() throws IOException, ParsingException {
+        // Fix: Comparison now uses variable, even when deeply nested
+        String source = """
+                when green flag clicked
+                repeat (10)
+                    if <touching (edge v)?> then
+                        if <(timer) > (5)> then
+                            say [Time's up!]
+                        end
+                    end
+                end
+                """;
+
+        Program program = parseProgram(source);
+        String bugId = findBlockId(program, BiggerThan.class);
+
+        ComparingLiteralsFix heuristic = new ComparingLiteralsFix(createTestIssueDTO(bugId));
+        assertFixFound(heuristic, program);
+    }
+
+    // ========================================================================
+    // INJECTOR-BASED TESTS
+    // ========================================================================
+
     @Test
     public void testInjector_ComparingLiterals() throws IOException, ParsingException {
         // Start with a valid program (comparisons involving variables)

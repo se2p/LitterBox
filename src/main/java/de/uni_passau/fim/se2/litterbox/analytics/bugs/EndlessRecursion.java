@@ -132,7 +132,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
 
     private ProcedureDefinition getProcedureRefactoring(CallStmt node) {
         List<Stmt> stmtList = ((StmtList) node.getParentNode()).getStmts();
-        int position = stmtList.indexOf(node);
+        int position = ((StmtList) node.getParentNode()).indexOfIdentity(node);
         stmtList = stmtList.subList(0, position);
         RepeatForeverStmt repeatForeverStmt = new RepeatForeverStmt(new StmtList(stmtList), node.getMetadata());
         return new NodeReplacementVisitor(node.getParentNode(), new StmtList(repeatForeverStmt))
@@ -143,7 +143,7 @@ public class EndlessRecursion extends AbstractIssueFinder {
         // Note that this is a valid local refactoring, but if there are other receivers this
         // would break the program
         List<Stmt> stmtList = ((StmtList) node.getParentNode()).getStmts();
-        int position = stmtList.indexOf(node);
+        int position = ((StmtList) node.getParentNode()).indexOfIdentity((Stmt) node);
         stmtList = stmtList.subList(0, position);
         RepeatForeverStmt repeatForeverStmt = new RepeatForeverStmt(new StmtList(stmtList), node.getMetadata());
         return new NodeReplacementVisitor(node.getParentNode(), new StmtList(repeatForeverStmt))

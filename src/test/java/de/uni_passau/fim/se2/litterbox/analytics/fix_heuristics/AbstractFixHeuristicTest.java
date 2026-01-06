@@ -19,18 +19,24 @@
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.injection.BugInjector;
+import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * Base test class for fix heuristic tests using ScratchBlocks text format.
@@ -68,6 +74,31 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
         Program baseProject = getAST(EMPTY_PROJECT);
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Program program = parser.extendProject(baseProject, spriteName, scratchBlocksCode);
+        AstNodeUtil.linkParents(program);
+        return program;
+    }
+
+    /**
+     * Parse ScratchBlocks code for multiple sprites.
+     *
+     * <p>Uses a base project with multiple sprites (raceConditionDifferentActors.json).
+     *
+     * @param sprite1Code code for Sprite1 (or null to skip)
+     * @param sprite2Code code for Sprite2 (or null to skip)
+     * @return the parsed Program with code added to both sprites
+     */
+    protected Program parseMultiSpriteProgram(String sprite1Code, String sprite2Code) throws IOException, ParsingException {
+        // Use a project that already has multiple sprites
+        Program program = getAST("src/test/fixtures/smells/raceConditionDifferentActors.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+
+        if (sprite1Code != null && !sprite1Code.isBlank()) {
+            program = parser.extendProject(program, "Sprite1", sprite1Code);
+        }
+        if (sprite2Code != null && !sprite2Code.isBlank()) {
+            program = parser.extendProject(program, "Sprite2", sprite2Code);
+        }
+
         AstNodeUtil.linkParents(program);
         return program;
     }
@@ -186,5 +217,120 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
      */
     protected static IssueDTO createTestIssueDTO(String blockId) {
         return createTestIssueDTO(blockId, "TestFinder");
+    }
+
+    // ========================================================================
+    // INJECTOR ROUNDTRIP HELPER
+    // ========================================================================
+
+    /**
+     * Performs an injector roundtrip test.
+     *
+     * <p>This helper automates the common pattern of:
+     * <ol>
+     *   <li>Parsing a fixed program</li>
+     *   <li>Verifying no bugs exist in fixed program</li>
+     *   <li>Injecting a bug using the injector</li>
+     *   <li>Verifying the bug exists in mutated program</li>
+     *   <li>Creating a fix heuristic for the bug</li>
+     *   <li>Verifying the fix is detected in the original program</li>
+     * </ol>
+     *
+     * @param fixedCode           the ScratchBlocks code representing a fixed program
+     * @param bugFinder           the bug finder to use
+     * @param injector            the bug injector to use
+     * @param fixHeuristicFactory creates a fix heuristic given an IssueDTO
+     * @throws IOException      if parsing fails
+     * @throws ParsingException if parsing fails
+     */
+    protected void assertInjectorRoundtrip(
+            String fixedCode,
+            IssueFinder bugFinder,
+            BugInjector injector,
+            Function<IssueDTO, AbstractFixHeuristic> fixHeuristicFactory
+    ) throws IOException, ParsingException {
+        assertInjectorRoundtrip(parseProgram(fixedCode), bugFinder, injector, fixHeuristicFactory);
+    }
+
+    /**
+     * Performs an injector roundtrip test with a pre-parsed program.
+     *
+     * @param fixedProgram        the fixed program
+     * @param bugFinder           the bug finder to use
+     * @param injector            the bug injector to use
+     * @param fixHeuristicFactory creates a fix heuristic given an IssueDTO
+     */
+    protected void assertInjectorRoundtrip(
+            Program fixedProgram,
+            IssueFinder bugFinder,
+            BugInjector injector,
+            Function<IssueDTO, AbstractFixHeuristic> fixHeuristicFactory
+    ) {
+        // Step 1: Verify original program has no bugs
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
+        Assertions.assertTrue(originalIssues.isEmpty(),
+                "Original (fixed) program should have no bugs, but found: " + originalIssues);
+
+        // Step 2: Inject bug
+        List<InjectionResult> injected = injector.inject(fixedProgram);
+        Assertions.assertFalse(injected.isEmpty(),
+                "Injector should create at least one bug");
+
+        // Step 3: Verify the mutated program has bugs
+        Program mutatedProgram = injected.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
+        Assertions.assertFalse(bugIssues.isEmpty(),
+                "Bug finder should detect bugs in mutated program");
+
+        // Step 4: Get block ID from bug
+        Issue bugIssue = bugIssues.iterator().next();
+        String bugBlockId = AstNodeUtil.getBlockId(bugIssue.getCodeLocation());
+        Assertions.assertNotNull(bugBlockId,
+                "Bug issue should have a block ID");
+
+        // Step 5: Fix heuristic should detect fix in original program
+        AbstractFixHeuristic fixHeuristic = fixHeuristicFactory.apply(createTestIssueDTO(bugBlockId));
+        assertFixFound(fixHeuristic, fixedProgram);
+    }
+
+    /**
+     * Performs an injector roundtrip test, allowing the original program to have
+     * some pre-existing bugs (useful when the injector adds more bugs to a program
+     * that may already have some).
+     *
+     * @param fixedProgram        the program to test
+     * @param bugFinder           the bug finder to use
+     * @param injector            the bug injector to use
+     * @param fixHeuristicFactory creates a fix heuristic given an IssueDTO
+     */
+    protected void assertInjectorRoundtripLenient(
+            Program fixedProgram,
+            IssueFinder bugFinder,
+            BugInjector injector,
+            Function<IssueDTO, AbstractFixHeuristic> fixHeuristicFactory
+    ) {
+        // Step 1: Count original bugs
+        Set<Issue> originalIssues = bugFinder.check(fixedProgram);
+        int originalBugCount = originalIssues.size();
+
+        // Step 2: Inject bug
+        List<InjectionResult> injected = injector.inject(fixedProgram);
+        Assertions.assertFalse(injected.isEmpty(),
+                "Injector should create at least one mutation");
+
+        // Step 3: Verify the mutated program has MORE bugs
+        Program mutatedProgram = injected.getFirst().mutatedProgram();
+        Set<Issue> bugIssues = bugFinder.check(mutatedProgram);
+        Assertions.assertTrue(bugIssues.size() > originalBugCount,
+                "Mutated program should have more bugs than original");
+
+        // Step 4: Get block ID from a NEW bug (one not in original)
+        Issue bugIssue = bugIssues.iterator().next();
+        String bugBlockId = AstNodeUtil.getBlockId(bugIssue.getCodeLocation());
+        Assertions.assertNotNull(bugBlockId, "Bug issue should have a block ID");
+
+        // Step 5: Fix heuristic should detect fix in original program
+        AbstractFixHeuristic fixHeuristic = fixHeuristicFactory.apply(createTestIssueDTO(bugBlockId));
+        assertFixFound(fixHeuristic, fixedProgram);
     }
 }

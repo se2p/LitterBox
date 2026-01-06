@@ -98,6 +98,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
 
     private List<InjectionResult> injectionResults;
     private Program originalProgram;
+    private int failedMutationCount;
 
     @Override
     public List<InjectionResult> inject(Program program) {
@@ -105,7 +106,12 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
         program.accept(new ParentVisitor());
         this.originalProgram = program;
         this.injectionResults = new ArrayList<>();
+        this.failedMutationCount = 0;
         program.accept(this);
+
+        if (failedMutationCount > 0) {
+            log.info(() -> getName() + " completed with " + failedMutationCount + " failed mutation(s)");
+        }
 
         return injectionResults;
     }
@@ -206,8 +212,8 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
                         originalScratchBlocks,
                         mutatedScratchBlocks
                 ));
-            } catch (Exception e) {
-                log.log(WARNING, "Failed to apply mutation for " + getName(), e);
+            } catch (RuntimeException e) {
+                handleMutationFailure("modifyClonedNode", e);
             }
         } else {
             log.warning("Could not find suitable cloned node for " + originalNode);
@@ -248,20 +254,20 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
         clone.accept(new ParentVisitor());
 
         // Apply the mutator to ALL cloned nodes
-        boolean anyMutated = false;
+        boolean hasAnyMutation = false;
         for (T originalNode : originalNodes) {
             ASTNode clonedNode = mappingVisitor.get(originalNode);
             if (originalNode.getClass().isInstance(clonedNode)) {
                 try {
                     mutator.accept((T) clonedNode);
-                    anyMutated = true;
-                } catch (Exception e) {
-                    log.log(WARNING, "Failed to apply mutation to node for " + getName(), e);
+                    hasAnyMutation = true;
+                } catch (RuntimeException e) {
+                    handleMutationFailure("modifyMultipleClonedNodes", e);
                 }
             }
         }
 
-        if (anyMutated) {
+        if (hasAnyMutation) {
             ASTNode clonedContext = mappingVisitor.get(originalContext);
 
             // Fallback: if context wasn't in the mapping, find context from the first cloned node
@@ -344,13 +350,27 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
             } else {
                 log.warning("Cloning program returned " + clonedRoot.getClass().getName());
             }
-        } catch (Exception e) {
-            log.log(WARNING, "Failed to apply immutable mutation for " + getName(), e);
+        } catch (RuntimeException e) {
+            handleMutationFailure("replaceNodeImmutably", e);
         }
     }
 
     private boolean reachesLimit() {
         return injectionResults.size() >= MAX_MUTATIONS;
+    }
+
+    /**
+     * Handles a mutation failure by logging the error and incrementing the failure count.
+     *
+     * @param operation description of the operation that failed
+     * @param e         the exception that was thrown
+     */
+    private void handleMutationFailure(String operation, Exception e) {
+        failedMutationCount++;
+        log.log(WARNING, e, () -> String.format(
+                "%s: %s failed - %s: %s",
+                getName(), operation, e.getClass().getSimpleName(), e.getMessage()
+        ));
     }
 
     /**
@@ -454,7 +474,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
         }
         try {
             return ScratchBlocksVisitor.of(node);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // ScratchBlocksVisitor can fail on certain scripts due to metadata issues.
             // Try fallback to parent nodes (ScriptList or ActorDefinition).
             log.fine("Could not get ScratchBlocks text for " + node.getClass().getSimpleName() + ": " + e.getMessage());
@@ -467,7 +487,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
                     if (!result.isEmpty()) {
                         return result;
                     }
-                } catch (Exception ignored) {
+                } catch (RuntimeException ignored) {
                     // Continue to next parent
                 }
                 parent = parent.getParentNode();
@@ -561,14 +581,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     protected void replaceInParent(Stmt oldStmt, Stmt newStmt) {
         if (oldStmt.getParentNode() instanceof StmtList stmtList) {
             List<Stmt> stmts = stmtList.getStmts();
-            int index = -1;
-            for (int i = 0; i < stmts.size(); i++) {
-                if (stmts.get(i) == oldStmt) {
-                    index = i;
-                    break;
-                }
-            }
-            //int index = stmts.indexOf(oldStmt);
+            int index = stmtList.indexOfIdentity(oldStmt);
             if (index >= 0) {
                 stmts.set(index, newStmt);
                 newStmt.setParentNode(stmtList);
@@ -582,14 +595,7 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
     protected boolean hasSuccessorStatements(Stmt stmt) {
         if (stmt.getParentNode() instanceof StmtList stmtList) {
             List<Stmt> stmts = stmtList.getStmts();
-            // Use identity comparison instead of indexOf() to avoid equals() issues
-            int index = -1;
-            for (int i = 0; i < stmts.size(); i++) {
-                if (stmts.get(i) == stmt) {
-                    index = i;
-                    break;
-                }
-            }
+            int index = stmtList.indexOfIdentity(stmt);
             return index >= 0 && index < stmts.size() - 1;
         }
         return false;

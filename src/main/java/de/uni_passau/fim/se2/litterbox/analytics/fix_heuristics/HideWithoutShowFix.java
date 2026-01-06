@@ -21,18 +21,30 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.HideWithoutShow;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ActorLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
+
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Fix heuristic for the HideWithoutShow bug.
  *
  * <p>The bug is reported when Hide is used but Show is never called in a visible actor.
  * The bug is fixed if Show now exists OR the actor makes no visible changes.
+ *
+ * <p>This heuristic uses actor-name matching because the injected Hide block has a new
+ * block ID that doesn't exist in the fixed file.
  */
 public class HideWithoutShowFix extends AbstractFixHeuristic {
 
@@ -59,13 +71,49 @@ public class HideWithoutShowFix extends AbstractFixHeuristic {
     }
 
     @Override
-    public void visit(ActorDefinition node) {
-        // State is reset by resetState() at the start of check()
-        super.visit(node);
+    public Set<FixResult> check(Program program) {
+        this.program = program;
+        this.fixes = new LinkedHashSet<>();
+        resetState();
 
-        if (targetHide != null && (hasShow || !hasVisibleChange)) {
-            addFix(targetHide, targetHide.getMetadata());
+        // Check for block deletion first
+        String blockId = getBugLocationBlockId();
+        if (blockId != null && !blockId.startsWith("__")) {
+            Optional<BlockIdNodeFinder.NodeContext> found = BlockIdNodeFinder.find(program, blockId);
+            if (found.isEmpty()) {
+                // Block was deleted - this is a fix
+                addFixWithLooseComment();
+                return Collections.unmodifiableSet(fixes);
+            }
         }
+
+        String targetActorName = originalIssue.sprite();
+
+        // Find the target actor in the fixed program
+        for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
+            if (actor.getIdent().getName().equals(targetActorName)) {
+                currentActor = actor;
+                hasShow = false;
+                hasVisibleChange = false;
+                targetHide = null;
+
+                actor.accept(this);
+
+                // Fix detected if:
+                // 1. Actor now has Show statement, OR
+                // 2. Actor no longer has visible changes (bug no longer applies)
+                if (hasShow || !hasVisibleChange) {
+                    if (targetHide != null) {
+                        addFix(targetHide, targetHide.getMetadata());
+                    } else {
+                        addFixWithLooseComment(actor);
+                    }
+                }
+                break;
+            }
+        }
+
+        return Collections.unmodifiableSet(fixes);
     }
 
     @Override
@@ -76,7 +124,8 @@ public class HideWithoutShowFix extends AbstractFixHeuristic {
 
     @Override
     public void visit(Hide node) {
-        if (matchesBugLocation(node)) {
+        // Capture the first Hide found (no block ID matching needed)
+        if (targetHide == null) {
             targetHide = node;
         }
         visitChildren(node);
@@ -101,4 +150,13 @@ public class HideWithoutShowFix extends AbstractFixHeuristic {
         hasVisibleChange = true;
         visitChildren(node);
     }
+
+    @Override
+    public void visit(Script node) {
+        if (node.getEvent() instanceof Never) {
+            return;
+        }
+        super.visit(node);
+    }
 }
+

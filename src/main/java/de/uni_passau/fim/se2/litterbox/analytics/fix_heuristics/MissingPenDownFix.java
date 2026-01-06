@@ -35,7 +35,7 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
  */
 public class MissingPenDownFix extends AbstractFixHeuristic implements PenExtensionVisitor {
 
-    private boolean penDownSet;
+    private boolean hasPenDownStatement;
     private PenUpStmt targetPenUp;
     private Script foundScript;
 
@@ -47,7 +47,7 @@ public class MissingPenDownFix extends AbstractFixHeuristic implements PenExtens
 
     @Override
     protected void resetState() {
-        penDownSet = false;
+        hasPenDownStatement = false;
         targetPenUp = null;
         foundScript = null;
     }
@@ -61,7 +61,7 @@ public class MissingPenDownFix extends AbstractFixHeuristic implements PenExtens
     public void visit(ActorDefinition actor) {
         super.visit(actor);
 
-        if (targetPenUp != null && penDownSet) {
+        if (targetPenUp != null && hasPenDownStatement) {
             // Fix: PenDown is present in the actor. Use explicit context overload.
             addFix(targetPenUp, targetPenUp.getMetadata(), actor, foundScript);
         }
@@ -78,7 +78,7 @@ public class MissingPenDownFix extends AbstractFixHeuristic implements PenExtens
 
     @Override
     public void visit(PenDownStmt node) {
-        penDownSet = true;
+        hasPenDownStatement = true;
         visitChildren(node);
     }
 }

@@ -48,8 +48,17 @@ public final class FixHeuristicRegistry {
 
     private static final Map<String, List<Function<IssueDTO, FixHeuristic>>> REGISTRY;
 
+    /**
+     * List of heuristic class names that failed to register during initialization.
+     */
+    private static final List<String> FAILED_REGISTRATIONS = new ArrayList<>();
+
     static {
         REGISTRY = buildRegistry();
+        if (!FAILED_REGISTRATIONS.isEmpty()) {
+            log.severe(() -> "Failed to register " + FAILED_REGISTRATIONS.size()
+                    + " fix heuristics: " + FAILED_REGISTRATIONS);
+        }
     }
 
     private FixHeuristicRegistry() {
@@ -122,9 +131,11 @@ public final class FixHeuristicRegistry {
             Map<String, List<Function<IssueDTO, FixHeuristic>>> registry,
             Function<IssueDTO, ? extends AbstractFixHeuristic> factory
     ) {
+        String factoryClassName = "unknown";
         try {
             // Instantiate with dummy issue to get the finder name
             AbstractFixHeuristic heuristic = factory.apply(DUMMY_ISSUE);
+            factoryClassName = heuristic.getClass().getSimpleName();
             String finderName = heuristic.getName();
 
             // Cast to FixHeuristic function type
@@ -132,8 +143,10 @@ public final class FixHeuristicRegistry {
             registry.computeIfAbsent(finderName, k -> new ArrayList<>()).add(fixHeuristicFactory);
 
             log.fine(() -> "Registered fix heuristic for: " + finderName);
-        } catch (Exception e) {
-            log.warning("Failed to register fix heuristic: " + e.getMessage());
+        } catch (RuntimeException e) {
+            String failedClass = factoryClassName;
+            FAILED_REGISTRATIONS.add(failedClass);
+            log.warning(() -> "Failed to register fix heuristic " + failedClass + ": " + e.getMessage());
         }
     }
 
@@ -180,5 +193,25 @@ public final class FixHeuristicRegistry {
      */
     public static int getHeuristicCount() {
         return REGISTRY.values().stream().mapToInt(List::size).sum();
+    }
+
+    /**
+     * Returns the list of fix heuristic class names that failed to register during initialization.
+     *
+     * <p>This method is primarily intended for testing to verify all heuristics registered successfully.
+     *
+     * @return an unmodifiable list of failed class names (empty if all registrations succeeded)
+     */
+    public static List<String> getFailedRegistrations() {
+        return List.copyOf(FAILED_REGISTRATIONS);
+    }
+
+    /**
+     * Checks if all fix heuristics registered successfully during initialization.
+     *
+     * @return true if no registrations failed
+     */
+    public static boolean allRegistrationsSucceeded() {
+        return FAILED_REGISTRATIONS.isEmpty();
     }
 }

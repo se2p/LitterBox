@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugs.HideWithoutShow;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ActorLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
@@ -58,6 +59,13 @@ public class HideWithoutShowInjector extends AbstractBugInjector {
     @Override
     public IssueFinder getIssueFinder() {
         return issueFinder;
+    }
+
+    @Override
+    public void visit(Script node) {
+        // Override to allow visiting Never blocks (dead code)
+        // so we can remove Show statements even from dead code
+        visitChildren(node);
     }
 
     @Override
@@ -114,37 +122,60 @@ public class HideWithoutShowInjector extends AbstractBugInjector {
 
     private void checkActorPrerequisites(ActorDefinition node) {
         node.accept(new ScratchVisitor() {
+            private boolean inNeverBlock = false;
+
             @Override
             public void visit(Script script) {
-                if (firstScript == null && !script.getStmtList().getStmts().isEmpty()) {
+                boolean isNever = script.getEvent() instanceof Never;
+
+                // Track first non-Never, non-empty script
+                if (firstScript == null && !script.getStmtList().getStmts().isEmpty() && !isNever) {
                     firstScript = script;
                 }
-                visitChildren(script);
+
+                // Skip Never blocks for hasShow/hasVisibleChange detection
+                // (matching bug finder behavior)
+                if (isNever) {
+                    inNeverBlock = true;
+                    visitChildren(script);
+                    inNeverBlock = false;
+                } else {
+                    visitChildren(script);
+                }
             }
 
             @Override
             public void visit(Show show) {
-                hasShow = true;
+                if (!inNeverBlock) {
+                    hasShow = true;
+                }
             }
 
             @Override
             public void visit(Hide hide) {
+                // Hide is checked regardless of Never block
                 hasHide = true;
             }
 
             @Override
             public void visit(SpriteMotionStmt stmt) {
-                hasVisibleChange = true;
+                if (!inNeverBlock) {
+                    hasVisibleChange = true;
+                }
             }
 
             @Override
             public void visit(SpriteLookStmt stmt) {
-                hasVisibleChange = true;
+                if (!inNeverBlock) {
+                    hasVisibleChange = true;
+                }
             }
 
             @Override
             public void visit(ActorLookStmt stmt) {
-                hasVisibleChange = true;
+                if (!inNeverBlock) {
+                    hasVisibleChange = true;
+                }
             }
         });
     }

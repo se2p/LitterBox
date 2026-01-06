@@ -103,6 +103,60 @@ public class MissingCloneCallFixTest extends AbstractFixHeuristicTest {
     }
 
     // ========================================================================
+    // MULTI-SPRITE TESTS
+    // ========================================================================
+
+    @Test
+    public void testFixFound_ClonedFromOtherSprite() throws IOException, ParsingException {
+        // Multi-sprite scenario: Sprite1 creates a clone of Sprite2,
+        // and Sprite2 has the clone handler.
+        String sprite1Code = """
+                when green flag clicked
+                create clone of (Sprite2 v)
+                """;
+
+        String sprite2Code = """
+                when I start as a clone
+                move (10) steps
+                """;
+
+        Program program = parseMultiSpriteProgram(sprite1Code, sprite2Code);
+
+        // Find the StartedAsClone block in Sprite2
+        String bugId = findBlockId(program, StartedAsClone.class);
+        Assertions.assertNotNull(bugId, "Should find StartedAsClone block in Sprite2");
+
+        // The bug is fixed because Sprite1 does create a clone of Sprite2
+        MissingCloneCallFix heuristic = new MissingCloneCallFix(createTestIssueDTO(bugId));
+        assertFixFound(heuristic, program);
+    }
+
+    @Test
+    public void testNoFix_ClonedFromWrongSprite() throws IOException, ParsingException {
+        // Multi-sprite scenario: Sprite2 has a clone handler but Sprite1
+        // creates a clone of itself, not of Sprite2.
+        String sprite1Code = """
+                when green flag clicked
+                create clone of (myself v)
+                """;
+
+        String sprite2Code = """
+                when I start as a clone
+                move (10) steps
+                """;
+
+        Program program = parseMultiSpriteProgram(sprite1Code, sprite2Code);
+
+        // Find the StartedAsClone block in Sprite2
+        String bugId = findBlockId(program, StartedAsClone.class);
+        Assertions.assertNotNull(bugId, "Should find StartedAsClone block in Sprite2");
+
+        // The bug is NOT fixed because Sprite1 clones itself, not Sprite2
+        MissingCloneCallFix heuristic = new MissingCloneCallFix(createTestIssueDTO(bugId));
+        assertNoFixFound(heuristic, program);
+    }
+
+    // ========================================================================
     // INJECTOR-BASED TESTS
     // ========================================================================
 

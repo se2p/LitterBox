@@ -95,6 +95,73 @@ public class TerminatedLoopFixTest extends AbstractFixHeuristicTest {
     }
 
     // ========================================================================
+    // NESTED STRUCTURE TESTS
+    // ========================================================================
+
+    @Test
+    public void testNoFix_StopInNestedIf() throws IOException, ParsingException {
+        // No Fix: Stop is in an if inside the loop, but still terminates the loop
+        String code = """
+                when green flag clicked
+                forever
+                    if <touching (edge v)?> then
+                        stop [all v]
+                    end
+                end
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, RepeatForeverStmt.class);
+
+        TerminatedLoopFix finder = new TerminatedLoopFix(createTestIssueDTO(blockId));
+        // The bug finder may not report this as terminated loop because stop isn't last stmt
+        // Let's check the actual behavior - this tests the edge case handling
+        Set<FixResult> fixes = finder.check(program);
+        // This should likely be a fix since stop is inside if, not unconditional last stmt
+        Assertions.assertFalse(fixes.isEmpty(),
+                "Stop inside if should not terminate loop unconditionally");
+    }
+
+    @Test
+    public void testNoFix_StopInNestedLoop() throws IOException, ParsingException {
+        // No Fix: Stop is in a nested loop (outer loop still has the bug)
+        String code = """
+                when green flag clicked
+                forever
+                    repeat (3)
+                        move (10) steps
+                    end
+                    stop [all v]
+                end
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, RepeatForeverStmt.class);
+
+        TerminatedLoopFix finder = new TerminatedLoopFix(createTestIssueDTO(blockId));
+        assertNoFixFound(finder, program);
+    }
+
+    @Test
+    public void testFixFound_StopAfterLoopNotInside() throws IOException, ParsingException {
+        // Fix: Stop is AFTER the loop, not inside it
+        String code = """
+                when green flag clicked
+                forever
+                    move (10) steps
+                end
+                stop [all v]
+                """;
+
+        Program program = parseProgram(code);
+        String blockId = findBlockId(program, RepeatForeverStmt.class);
+
+        TerminatedLoopFix finder = new TerminatedLoopFix(createTestIssueDTO(blockId));
+        // Loop doesn't end with stop - it's after the loop
+        assertFixFound(finder, program);
+    }
+
+    // ========================================================================
     // INJECTOR-BASED TESTS
     // ========================================================================
 

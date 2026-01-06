@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenClearStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenDownStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 import java.util.ArrayList;
@@ -52,20 +53,16 @@ public class MissingEraseAllInjector extends AbstractBugInjector {
             return;
         }
 
-        // Collect all PenClearStmt blocks
-        List<PenClearStmt> penClearStmts = new ArrayList<>();
-        collectPenClearStmts(node, penClearStmts);
-        if (penClearStmts.isEmpty()) {
+        // Collect all StmtLists that contain PenClearStmt
+        List<StmtList> stmtListsWithPenClear = new ArrayList<>();
+        collectStmtListsWithPenClear(node, stmtListsWithPenClear);
+        if (stmtListsWithPenClear.isEmpty()) {
             return;
         }
 
-        // Create ONE mutation that removes ALL erase all blocks
-        modifyClonedNode(penClearStmts.getFirst(), clonedFirst -> {
-            Program clonedProgram = findProgramRoot(clonedFirst);
-            if (clonedProgram != null) {
-                removeAllPenClearStmts(clonedProgram);
-            }
-        });
+        // Create ONE mutation that removes ALL erase all blocks from their StmtLists
+        modifyMultipleClonedNodes(stmtListsWithPenClear, (StmtList clonedList) ->
+                clonedList.getStmts().removeIf(stmt -> stmt instanceof PenClearStmt));
     }
 
     private boolean hasPenDown(ASTNode node) {
@@ -80,21 +77,17 @@ public class MissingEraseAllInjector extends AbstractBugInjector {
         return false;
     }
 
-    private void collectPenClearStmts(ASTNode node, List<PenClearStmt> result) {
-        if (node instanceof PenClearStmt penClear) {
-            result.add(penClear);
-        }
-        for (ASTNode child : node.getChildren()) {
-            collectPenClearStmts(child, result);
-        }
-    }
-
-    private void removeAllPenClearStmts(ASTNode node) {
+    private void collectStmtListsWithPenClear(ASTNode node, List<StmtList> result) {
         if (node instanceof StmtList stmtList) {
-            stmtList.getStmts().removeIf(stmt -> stmt instanceof PenClearStmt);
+            for (Stmt stmt : stmtList.getStmts()) {
+                if (stmt instanceof PenClearStmt) {
+                    result.add(stmtList);
+                    break; // Only add StmtList once even if multiple PenClear
+                }
+            }
         }
         for (ASTNode child : node.getChildren()) {
-            removeAllPenClearStmts(child);
+            collectStmtListsWithPenClear(child, result);
         }
     }
 }
