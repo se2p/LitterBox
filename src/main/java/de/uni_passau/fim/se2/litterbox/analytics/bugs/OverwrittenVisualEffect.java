@@ -34,6 +34,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +61,7 @@ public class OverwrittenVisualEffect extends AbstractIssueFinder {
         Map<String, Stmt> lastEffectStmt = new HashMap<>();
 
         for (Stmt stmt : node.getStmts()) {
-            boolean isHalting = containsHalting(stmt);
+            boolean isHalting = AstNodeUtil.containsTimedHaltingStatement(stmt);
 
             if (stmt instanceof SwitchCostumeTo || stmt instanceof NextCostume) {
                 checkAndPut(lastEffectStmt, "COSTUME", stmt);

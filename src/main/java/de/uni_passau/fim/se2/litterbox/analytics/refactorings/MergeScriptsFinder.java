@@ -21,9 +21,9 @@ package de.uni_passau.fim.se2.litterbox.analytics.refactorings;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeScripts;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
+import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeScripts;
 import java.util.ArrayList;
 import java.util.List;
 

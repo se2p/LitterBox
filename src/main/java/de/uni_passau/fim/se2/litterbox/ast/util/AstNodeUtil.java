@@ -52,6 +52,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadata
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
@@ -62,6 +63,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.InsertAt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ReplaceItem;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 
 import java.util.*;
@@ -82,9 +86,6 @@ public class AstNodeUtil {
      * @return The block id of the node if it has one, {@code null} otherwise.
      */
     public static String getBlockId(final ASTNode node) {
-        if (node == null) {
-            return null;
-        }
         if (node.getMetadata() instanceof DataBlockMetadata block) {
             return block.getBlockId();
         } else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
@@ -93,11 +94,7 @@ public class AstNodeUtil {
             return ((NonDataBlockMetadata) procedure.getDefinition()).getBlockId();
         } else if (node instanceof Script script) {
             if (script.getEvent() instanceof Never) {
-                // Scripts with Never events use the first statement's block ID
-                // Return null if the statement list is empty
-                if (!script.getStmtList().hasStatements()) {
-                    return null;
-                }
+                // Scripts with Never events (disconnected blocks) use the first statement's block ID
                 return getBlockId(script.getStmtList().getStatement(0));
             } else {
                 return getBlockId(script.getEvent());
@@ -914,35 +911,111 @@ public class AstNodeUtil {
         }
     }
 
+
     /**
-     * Checks if a statement is a yielding statement (one that pauses script execution).
+     * Checks if the given statement is a halting statement that interrupts control flow.
      *
-     * <p>Yielding statements transfer control back to the Scratch runtime, allowing other
-     * scripts to execute. This includes wait blocks, timed speech/thought bubbles, glide
-     * motions, and blocking broadcast/sound operations.
+     * <p>Halting statements include:
+     * <ul>
+     *   <li>Time-based waits: {@link WaitSeconds}, {@link WaitUntil}</li>
+     *   <li>Timed speech/thought: {@link SayForSecs}, {@link ThinkForSecs}, {@link Speak}</li>
+     *   <li>Glide animations: {@link GlideSecsToXY}, {@link GlideSecsTo}</li>
+     *   <li>Sound playback: {@link PlaySoundUntilDone}</li>
+     *   <li>User interaction: {@link AskAndWait}, {@link BroadcastAndWait}, {@link SwitchBackdropAndWait}</li>
+     *   <li>Loop statements: {@link LoopStmt}</li>
+     *   <li>Termination statements: {@link StopAll}, {@link StopThisScript}, {@link DeleteClone}</li>
+     * </ul>
      *
      * @param stmt the statement to check
-     * @return true if the statement is yielding
+     * @return {@code true} if the statement is a halting statement
      */
-    public static boolean isYielding(de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt stmt) {
-        return stmt instanceof WaitSeconds
-                || stmt instanceof SayForSecs
-                || stmt instanceof ThinkForSecs
-                || stmt instanceof GlideSecsTo
-                || stmt instanceof GlideSecsToXY
-                || stmt instanceof PlaySoundUntilDone
-                || stmt instanceof AskAndWait
+    public static boolean isHaltingStatement(Stmt stmt) {
+        return stmt instanceof AskAndWait
                 || stmt instanceof BroadcastAndWait
-                || stmt instanceof WaitUntil
+                || stmt instanceof DeleteClone
+                || stmt instanceof GlideSecsToXY
+                || stmt instanceof GlideSecsTo
+                || stmt instanceof LoopStmt
+                || stmt instanceof PlaySoundUntilDone
                 || stmt instanceof RepeatTimesStmt
                 || stmt instanceof RepeatForeverStmt
                 || stmt instanceof UntilStmt
                 || stmt instanceof PlayDrumForBeats
                 || stmt instanceof PlayNoteForBeats
                 || stmt instanceof RestForBeats
+                || stmt instanceof SayForSecs
                 || stmt instanceof Speak
-                || stmt instanceof TranslateTo;
+                || stmt instanceof StopThisScript
+                || stmt instanceof StopAll
+                || stmt instanceof SwitchBackdropAndWait
+                || stmt instanceof ThinkForSecs
+                || stmt instanceof WaitSeconds
+                || stmt instanceof WaitUntil;
     }
+
+    /**
+     * Checks if the given statement is a timed halting statement.
+     *
+     * <p>Unlike {@link #isHaltingStatement(Stmt)}, this only checks for statements
+     * that take observable time (for visual effect analysis), excluding control flow
+     * terminators and loop statements.
+     *
+     * @param stmt the statement to check
+     * @return {@code true} if the statement is a timed halting statement
+     */
+    public static boolean isTimedHaltingStatement(Stmt stmt) {
+        return stmt instanceof WaitSeconds
+                || stmt instanceof ThinkForSecs
+                || stmt instanceof SayForSecs
+                || stmt instanceof GlideSecsToXY
+                || stmt instanceof GlideSecsTo
+                || stmt instanceof PlaySoundUntilDone
+                || stmt instanceof PlayDrumForBeats
+                || stmt instanceof PlayNoteForBeats
+                || stmt instanceof RestForBeats
+                || stmt instanceof Speak;
+    }
+
+    /**
+     * Recursively checks if the given AST node or any of its descendants contains a halting statement.
+     *
+     * @param node the AST node to check
+     * @return {@code true} if the node or any descendant is a halting statement
+     */
+    public static boolean containsHaltingStatement(ASTNode node) {
+        if (node instanceof Stmt stmt && isHaltingStatement(stmt)) {
+            return true;
+        }
+        if (node != null && node.getChildren() != null) {
+            for (ASTNode child : node.getChildren()) {
+                if (containsHaltingStatement(child)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Recursively checks if the given AST node or any of its descendants contains a timed halting statement.
+     *
+     * @param node the AST node to check
+     * @return {@code true} if the node or any descendant is a timed halting statement
+     */
+    public static boolean containsTimedHaltingStatement(ASTNode node) {
+        if (node instanceof Stmt stmt && isTimedHaltingStatement(stmt)) {
+            return true;
+        }
+        if (node != null && node.getChildren() != null) {
+            for (ASTNode child : node.getChildren()) {
+                if (containsTimedHaltingStatement(child)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Checks if an expression is a literal value (string or number).
