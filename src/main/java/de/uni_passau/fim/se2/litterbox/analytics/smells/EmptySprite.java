@@ -55,12 +55,9 @@ public class EmptySprite extends AbstractIssueFinder {
             return false;
         }
 
-        if (first.getFinder() != other.getFinder()) {
-            // Can only be a duplicate if it's the same finder
-            return false;
-        }
+        // Can only be a duplicate if it's the same finder
+        return first.getFinder() == other.getFinder();
 
         //empty sprites are always the same as they have nothing that separates them
-        return true;
     }
 }

@@ -31,7 +31,7 @@ public class CloneAnalysis {
 
     private int minSize = MIN_SIZE;
     private int maxGap = MAX_GAP;
-    private int minSizeNextToGap = MIN_SIZE_NEXT_TO_GAP;
+    private final int minSizeNextToGap = MIN_SIZE_NEXT_TO_GAP;
 
     private ASTNode root1;
     private ASTNode root2;
@@ -142,12 +142,10 @@ public class CloneAnalysis {
                     insertClone(clones, clone);
                 }
             }
-
         }
 
         return clones;
     }
-
 
     private Set<CodeClone> getAllClonesType3(List<Stmt> statements1, List<Stmt> statements2, boolean[][] similarityMatrix, boolean selfComparison) {
         Set<CodeClone> clones = new LinkedHashSet<>();
@@ -176,7 +174,7 @@ public class CloneAnalysis {
             CodeClone otherClone = iterator.next();
             if (otherClone.subsumes(clone)) {
                 return;
-            } else if(clone.subsumes(otherClone)) {
+            } else if (clone.subsumes(otherClone)) {
                 iterator.remove();
             }
         }
@@ -248,5 +246,4 @@ public class CloneAnalysis {
         }
         return block;
     }
-
 }

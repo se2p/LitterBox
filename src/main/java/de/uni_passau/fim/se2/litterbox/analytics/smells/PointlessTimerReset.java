@@ -18,23 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Checks if the "reset timer" block is used but the "timer" block is never used.
@@ -55,29 +46,29 @@ public class PointlessTimerReset extends AbstractIssueFinder {
         this.issues = new LinkedHashSet<>();
         this.resets.clear();
         this.isTimerUsed = false;
-        
+
         program.accept(this);
-        
+
         if (!isTimerUsed && !resets.isEmpty()) {
             for (ResetContext ctx : resets) {
                 createIssue(ctx);
             }
         }
-        
+
         return this.issues;
     }
 
     private void createIssue(ResetContext ctx) {
         IssueBuilder builder = new IssueBuilder()
-            .withFinder(this)
-            .withProgram(program)
-            .withActor(ctx.actor())
-            .withScriptOrProcedure(ctx.script())
-            .withCurrentNode(ctx.node())
-            .withMetadata(ctx.node().getMetadata())
-            .withHint(NAME)
-            .withSeverity(IssueSeverity.LOW);
-            
+                .withFinder(this)
+                .withProgram(program)
+                .withActor(ctx.actor())
+                .withScriptOrProcedure(ctx.script())
+                .withCurrentNode(ctx.node())
+                .withMetadata(ctx.node().getMetadata())
+                .withHint(NAME)
+                .withSeverity(IssueSeverity.LOW);
+
         addIssue(builder);
     }
 

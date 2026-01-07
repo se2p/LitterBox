@@ -25,7 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.RepeatedSubsequenceFinder;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.SequenceToLoop;
 
-import java.util.*;
+import java.util.List;
 
 public class SequentialActions extends AbstractIssueFinder {
 
@@ -35,9 +35,9 @@ public class SequentialActions extends AbstractIssueFinder {
             @Override
             protected void handleRepetition(StmtList stmtList, List<Stmt> subsequence, int occurrences, int startIndex) {
                 IssueBuilder builder = prepareIssueBuilder().withCurrentNode(subsequence.getFirst())
-                                .withMetadata(subsequence.getFirst().getMetadata())
-                                .withSeverity(IssueSeverity.LOW)
-                                .withHint(Hint.fromKey(getName()));
+                        .withMetadata(subsequence.getFirst().getMetadata())
+                        .withSeverity(IssueSeverity.LOW)
+                        .withHint(Hint.fromKey(getName()));
                 SequenceToLoop sequenceToLoop = new SequenceToLoop(stmtList, subsequence, occurrences, startIndex);
                 ScriptEntity refactoring = sequenceToLoop.apply(getCurrentScriptEntity());
                 addIssue(builder.withRefactoring(refactoring));

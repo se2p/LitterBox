@@ -114,22 +114,28 @@ public sealed interface RawBlock {
         public Optional<RawInput> getOptionalInput(final KnownInputs input) {
             return Optional.ofNullable(inputs.get(input.getName()));
         }
-
     }
 
-    sealed interface ArrayBlock extends RawBlock {}
+    sealed interface ArrayBlock extends RawBlock {
+    }
 
-    record RawFloatBlockLiteral(double value) implements ArrayBlock {}
+    record RawFloatBlockLiteral(double value) implements ArrayBlock {
+    }
 
-    record RawIntBlockLiteral(long value) implements ArrayBlock {}
+    record RawIntBlockLiteral(long value) implements ArrayBlock {
+    }
 
-    record RawAngleBlockLiteral(double angle) implements ArrayBlock {}
+    record RawAngleBlockLiteral(double angle) implements ArrayBlock {
+    }
 
-    record RawColorLiteral(String color) implements ArrayBlock {}
+    record RawColorLiteral(String color) implements ArrayBlock {
+    }
 
-    record RawStringLiteral(String value) implements ArrayBlock {}
+    record RawStringLiteral(String value) implements ArrayBlock {
+    }
 
-    record RawBroadcast(String name, RawBlockId id) implements ArrayBlock {}
+    record RawBroadcast(String name, RawBlockId id) implements ArrayBlock {
+    }
 
     record RawVariable(String name, RawBlockId id, Optional<RawBlockId> comment,
                        Optional<Coordinates> coordinates) implements ArrayBlock {

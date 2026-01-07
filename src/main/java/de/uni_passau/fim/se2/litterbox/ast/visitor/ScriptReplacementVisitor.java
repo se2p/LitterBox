@@ -19,7 +19,10 @@
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import com.google.common.collect.Sets;
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +54,6 @@ public class ScriptReplacementVisitor extends OnlyCodeCloneVisitor {
     protected boolean isTargetScript(ScriptEntity node) {
         return node == target;
     }
-
 
     @Override
     public ASTNode visit(ScriptList node) {

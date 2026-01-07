@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Direction;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PositionX;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PositionY;
@@ -31,19 +32,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Size;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Backdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class InappropriateIntimacy extends AbstractIssueFinder {
 
@@ -73,7 +67,7 @@ public class InappropriateIntimacy extends AbstractIssueFinder {
                 Hint hint = Hint.fromKey(NAME);
                 hint.setParameter(Hint.HINT_SPRITE, entry.getKey());
                 addIssue(script.getEvent(), script.getEvent().getMetadata(), IssueSeverity.MEDIUM, hint);
-                return; 
+                return;
             }
         }
     }

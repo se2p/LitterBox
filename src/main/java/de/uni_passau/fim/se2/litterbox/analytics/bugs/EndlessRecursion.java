@@ -91,7 +91,6 @@ public class EndlessRecursion extends AbstractIssueFinder {
                         .withRefactoring(getBroadcastRefactoring(node));
 
                 addIssue(builder);
-
             }
         }
     }

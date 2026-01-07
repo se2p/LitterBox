@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeScripts;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,8 +65,6 @@ public class MergeScriptsFinder extends AbstractDependencyRefactoringFinder {
         Script merged = refactoring.getMergedScript();
         return hasDependencies(script1, script2, merged);
     }
-
-
 
     @Override
     protected boolean hasDependencies(Script script1, Script script2, Script mergedScript) {

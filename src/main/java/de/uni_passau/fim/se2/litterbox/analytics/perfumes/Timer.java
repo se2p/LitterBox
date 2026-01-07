@@ -50,7 +50,6 @@ public class Timer extends AbstractIssueFinder {
     private List<Qualified> setVariables = new ArrayList<>();
     private boolean addComment = false;
 
-
     @Override
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
@@ -134,12 +133,8 @@ public class Timer extends AbstractIssueFinder {
         if (first == other) {
             return false;
         }
-        if (first.getFinder() != other.getFinder()) {
-            return false;
-        }
-        return true;
+        return first.getFinder() == other.getFinder();
     }
-
 
     @Override
     public String getName() {

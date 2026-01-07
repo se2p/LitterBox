@@ -38,7 +38,6 @@ public class MaxVariableLengthCount<T extends ASTNode> implements ScratchVisitor
     private boolean insideProcedure = false;
     private List<String> variables;
 
-
     @Override
     public void visit(Variable node) {
         if (insideScript || insideProcedure) {

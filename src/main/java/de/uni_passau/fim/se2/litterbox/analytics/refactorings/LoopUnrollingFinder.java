@@ -36,7 +36,7 @@ public class LoopUnrollingFinder extends AbstractRefactoringFinder {
         NumExpr expr = loop.getTimes();
         if (expr instanceof NumberLiteral) {
             // The Scratch UI prevents decimal numbers so this cast is safe
-            int value = (int)((NumberLiteral) expr).getValue();
+            int value = (int) ((NumberLiteral) expr).getValue();
             if (value <= MAX_UNROLLING) {
                 refactorings.add(new LoopUnrolling(loop, value));
             }
@@ -44,7 +44,6 @@ public class LoopUnrollingFinder extends AbstractRefactoringFinder {
 
         visitChildren(loop);
     }
-
 
     @Override
     public String getName() {

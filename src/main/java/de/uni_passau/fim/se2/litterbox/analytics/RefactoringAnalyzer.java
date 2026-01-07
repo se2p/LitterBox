@@ -23,20 +23,12 @@ import de.uni_passau.fim.se2.litterbox.refactor.RefactoringTool;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.CrowdingDistanceSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.FastNonDominatedSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.NSGAII;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.ChromosomeGenerator;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.FixedSizePopulationGenerator;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.OffspringGenerator;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequenceGenerator;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.*;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.CohesionFitness;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.CyclomaticComplexityFitness;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfScriptsFitness;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.BinaryRankTournament;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceCrossover;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.io.IOException;
@@ -104,7 +96,6 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
             log.severe("Failed to write NSGA-II population to CSV: " + e.getMessage());
         }
     }
-
 
     /**
      * Execute the list of refactorings.
@@ -184,8 +175,6 @@ public class RefactoringAnalyzer extends FileAnalyzer<Void> {
 
         return fitnessFunctions;
     }
-
-
 
     private static class RefactoringProgramAnalyzer implements ProgramAnalyzer<Void> {
 

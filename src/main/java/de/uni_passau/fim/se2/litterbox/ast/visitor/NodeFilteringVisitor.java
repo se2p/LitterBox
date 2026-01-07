@@ -35,9 +35,9 @@ public class NodeFilteringVisitor<T extends ASTNode> implements ScratchVisitor {
     /**
      * Finds all blocks of the given type in the AST.
      *
-     * @param root The root of the searched AST.
+     * @param root      The root of the searched AST.
      * @param blockType The type of block to search for.
-     * @param <T> The type of block to search for.
+     * @param <T>       The type of block to search for.
      * @return All blocks in the subtree of {@code root} of type {@code blockType}.
      */
     public static <T extends ASTNode> List<T> getBlocks(final ASTNode root, final Class<T> blockType) {
@@ -49,9 +49,9 @@ public class NodeFilteringVisitor<T extends ASTNode> implements ScratchVisitor {
     /**
      * Finds a block of the given type in the AST.
      *
-     * @param root The root of the searched AST.
+     * @param root      The root of the searched AST.
      * @param blockType The type of block to search for.
-     * @param <T> The type of block to search for.
+     * @param <T>       The type of block to search for.
      * @return The first found block in the subtree of {@code root} of type {@code blockType}.
      */
     public static <T extends ASTNode> Optional<T> getBlock(final ASTNode root, final Class<T> blockType) {
@@ -61,8 +61,7 @@ public class NodeFilteringVisitor<T extends ASTNode> implements ScratchVisitor {
     @Override
     public void visit(ASTNode node) {
         if (blockType.isAssignableFrom(node.getClass())) {
-            @SuppressWarnings("unchecked")
-            final T tNode = (T) node;
+            @SuppressWarnings("unchecked") final T tNode = (T) node;
             blocks.add(tNode);
         }
 

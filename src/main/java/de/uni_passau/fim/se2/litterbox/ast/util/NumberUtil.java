@@ -51,10 +51,10 @@ public final class NumberUtil {
         }
         return ALLOWED_CHARS.matcher(text).matches() && !VALID_NUMBER.matcher(text).matches();
     }
-    
+
     /**
      * Checks if a string looks like it was intended to be a number.
-     * 
+     *
      * @param text The string to check.
      * @return {@code true} if it's either a valid number or an invalid number string.
      */

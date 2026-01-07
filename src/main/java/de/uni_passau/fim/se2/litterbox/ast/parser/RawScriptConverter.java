@@ -31,7 +31,10 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawBlockId;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 final class RawScriptConverter {
@@ -88,7 +91,7 @@ final class RawScriptConverter {
      * Converts a statement list.
      *
      * @param state The current parser state.
-     * @param root The first block of the statement list.
+     * @param root  The first block of the statement list.
      * @return a statement list, or {@code null} in case the {@code root} does not point to a statement block.
      */
     static StmtList convertStmtList(final ProgramParserState state, final RawBlockId root) {
@@ -152,8 +155,8 @@ final class RawScriptConverter {
     private static boolean isShadowParameter(final RawBlock.RawRegularBlock block) {
         return block.shadow()
                 && (
-                    ProcedureOpcode.argument_reporter_string_number.name().equals(block.opcode())
-                            || ProcedureOpcode.argument_reporter_boolean.name().equals(block.opcode())
-                );
+                ProcedureOpcode.argument_reporter_string_number.name().equals(block.opcode())
+                        || ProcedureOpcode.argument_reporter_boolean.name().equals(block.opcode())
+        );
     }
 }

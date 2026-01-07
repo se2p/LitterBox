@@ -85,7 +85,6 @@ public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, S
         list.add(new VariablesBlockCount<>());
         list.add(new OperatorsBlockCount<>());
 
-
         double count = new BlockCount<ProcedureDefinition>().calculateMetric(node);
 
         // Empty program
@@ -96,7 +95,7 @@ public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, S
         double localEntropy = 0.0; // Compute script category entropy
 
         for (MetricExtractor<ProcedureDefinition> extractor : list) {
-            double pX =  extractor.calculateMetric(node) / count;
+            double pX = extractor.calculateMetric(node) / count;
             if (pX == 0) {
                 continue;
             }
@@ -105,7 +104,6 @@ public class CategoryEntropy<T extends ASTNode> implements MetricExtractor<T>, S
         }
 
         this.programCount += localEntropy;
-
     }
 
     @Override

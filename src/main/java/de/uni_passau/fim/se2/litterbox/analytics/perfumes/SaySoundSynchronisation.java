@@ -51,7 +51,6 @@ public class SaySoundSynchronisation extends AbstractIssueFinder {
         });
     }
 
-
     @Override
     public void visit(Say node) {
         if (saySomething && afterSound) {
@@ -77,10 +76,7 @@ public class SaySoundSynchronisation extends AbstractIssueFinder {
         if (first == other) {
             return false;
         }
-        if (first.getFinder() != other.getFinder()) {
-            return false;
-        }
-        return true;
+        return first.getFinder() == other.getFinder();
     }
 
     @Override

@@ -28,7 +28,7 @@ import de.uni_passau.fim.se2.litterbox.dependency.ProgramDependenceGraph;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.SwapStatements;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,7 +68,7 @@ public class SwapStatementsFinder extends AbstractDependencyRefactoringFinder {
             if (stmt1Node.isPresent() && stmt2Node.isPresent()
                     && !isTerminationStatement(stmt2Node.get().getASTNode())
                     && !pdg.hasDependency(stmt1Node.get(), stmt2Node.get())
-                    && !wouldCreateDataDependency(currentScript, Arrays.asList(stmt2), Arrays.asList(stmt1))) {
+                    && !wouldCreateDataDependency(currentScript, Collections.singletonList(stmt2), Collections.singletonList(stmt1))) {
                 refactorings.add(new SwapStatements(stmt1, stmt2));
             }
         }

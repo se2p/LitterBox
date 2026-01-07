@@ -99,14 +99,14 @@ final class StringExprConverter extends ExprConverter {
     private static boolean isParseableAsStringLiteral(final RawInput exprBlock) {
         final boolean hasCorrectType = exprBlock.input() instanceof BlockRef.Block(RawBlock.ArrayBlock exprInput)
                 && (
-                        // Raw color literals in string positions can only be achieved by JSON hacking.
-                        // Since the JSON contains the hex-string of the color, though, we can parse it as string.
-                        //
-                        // Broadcasts behave like String messages.
-                        exprInput instanceof RawBlock.RawStringLiteral
-                                || exprInput instanceof RawBlock.RawColorLiteral
-                                || exprInput instanceof RawBlock.RawBroadcast
-                );
+                // Raw color literals in string positions can only be achieved by JSON hacking.
+                // Since the JSON contains the hex-string of the color, though, we can parse it as string.
+                //
+                // Broadcasts behave like String messages.
+                exprInput instanceof RawBlock.RawStringLiteral
+                        || exprInput instanceof RawBlock.RawColorLiteral
+                        || exprInput instanceof RawBlock.RawBroadcast
+        );
 
         return hasCorrectShadow(exprBlock) && hasCorrectType;
     }
@@ -193,7 +193,7 @@ final class StringExprConverter extends ExprConverter {
         final String property = exprBlock.getFieldValueAsString(KnownFields.PROPERTY);
         final Attribute attribute = switch (property) {
             case "y position", "x position", "direction", "costume #", "costume name", "size", "volume",
-                    "backdrop name", "backdrop #" -> new AttributeFromFixed(new FixedAttribute(property));
+                 "backdrop name", "backdrop #" -> new AttributeFromFixed(new FixedAttribute(property));
             default -> new AttributeFromVariable(new Variable(new StrId(property)));
         };
 

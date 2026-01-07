@@ -25,9 +25,9 @@ import java.util.List;
 
 public class CloneBlock {
 
-    private List<Integer> positions1 = new ArrayList<>();
+    private final List<Integer> positions1 = new ArrayList<>();
 
-    private List<Integer> positions2 = new ArrayList<>();
+    private final List<Integer> positions2 = new ArrayList<>();
 
     public void add(int x, int y) {
         positions1.add(x);
@@ -88,11 +88,7 @@ public class CloneBlock {
             return false;
         }
         int diffY = getFirstY() - other.getLastY() - 1;
-        if (diffY < 0 || Math.abs(diffY) > gapSize) {
-            return false;
-        }
-
-        return true;
+        return diffY >= 0 && Math.abs(diffY) <= gapSize;
     }
 
     public void fillPositionMap(boolean[][] filledPositions) {

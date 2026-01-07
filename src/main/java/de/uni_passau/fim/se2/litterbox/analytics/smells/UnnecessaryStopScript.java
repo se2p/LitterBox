@@ -57,7 +57,6 @@ public class UnnecessaryStopScript extends AbstractIssueFinder {
         }
     }
 
-
     @Override
     public IssueType getIssueType() {
         return IssueType.SMELL;

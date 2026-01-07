@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-public class VariableCount<T extends ASTNode> implements  ScratchVisitor, MetricExtractor<T> {
+public class VariableCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
 
     public static final String NAME = "variable_count";
     private boolean insideScript = false;

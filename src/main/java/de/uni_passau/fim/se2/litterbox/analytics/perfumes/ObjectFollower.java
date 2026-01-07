@@ -103,10 +103,7 @@ public class ObjectFollower extends AbstractIssueFinder {
         if (first == other) {
             return false;
         }
-        if (first.getFinder() != other.getFinder()) {
-            return false;
-        }
-        return true;
+        return first.getFinder() == other.getFinder();
     }
 
     @Override

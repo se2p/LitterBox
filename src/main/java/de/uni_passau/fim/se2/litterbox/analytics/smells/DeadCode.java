@@ -42,7 +42,6 @@ public class DeadCode extends AbstractIssueFinder {
         currentScript = null;
     }
 
-
     @Override
     public boolean isDuplicateOf(Issue first, Issue other) {
         if (first == other) {
@@ -55,12 +54,8 @@ public class DeadCode extends AbstractIssueFinder {
             return false;
         }
 
-        if (first.getFinder() instanceof DeadCode) {
-            // All instances of dead code are duplicates
-            return true;
-        }
-
-        return false;
+        // All instances of dead code are duplicates
+        return first.getFinder() instanceof DeadCode;
     }
 
     @Override

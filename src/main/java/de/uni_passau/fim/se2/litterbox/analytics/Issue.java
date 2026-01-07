@@ -62,7 +62,7 @@ public class Issue {
      * @param metaData    that contains references for comments
      */
     protected Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor,
-                 ScriptEntity script, ASTNode currentNode, Metadata metaData, Hint hint) {
+                    ScriptEntity script, ASTNode currentNode, Metadata metaData, Hint hint) {
         Preconditions.checkArgument((currentNode == null) == (script == null));
         this.finder = finder;
         this.severity = severity;
@@ -70,7 +70,7 @@ public class Issue {
         this.actor = actor;
         this.script = script;
         this.node = currentNode;
-        this.normalizedNode   = normalize(this.node);
+        this.normalizedNode = normalize(this.node);
         this.normalizedScript = normalize(script);
         this.metaData = metaData;
         this.hint = hint;
@@ -84,7 +84,7 @@ public class Issue {
         this.actor = builder.getActor();
         this.script = builder.getScript();
         this.node = builder.getCurrentNode();
-        this.normalizedNode   = normalize(this.node);
+        this.normalizedNode = normalize(this.node);
         this.normalizedScript = normalize(script);
         this.refactoredScript = builder.getRefactoring();
         this.metaData = builder.getMetaData();
@@ -152,7 +152,6 @@ public class Issue {
     public void setRefactoredScriptOrProcedureDefinition(ScriptEntity script) {
         this.refactoredScript = script;
     }
-
 
     public String getFinderName() {
         return finder.getName();

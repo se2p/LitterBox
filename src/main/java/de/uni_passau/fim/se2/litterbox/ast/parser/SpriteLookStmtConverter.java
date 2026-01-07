@@ -81,7 +81,7 @@ final class SpriteLookStmtConverter extends StmtConverter<SpriteLookStmt> {
                 yield new GoToLayer(choice, metadata);
             }
             case looks_goforwardbackwardlayers -> {
-                final String layerOption =  block.getFieldValueAsString(KnownFields.FORWARD_BACKWARD);
+                final String layerOption = block.getFieldValueAsString(KnownFields.FORWARD_BACKWARD);
                 final ForwardBackwardChoice choice = new ForwardBackwardChoice(layerOption);
                 final NumExpr numExpr = NumExprConverter.convertNumExpr(state, block, KnownInputs.NUM);
                 yield new ChangeLayerBy(numExpr, choice, metadata);

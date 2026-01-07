@@ -52,6 +52,4 @@ public class LLMProgramReadabilityImprovementAnalyzer extends LLMProgramModifica
         ParsedLlmResponseCode llmResponse = scratchLlm.singleQueryWithCodeOnlyResponse(program, query);
         return llmResponseParser.updateProgram(program, llmResponse);
     }
-
-
 }

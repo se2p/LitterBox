@@ -38,9 +38,9 @@ public final class BlockIdNodeFinder implements ScratchVisitor {
     /**
      * Context information for a found node.
      *
-     * @param node the found AST node
-     * @param actor the containing actor
-     * @param script the containing script (null if in a procedure)
+     * @param node      the found AST node
+     * @param actor     the containing actor
+     * @param script    the containing script (null if in a procedure)
      * @param procedure the containing procedure (null if in a script)
      */
     public record NodeContext(
@@ -48,7 +48,8 @@ public final class BlockIdNodeFinder implements ScratchVisitor {
             ActorDefinition actor,
             Script script,
             ProcedureDefinition procedure
-    ) {}
+    ) {
+    }
 
     private final String targetBlockId;
     private ASTNode foundNode;

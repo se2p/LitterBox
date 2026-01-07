@@ -25,7 +25,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.*;
@@ -187,7 +186,7 @@ public abstract class AbstractIssueFinder implements IssueFinder, ScratchVisitor
     @Override
     public Collection<String> getHintKeys() {
         // Default: Only one key with the name of the finder
-        return Arrays.asList(getName());
+        return Collections.singletonList(getName());
     }
 
     @Override

@@ -45,7 +45,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 public class NodeDeletionVisitor extends OnlyCodeCloneVisitor {
 
-    private ASTNode target;
+    private final ASTNode target;
 
     public NodeDeletionVisitor(ASTNode target) {
         this.target = target;

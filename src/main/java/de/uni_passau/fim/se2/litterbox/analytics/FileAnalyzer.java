@@ -144,7 +144,7 @@ public abstract class FileAnalyzer<R> {
      * Writes the analysis result to the output destination {@link #output}.
      *
      * @param projectFile The path of the sb3 or json file from which the program was originally read.
-     * @param program The analysed program.
+     * @param program     The analysed program.
      * @param checkResult The analysis result.
      * @throws IOException Thrown in case writing to the destination fails.
      */

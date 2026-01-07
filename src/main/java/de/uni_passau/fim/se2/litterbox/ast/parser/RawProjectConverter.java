@@ -33,11 +33,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorListMet
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.*;
+import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawMonitor;
+import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawProject;
+import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawTarget;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 final class RawProjectConverter {
     private final RawProject project;

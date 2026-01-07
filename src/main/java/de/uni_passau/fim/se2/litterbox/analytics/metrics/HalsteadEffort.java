@@ -38,7 +38,7 @@ public class HalsteadEffort<T extends ASTNode> implements MetricExtractor<T> {
 
         //  D = ( n1 / 2 ) * ( N2 / n2 )
         double n1 = halstead.getUniqueOperators();
-        double n2  = halstead.getUniqueOperands();
+        double n2 = halstead.getUniqueOperands();
         double totalOperands = halstead.getTotalOperands();
 
         if (n2 == 0) {

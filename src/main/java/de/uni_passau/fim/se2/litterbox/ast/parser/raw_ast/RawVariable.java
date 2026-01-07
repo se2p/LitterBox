@@ -21,4 +21,5 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @JsonFormat(shape = JsonFormat.Shape.ARRAY)
-public record RawVariable<T>(String variableName, T value, boolean isCloudVariable) {}
+public record RawVariable<T>(String variableName, T value, boolean isCloudVariable) {
+}

@@ -18,7 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
@@ -54,7 +57,6 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
                         .withSeverity(IssueSeverity.HIGH)
                         .withRefactoring(refactoring);
                 addIssue(builder);
-
             } else if (isBooleanFalseLiteral(equals.getOperand2())) {
                 NodeReplacementVisitor visitor = new NodeReplacementVisitor(equals, new Not(getBooleanExpression(equals.getOperand1()), equals.getMetadata()));
                 ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
@@ -64,7 +66,6 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
                         .withSeverity(IssueSeverity.HIGH)
                         .withRefactoring(refactoring);
                 addIssue(builder);
-
             }
         } else if (isBooleanExpression(equals.getOperand2())) {
             if (isBooleanTrueLiteral(equals.getOperand1())) {

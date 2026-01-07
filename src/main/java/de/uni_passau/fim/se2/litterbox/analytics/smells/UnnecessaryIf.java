@@ -27,7 +27,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.StatementReplacementVisitor;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class UnnecessaryIf extends AbstractIssueFinder {
     public static final String NAME = "unnecessary_if";
@@ -45,8 +48,8 @@ public class UnnecessaryIf extends AbstractIssueFinder {
                     IfThenStmt joinedIf = new IfThenStmt(or, lastIf.getThenStmts(), s.getMetadata());
                     StatementReplacementVisitor visitor = new StatementReplacementVisitor(
                             lastIf,
-                            Arrays.asList(s),
-                            Arrays.asList(joinedIf)
+                            List.of(s),
+                            List.of(joinedIf)
                     );
                     ScriptEntity refactored = visitor.apply(getCurrentScriptEntity());
 
@@ -97,9 +100,7 @@ public class UnnecessaryIf extends AbstractIssueFinder {
             Set<ASTNode> nodes = new HashSet<>(mbFirst.getNodes());
             nodes.retainAll(mbOther.getNodes());
             // If there is an overlap, the issues overlap on one if
-            if (!nodes.isEmpty()) {
-                return true;
-            }
+            return !nodes.isEmpty();
         }
 
         return false;

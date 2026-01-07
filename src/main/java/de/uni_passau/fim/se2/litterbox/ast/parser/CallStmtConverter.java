@@ -25,7 +25,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.UnspecifiedStringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
-import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.*;
+import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawBlock;
+import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawBlockId;
+import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawInput;
+import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawMutation;
 
 import java.util.ArrayList;
 import java.util.Collections;

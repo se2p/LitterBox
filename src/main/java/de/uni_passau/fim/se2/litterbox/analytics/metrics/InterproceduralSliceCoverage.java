@@ -30,7 +30,9 @@ import de.uni_passau.fim.se2.litterbox.cfg.Defineable;
 import de.uni_passau.fim.se2.litterbox.dependency.ProgramDependenceGraph;
 import de.uni_passau.fim.se2.litterbox.dependency.SliceProfile;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class InterproceduralSliceCoverage<T extends ASTNode> implements MetricExtractor<T> {
     public static final String NAME = "interprocedural_slice_coverage";
@@ -62,7 +64,6 @@ public class InterproceduralSliceCoverage<T extends ASTNode> implements MetricEx
                         }
                     }
                 }
-
             }
         });
 

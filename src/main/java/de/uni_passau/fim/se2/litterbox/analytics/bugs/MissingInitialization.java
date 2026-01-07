@@ -60,7 +60,6 @@ public class MissingInitialization extends AbstractIssueFinder {
         }
     }
 
-
     public static final String NAME = "missing_initialization";
     public static final String NAME_CLONE = "missing_initialization_clone";
 

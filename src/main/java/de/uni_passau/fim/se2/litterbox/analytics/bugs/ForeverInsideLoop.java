@@ -44,7 +44,7 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
     private boolean blocksAfter;
     private boolean blocksBefore;
     private boolean insideIfElse;
-    private Stack<LoopStmt> loopStack = new Stack<>();
+    private final Stack<LoopStmt> loopStack = new Stack<>();
 
     @Override
     public void visit(ActorDefinition actor) {
@@ -111,7 +111,6 @@ public class ForeverInsideLoop extends AbstractIssueFinder {
         //   Y
 
         StmtList outerList = (StmtList) outerLoop.getParentNode();
-
 
         List<Stmt> outerStatements = new ArrayList<>(outerList.getStmts());
         int pos = outerStatements.indexOf(outerLoop); // Location of Loop 1

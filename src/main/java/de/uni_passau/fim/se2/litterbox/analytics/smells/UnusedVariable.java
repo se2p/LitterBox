@@ -127,7 +127,7 @@ public class UnusedVariable extends AbstractIssueFinder {
     }
 
     private void addScriptWithIssueFor(Expression expr, Hint hint) {
-        Script theScript = new Script(new Never(), new StmtList(Arrays.asList(new ExpressionStmt(expr))));
+        Script theScript = new Script(new Never(), new StmtList(List.of(new ExpressionStmt(expr))));
         addIssueForSynthesizedScript(theScript, expr, new NoBlockMetadata(), hint);
     }
 

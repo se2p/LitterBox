@@ -405,13 +405,13 @@ public class StmtListJSONCreator
         } else {
             IdJsonStringTuple tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
                     condition, symbolTable);
-            if (tuple.getId() == null) {
+            if (tuple.id() == null) {
                 StringBuilder jsonString = new StringBuilder();
-                createField(jsonString, CONDITION_KEY).append(tuple.getJsonString());
+                createField(jsonString, CONDITION_KEY).append(tuple.jsonString());
                 inputs.add(jsonString.toString());
             } else {
-                finishedJSONStrings.add(tuple.getJsonString());
-                inputs.add(createReferenceJSON(tuple.getId(), CONDITION_KEY, false));
+                finishedJSONStrings.add(tuple.jsonString());
+                inputs.add(createReferenceJSON(tuple.id(), CONDITION_KEY, false));
             }
         }
     }
@@ -474,13 +474,13 @@ public class StmtListJSONCreator
         } else {
             IdJsonStringTuple tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
                     condition, symbolTable);
-            if (tuple.getId() == null) {
+            if (tuple.id() == null) {
                 StringBuilder jsonString = new StringBuilder();
-                createField(jsonString, CONDITION_KEY).append(tuple.getJsonString());
+                createField(jsonString, CONDITION_KEY).append(tuple.jsonString());
                 inputs.add(jsonString.toString());
             } else {
-                finishedJSONStrings.add(tuple.getJsonString());
-                inputs.add(createReferenceJSON(tuple.getId(), CONDITION_KEY, false));
+                finishedJSONStrings.add(tuple.jsonString());
+                inputs.add(createReferenceJSON(tuple.id(), CONDITION_KEY, false));
             }
         }
 
@@ -765,8 +765,8 @@ public class StmtListJSONCreator
         IdJsonStringTuple tuple;
         if (elem instanceof Myself) {
             tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), elem, dependentOpcode);
-            finishedJSONStrings.add(tuple.getJsonString());
-            return createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false);
+            finishedJSONStrings.add(tuple.jsonString());
+            return createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false);
         } else {
             WithCloneExpr withExpr = (WithCloneExpr) elem;
             //if metadata are NoBlockMetadata the WithExpr is simply a wrapper of another block
@@ -774,8 +774,8 @@ public class StmtListJSONCreator
                 return createExpr(metadata, inputName, withExpr.getExpression());
             } else {
                 tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), elem, dependentOpcode);
-                finishedJSONStrings.add(tuple.getJsonString());
-                return createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false);
+                finishedJSONStrings.add(tuple.jsonString());
+                return createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false);
             }
         }
     }
@@ -794,8 +794,8 @@ public class StmtListJSONCreator
     public void visit(ExpressionStmt node) {
         IdJsonStringTuple tuple = exprCreator.createExpressionJSON(null,
                 node.getExpression(), symbolTable);
-        finishedJSONStrings.add(tuple.getJsonString());
-        previousBlockId = tuple.getId();
+        finishedJSONStrings.add(tuple.jsonString());
+        previousBlockId = tuple.id();
     }
 
     @Override
@@ -830,25 +830,25 @@ public class StmtListJSONCreator
                 tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
                         current, symbolTable);
 
-                if (tuple.getId() == null) {
+                if (tuple.id() == null) {
                     StringBuilder jsonString = new StringBuilder();
-                    createField(jsonString, argumentId).append(tuple.getJsonString());
+                    createField(jsonString, argumentId).append(tuple.jsonString());
                     inputs.add(jsonString.toString());
                 } else {
-                    finishedJSONStrings.add(tuple.getJsonString());
-                    inputs.add(createReferenceJSON(tuple.getId(), argumentId, false));
+                    finishedJSONStrings.add(tuple.jsonString());
+                    inputs.add(createReferenceJSON(tuple.id(), argumentId, false));
                 }
             } else {
                 tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
                         current, symbolTable);
 
-                if (tuple.getId() == null) {
+                if (tuple.id() == null) {
                     StringBuilder jsonString = new StringBuilder();
-                    createField(jsonString, argumentId).append(tuple.getJsonString());
+                    createField(jsonString, argumentId).append(tuple.jsonString());
                     inputs.add(jsonString.toString());
                 } else {
-                    finishedJSONStrings.add(tuple.getJsonString());
-                    inputs.add(createReferenceJSON(tuple.getId(), argumentId, true));
+                    finishedJSONStrings.add(tuple.jsonString());
+                    inputs.add(createReferenceJSON(tuple.id(), argumentId, true));
                 }
             }
         }
@@ -868,8 +868,8 @@ public class StmtListJSONCreator
 
         if (colorParam instanceof FixedColorParam) {
             tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), colorParam, dependentOpcode);
-            inputs.add(createReferenceInput(COLOR_PARAM_BIG_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
-            finishedJSONStrings.add(tuple.getJsonString());
+            inputs.add(createReferenceInput(COLOR_PARAM_BIG_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
+            finishedJSONStrings.add(tuple.jsonString());
         } else {
             inputs.add(createExpr(metadata, COLOR_PARAM_BIG_KEY, ((ColorParamFromExpr) colorParam).getExpr()));
         }
@@ -943,8 +943,8 @@ public class StmtListJSONCreator
         IdJsonStringTuple tuple;
         if (elem instanceof Prev || elem instanceof Next || elem instanceof Random) {
             tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), elem, dependentOpcode);
-            finishedJSONStrings.add(tuple.getJsonString());
-            return createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false);
+            finishedJSONStrings.add(tuple.jsonString());
+            return createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false);
         } else {
             WithExpr withExpr = (WithExpr) elem;
             //if metadata are NoBlockMetadata the WithExpr is simply a wrapper of another block
@@ -952,8 +952,8 @@ public class StmtListJSONCreator
                 return createExpr(metadata, inputName, withExpr.getExpression());
             } else {
                 tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), elem, dependentOpcode);
-                finishedJSONStrings.add(tuple.getJsonString());
-                return createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false);
+                finishedJSONStrings.add(tuple.jsonString());
+                return createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false);
             }
         }
     }
@@ -973,8 +973,8 @@ public class StmtListJSONCreator
 
         if (pos instanceof RandomPos || pos instanceof MousePos) {
             tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), pos, dependentOpcode);
-            finishedJSONStrings.add(tuple.getJsonString());
-            return createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false);
+            finishedJSONStrings.add(tuple.jsonString());
+            return createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false);
         } else {
             FromExpression fromPos = (FromExpression) pos;
 
@@ -984,8 +984,8 @@ public class StmtListJSONCreator
                 return createExpr(metadata, inputName, fromPos.getStringExpr());
             } else {
                 tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), pos, dependentOpcode);
-                finishedJSONStrings.add(tuple.getJsonString());
-                return createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false);
+                finishedJSONStrings.add(tuple.jsonString());
+                return createReferenceInput(inputName, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false);
             }
         }
     }
@@ -1065,13 +1065,13 @@ public class StmtListJSONCreator
     private String createExpr(NonDataBlockMetadata metadata, String inputKey, Expression expr) {
         IdJsonStringTuple tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
                 expr, symbolTable);
-        if (tuple.getId() == null) {
+        if (tuple.id() == null) {
             StringBuilder jsonString = new StringBuilder();
-            createField(jsonString, inputKey).append(tuple.getJsonString());
+            createField(jsonString, inputKey).append(tuple.jsonString());
             return jsonString.toString();
         } else {
-            finishedJSONStrings.add(tuple.getJsonString());
-            return createReferenceJSON(tuple.getId(), inputKey, true);
+            finishedJSONStrings.add(tuple.jsonString());
+            return createReferenceJSON(tuple.id(), inputKey, true);
         }
     }
 
@@ -1124,13 +1124,13 @@ public class StmtListJSONCreator
 
         tuple = exprCreator.createExpressionJSON(metadata.getBlockId(),
                 color, symbolTable);
-        if (tuple.getId() == null) {
+        if (tuple.id() == null) {
             StringBuilder jsonString = new StringBuilder();
-            createField(jsonString, COLOR_KEY).append(tuple.getJsonString());
+            createField(jsonString, COLOR_KEY).append(tuple.jsonString());
             inputs.add(jsonString.toString());
         } else {
-            finishedJSONStrings.add(tuple.getJsonString());
-            inputs.add(createReferenceJSON(tuple.getId(), COLOR_KEY, true));
+            finishedJSONStrings.add(tuple.jsonString());
+            inputs.add(createReferenceJSON(tuple.id(), COLOR_KEY, true));
         }
 
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
@@ -1156,8 +1156,8 @@ public class StmtListJSONCreator
         List<String> inputs = new ArrayList<>();
         if (node.getLanguage() instanceof FixedLanguage) {
             IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node.getLanguage(), node.getMenuLanguageOpcode());
-            finishedJSONStrings.add(tuple.getJsonString());
-            inputs.add(createReferenceInput(LANGUAGE_INPUT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            finishedJSONStrings.add(tuple.jsonString());
+            inputs.add(createReferenceInput(LANGUAGE_INPUT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         } else {
             inputs.add(createExpr(metadata, LANGUAGE_INPUT_KEY, ((ExprLanguage) node.getLanguage()).getExpr()));
         }
@@ -1172,8 +1172,8 @@ public class StmtListJSONCreator
         List<String> inputs = new ArrayList<>();
         if (node.getVoice() instanceof FixedVoice) {
             IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node.getVoice(), node.getMenuVoiceOpcode());
-            finishedJSONStrings.add(tuple.getJsonString());
-            inputs.add(createReferenceInput(VOICE_INPUT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            finishedJSONStrings.add(tuple.jsonString());
+            inputs.add(createReferenceInput(VOICE_INPUT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         } else {
             inputs.add(createExpr(metadata, VOICE_INPUT_KEY, ((ExprVoice) node.getVoice()).getExpr()));
         }
@@ -1206,8 +1206,8 @@ public class StmtListJSONCreator
         List<String> inputs = new ArrayList<>();
         if (node.getInstrument() instanceof FixedInstrument) {
             IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node.getInstrument(), node.getMenuInstrumentOpcode());
-            finishedJSONStrings.add(tuple.getJsonString());
-            inputs.add(createReferenceInput(INSTRUMENT, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            finishedJSONStrings.add(tuple.jsonString());
+            inputs.add(createReferenceInput(INSTRUMENT, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         } else {
             inputs.add(createExpr(metadata, INSTRUMENT, ((ExprInstrument) node.getInstrument()).getExpr()));
         }
@@ -1224,8 +1224,8 @@ public class StmtListJSONCreator
 
         if (node.getDrum() instanceof FixedDrum) {
             IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node.getDrum(), node.getMenuDrumOpcode());
-            finishedJSONStrings.add(tuple.getJsonString());
-            inputs.add(createReferenceInput(DRUM, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            finishedJSONStrings.add(tuple.jsonString());
+            inputs.add(createReferenceInput(DRUM, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         } else {
             inputs.add(createExpr(metadata, DRUM, ((ExprDrum) node.getDrum()).getExpr()));
         }
@@ -1243,8 +1243,8 @@ public class StmtListJSONCreator
         Note note = node.getNote();
         if (note instanceof FixedNote) {
             IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), note, DependentBlockOpcode.note);
-            finishedJSONStrings.add(tuple.getJsonString());
-            inputs.add(createReferenceInput(NOTE, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            finishedJSONStrings.add(tuple.jsonString());
+            inputs.add(createReferenceInput(NOTE, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         } else {
             inputs.add(createExpr(metadata, NOTE, ((ExprNote) note).getExpr()));
         }

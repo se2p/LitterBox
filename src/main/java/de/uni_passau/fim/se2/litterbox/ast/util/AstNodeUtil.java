@@ -911,7 +911,6 @@ public class AstNodeUtil {
         }
     }
 
-
     /**
      * Checks if the given statement is a halting statement that interrupts control flow.
      *
@@ -1012,7 +1011,6 @@ public class AstNodeUtil {
         }
         return false;
     }
-
 
     /**
      * Checks if an expression is a literal value (string or number).

@@ -32,11 +32,11 @@ import java.util.List;
  * </ul>
  *
  * @param beforeSource the source identifier for the before version (file path)
- * @param afterSource the source identifier for the after version (file path)
- * @param fixed issues that were verified as fixed by fix heuristics
- * @param newIssues issues only present in the after version
- * @param persisting issues present in both versions
- * @param removed issues that disappeared but weren't verified as properly fixed
+ * @param afterSource  the source identifier for the after version (file path)
+ * @param fixed        issues that were verified as fixed by fix heuristics
+ * @param newIssues    issues only present in the after version
+ * @param persisting   issues present in both versions
+ * @param removed      issues that disappeared but weren't verified as properly fixed
  */
 public record DiffResult(
         String beforeSource,

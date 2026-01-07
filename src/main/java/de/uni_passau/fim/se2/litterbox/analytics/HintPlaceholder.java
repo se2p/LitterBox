@@ -20,7 +20,8 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 public sealed interface HintPlaceholder {
 
-    record Value(String value) implements HintPlaceholder {}
+    record Value(String value) implements HintPlaceholder {
+    }
 
     /**
      * A placeholder that will be translated using
@@ -28,7 +29,8 @@ public sealed interface HintPlaceholder {
      *
      * @param translationKey The key for the translation string.
      */
-    record Translatable(String translationKey) implements HintPlaceholder {}
+    record Translatable(String translationKey) implements HintPlaceholder {
+    }
 
     /**
      * A fixed string with translatable elements inside.
@@ -40,8 +42,9 @@ public sealed interface HintPlaceholder {
      *
      * @param value The string that should be part of the hint.
      */
-    record ValueWithTranslatableElements(String value) implements HintPlaceholder {}
+    record ValueWithTranslatableElements(String value) implements HintPlaceholder {
+    }
 
-    record Defineable(de.uni_passau.fim.se2.litterbox.cfg.Defineable defineable) implements HintPlaceholder {}
-
+    record Defineable(de.uni_passau.fim.se2.litterbox.cfg.Defineable defineable) implements HintPlaceholder {
+    }
 }

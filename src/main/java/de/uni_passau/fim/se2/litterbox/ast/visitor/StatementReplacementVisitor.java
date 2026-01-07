@@ -54,7 +54,6 @@ public class StatementReplacementVisitor extends OnlyCodeCloneVisitor {
         return node == target;
     }
 
-
     @Override
     public ASTNode visit(StmtList node) {
         List<Stmt> statements = new ArrayList<>();

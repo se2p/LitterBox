@@ -18,11 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.AsExprType;
@@ -41,13 +37,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPosXY;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
@@ -180,8 +170,7 @@ public class EmptyParameter extends AbstractIssueFinder {
     }
 
     private ASTNode getEmptyParameterNode(ASTNode node) {
-        if (node instanceof StringLiteral) {
-            StringLiteral literal = (StringLiteral) node;
+        if (node instanceof StringLiteral literal) {
             if (literal.getText().isEmpty()) {
                 return literal;
             }
@@ -191,9 +180,11 @@ public class EmptyParameter extends AbstractIssueFinder {
                 || node instanceof Variable || node instanceof Qualified
                 || node instanceof FromExpression || node instanceof FromNumber) {
             if (!node.getChildren().isEmpty()) {
-                for(ASTNode child : node.getChildren()) {
-                     ASTNode res = getEmptyParameterNode(child);
-                     if (res != null) return res;
+                for (ASTNode child : node.getChildren()) {
+                    ASTNode res = getEmptyParameterNode(child);
+                    if (res != null) {
+                        return res;
+                    }
                 }
             }
         }

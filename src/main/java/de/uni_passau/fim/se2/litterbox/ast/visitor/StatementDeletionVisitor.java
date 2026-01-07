@@ -27,7 +27,7 @@ import java.util.List;
 
 public class StatementDeletionVisitor extends OnlyCodeCloneVisitor {
 
-    private Stmt targetStatement;
+    private final Stmt targetStatement;
 
     public StatementDeletionVisitor(Stmt targetStatement) {
         this.targetStatement = targetStatement;

@@ -62,7 +62,7 @@ public class NodeNameUtil {
      * <p>Combines the name/projectID of the program with the unique name of a script to create a globally unique
      * identifier for the script.
      *
-     * @param program The program the script belongs to.
+     * @param program      The program the script belongs to.
      * @param scriptEntity Some script inside {@code program}.
      * @return A unique name based on the program and script ids. Empty if no ID could be generated for the script.
      */

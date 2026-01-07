@@ -465,8 +465,8 @@ public class ExpressionJSONCreator
             IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
                     metadata.getBlockId(), touchable, node.getTouchingObjectMenuOpcode()
             );
-            finishedJSONStrings.add(tuple.getJsonString());
-            inputs.add(createReferenceInput(TOUCHINGOBJECTMENU, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            finishedJSONStrings.add(tuple.jsonString());
+            inputs.add(createReferenceInput(TOUCHINGOBJECTMENU, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         } else {
             AsTouchable asTouchable = (AsTouchable) touchable;
             inputs.add(createExpr(metadata, asTouchable.getOperand1(), TOUCHINGOBJECTMENU, true));
@@ -488,8 +488,8 @@ public class ExpressionJSONCreator
             IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
                     metadata.getBlockId(), pos, node.getDistanceToMenuOpcode()
             );
-            finishedJSONStrings.add(tuple.getJsonString());
-            inputs.add(createReferenceInput(DISTANCETOMENU_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            finishedJSONStrings.add(tuple.jsonString());
+            inputs.add(createReferenceInput(DISTANCETOMENU_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         } else {
             FromExpression fromPos = (FromExpression) pos;
             IdJsonStringTuple tuple;
@@ -500,8 +500,8 @@ public class ExpressionJSONCreator
                 tuple = fixedExprCreator.createFixedExpressionJSON(
                         metadata.getBlockId(), pos, node.getDistanceToMenuOpcode()
                 );
-                finishedJSONStrings.add(tuple.getJsonString());
-                inputs.add(createReferenceInput(DISTANCETOMENU_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+                finishedJSONStrings.add(tuple.jsonString());
+                inputs.add(createReferenceInput(DISTANCETOMENU_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
             }
         }
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
@@ -525,8 +525,8 @@ public class ExpressionJSONCreator
             IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
                     metadata.getBlockId(), elem, node.getSensingOfObjectMenuOpcode()
             );
-            finishedJSONStrings.add(tuple.getJsonString());
-            inputs.add(createReferenceInput(OBJECT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            finishedJSONStrings.add(tuple.jsonString());
+            inputs.add(createReferenceInput(OBJECT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         }
 
         String fieldValue;
@@ -573,8 +573,8 @@ public class ExpressionJSONCreator
             IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
                     metadata.getBlockId(), key, node.getKeyOptionsOpcode()
             );
-            finishedJSONStrings.add(tuple.getJsonString());
-            inputs.add(createReferenceInput(KEY_OPTION, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            finishedJSONStrings.add(tuple.jsonString());
+            inputs.add(createReferenceInput(KEY_OPTION, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         }
 
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
@@ -748,13 +748,13 @@ public class ExpressionJSONCreator
 
     private String createExpr(NonDataBlockMetadata metadata, ASTNode expr, String inputName, boolean withDefault) {
         IdJsonStringTuple tuple = expressionJSONCreator.createExpressionJSON(metadata.getBlockId(), expr, symbolTable);
-        if (tuple.getId() == null) {
+        if (tuple.id() == null) {
             StringBuilder jsonString = new StringBuilder();
-            createField(jsonString, inputName).append(tuple.getJsonString());
+            createField(jsonString, inputName).append(tuple.jsonString());
             return jsonString.toString();
         } else {
-            finishedJSONStrings.add(tuple.getJsonString());
-            return createReferenceJSON(tuple.getId(), inputName, withDefault);
+            finishedJSONStrings.add(tuple.jsonString());
+            return createReferenceJSON(tuple.id(), inputName, withDefault);
         }
     }
 

@@ -32,7 +32,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MissingAsk extends AbstractIssueFinder  {
+public class MissingAsk extends AbstractIssueFinder {
 
     private List<Answer> answerBlocks = new ArrayList<>();
     private boolean askUsed = false;

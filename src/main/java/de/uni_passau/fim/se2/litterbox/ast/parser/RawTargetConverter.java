@@ -245,9 +245,9 @@ final class RawTargetConverter {
         } else {
             throw new InternalParsingException(
                     "Unknown variable type: '"
-                        + variable.value().toString()
-                        + "' for variable "
-                        + variable.variableName()
+                            + variable.value().toString()
+                            + "' for variable "
+                            + variable.variableName()
             );
         }
 

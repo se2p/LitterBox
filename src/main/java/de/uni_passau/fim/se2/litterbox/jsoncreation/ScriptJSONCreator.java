@@ -83,13 +83,13 @@ public class ScriptJSONCreator {
                 } else {
                     IdJsonStringTuple tuple = exprCreator.createExpressionJSON(meta.getBlockId(),
                             numExpr, symbol);
-                    if (tuple.getId() == null) {
+                    if (tuple.id() == null) {
                         StringBuilder inputString = new StringBuilder();
-                        createField(inputString, VALUE_KEY).append(tuple.getJsonString());
+                        createField(inputString, VALUE_KEY).append(tuple.jsonString());
                         inputs.add(inputString.toString());
                     } else {
-                        inputs.add(createReferenceJSON(tuple.getId(), VALUE_KEY, true));
-                        jsonString.append(tuple.getJsonString()).append(",");
+                        inputs.add(createReferenceJSON(tuple.id(), VALUE_KEY, true));
+                        jsonString.append(tuple.jsonString()).append(",");
                     }
                 }
 
@@ -114,13 +114,13 @@ public class ScriptJSONCreator {
                 } else {
                     IdJsonStringTuple tuple = exprCreator.createExpressionJSON(meta.getBlockId(),
                             numExpr, symbol);
-                    if (tuple.getId() == null) {
+                    if (tuple.id() == null) {
                         StringBuilder inputString = new StringBuilder();
-                        createField(inputString, REFERENCE_KEY).append(tuple.getJsonString());
+                        createField(inputString, REFERENCE_KEY).append(tuple.jsonString());
                         inputs.add(inputString.toString());
                     } else {
-                        inputs.add(createReferenceJSON(tuple.getId(), REFERENCE_KEY, true));
-                        jsonString.append(tuple.getJsonString()).append(",");
+                        inputs.add(createReferenceJSON(tuple.id(), REFERENCE_KEY, true));
+                        jsonString.append(tuple.jsonString()).append(",");
                     }
                 }
 

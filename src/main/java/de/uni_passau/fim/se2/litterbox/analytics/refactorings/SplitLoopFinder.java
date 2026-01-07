@@ -88,7 +88,6 @@ public class SplitLoopFinder extends AbstractDependencyRefactoringFinder {
         }
     }
 
-
     @Override
     public String getName() {
         return SplitLoop.NAME;
