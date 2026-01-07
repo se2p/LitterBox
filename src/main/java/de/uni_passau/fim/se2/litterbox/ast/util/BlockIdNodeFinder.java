@@ -74,8 +74,19 @@ public final class BlockIdNodeFinder implements ScratchVisitor {
      * @return the node context if found, empty otherwise
      */
     public static Optional<NodeContext> find(Program program, String blockId) {
+        return find((ASTNode) program, blockId);
+    }
+
+    /**
+     * Finds a node by its block ID in the given AST subtree.
+     *
+     * @param root    the root node to start searching from
+     * @param blockId the block ID to find
+     * @return the node context if found, empty otherwise
+     */
+    public static Optional<NodeContext> find(ASTNode root, String blockId) {
         BlockIdNodeFinder finder = new BlockIdNodeFinder(blockId);
-        program.accept(finder);
+        root.accept(finder);
         if (finder.foundNode != null) {
             return Optional.of(new NodeContext(
                     finder.foundNode,
@@ -85,6 +96,20 @@ public final class BlockIdNodeFinder implements ScratchVisitor {
             ));
         }
         return Optional.empty();
+    }
+
+    /**
+     * Finds a node by its block ID in the given AST subtree.
+     *
+     * <p>This is a convenience method that returns only the node without context.
+     * Use {@link #find(ASTNode, String)} if you also need the containing actor/script/procedure.
+     *
+     * @param root    the root node to start searching from
+     * @param blockId the block ID to find
+     * @return the node if found, empty otherwise
+     */
+    public static Optional<ASTNode> findNode(ASTNode root, String blockId) {
+        return find(root, blockId).map(NodeContext::node);
     }
 
     private void checkNode(ASTNode node) {
@@ -116,7 +141,9 @@ public final class BlockIdNodeFinder implements ScratchVisitor {
 
     @Override
     public void visit(Script script) {
-        checkNode(script);
+        // Don't check the Script node itself - only track context.
+        // AstNodeUtil.getBlockId(script) returns the event's block ID,
+        // but we want to match the event node, not the script.
         currentScript = script;
         currentProcedure = null;
         visitChildren(script);
