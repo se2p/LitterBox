@@ -25,7 +25,8 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import java.util.List;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.*;
+import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.createField;
+import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.createFieldValue;
 
 public abstract class BlockJsonCreatorHelper {
 

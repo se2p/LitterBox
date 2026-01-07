@@ -22,9 +22,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.Type;
 
 public class ParameterInfo {
-    private String name;
-    private String defaultValue;
-    private String id;
+    private final String name;
+    private final String defaultValue;
+    private final String id;
 
     public ParameterInfo(String name, String id, Type type) {
         this.name = name;

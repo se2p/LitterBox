@@ -65,7 +65,8 @@ import java.util.List;
 import java.util.Locale;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
+import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.createBlockWithoutMutationString;
+import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.createFields;
 
 /**
  * This class is for creating the JSONs of predetermined drop downs, that could be replaced by expressions such as
@@ -92,8 +93,8 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
         StringBuilder jsonString = new StringBuilder();
         // Filter out empty/null strings to prevent double-comma JSON corruption
         List<String> validJsonStrings = finishedJSONStrings.stream()
-            .filter(s -> s != null && !s.isEmpty())
-            .toList();
+                .filter(s -> s != null && !s.isEmpty())
+                .toList();
 
         for (int i = 0; i < validJsonStrings.size() - 1; i++) {
             jsonString.append(validJsonStrings.get(i)).append(",");
