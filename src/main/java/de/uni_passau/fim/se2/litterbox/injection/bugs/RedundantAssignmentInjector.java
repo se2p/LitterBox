@@ -23,26 +23,16 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugs.RedundantAssignment;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
@@ -177,27 +167,7 @@ public class RedundantAssignmentInjector extends AbstractBugInjector {
             return false;
         }
         Stmt prevStmt = stmtList.getStmts().get(index - 1);
-        return isHaltingStatement(prevStmt);
-    }
-
-    /**
-     * Checks if a statement is a halting statement (matches the finder's isHalting).
-     */
-    private boolean isHaltingStatement(Stmt stmt) {
-        return stmt instanceof AskAndWait
-                || stmt instanceof BroadcastAndWait
-                || stmt instanceof DeleteClone
-                || stmt instanceof GlideSecsToXY
-                || stmt instanceof GlideSecsTo
-                || stmt instanceof LoopStmt
-                || stmt instanceof PlaySoundUntilDone
-                || stmt instanceof SayForSecs
-                || stmt instanceof StopThisScript
-                || stmt instanceof StopAll
-                || stmt instanceof SwitchBackdropAndWait
-                || stmt instanceof ThinkForSecs
-                || stmt instanceof WaitSeconds
-                || stmt instanceof WaitUntil;
+        return AstNodeUtil.isHaltingStatement(prevStmt);
     }
 
     /**

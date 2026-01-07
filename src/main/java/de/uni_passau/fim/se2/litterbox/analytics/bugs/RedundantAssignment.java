@@ -23,22 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysis;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysisBuilder;
@@ -224,8 +209,6 @@ public class RedundantAssignment extends AbstractIssueFinder {
         return null;
     }
 
-    // deleted isDynamic, isConstant, etc.
-
     @Override
     public String getName() {
         return NAME;
@@ -292,7 +275,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
         }
 
         private boolean isHaltingNode(CFGNode node) {
-            return containsHaltingNode(node.getASTNode());
+            return AstNodeUtil.containsHaltingStatement(node.getASTNode());
         }
 
         private boolean isExitNode(CFGNode node) {
@@ -345,7 +328,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
         }
 
         private boolean isHaltingNode(CFGNode node) {
-            return containsHaltingNode(node.getASTNode());
+            return AstNodeUtil.containsHaltingStatement(node.getASTNode());
         }
     }
 
@@ -367,39 +350,5 @@ public class RedundantAssignment extends AbstractIssueFinder {
         public String toString() {
             return definition.toString() + (isUsed ? "(USED)" : "(UNUSED)");
         }
-    }
-
-    // deleted getHaltingUses
-
-    private static boolean containsHaltingNode(ASTNode node) {
-        if (node instanceof Stmt stmt && isHalting(stmt)) {
-            return true;
-        }
-        if (node != null && node.getChildren() != null) {
-            for (ASTNode child : node.getChildren()) {
-                if (containsHaltingNode(child)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private static boolean isHalting(Stmt stmt) {
-        return stmt instanceof AskAndWait
-                || stmt instanceof BroadcastAndWait
-                || stmt instanceof DeleteClone
-                || stmt instanceof GlideSecsToXY
-                || stmt instanceof GlideSecsTo
-                || stmt instanceof LoopStmt
-                || stmt instanceof PlaySoundUntilDone
-                || stmt instanceof SayForSecs
-                || stmt instanceof Speak
-                || stmt instanceof StopThisScript
-                || stmt instanceof StopAll
-                || stmt instanceof SwitchBackdropAndWait
-                || stmt instanceof ThinkForSecs
-                || stmt instanceof WaitSeconds
-                || stmt instanceof WaitUntil;
     }
 }
