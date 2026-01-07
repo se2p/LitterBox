@@ -162,7 +162,7 @@ public abstract class AbstractDependencyRefactoringFinder extends AbstractRefact
         );
         List<Stmt> stmtScript2 = new ArrayList<>(
                 mergedScript.getStmtList().getStmts().subList(
-                        script2.getStmtList().getNumberOfStatements(),
+                        script1.getStmtList().getNumberOfStatements(),
                         mergedScript.getStmtList().getNumberOfStatements()
                 )
         );
