@@ -155,10 +155,10 @@ public abstract class AbstractBugInjector implements BugInjector, ScratchVisitor
      * <p>Use this when you need to provide a specific script ID that cannot be automatically inferred
      * from the original node (e.g., when mutating an ActorDefinition but wanting to point to a specific Script).
      *
-     * @param originalNode The node in the original AST that triggered the injection
-     * @param mutator      Logic to apply to the cloned node
-     * @param originalScriptId     The script ID to associate with this injection
-     * @param <T>          The type of the AST node
+     * @param originalNode     The node in the original AST that triggered the injection
+     * @param mutator          Logic to apply to the cloned node
+     * @param originalScriptId The script ID to associate with this injection
+     * @param <T>              The type of the AST node
      */
     @SuppressWarnings("unchecked")
     protected <T extends ASTNode> void modifyClonedNode(T originalNode, Consumer<T> mutator, String originalScriptId) {

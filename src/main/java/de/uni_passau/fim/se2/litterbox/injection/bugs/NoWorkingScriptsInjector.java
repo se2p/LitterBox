@@ -54,10 +54,14 @@ import java.util.List;
  */
 public class NoWorkingScriptsInjector extends AbstractBugInjector {
 
-    /** X position for loose blocks (arbitrary but consistent). */
+    /**
+     * X position for loose blocks (arbitrary but consistent).
+     */
     private static final double LOOSE_BLOCK_X = 100.0;
 
-    /** Y position for loose blocks (arbitrary but consistent). */
+    /**
+     * Y position for loose blocks (arbitrary but consistent).
+     */
     private static final double LOOSE_BLOCK_Y = 100.0;
 
     private final IssueFinder issueFinder = new NoWorkingScripts();

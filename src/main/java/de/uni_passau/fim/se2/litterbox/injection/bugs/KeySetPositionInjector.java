@@ -31,7 +31,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockM
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;

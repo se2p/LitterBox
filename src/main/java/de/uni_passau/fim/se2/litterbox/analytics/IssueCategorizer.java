@@ -90,17 +90,13 @@ public class IssueCategorizer {
             String blockId = beforeIssue.issueLocationBlockId();
 
             if (isBlockIdEmpty(blockId)) {
-                // Issue without block ID - match by actor name instead
                 categorizeByActorName(finderName, beforeIssue, afterIssues, afterActorNames, afterProgram);
             } else {
-                // Check if issue persists (same actor + same location + same hint)
                 Optional<Issue> existingIssue = findMatchingIssue(afterIssues, beforeIssue.sprite(), blockId, beforeIssue.hint());
 
                 if (existingIssue.isPresent()) {
-                    // Issue still exists at same location with same hint - PERSISTING
                     persisting.add(existingIssue.get());
                 } else {
-                    // Issue no longer at this location (or hint changed) - check if fixed or just removed
                     categorizeAsFixedOrRemoved(finderName, beforeIssue, afterProgram);
                 }
             }
@@ -115,8 +111,7 @@ public class IssueCategorizer {
                 .findFirst();
     }
 
-    private boolean hintsMatch(String dtoHint, de.uni_passau.fim.se2.litterbox.analytics.Hint issueHint) {
-        // Use getHintText() for comparison - produces stable, translated text
+    private boolean hintsMatch(String dtoHint, Hint issueHint) {
         String issueHintStr = issueHint != null ? issueHint.getHintText(translator) : null;
         return Objects.equals(dtoHint, issueHintStr);
     }
@@ -131,19 +126,14 @@ public class IssueCategorizer {
         String actorName = beforeIssue.sprite();
 
         if (afterActorNames.contains(actorName)) {
-            // Check if same finder+actor still has an issue
-            // AND check if the hint matches. If hint doesn't match, it might be a different bug instance (e.g. different message literal)
             Optional<Issue> matchingIssue = findIssueByActorAndHint(afterIssues, actorName, beforeIssue.hint());
 
             if (matchingIssue.isPresent()) {
                 persisting.add(matchingIssue.get());
             } else {
-                // Same actor exists, but no issue with matching hint found.
-                // This suggests the specific instance was fixed/removed.
                 categorizeAsFixedOrRemoved(finderName, beforeIssue, afterProgram);
             }
         } else {
-            // No issue for this actor anymore - check if fixed
             categorizeAsFixedOrRemoved(finderName, beforeIssue, afterProgram);
         }
     }
@@ -180,8 +170,6 @@ public class IssueCategorizer {
 
         return fixResults;
     }
-
-    // ==================== Helper Methods ====================
 
     private boolean isBlockIdEmpty(String blockId) {
         return blockId == null || blockId.isEmpty();
@@ -221,8 +209,6 @@ public class IssueCategorizer {
     private Map<String, List<Issue>> groupByFinder(Set<Issue> issues) {
         return issues.stream().collect(Collectors.groupingBy(Issue::getFinderName));
     }
-
-    // ==================== Result Accessors ====================
 
     public List<FixResult> getFixed() {
         return Collections.unmodifiableList(fixed);

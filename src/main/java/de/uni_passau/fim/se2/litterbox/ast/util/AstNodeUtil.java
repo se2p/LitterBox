@@ -937,9 +937,6 @@ public class AstNodeUtil {
                 || stmt instanceof GlideSecsTo
                 || stmt instanceof LoopStmt
                 || stmt instanceof PlaySoundUntilDone
-                || stmt instanceof RepeatTimesStmt
-                || stmt instanceof RepeatForeverStmt
-                || stmt instanceof UntilStmt
                 || stmt instanceof PlayDrumForBeats
                 || stmt instanceof PlayNoteForBeats
                 || stmt instanceof RestForBeats

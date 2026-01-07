@@ -64,13 +64,13 @@ public class TerminatedLoopInjector extends AbstractBugInjector {
     /**
      * Adds a StopThisScript block at the end of the loop's body.
      *
-     * @param loopNode The loop node (RepeatForeverStmt, RepeatTimesStmt, or UntilStmt)
+     * @param loopNode       The loop node (RepeatForeverStmt, RepeatTimesStmt, or UntilStmt)
      * @param stmtListGetter Function to get the StmtList from the loop node
-     * @param <T> The type of the loop node
+     * @param <T>            The type of the loop node
      */
     private <T extends Stmt> void injectIntoLoop(T loopNode, java.util.function.Function<T, StmtList> stmtListGetter) {
         StmtList originalList = stmtListGetter.apply(loopNode);
-        
+
         // Skip empty loop bodies - adding a stop block makes no sense
         if (originalList.getStmts().isEmpty()) {
             return;

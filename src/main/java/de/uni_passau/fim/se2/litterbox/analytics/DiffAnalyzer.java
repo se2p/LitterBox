@@ -72,20 +72,15 @@ public class DiffAnalyzer {
         String beforeSource = beforePath.toString();
         String afterSource = afterPath.toString();
 
-        // Parse the after program (always .sb3)
         Program afterProgram = parser.parseFile(afterPath.toFile());
 
-        // Load before issues - either from JSON report or by analyzing .sb3
         Map<String, List<IssueDTO>> beforeIssuesByFinder = loadBeforeIssues(beforePath);
 
-        // Analyze the after program
         Set<Issue> afterIssues = analyzeProgram(afterProgram);
 
-        // Categorize issues
         IssueCategorizer categorizer = new IssueCategorizer();
         categorizer.categorize(beforeIssuesByFinder, afterIssues, afterProgram);
 
-        // Convert results to Issue objects for consistent API
         List<Issue> fixedIssues = IssueConverter.convertFixResultsToIssues(
                 categorizer.getFixed(), afterProgram);
         List<Issue> removedIssues = IssueConverter.createRemovedIssues(

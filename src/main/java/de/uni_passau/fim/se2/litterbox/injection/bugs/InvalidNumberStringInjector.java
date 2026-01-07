@@ -40,6 +40,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
+
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
