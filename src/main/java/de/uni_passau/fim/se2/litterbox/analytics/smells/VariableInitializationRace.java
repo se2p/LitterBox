@@ -37,7 +37,22 @@ import java.util.*;
 
 public class VariableInitializationRace extends AbstractIssueFinder {
 
-    private record InitializationInstance(Script script, CommonStmt statement) {
+    private static class InitializationInstance {
+        private final Script script;
+        private final CommonStmt statement;
+
+        InitializationInstance(Script script, CommonStmt statement) {
+            this.script = script;
+            this.statement = statement;
+        }
+
+        Script script() {
+            return script;
+        }
+
+        CommonStmt statement() {
+            return statement;
+        }
     }
 
     private Map<Event, Map<Identifier, Set<InitializationInstance>>> variableMap = new LinkedHashMap<>();
