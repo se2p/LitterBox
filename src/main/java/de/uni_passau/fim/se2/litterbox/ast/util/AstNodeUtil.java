@@ -22,7 +22,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
@@ -41,8 +40,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVid
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetadataList;
@@ -287,33 +284,6 @@ public class AstNodeUtil {
 
     public static boolean hasBlockId(ASTNode node, String blockId) {
         return Objects.equals(getBlockId(node), blockId);
-    }
-
-    /**
-     * Links all nodes in the AST to their parent nodes.
-     *
-     * @param root The root of the tree.
-     */
-    public static void linkParents(final ASTNode root) {
-        final ParentLinkingVisitor visitor = new ParentLinkingVisitor();
-        root.accept(visitor);
-    }
-
-    private static class ParentLinkingVisitor implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor,
-            TextToSpeechExtensionVisitor, TranslateExtensionVisitor, VideoSensingExtensionVisitor {
-
-        private ParentLinkingVisitor() {
-        }
-
-        @Override
-        public void visit(final ASTNode node) {
-            for (ASTNode child : node.getChildren()) {
-                if (child != null) {
-                    child.setParentNode(node);
-                    child.accept(this);
-                }
-            }
-        }
     }
 
     private static class BlockMapVisitor implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor,
@@ -1010,15 +980,5 @@ public class AstNodeUtil {
             }
         }
         return false;
-    }
-
-    /**
-     * Checks if an expression is a literal value (string or number).
-     *
-     * @param expr the expression to check
-     * @return true if the expression is a StringLiteral or NumberLiteral
-     */
-    public static boolean isLiteral(Expression expr) {
-        return expr instanceof StringLiteral || expr instanceof NumberLiteral;
     }
 }

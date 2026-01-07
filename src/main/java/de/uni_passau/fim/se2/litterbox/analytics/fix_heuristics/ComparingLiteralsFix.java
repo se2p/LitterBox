@@ -25,7 +25,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BiggerThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.LessThan;
-import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
@@ -84,6 +85,15 @@ public class ComparingLiteralsFix extends AbstractFixHeuristic {
      * Returns true if at least one operand is NOT a literal (meaning the bug is fixed).
      */
     private boolean isNotStatic(ComparableExpr op1, ComparableExpr op2) {
-        return !(AstNodeUtil.isLiteral(op1) && AstNodeUtil.isLiteral(op2));
+        return !(isComparableLiteral(op1) && isComparableLiteral(op2));
+    }
+
+    /**
+     * Checks if the expression is a literal constant (not a variable or computed value).
+     * Only StringLiteral and NumberLiteral need to be checked because BoolLiteral and
+     * ColorLiteral cannot appear in comparison blocks (they don't implement ComparableExpr).
+     */
+    private boolean isComparableLiteral(ComparableExpr expr) {
+        return expr instanceof StringLiteral || expr instanceof NumberLiteral;
     }
 }

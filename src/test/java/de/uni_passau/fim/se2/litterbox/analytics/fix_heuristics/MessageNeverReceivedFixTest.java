@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageNeverReceived;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import de.uni_passau.fim.se2.litterbox.injection.bugs.MessageNeverReceivedInjector;
 import org.junit.jupiter.api.Assertions;
@@ -99,7 +100,7 @@ public class MessageNeverReceivedFixTest extends AbstractFixHeuristicTest {
         program = new de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser()
                 .extendProject(program, "Sprite1", "when green flag clicked\nbroadcast (hello v)");
 
-        de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil.linkParents(program);
+        ParentVisitor.apply(program);
 
         String bugId = findBlockId(program, Broadcast.class);
         MessageNeverReceivedFix heuristic = new MessageNeverReceivedFix(createTestIssueDTO(bugId));

@@ -36,6 +36,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCost
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
@@ -211,7 +212,7 @@ public class RedundantAssignmentInjector extends AbstractBugInjector {
 
                 // Link all nested parent references - required for JSON serialization
                 // which checks parent node types (e.g., FixedExpressionJSONCreator.visit(WithExpr))
-                AstNodeUtil.linkParents(duplicate);
+                ParentVisitor.apply(duplicate);
 
                 // Insert the duplicate immediately BEFORE the original (at the same index)
                 // This makes the duplicate redundant, not the original

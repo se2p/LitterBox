@@ -37,7 +37,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackd
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
-import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
@@ -141,7 +140,7 @@ public class MissingResourceInjector extends AbstractBugInjector {
         if (node.getBackdrop() instanceof StrId strId) {
             String backdropName = strId.getName();
             if (stageBackdrops.contains(backdropName)) {
-                injectBackdropEvent(node, INVALID_COSTUME_NAME);
+                injectBackdropEvent(node);
             }
         }
         super.visit(node);
@@ -175,7 +174,7 @@ public class MissingResourceInjector extends AbstractBugInjector {
         if (choice instanceof WithExpr withExpr && withExpr.getExpression() instanceof StrId strId) {
             String resourceName = strId.getName();
             if (validator.test(resourceName)) {
-                replaceWithInvalidResource(node, withExpr, invalidName, node.getMetadata(), constructor);
+                replaceWithInvalidResource(node, withExpr, invalidName, constructor);
             }
         }
     }
@@ -188,7 +187,6 @@ public class MissingResourceInjector extends AbstractBugInjector {
      * @param node             The original statement to replace
      * @param originalWithExpr The original WithExpr containing the valid resource
      * @param invalidName      The invalid resource name to use
-     * @param metadata         The metadata to preserve
      * @param constructor      Constructor for the replacement statement
      * @param <T>              The statement type
      */
@@ -196,14 +194,13 @@ public class MissingResourceInjector extends AbstractBugInjector {
             T node,
             WithExpr originalWithExpr,
             String invalidName,
-            BlockMetadata metadata,
             BiFunction<WithExpr, BlockMetadata, T> constructor) {
 
         modifyClonedNode(node, clonedNode -> {
             WithExpr newWithExpr = createInvalidWithExpr(originalWithExpr, invalidName);
             T newStmt = constructor.apply(newWithExpr, clonedNode.getMetadata());
             newWithExpr.setParentNode(newStmt);
-            AstNodeUtil.linkParents(newStmt);
+            ParentVisitor.apply(newStmt);
 
             replaceInParent(clonedNode, newStmt);
         });
@@ -231,9 +228,9 @@ public class MissingResourceInjector extends AbstractBugInjector {
         return newWithExpr;
     }
 
-    private void injectBackdropEvent(BackdropSwitchTo node, String invalidName) {
+    private void injectBackdropEvent(BackdropSwitchTo node) {
         modifyClonedNode(node, clonedNode -> {
-            StrId invalidId = new StrId(invalidName);
+            StrId invalidId = new StrId(INVALID_COSTUME_NAME);
             // Use existing metadata
             BackdropSwitchTo newEvent = new BackdropSwitchTo(invalidId, clonedNode.getMetadata());
             invalidId.setParentNode(newEvent);

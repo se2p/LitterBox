@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import org.junit.jupiter.api.Assertions;
@@ -57,7 +58,7 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
         Program baseProject = getAST(EMPTY_PROJECT);
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Program program = parser.extendProject(baseProject, DEFAULT_SPRITE, scratchBlocksCode);
-        AstNodeUtil.linkParents(program);
+        ParentVisitor.apply(program);
         return program;
     }
 
@@ -68,7 +69,7 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
         Program baseProject = getAST(EMPTY_PROJECT);
         ScratchBlocksParser parser = new ScratchBlocksParser();
         Program program = parser.extendProject(baseProject, spriteName, scratchBlocksCode);
-        AstNodeUtil.linkParents(program);
+        ParentVisitor.apply(program);
         return program;
     }
 
@@ -93,7 +94,7 @@ public abstract class AbstractFixHeuristicTest implements JsonTest {
             program = parser.extendProject(program, "Sprite2", sprite2Code);
         }
 
-        AstNodeUtil.linkParents(program);
+        ParentVisitor.apply(program);
         return program;
     }
 
