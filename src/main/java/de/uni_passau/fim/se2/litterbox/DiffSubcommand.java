@@ -23,6 +23,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.DiffResult;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
+import org.apache.commons.csv.CSVPrinter;
 import picocli.CommandLine;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
@@ -72,7 +74,7 @@ public class DiffSubcommand implements Callable<Integer> {
 
     @CommandLine.Option(
             names = {"-o", "--output"},
-            description = "Optional: Path for output file (JSON format)."
+            description = "Optional: Path for output file. Format determined by extension (.json or .csv)."
     )
     Path outputPath;
 
@@ -102,10 +104,15 @@ public class DiffSubcommand implements Callable<Integer> {
         DiffAnalyzer analyzer = new DiffAnalyzer(detectors, ignoreLooseBlocks);
         DiffResult result = analyzer.analyze(beforePath, afterPath);
 
-        if (outputPath != null) {
-            writeJsonOutput(result);
-        } else {
+        if (outputPath == null) {
             writeConsoleOutput(result);
+        } else if (outputPath.getFileName().toString().endsWith(".json")) {
+            writeJsonOutput(result);
+        } else if (outputPath.getFileName().toString().endsWith(".csv")) {
+            writeCsvOutput(result);
+        } else {
+            throw new IllegalArgumentException("Unknown output file type: " + outputPath
+                    + ". Supported extensions: .json, .csv");
         }
 
         return 0;
@@ -178,7 +185,7 @@ public class DiffSubcommand implements Callable<Integer> {
         out.println();
     }
 
-    private void writeJsonOutput(DiffResult result) throws IOException {
+    private void writeJsonOutput(DiffResult result) {
         DiffReportJson report = new DiffReportJson(
                 result.beforeSource(),
                 result.afterSource(),
@@ -200,6 +207,47 @@ public class DiffSubcommand implements Callable<Integer> {
         mapper.writeValue(outputPath.toFile(), report);
 
         spec.commandLine().getOut().println("Diff report written to: " + outputPath);
+    }
+
+    private void writeCsvOutput(DiffResult result) throws IOException {
+        List<String> headers = List.of(
+                "beforeProject", "afterProject", "category", "finder", "actor", "blockId"
+        );
+
+        try (CSVPrinter printer = CSVPrinterFactory.getNewPrinter(outputPath, headers)) {
+            String beforeProject = result.beforeSource();
+            String afterProject = result.afterSource();
+
+            writeIssuesToCsv(printer, beforeProject, afterProject, "FIXED", result.fixed());
+            writeIssuesToCsv(printer, beforeProject, afterProject, "NEW", result.newIssues());
+            writeIssuesToCsv(printer, beforeProject, afterProject, "PERSISTING", result.persisting());
+            writeIssuesToCsv(printer, beforeProject, afterProject, "REMOVED", result.removed());
+
+            printer.flush();
+        }
+
+        spec.commandLine().getOut().println("Diff report written to: " + outputPath);
+    }
+
+    private void writeIssuesToCsv(
+            CSVPrinter printer,
+            String beforeProject,
+            String afterProject,
+            String category,
+            List<Issue> issues
+    ) throws IOException {
+        for (Issue issue : issues) {
+            ASTNode codeLocation = issue.getCodeLocation();
+            String blockId = codeLocation != null ? AstNodeUtil.getBlockId(codeLocation) : "";
+            printer.printRecord(
+                    beforeProject,
+                    afterProject,
+                    category,
+                    issue.getFinderName(),
+                    issue.getActorName(),
+                    blockId != null ? blockId : ""
+            );
+        }
     }
 
     private List<IssueJson> issuesToJson(List<Issue> issues) {
