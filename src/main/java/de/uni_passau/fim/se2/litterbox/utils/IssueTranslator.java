@@ -53,7 +53,9 @@ public final class IssueTranslator {
         ROTATION_STYLE("rotation_style"),
         SOUND_STATE("sound_state"),
         TIMER("timer"),
-        DRAG_MODE("drag_mode");
+        DRAG_MODE("drag_mode"),
+        TRANSPARENCY("transparency"),
+        VIDEO_STATE("video_state");
 
         private final String key;
 

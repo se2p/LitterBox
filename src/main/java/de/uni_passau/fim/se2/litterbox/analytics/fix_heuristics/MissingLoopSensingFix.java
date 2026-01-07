@@ -24,11 +24,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.VideoSensingExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.Stack;
@@ -39,7 +41,7 @@ import java.util.Stack;
  * <p>The bug is reported when sensing blocks are used outside a loop.
  * The bug is fixed if they're now inside a loop or after a wait/ask.
  */
-public class MissingLoopSensingFix extends AbstractFixHeuristic {
+public class MissingLoopSensingFix extends AbstractFixHeuristic implements VideoSensingExtensionVisitor {
 
     private final IssueFinder relatedBugFinder = new MissingLoopSensing();
 
@@ -140,6 +142,12 @@ public class MissingLoopSensingFix extends AbstractFixHeuristic {
 
     @Override
     public void visit(DistanceTo node) {
+        check(node);
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(VideoOn node) {
         check(node);
         visitChildren(node);
     }

@@ -195,7 +195,7 @@
                     "inputs": {},
                     "fields": {
                         "SOUND_MENU": [
-                            "pop"
+                            "missingSound"
                         ]
                     },
                     "shadow": true,
@@ -222,7 +222,7 @@
                     "inputs": {},
                     "fields": {
                         "SOUND_MENU": [
-                            "pop"
+                            "missingSound"
                         ]
                     },
                     "shadow": true,

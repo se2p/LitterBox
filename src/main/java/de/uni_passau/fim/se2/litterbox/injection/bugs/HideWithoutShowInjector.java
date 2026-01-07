@@ -108,7 +108,7 @@ public class HideWithoutShowInjector extends AbstractBugInjector {
 
                         @Override
                         public void visit(Script script) {
-                            if (!found && !script.getStmtList().getStmts().isEmpty()) {
+                            if (!found && !script.getStmtList().getStmts().isEmpty() && !(script.getEvent() instanceof Never)) {
                                 Hide hide = new Hide(NonDataBlockMetadata.emptyNonBlockMetadata());
                                 script.getStmtList().getStmts().addFirst(hide);
                                 found = true;
@@ -153,8 +153,10 @@ public class HideWithoutShowInjector extends AbstractBugInjector {
 
             @Override
             public void visit(Hide hide) {
-                // Hide is checked regardless of Never block
-                hasHide = true;
+                // Hide is checked only if not in Never block
+                if (!inNeverBlock) {
+                    hasHide = true;
+                }
             }
 
             @Override

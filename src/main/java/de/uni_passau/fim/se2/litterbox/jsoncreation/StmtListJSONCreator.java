@@ -44,6 +44,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.languag
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
@@ -75,10 +78,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.text.DecimalFormat;
@@ -91,7 +91,13 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.createField;
 
-public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor {
+public class StmtListJSONCreator
+        implements ScratchVisitor,
+        PenExtensionVisitor,
+        TextToSpeechExtensionVisitor,
+        MusicExtensionVisitor,
+        TranslateExtensionVisitor,
+        VideoSensingExtensionVisitor {
     private String previousBlockId = null;
     private final List<String> finishedJSONStrings;
     private final List<Stmt> stmtList;
@@ -1236,12 +1242,46 @@ public class StmtListJSONCreator implements ScratchVisitor, PenExtensionVisitor,
 
         Note note = node.getNote();
         if (note instanceof FixedNote) {
-            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), (FixedNote) note, DependentBlockOpcode.note);
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), note, DependentBlockOpcode.note);
             finishedJSONStrings.add(tuple.getJsonString());
             inputs.add(createReferenceInput(NOTE, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
         } else {
             inputs.add(createExpr(metadata, NOTE, ((ExprNote) note).getExpr()));
         }
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, createInputs(inputs), EMPTY_VALUE, node.getOpcode()));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(WhenVideoMotionGreaterThan node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        if (metadata != null) {
+            List<String> inputs = new ArrayList<>();
+            inputs.add(createExpr(metadata, REFERENCE_KEY, node.getReference()));
+
+            finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                    null, createInputs(inputs), EMPTY_VALUE, node.getOpcode()));
+            previousBlockId = metadata.getBlockId();
+        }
+    }
+
+    @Override
+    public void visit(TurnVideo node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        String fieldsString = createFields(VIDEO_STATE_KEY, node.getVideoState(), null);
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
+                previousBlockId, EMPTY_VALUE, fieldsString, node.getOpcode()));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(SetVideoTransparency node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createExpr(metadata, TRANSPARENCY_KEY, node.getTransparency()));
 
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
                 previousBlockId, createInputs(inputs), EMPTY_VALUE, node.getOpcode()));

@@ -25,6 +25,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,6 +138,8 @@ public final class IssueConverter {
         return removed;
     }
 
+    private static final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator();
+
     /**
      * Creates a minimal IssueDTO from an Issue for comparison purposes.
      *
@@ -149,6 +153,13 @@ public final class IssueConverter {
             blockId = AstNodeUtil.getBlockId(codeLocation);
         }
 
+        // Include the hint text for proper issue matching by fix heuristics
+        String hintText = null;
+        if (issue.getHint() != null) {
+            // Use the translated hint text for comparison
+            hintText = issue.getHint().getHintText(translator);
+        }
+
         return new IssueDTO(
                 issue.getId(),
                 issue.getFinderName(),
@@ -158,7 +169,7 @@ public final class IssueConverter {
                 issue.getActorName(),
                 blockId,
                 null, null, null, null,
-                null, null, 0, null, null
+                hintText, null, 0, null, null
         );
     }
 

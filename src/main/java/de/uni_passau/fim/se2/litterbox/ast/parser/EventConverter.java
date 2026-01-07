@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.PressedState;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RobotButton;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RobotDirection;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
@@ -100,6 +101,10 @@ class EventConverter {
             case when_brightness_less -> {
                 final NumExpr fieldValue = NumExprConverter.convertNumExpr(state, event, KnownInputs.BRIGHTNESS);
                 yield new BrightnessLess(fieldValue, metadata);
+            }
+            case videoSensing_whenMotionGreaterThan -> {
+                final NumExpr reference = NumExprConverter.convertNumExpr(state, event, KnownInputs.REFERENCE);
+                yield new WhenVideoMotionGreaterThan(reference, metadata);
             }
         };
     }

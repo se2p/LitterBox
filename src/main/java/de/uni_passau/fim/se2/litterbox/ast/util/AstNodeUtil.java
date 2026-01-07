@@ -37,6 +37,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLang
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
@@ -212,8 +216,8 @@ public class AstNodeUtil {
      * @param node       Some node in the AST.
      * @param parentType The class the parent is represented by.
      * @return The parent in the AST of the requested type.
-     *         Might return {@code node} itself if it has matching type.
-     *         Returns {@code null} if no parent of the requested type could be found.
+     * Might return {@code node} itself if it has matching type.
+     * Returns {@code null} if no parent of the requested type could be found.
      */
     public static <T extends ASTNode> T findParent(final ASTNode node, final Class<T> parentType) {
         ASTNode currentNode = node;
@@ -299,7 +303,7 @@ public class AstNodeUtil {
     }
 
     private static class ParentLinkingVisitor implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor,
-            TextToSpeechExtensionVisitor, TranslateExtensionVisitor {
+            TextToSpeechExtensionVisitor, TranslateExtensionVisitor, VideoSensingExtensionVisitor {
 
         private ParentLinkingVisitor() {
         }
@@ -316,7 +320,7 @@ public class AstNodeUtil {
     }
 
     private static class BlockMapVisitor implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor,
-            TextToSpeechExtensionVisitor, TranslateExtensionVisitor {
+            TextToSpeechExtensionVisitor, TranslateExtensionVisitor, VideoSensingExtensionVisitor {
         private final Map<String, ASTNode> blockMap = new LinkedHashMap<>();
 
         private BlockMapVisitor() {
@@ -380,7 +384,7 @@ public class AstNodeUtil {
         return visitor.inputs.containsKey(inputKind) && visitor.inputs.get(inputKind) == child;
     }
 
-    private static class IsInputOfVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor, TranslateExtensionVisitor {
+    private static class IsInputOfVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor, TranslateExtensionVisitor, VideoSensingExtensionVisitor {
         private final Map<String, ASTNode> inputs = new LinkedHashMap<>();
 
         private IsInputOfVisitor() {
@@ -883,6 +887,30 @@ public class AstNodeUtil {
         public void visit(final TranslateTo node) {
             inputs.put(WORDS_KEY, node.getText());
             inputs.put(LANGUAGE_INPUT_KEY, node.getLanguage());
+        }
+
+        /*
+         * Video Sensing blocks
+         */
+
+        @Override
+        public void visit(WhenVideoMotionGreaterThan node) {
+            inputs.put(REFERENCE_KEY, node.getReference());
+        }
+
+        @Override
+        public void visit(VideoOn node) {
+            // no inputs
+        }
+
+        @Override
+        public void visit(TurnVideo node) {
+            // no inputs
+        }
+
+        @Override
+        public void visit(SetVideoTransparency node) {
+            inputs.put(TRANSPARENCY_KEY, node.getTransparency());
         }
     }
 

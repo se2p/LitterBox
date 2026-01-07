@@ -32,6 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -54,6 +55,8 @@ import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TranslateExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.VideoSensingExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.text.DecimalFormat;
@@ -66,7 +69,11 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.createField;
 
-public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtensionVisitor {
+public class ExpressionJSONCreator
+        implements ScratchVisitor,
+        TextToSpeechExtensionVisitor,
+        TranslateExtensionVisitor,
+        VideoSensingExtensionVisitor {
     private List<String> finishedJSONStrings;
     private String previousBlockId = null;
     private String topExpressionId = null;
@@ -82,13 +89,13 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         expressionJSONCreator = new ExpressionJSONCreator();
         fixedExprCreator = new FixedExpressionJSONCreator();
         expression.accept(this);
-        
+
         StringBuilder jsonString = new StringBuilder();
         // Filter out empty/null strings to prevent double-comma JSON corruption
         List<String> validJsonStrings = finishedJSONStrings.stream()
-            .filter(s -> s != null && !s.isEmpty())
-            .toList();
-            
+                .filter(s -> s != null && !s.isEmpty())
+                .toList();
+
         for (int i = 0; i < validJsonStrings.size() - 1; i++) {
             jsonString.append(validJsonStrings.get(i)).append(",");
         }
@@ -759,5 +766,23 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     @Override
     public void visit(ExprVoice node) {
         node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(VideoOn node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+
+        // Build a single fields object with both fields to avoid invalid JSON like {...},{...}
+        String fieldsString = "{" +
+                "\"" + ATTRIBUTE_KEY + "\":[\"" + escape(node.getAttribute()) + "\",null]," +
+                "\"" + SUBJECT_KEY + "\":[\"" + escape(node.getSubject()) + "\",null]" +
+                "}";
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, EMPTY_VALUE, fieldsString, node.getOpcode()));
+        previousBlockId = metadata.getBlockId();
     }
 }

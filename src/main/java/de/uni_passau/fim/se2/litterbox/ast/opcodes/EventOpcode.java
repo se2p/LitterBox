@@ -20,24 +20,16 @@ package de.uni_passau.fim.se2.litterbox.ast.opcodes;
 
 public enum EventOpcode implements Opcode {
     // Scratch opcodes
-    event_whenflagclicked,
-    event_whenkeypressed,
-    event_whenstageclicked,
-    event_whenthisspriteclicked,
-    event_whenbroadcastreceived,
-    event_whenbackdropswitchesto,
-    event_whengreaterthan,
-    control_start_as_clone,
+    event_whenflagclicked, event_whenstageclicked, event_whenthisspriteclicked,
+    event_whenbroadcastreceived, event_whenbackdropswitchesto, event_whengreaterthan,
+    event_whenkeypressed, control_start_as_clone,
 
-    // opcodes of educational robots
-    when_board_launch,      // codey, mcore, auriga
-    main,                   // megapi_robot, megapi
-    when_button_press,      // codey
-    when_board_button,      // mcore
-    when_board_shake,       // codey
-    when_board_tilt,        // codey
-    when_volume_over,       // codey
-    when_brightness_less;   // codey
+    // mBlock extension blocks
+    when_board_launch, main, when_board_shake, when_board_tilt, when_board_button,
+    when_volume_over, when_brightness_less, when_button_press,
+
+    // Video Sensing
+    videoSensing_whenMotionGreaterThan;
 
     public static boolean contains(String opcode) {
         opcode = Opcode.removePrefix(opcode);

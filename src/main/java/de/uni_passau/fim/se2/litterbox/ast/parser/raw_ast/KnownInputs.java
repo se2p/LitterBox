@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast;
 
 public enum KnownInputs {
+    ATTRIBUTE("ATTRIBUTE"),
     ANGLE("ANGLE"),
     /**
      * X-Axis for mBlocks sometimes used instead of {@link #X_AXIS}.
@@ -84,6 +85,7 @@ public enum KnownInputs {
     POWER_LEFT("POWER_LEFT"),
     POWER_RIGHT("POWER_RIGHT"),
     QUESTION("QUESTION"),
+    REFERENCE("REFERENCE"),
     RIGHT_POWER("RIGHT_POWER"),
     SECS("SECS"),
     SIZE("SIZE"),
@@ -94,6 +96,7 @@ public enum KnownInputs {
     STRING("STRING"),
     STRING1("STRING1"),
     STRING2("STRING2"),
+    SUBJECT("SUBJECT"),
     SUBSTACK("SUBSTACK"),
     SUBSTACK2("SUBSTACK2"),
     TEMPO("TEMPO"),
@@ -107,6 +110,8 @@ public enum KnownInputs {
     TOWARDS("TOWARDS"),
     DISTANCE_TO_MENU("DISTANCETOMENU"),
     TOUCHINGOBJECTMENU("TOUCHINGOBJECTMENU"),
+    TRANSPARENCY("TRANSPARENCY"),
+    VIDEO_STATE("VIDEO_STATE"),
     VALUE("VALUE"),
     VOICE("VOICE"),
     VOLUME("VOLUME"),

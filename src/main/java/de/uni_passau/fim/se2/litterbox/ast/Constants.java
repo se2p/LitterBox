@@ -199,6 +199,11 @@ public final class Constants {
     public static final String VOICE_FIELDS_KEY = "voices";
     public static final String LANGUAGE_INPUT_KEY = "LANGUAGE";
     public static final String LANGUAGE_FIELDS_KEY = "languages";
+    public static final String ATTRIBUTE_KEY = "ATTRIBUTE";
+    public static final String SUBJECT_KEY = "SUBJECT";
+    public static final String REFERENCE_KEY = "REFERENCE";
+    public static final String TRANSPARENCY_KEY = "TRANSPARENCY";
+    public static final String VIDEO_STATE_KEY = "VIDEO_STATE";
 
     // Music Extension Constants
     public static final String DRUM = "DRUM";

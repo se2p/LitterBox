@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.nu
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.MCorePort;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RGB;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.Tempo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -76,7 +77,7 @@ final class NumExprConverter extends ExprConverter {
     /**
      * Checks if the block can be parsed as {@link NumExpr} without wrapping in {@link AsNumber}.
      *
-     * @param target The actor the block appears in.
+     * @param target    The actor the block appears in.
      * @param exprBlock The expression to check.
      * @return True, iff the {@code exprBlock} can be parsed as {@link NumExpr}.
      */
@@ -90,8 +91,8 @@ final class NumExprConverter extends ExprConverter {
     private static boolean isParseableAsNumberLiteral(final RawInput exprBlock) {
         final boolean hasCorrectType = exprBlock.input() instanceof BlockRef.Block(RawBlock.ArrayBlock exprInput) && (
                 exprInput instanceof RawBlock.RawFloatBlockLiteral
-                || exprInput instanceof RawBlock.RawIntBlockLiteral
-                || exprInput instanceof RawBlock.RawAngleBlockLiteral
+                        || exprInput instanceof RawBlock.RawIntBlockLiteral
+                        || exprInput instanceof RawBlock.RawAngleBlockLiteral
         );
 
         boolean canBeParsedAsNumber = false;
@@ -264,7 +265,59 @@ final class NumExprConverter extends ExprConverter {
                 final MCorePort port = new MCorePort(portId);
                 yield new DetectLinePort(port, metadata);
             }
+            case videoSensing_videoOn -> {
+                final String attribute = getVideoSensingMenuValue(state, block, KnownInputs.ATTRIBUTE,
+                        KnownFields.ATTRIBUTE, "videoSensing_menu_ATTRIBUTE", "motion");
+                final String subject = getVideoSensingMenuValue(state, block, KnownInputs.SUBJECT,
+                        KnownFields.SUBJECT, "videoSensing_menu_SUBJECT", "this sprite");
+                yield new VideoOn(attribute, subject, metadata);
+            }
         };
+    }
+
+    /**
+     * Extracts a video sensing menu value from either a field or an input with shadow block.
+     *
+     * <p>Scratch projects can have video sensing menu values in two formats:
+     * <ul>
+     *   <li>Field-based (older/simple): {@code "fields": {"ATTRIBUTE": ["motion", null]}}</li>
+     *   <li>Input-based (newer/complex): {@code "inputs": {"ATTRIBUTE": [1, "shadowBlockId"]}}
+     *       referencing a shadow menu block</li>
+     * </ul>
+     *
+     * @param state              The parser state containing block information
+     * @param block              The videoSensing_videoOn block
+     * @param inputKey           The KnownInputs key for input-based format
+     * @param fieldKey           The KnownFields key for field-based format
+     * @param expectedMenuOpcode The expected opcode of the shadow menu block
+     * @param defaultValue       The default value if neither format is found
+     * @return The menu value string
+     */
+    private static String getVideoSensingMenuValue(
+            final ProgramParserState state,
+            final RawBlock.RawRegularBlock block,
+            final KnownInputs inputKey,
+            final KnownFields fieldKey,
+            final String expectedMenuOpcode,
+            final String defaultValue) {
+        // First, try the field-based format (older projects)
+        if (block.hasField(fieldKey)) {
+            return block.getFieldValueAsString(fieldKey);
+        }
+
+        // Then, try the input-based format with shadow block (newer projects)
+        if (block.hasInput(inputKey)) {
+            final RawInput menuInput = block.getInput(inputKey);
+            if (ShadowType.SHADOW.equals(menuInput.shadowType())
+                    && menuInput.input() instanceof BlockRef.IdRef(RawBlockId menuId)
+                    && state.getBlock(menuId) instanceof RawBlock.RawRegularBlock menuBlock
+                    && expectedMenuOpcode.equals(menuBlock.opcode())) {
+                return menuBlock.getFieldValueAsString(fieldKey);
+            }
+        }
+
+        // Fallback for malformed blocks
+        return defaultValue;
     }
 
     private static TimeComp getTimeComp(final RawBlock.RawRegularBlock sensingCurrentBlock) {

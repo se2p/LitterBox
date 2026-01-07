@@ -25,6 +25,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,6 +43,7 @@ public class IssueCategorizer {
     private final List<Issue> persisting = new ArrayList<>();
     private final List<Issue> newIssues = new ArrayList<>();
     private final List<RemovedIssueInfo> removed = new ArrayList<>();
+    private final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator();
 
     /**
      * Categorizes issues between before and after versions.
@@ -55,7 +58,7 @@ public class IssueCategorizer {
             Program afterProgram
     ) {
         Map<String, List<Issue>> afterIssuesByFinder = groupByFinder(afterIssues);
-        Set<String> beforeBlockIds = extractAllBlockIds(beforeIssuesByFinder);
+        Set<String> beforeIssueKeys = extractAllIssueKeys(beforeIssuesByFinder);
 
         // Process each finder from before version
         for (Map.Entry<String, List<IssueDTO>> entry : beforeIssuesByFinder.entrySet()) {
@@ -68,8 +71,8 @@ public class IssueCategorizer {
 
         // Find NEW issues (in after but not in before)
         for (Issue issue : afterIssues) {
-            String blockId = getBlockId(issue);
-            if (!isBlockIdInSet(blockId, beforeBlockIds)) {
+            String issueKey = getIssueKey(issue);
+            if (!beforeIssueKeys.contains(issueKey)) {
                 newIssues.add(issue);
             }
         }
@@ -81,7 +84,6 @@ public class IssueCategorizer {
             List<Issue> afterIssues,
             Program afterProgram
     ) {
-        Set<String> afterBlockIds = extractBlockIds(afterIssues);
         Set<String> afterActorNames = extractActorNames(afterIssues);
 
         for (IssueDTO beforeIssue : beforeIssues) {
@@ -90,14 +92,33 @@ public class IssueCategorizer {
             if (isBlockIdEmpty(blockId)) {
                 // Issue without block ID - match by actor name instead
                 categorizeByActorName(finderName, beforeIssue, afterIssues, afterActorNames, afterProgram);
-            } else if (afterBlockIds.contains(blockId)) {
-                // Issue still exists at same location - PERSISTING
-                findIssueByBlockId(afterIssues, blockId).ifPresent(persisting::add);
             } else {
-                // Issue no longer at this location - check if fixed or just removed
-                categorizeAsFixedOrRemoved(finderName, beforeIssue, afterProgram);
+                // Check if issue persists (same actor + same location + same hint)
+                Optional<Issue> existingIssue = findMatchingIssue(afterIssues, beforeIssue.sprite(), blockId, beforeIssue.hint());
+
+                if (existingIssue.isPresent()) {
+                    // Issue still exists at same location with same hint - PERSISTING
+                    persisting.add(existingIssue.get());
+                } else {
+                    // Issue no longer at this location (or hint changed) - check if fixed or just removed
+                    categorizeAsFixedOrRemoved(finderName, beforeIssue, afterProgram);
+                }
             }
         }
+    }
+
+    private Optional<Issue> findMatchingIssue(List<Issue> issues, String actorName, String blockId, String hint) {
+        return issues.stream()
+                .filter(i -> Objects.equals(actorName, i.getActorName()))
+                .filter(i -> Objects.equals(blockId, getBlockId(i)))
+                .filter(i -> hintsMatch(hint, i.getHint()))
+                .findFirst();
+    }
+
+    private boolean hintsMatch(String dtoHint, de.uni_passau.fim.se2.litterbox.analytics.Hint issueHint) {
+        // Use getHintText() for comparison - produces stable, translated text
+        String issueHintStr = issueHint != null ? issueHint.getHintText(translator) : null;
+        return Objects.equals(dtoHint, issueHintStr);
     }
 
     private void categorizeByActorName(
@@ -111,11 +132,27 @@ public class IssueCategorizer {
 
         if (afterActorNames.contains(actorName)) {
             // Check if same finder+actor still has an issue
-            findIssueByActorName(afterIssues, actorName).ifPresent(persisting::add);
+            // AND check if the hint matches. If hint doesn't match, it might be a different bug instance (e.g. different message literal)
+            Optional<Issue> matchingIssue = findIssueByActorAndHint(afterIssues, actorName, beforeIssue.hint());
+
+            if (matchingIssue.isPresent()) {
+                persisting.add(matchingIssue.get());
+            } else {
+                // Same actor exists, but no issue with matching hint found.
+                // This suggests the specific instance was fixed/removed.
+                categorizeAsFixedOrRemoved(finderName, beforeIssue, afterProgram);
+            }
         } else {
             // No issue for this actor anymore - check if fixed
             categorizeAsFixedOrRemoved(finderName, beforeIssue, afterProgram);
         }
+    }
+
+    private Optional<Issue> findIssueByActorAndHint(List<Issue> issues, String actorName, String hint) {
+        return issues.stream()
+                .filter(i -> actorName != null && actorName.equals(i.getActorName()))
+                .filter(i -> hintsMatch(hint, i.getHint()))
+                .findFirst();
     }
 
     private void categorizeAsFixedOrRemoved(String finderName, IssueDTO beforeIssue, Program afterProgram) {
@@ -150,32 +187,9 @@ public class IssueCategorizer {
         return blockId == null || blockId.isEmpty();
     }
 
-    private boolean isBlockIdInSet(String blockId, Set<String> blockIds) {
-        return blockId != null && blockIds.contains(blockId);
-    }
-
-    private Optional<Issue> findIssueByBlockId(List<Issue> issues, String blockId) {
-        return issues.stream()
-                .filter(i -> blockId.equals(getBlockId(i)))
-                .findFirst();
-    }
-
-    private Optional<Issue> findIssueByActorName(List<Issue> issues, String actorName) {
-        return issues.stream()
-                .filter(i -> actorName != null && actorName.equals(i.getActorName()))
-                .findFirst();
-    }
-
     private String getBlockId(Issue issue) {
         ASTNode codeLocation = issue.getCodeLocation();
         return codeLocation != null ? AstNodeUtil.getBlockId(codeLocation) : null;
-    }
-
-    private Set<String> extractBlockIds(List<Issue> issues) {
-        return issues.stream()
-                .map(this::getBlockId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
     }
 
     private Set<String> extractActorNames(List<Issue> issues) {
@@ -185,12 +199,23 @@ public class IssueCategorizer {
                 .collect(Collectors.toSet());
     }
 
-    private Set<String> extractAllBlockIds(Map<String, List<IssueDTO>> issuesByFinder) {
+    private Set<String> extractAllIssueKeys(Map<String, List<IssueDTO>> issuesByFinder) {
         return issuesByFinder.values().stream()
                 .flatMap(List::stream)
-                .map(IssueDTO::issueLocationBlockId)
+                .map(dto -> getIssueKeyFromDTO(dto))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
+    }
+
+    private String getIssueKey(Issue issue) {
+        String blockId = getBlockId(issue);
+        String actorName = issue.getActorName();
+        String hint = issue.getHint() != null ? issue.getHint().getHintText(translator) : null;
+        return actorName + ":" + blockId + ":" + hint;
+    }
+
+    private String getIssueKeyFromDTO(IssueDTO dto) {
+        return dto.sprite() + ":" + dto.issueLocationBlockId() + ":" + dto.hint();
     }
 
     private Map<String, List<Issue>> groupByFinder(Set<Issue> issues) {

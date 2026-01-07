@@ -41,6 +41,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.languag
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -75,6 +79,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TranslateExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.VideoSensingExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.dataflow.*;
 
@@ -84,7 +89,7 @@ import java.util.function.Function;
 /**
  * Detects type errors using dataflow analysis and type inference.
  */
-public class TypeError extends AbstractIssueFinder implements TextToSpeechExtensionVisitor, TranslateExtensionVisitor {
+public class TypeError extends AbstractIssueFinder implements TextToSpeechExtensionVisitor, TranslateExtensionVisitor, VideoSensingExtensionVisitor {
     public static final String NAME = "type_error";
     public static final String WEIRD_DISTANCE = "type_error_weird_distance";
 
@@ -767,6 +772,28 @@ public class TypeError extends AbstractIssueFinder implements TextToSpeechExtens
             case ComparableExpr ignored -> Type.ANY;
             default -> Type.ANY; // Implicit cast or unknown
         };
+    }
+
+    @Override
+    public void visit(WhenVideoMotionGreaterThan node) {
+        checkType(node.getReference(), Type.NUMBER);
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(VideoOn node) {
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(TurnVideo node) {
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(SetVideoTransparency node) {
+        checkType(node.getTransparency(), Type.NUMBER);
+        visitChildren(node);
     }
 
     /*

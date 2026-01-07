@@ -27,6 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
@@ -35,6 +37,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveStep
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.VideoSensingExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
 import java.util.ArrayList;
@@ -58,10 +61,8 @@ import java.util.function.Function;
  * For realistic bugs, this injector collects boolean expressions from the program
  * (like {@code Touching}, {@code IsMouseDown}, etc.) and uses them as replacement values.
  *
- * <p>
- * This injector uses {@link #replaceWith} for immutable transformations.
  */
-public class TypeErrorInjector extends AbstractComparisonInjector {
+public class TypeErrorInjector extends AbstractComparisonInjector implements VideoSensingExtensionVisitor {
 
     /**
      * Fallback boolean expression to use when no boolean expressions are found in the program.
@@ -163,6 +164,18 @@ public class TypeErrorInjector extends AbstractComparisonInjector {
     public void visit(WaitSeconds node) {
         injectIntoNumericParam(node, n -> new WaitSeconds(getBoolAsNumReplacement(), n.getMetadata()));
         super.visit(node);
+    }
+
+    @Override
+    public void visit(SetVideoTransparency node) {
+        injectIntoNumericParam(node, n -> new SetVideoTransparency(getBoolAsNumReplacement(), n.getMetadata()));
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(WhenVideoMotionGreaterThan node) {
+        injectIntoNumericParam(node, n -> new WhenVideoMotionGreaterThan(getBoolAsNumReplacement(), n.getMetadata()));
+        visitChildren(node);
     }
 
     // ==================== Helper Methods ====================
