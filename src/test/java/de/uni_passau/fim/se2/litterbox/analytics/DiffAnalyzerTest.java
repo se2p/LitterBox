@@ -130,4 +130,48 @@ class DiffAnalyzerTest implements JsonTest {
         assertNotNull(issues);
         // Empty project should have no issues (or very few)
     }
+
+    @Test
+    void testAnalyzeWithProjectJsonAsBefore() throws IOException, ParsingException {
+        // Test that project.json files can be used as the "before" input
+        Path projectJsonPath = Path.of("src/test/fixtures/emptyProject.json");
+        Path sb3Path = Path.of("src/test/fixtures/emptyProject.sb3");
+
+        DiffAnalyzer analyzer = new DiffAnalyzer(BUGS_DETECTORS, false);
+        DiffResult result = analyzer.analyze(projectJsonPath, sb3Path);
+
+        assertNotNull(result);
+        assertEquals(projectJsonPath.toString(), result.beforeSource());
+        assertEquals(sb3Path.toString(), result.afterSource());
+    }
+
+    @Test
+    void testAnalyzeWithProjectJsonAsAfter() throws IOException, ParsingException {
+        // Test that project.json files can be used as the "after" input
+        Path sb3Path = Path.of("src/test/fixtures/emptyProject.sb3");
+        Path projectJsonPath = Path.of("src/test/fixtures/emptyProject.json");
+
+        DiffAnalyzer analyzer = new DiffAnalyzer(BUGS_DETECTORS, false);
+        DiffResult result = analyzer.analyze(sb3Path, projectJsonPath);
+
+        assertNotNull(result);
+        assertEquals(sb3Path.toString(), result.beforeSource());
+        assertEquals(projectJsonPath.toString(), result.afterSource());
+    }
+
+    @Test
+    void testAnalyzeWithProjectJsonForBothBeforeAndAfter() throws IOException, ParsingException {
+        // Test that project.json files can be used for both before and after
+        Path projectJsonPath = Path.of("src/test/fixtures/emptyProject.json");
+
+        DiffAnalyzer analyzer = new DiffAnalyzer(BUGS_DETECTORS, false);
+        DiffResult result = analyzer.analyze(projectJsonPath, projectJsonPath);
+
+        assertNotNull(result);
+        assertEquals(projectJsonPath.toString(), result.beforeSource());
+        assertEquals(projectJsonPath.toString(), result.afterSource());
+        // Same project should have no fixed or new issues
+        assertTrue(result.fixed().isEmpty());
+        assertTrue(result.newIssues().isEmpty());
+    }
 }

@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.DiffResult;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
 import org.apache.commons.csv.CSVPrinter;
 import picocli.CommandLine;
@@ -60,14 +61,14 @@ public class DiffSubcommand implements Callable<Integer> {
 
     @CommandLine.Option(
             names = {"-b", "--before"},
-            description = "Path to the prior version (.sb3) or prior analysis report (.json).",
+            description = "Path to the prior version (.sb3, project.json, or LitterBox report .json).",
             required = true
     )
     Path beforePath;
 
     @CommandLine.Option(
             names = {"-a", "--after"},
-            description = "Path to the modified/new project file (.sb3).",
+            description = "Path to the modified/new project file (.sb3 or project.json).",
             required = true
     )
     Path afterPath;
@@ -90,12 +91,6 @@ public class DiffSubcommand implements Callable<Integer> {
             description = "Ignore loose blocks when checking bug patterns."
     )
     boolean ignoreLooseBlocks;
-
-    @CommandLine.Option(
-            names = {"--summary-only"},
-            description = "Only print summary, no details."
-    )
-    boolean summaryOnly;
 
     @Override
     public Integer call() throws Exception {
@@ -131,10 +126,11 @@ public class DiffSubcommand implements Callable<Integer> {
                     "After file does not exist: " + afterPath
             );
         }
-        if (!afterPath.toString().toLowerCase().endsWith(".sb3")) {
+        String afterLower = afterPath.toString().toLowerCase();
+        if (!afterLower.endsWith(".sb3") && !afterLower.endsWith(".json")) {
             throw new CommandLine.ParameterException(
                     spec.commandLine(),
-                    "After file must be a .sb3 file: " + afterPath
+                    "After file must be a .sb3 or .json file: " + afterPath
             );
         }
         String beforeLower = beforePath.toString().toLowerCase();
@@ -158,12 +154,10 @@ public class DiffSubcommand implements Callable<Integer> {
         out.printf("  PERSISTING: %d%n", result.persistingCount());
         out.printf("  REMOVED:    %d%n%n", result.removedCount());
 
-        if (!summaryOnly) {
-            printIssueList(out, "FIXED BUGS", "✓", result.fixed());
-            printIssueList(out, "NEW BUGS", "✗", result.newIssues());
-            printIssueList(out, "PERSISTING BUGS", "-", result.persisting());
-            printIssueList(out, "REMOVED (unverified)", "?", result.removed());
-        }
+        printIssueList(out, "FIXED BUGS", "✓", result.fixed());
+        printIssueList(out, "NEW BUGS", "✗", result.newIssues());
+        printIssueList(out, "PERSISTING BUGS", "-", result.persisting());
+        printIssueList(out, "REMOVED (unverified)", "?", result.removed());
     }
 
     private void printIssueList(PrintWriter out, String header, String marker, List<Issue> issues) {
@@ -173,16 +167,39 @@ public class DiffSubcommand implements Callable<Integer> {
 
         out.println(header + ":");
         for (Issue issue : issues) {
-            ASTNode codeLocation = issue.getCodeLocation();
-            String blockId = codeLocation != null ? AstNodeUtil.getBlockId(codeLocation) : null;
-            out.printf("  %s %s in %s (block: %s)%n",
+            String codeSnippet = getCodeSnippet(issue);
+            out.printf("  %s %s in %s: %s%n",
                     marker,
                     issue.getFinderName(),
                     issue.getActorName(),
-                    blockId != null ? blockId : "unknown"
+                    codeSnippet
             );
         }
         out.println();
+    }
+
+    private String getCodeSnippet(Issue issue) {
+        ASTNode codeLocation = issue.getCodeLocation();
+        if (codeLocation != null) {
+            // Convert to scratchblocks notation and take first line only
+            String scratchBlocks = ScratchBlocksVisitor.of(codeLocation).trim();
+            int newlineIndex = scratchBlocks.indexOf('\n');
+            if (newlineIndex > 0) {
+                scratchBlocks = scratchBlocks.substring(0, newlineIndex);
+            }
+            return scratchBlocks;
+        }
+
+        // For fixed issues where the node was deleted, use the stored code snippet
+        String originalCode = issue.getOriginalCodeSnippet();
+        if (originalCode != null && !originalCode.isBlank()) {
+            // Take first line only for compact display
+            return originalCode.lines().findFirst().orElse(originalCode).trim();
+        }
+
+        // Final fallback to block ID
+        String blockId = issue.getOriginalBlockId();
+        return blockId != null ? "(block: " + blockId + ")" : "(unknown location)";
     }
 
     private void writeJsonOutput(DiffResult result) {
@@ -238,7 +255,10 @@ public class DiffSubcommand implements Callable<Integer> {
     ) throws IOException {
         for (Issue issue : issues) {
             ASTNode codeLocation = issue.getCodeLocation();
-            String blockId = codeLocation != null ? AstNodeUtil.getBlockId(codeLocation) : "";
+            String blockId = codeLocation != null ? AstNodeUtil.getBlockId(codeLocation) : null;
+            if (blockId == null) {
+                blockId = issue.getOriginalBlockId();
+            }
             printer.printRecord(
                     beforeProject,
                     afterProject,
@@ -255,6 +275,9 @@ public class DiffSubcommand implements Callable<Integer> {
                 .map(issue -> {
                     ASTNode codeLocation = issue.getCodeLocation();
                     String blockId = codeLocation != null ? AstNodeUtil.getBlockId(codeLocation) : null;
+                    if (blockId == null) {
+                        blockId = issue.getOriginalBlockId();
+                    }
                     return new IssueJson(issue.getFinderName(), issue.getActorName(), blockId);
                 })
                 .toList();

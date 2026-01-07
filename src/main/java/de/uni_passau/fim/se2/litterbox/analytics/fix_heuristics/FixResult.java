@@ -77,4 +77,13 @@ public record FixResult(
     public String getActorName() {
         return actor != null ? actor.getIdent().getName() : null;
     }
+
+    /**
+     * Returns the scratchblocks code representation of the original issue location.
+     *
+     * @return the scratchblocks code, or null if not available
+     */
+    public String getOriginalScratchBlocksCode() {
+        return originalIssue.scratchBlocksCode();
+    }
 }

@@ -25,8 +25,10 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Analyzes differences between two versions of a Scratch project.
@@ -62,8 +64,8 @@ public class DiffAnalyzer {
     /**
      * Analyzes the diff between two project versions.
      *
-     * @param beforePath path to the before version (.sb3 or .json report)
-     * @param afterPath  path to the after version (.sb3 only)
+     * @param beforePath path to the before version (.sb3, project.json, or LitterBox report .json)
+     * @param afterPath  path to the after version (.sb3 or project.json)
      * @return categorized diff results
      * @throws IOException      if files cannot be read
      * @throws ParsingException if files cannot be parsed
@@ -99,7 +101,12 @@ public class DiffAnalyzer {
     private Map<String, List<IssueDTO>> loadBeforeIssues(Path beforePath)
             throws IOException, ParsingException {
         if (isJsonFile(beforePath)) {
-            return loadIssuesFromJson(beforePath);
+            if (isLitterBoxReport(beforePath)) {
+                return loadIssuesFromJson(beforePath);
+            } else {
+                // It's a project.json file, parse as Scratch project
+                return analyzeAndConvertToDTO(beforePath);
+            }
         } else {
             return analyzeAndConvertToDTO(beforePath);
         }
@@ -128,10 +135,40 @@ public class DiffAnalyzer {
             throws IOException, ParsingException {
         File file = jsonPath.toFile();
         IssueParser issueParser = new IssueParser();
-        return issueParser.getIssuesPerFinder(file);
+        Map<String, List<IssueDTO>> allIssues = issueParser.getIssuesPerFinder(file);
+
+        // Filter to only include issues from the selected detectors
+        Set<String> selectedFinders = getSelectedFinderNames();
+        return allIssues.entrySet().stream()
+                .filter(entry -> selectedFinders.contains(entry.getKey()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    private Set<String> getSelectedFinderNames() {
+        return IssueTool.getFinders(detectors).stream()
+                .map(IssueFinder::getName)
+                .collect(Collectors.toSet());
     }
 
     private boolean isJsonFile(Path path) {
         return path.toString().toLowerCase().endsWith(".json");
+    }
+
+    /**
+     * Detects whether a JSON file is a LitterBox report or a project.json.
+     *
+     * <p>This method checks for the presence of the "targets" field which is
+     * unique to Scratch project.json files. LitterBox reports have "metrics"
+     * and "issues" fields instead.
+     *
+     * @param path path to the JSON file
+     * @return true if the file is a LitterBox report, false if it's a project.json
+     * @throws IOException if the file cannot be read
+     */
+    private boolean isLitterBoxReport(Path path) throws IOException {
+        // Read the first portion of the file to check for distinguishing fields
+        String content = Files.readString(path);
+        // project.json files have a "targets" field; LitterBox reports do not
+        return !content.contains("\"targets\"");
     }
 }

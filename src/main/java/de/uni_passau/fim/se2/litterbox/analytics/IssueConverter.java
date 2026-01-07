@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
@@ -63,7 +64,12 @@ public final class IssueConverter {
             ActorDefinition actor = fix.actor();
             ASTNode node = fix.fixedNode();
 
-            // Handle deleted blocks (null fixedNode) - still a valid fix
+            // Handle null actor - look up by the original issue's actor name
+            if (actor == null && fix.originalIssue() != null && fix.originalIssue().sprite() != null) {
+                actor = findActorByName(actors, fix.originalIssue().sprite());
+            }
+
+            // Final fallback to first actor if still null
             if (actor == null && !actors.isEmpty()) {
                 actor = actors.getFirst();
             }
@@ -80,13 +86,21 @@ public final class IssueConverter {
     }
 
     private static Issue buildFixIssue(FixResult fix, Program program, ActorDefinition actor, ASTNode node) {
+        // Determine code snippet - prefer from original issue, fall back to generating from node
+        String codeSnippet = fix.getOriginalScratchBlocksCode();
+        if ((codeSnippet == null || codeSnippet.isBlank()) && node != null) {
+            codeSnippet = ScratchBlocksVisitor.of(node);
+        }
+
         IssueBuilder builder = new IssueBuilder()
                 .withFinder(new SyntheticIssueFinder(fix.getOriginalBugFinder(), IssueType.BUG))
                 .withProgram(program)
                 .withActor(actor)
                 .withMetadata(fix.metadata())
                 .withSeverity(IssueSeverity.LOW)
-                .withHint(fix.getOriginalBugFinder());
+                .withHint(fix.getOriginalBugFinder())
+                .withOriginalBlockId(fix.getBugLocationBlockId())
+                .withOriginalCodeSnippet(codeSnippet);
 
         // IssueBuilder requires both currentNode and script to be set, or both null
         if (node != null) {
@@ -148,9 +162,11 @@ public final class IssueConverter {
      */
     public static IssueDTO toMinimalDTO(Issue issue) {
         String blockId = null;
+        String scratchBlocksCode = null;
         ASTNode codeLocation = issue.getCodeLocation();
         if (codeLocation != null) {
             blockId = AstNodeUtil.getBlockId(codeLocation);
+            scratchBlocksCode = ScratchBlocksVisitor.of(codeLocation);
         }
 
         // Include the hint text for proper issue matching by fix heuristics
@@ -169,7 +185,7 @@ public final class IssueConverter {
                 issue.getActorName(),
                 blockId,
                 null, null, null, null,
-                hintText, null, 0, null, null
+                hintText, null, 0, scratchBlocksCode, null
         );
     }
 
