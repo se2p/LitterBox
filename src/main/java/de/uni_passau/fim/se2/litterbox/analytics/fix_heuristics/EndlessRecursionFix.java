@@ -34,7 +34,7 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
  */
 public class EndlessRecursionFix extends AbstractFixHeuristic {
 
-    private int loopIfCounter;
+    private int conditionalNestingDepth;
     private String currentProcedureName;
     private boolean insideProcedure;
 
@@ -51,7 +51,7 @@ public class EndlessRecursionFix extends AbstractFixHeuristic {
 
     @Override
     protected void resetState() {
-        loopIfCounter = 0;
+        conditionalNestingDepth = 0;
         currentProcedureName = null;
         insideProcedure = false;
     }
@@ -76,8 +76,8 @@ public class EndlessRecursionFix extends AbstractFixHeuristic {
                     && currentProcedureName.equals(node.getIdent().getName());
 
             if (isRecursive) {
-                // Fixed if guarded by a conditional (loopIfCounter > 0)
-                if (loopIfCounter > 0) {
+                // Fixed if guarded by a conditional (conditionalNestingDepth > 0)
+                if (conditionalNestingDepth > 0) {
                     addFix(node, node.getMetadata());
                 }
             } else {
@@ -90,15 +90,15 @@ public class EndlessRecursionFix extends AbstractFixHeuristic {
 
     @Override
     public void visit(IfElseStmt node) {
-        loopIfCounter++;
+        conditionalNestingDepth++;
         visitChildren(node);
-        loopIfCounter--;
+        conditionalNestingDepth--;
     }
 
     @Override
     public void visit(IfThenStmt node) {
-        loopIfCounter++;
+        conditionalNestingDepth++;
         visitChildren(node);
-        loopIfCounter--;
+        conditionalNestingDepth--;
     }
 }

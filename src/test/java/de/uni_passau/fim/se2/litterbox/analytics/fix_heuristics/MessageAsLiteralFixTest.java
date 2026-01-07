@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -49,7 +50,8 @@ public class MessageAsLiteralFixTest extends AbstractFixHeuristicTest {
         String bugId = findBlockId(program, StringLiteral.class,
                 s -> s.getText().equals("myMessage"));
 
-        MessageAsLiteralFix heuristic = new MessageAsLiteralFix(createTestIssueDTO(bugId));
+        MessageAsLiteralFix heuristic = new MessageAsLiteralFix(
+                withHint(createTestIssueDTO(bugId), "myMessage"));
         assertFixFound(heuristic, program);
     }
 
@@ -60,7 +62,7 @@ public class MessageAsLiteralFixTest extends AbstractFixHeuristicTest {
                 when green flag clicked
                 say [myMessage]
                 broadcast (myMessage v)
-                
+
                 when I receive [myMessage v]
                 move (10) steps
                 """;
@@ -70,7 +72,8 @@ public class MessageAsLiteralFixTest extends AbstractFixHeuristicTest {
         String bugId = findBlockId(program, StringLiteral.class,
                 s -> s.getText().equals("myMessage") && s.getParentNode().getClass().getSimpleName().contains("Say"));
 
-        MessageAsLiteralFix heuristic = new MessageAsLiteralFix(createTestIssueDTO(bugId));
+        MessageAsLiteralFix heuristic = new MessageAsLiteralFix(
+                withHint(createTestIssueDTO(bugId), "myMessage"));
         assertFixFound(heuristic, program);
     }
 
@@ -80,7 +83,7 @@ public class MessageAsLiteralFixTest extends AbstractFixHeuristicTest {
         String source = """
                 when green flag clicked
                 say [myMessage]
-                
+
                 when I receive [myMessage v]
                 move (10) steps
                 """;
@@ -89,8 +92,80 @@ public class MessageAsLiteralFixTest extends AbstractFixHeuristicTest {
         String bugId = findBlockId(program, StringLiteral.class,
                 s -> s.getText().equals("myMessage") && s.getParentNode().getClass().getSimpleName().contains("Say"));
 
-        MessageAsLiteralFix heuristic = new MessageAsLiteralFix(createTestIssueDTO(bugId));
+        MessageAsLiteralFix heuristic = new MessageAsLiteralFix(
+                withHint(createTestIssueDTO(bugId), "myMessage"));
         assertNoFixFound(heuristic, program);
+    }
+
+    private IssueDTO withHint(IssueDTO issue, String messageName) {
+        String hint = "message_as_literal{MESSAGE=Value[value=" + messageName + "]}";
+        return new IssueDTO(
+                issue.id(), issue.finder(), issue.name(), issue.type(), issue.severity(),
+                issue.sprite(), issue.issueLocationBlockId(), issue.duplicateOf(),
+                issue.subsumedBy(), issue.coupledTo(), issue.similarTo(),
+                hint,
+                issue.costumes(), issue.currentCostume(), issue.scratchBlocksCode(),
+                issue.refactoringScratchBlocksCode()
+        );
+    }
+
+    private IssueDTO withTranslatedHint(IssueDTO issue, String messageName) {
+        // This is the actual translated hint format from IssueHints_en.properties
+        // The fix heuristic must be able to extract the message from this format
+        String hint = "[b]Problem:[/b] [newLine] You are using the name of a message as text. "
+                + "[newLine] [newLine] [b]Suggestion for code improvement:[/b] [newLine] "
+                + "Probably, you meant to use a [sbi]broadcast (" + messageName + " v)[/sbi] "
+                + "or [sbi]broadcast (" + messageName + " v) and wait[/sbi] block.";
+        return new IssueDTO(
+                issue.id(), issue.finder(), issue.name(), issue.type(), issue.severity(),
+                issue.sprite(), issue.issueLocationBlockId(), issue.duplicateOf(),
+                issue.subsumedBy(), issue.coupledTo(), issue.similarTo(),
+                hint,
+                issue.costumes(), issue.currentCostume(), issue.scratchBlocksCode(),
+                issue.refactoringScratchBlocksCode()
+        );
+    }
+
+    // ========================================================================
+    // HINT FORMAT REGRESSION TESTS
+    // These tests verify that the fix heuristic can parse message names from
+    // both the raw toString() format and the translated hint format.
+    // If hint text format changes in the future, these tests will fail.
+    // ========================================================================
+
+    @Test
+    public void testHintParsing_RawFormat() throws IOException, ParsingException {
+        // Test with raw toString() format: MESSAGE=Value[value=TestMessage]
+        String source = """
+                when green flag clicked
+                say [TestMessage]
+                """;
+
+        Program program = parseProgram(source);
+        String bugId = findBlockId(program, StringLiteral.class,
+                s -> s.getText().equals("TestMessage"));
+
+        MessageAsLiteralFix heuristic = new MessageAsLiteralFix(
+                withHint(createTestIssueDTO(bugId), "TestMessage"));
+        assertFixFound(heuristic, program);
+    }
+
+    @Test
+    public void testHintParsing_TranslatedFormat() throws IOException, ParsingException {
+        // Test with translated format: broadcast (MESSAGE v)
+        // This tests the DiffAnalyzer path which uses getHintText(translator)
+        String source = """
+                when green flag clicked
+                say [GameOver]
+                """;
+
+        Program program = parseProgram(source);
+        String bugId = findBlockId(program, StringLiteral.class,
+                s -> s.getText().equals("GameOver"));
+
+        MessageAsLiteralFix heuristic = new MessageAsLiteralFix(
+                withTranslatedHint(createTestIssueDTO(bugId), "GameOver"));
+        assertFixFound(heuristic, program);
     }
 
     @Test
@@ -124,7 +199,7 @@ public class MessageAsLiteralFixTest extends AbstractFixHeuristicTest {
                 when green flag clicked
                 broadcast (myMessage v)
                 say [Hello]
-                
+
                 when I receive [myMessage v]
                 move (10) steps
                 """;
@@ -148,7 +223,7 @@ public class MessageAsLiteralFixTest extends AbstractFixHeuristicTest {
                 "Injector should produce results");
 
         // Verify bug in mutated
-        Program mutatedProgram = results.get(0).mutatedProgram();
+        Program mutatedProgram = results.getFirst().mutatedProgram();
         java.util.Set<de.uni_passau.fim.se2.litterbox.analytics.Issue> bugIssues =
                 bugFinder.check(mutatedProgram);
         org.junit.jupiter.api.Assertions.assertFalse(bugIssues.isEmpty(),

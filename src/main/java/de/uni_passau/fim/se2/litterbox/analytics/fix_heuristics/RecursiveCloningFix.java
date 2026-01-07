@@ -21,32 +21,24 @@ package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.RecursiveCloning;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 /**
  * Fix heuristic for the RecursiveCloning bug.
  *
  * <p>The bug is reported when "When I start as clone" creates a clone of myself (infinite loop).
- * The bug is fixed if DeleteClone is present before the recursive clone creation.
+ * The bug is fixed if DeleteClone is present in the same script, breaking the recursion.
  */
 public class RecursiveCloningFix extends AbstractFixHeuristic {
-
-    private boolean secondVisit;
-    private boolean foundDelete;
 
     private final RecursiveCloning relatedBugFinder = new RecursiveCloning();
 
     public RecursiveCloningFix(IssueDTO originalIssue) {
         super(originalIssue);
-    }
-
-    @Override
-    protected void resetState() {
-        secondVisit = false;
-        foundDelete = false;
     }
 
     @Override
@@ -56,37 +48,39 @@ public class RecursiveCloningFix extends AbstractFixHeuristic {
 
     @Override
     public void visit(Script node) {
-        if (node.getEvent() instanceof StartedAsClone) {
-            foundDelete = false;
-            secondVisit = false;
+        if (!(node.getEvent() instanceof StartedAsClone)) {
+            return;
+        }
 
-            // First pass: check if DeleteClone exists in the script
-            visitChildren(node);
+        // Single-pass: Check if DeleteClone exists and if the target CreateCloneOf is present
+        ScriptAnalyzer analyzer = new ScriptAnalyzer();
+        node.accept(analyzer);
 
-            // Second pass: if DeleteClone was found, report the fix at the buggy block location
-            if (foundDelete) {
-                secondVisit = true;
-                visitChildren(node);
-                secondVisit = false;
+        // If the script contains DeleteClone, the recursive cloning is fixed
+        if (analyzer.hasDeleteClone && analyzer.targetCreateClone != null) {
+            addFix(analyzer.targetCreateClone, analyzer.targetCreateClone.getMetadata());
+        }
+    }
+
+    /**
+     * Single-pass analyzer that collects information about a script.
+     */
+    private class ScriptAnalyzer implements ScratchVisitor {
+        boolean hasDeleteClone = false;
+        CreateCloneOf targetCreateClone = null;
+
+        @Override
+        public void visit(DeleteClone node) {
+            hasDeleteClone = true;
+            // Continue traversal in case target is found later
+        }
+
+        @Override
+        public void visit(CreateCloneOf node) {
+            if (matchesBugLocation(node)) {
+                targetCreateClone = node;
             }
-
-            foundDelete = false; // Reset state
+            visitChildren(node);
         }
-    }
-
-    @Override
-    public void visit(Myself node) {
-        if (secondVisit && matchesBugLocation(node.getParentNode())) {
-            addFix(node.getParentNode(), node.getParentNode().getMetadata());
-        }
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(DeleteClone node) {
-        if (!secondVisit) {
-            foundDelete = true;
-        }
-        visitChildren(node);
     }
 }

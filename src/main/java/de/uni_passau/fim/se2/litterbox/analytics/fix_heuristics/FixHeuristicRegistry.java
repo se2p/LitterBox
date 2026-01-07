@@ -39,7 +39,15 @@ public final class FixHeuristicRegistry {
     private static final Logger log = Logger.getLogger(FixHeuristicRegistry.class.getName());
 
     /**
-     * Dummy IssueDTO used only during registry initialization.
+     * Sentinel IssueDTO used only during registry initialization to discover bug finder names.
+     *
+     * <p>Each fix heuristic is associated with a bug finder, but the association is defined
+     * via {@link AbstractFixHeuristic#getRelatedBugFinder()} which requires instantiation.
+     * Rather than requiring each heuristic to duplicate the bug finder name as a static constant,
+     * we instantiate once during class loading with this sentinel issue to query the name.
+     *
+     * <p>This is a trade-off: the alternative (static constants in each heuristic) would
+     * require maintaining duplicate name strings in 48 files.
      */
     private static final IssueDTO DUMMY_ISSUE = new IssueDTO(
             0, "__registry_init__", "__dummy__", null, 0, null,

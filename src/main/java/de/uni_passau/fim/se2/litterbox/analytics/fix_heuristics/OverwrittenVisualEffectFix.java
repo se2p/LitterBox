@@ -76,12 +76,12 @@ public class OverwrittenVisualEffectFix extends AbstractFixHeuristic {
 
             if (stmt instanceof ClearGraphicEffects) {
                 if (lastEffectStmt.containsKey(KEY_CLEAR)) {
-                    reportIfTarget(lastEffectStmt.get(KEY_CLEAR), true);
+                    addFixIfTargetNotBuggy(lastEffectStmt.get(KEY_CLEAR), true);
                 }
                 for (GraphicEffect.GraphicEffectType type : GraphicEffect.GraphicEffectType.values()) {
                     String key = getGraphicEffectKey(type);
                     if (lastEffectStmt.containsKey(key)) {
-                        reportIfTarget(lastEffectStmt.get(key), true);
+                        addFixIfTargetNotBuggy(lastEffectStmt.get(key), true);
                     }
                 }
                 // Only clear graphic effects and previous CLEAR, keep other states (visibility, costume, etc.)
@@ -94,14 +94,14 @@ public class OverwrittenVisualEffectFix extends AbstractFixHeuristic {
 
             if (effectKey != null) {
                 if (lastEffectStmt.containsKey(effectKey)) {
-                    reportIfTarget(lastEffectStmt.get(effectKey), true);
+                    addFixIfTargetNotBuggy(lastEffectStmt.get(effectKey), true);
                 }
                 lastEffectStmt.put(effectKey, stmt);
             }
 
             if (isHalting) {
                 for (Stmt s : lastEffectStmt.values()) {
-                    reportIfTarget(s, false);
+                    addFixIfTargetNotBuggy(s, false);
                 }
                 lastEffectStmt.clear();
             }
@@ -109,7 +109,7 @@ public class OverwrittenVisualEffectFix extends AbstractFixHeuristic {
 
         // At end of list, remaining are safe
         for (Stmt s : lastEffectStmt.values()) {
-            reportIfTarget(s, false);
+            addFixIfTargetNotBuggy(s, false);
         }
 
         visitChildren(node);
@@ -138,32 +138,21 @@ public class OverwrittenVisualEffectFix extends AbstractFixHeuristic {
         return null;
     }
 
-    private void reportIfTarget(Stmt stmt, boolean isBug) {
+    private void addFixIfTargetNotBuggy(Stmt stmt, boolean isBug) {
         if (matchesBugLocation(stmt) && !isBug) {
             addFix(stmt, stmt.getMetadata());
         }
     }
 
-    private boolean containsHalting(Stmt stmt) {
-        if (isHalting(stmt)) {
-            return true;
-        }
-        for (ASTNode child : stmt.getChildren()) {
-            if (child instanceof Stmt childStmt && containsHalting(childStmt)) {
-                return true;
-            } else if (containsHaltingNode(child)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean containsHaltingNode(ASTNode node) {
+    /**
+     * Recursively checks if the given node or any of its descendants is a halting statement.
+     */
+    private boolean containsHalting(ASTNode node) {
         if (node instanceof Stmt stmt && isHalting(stmt)) {
             return true;
         }
         for (ASTNode child : node.getChildren()) {
-            if (containsHaltingNode(child)) {
+            if (containsHalting(child)) {
                 return true;
             }
         }

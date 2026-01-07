@@ -28,7 +28,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.IfOnEdgeBounce;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -174,7 +173,6 @@ class StructuralEqualityTest implements JsonTest {
         assertThat(StructuralEquality.areStructurallyEqualIgnoringLiterals(p1, p2)).isFalse();
     }
 
-    @Disabled("only for initial debugging which leaf types are missing")
     @ParameterizedTest
     @MethodSource("allFixtures")
     void allProgramsStructurallyIdenticalToSelf(final Program program) {

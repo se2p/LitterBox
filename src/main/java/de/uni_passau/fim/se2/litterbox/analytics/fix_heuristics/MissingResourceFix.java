@@ -59,10 +59,7 @@ public class MissingResourceFix extends AbstractFixHeuristic {
 
     @Override
     protected void resetState() {
-        images = null;
-        backdrops = null;
-        sounds = null;
-        stageSounds = null;
+        // Fields are initialized in visit(Program) - no reset needed
     }
 
     @Override

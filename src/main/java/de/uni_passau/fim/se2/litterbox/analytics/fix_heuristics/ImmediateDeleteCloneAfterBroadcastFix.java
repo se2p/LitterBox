@@ -58,24 +58,17 @@ public class ImmediateDeleteCloneAfterBroadcastFix extends AbstractFixHeuristic 
                 List<Stmt> stmts = list.getStmts();
                 int index = stmts.indexOf(node);
 
-                boolean foundDelete = false;
-                boolean foundYielding = false;
-
                 if (index != -1) {
-                    for (int i = index + 1; i < stmts.size(); i++) {
-                        Stmt s = stmts.get(i);
-                        if (s instanceof DeleteClone) {
-                            foundDelete = true;
-                            break;
-                        }
-                        if (AstNodeUtil.isYielding(s)) {
-                            foundYielding = true;
-                            break;
+                    boolean immediateDelete = false;
+                    if (index + 1 < stmts.size()) {
+                        Stmt next = stmts.get(index + 1);
+                        if (next instanceof DeleteClone) {
+                            immediateDelete = true;
                         }
                     }
 
-                    if (!foundDelete || foundYielding) {
-                        // Fixed: Either removed DeleteClone entirely, or inserted a yielding statement
+                    if (!immediateDelete) {
+                        // Fixed: The immediate next statement is NOT DeleteClone
                         addFix(node, node.getMetadata());
                     }
                 }

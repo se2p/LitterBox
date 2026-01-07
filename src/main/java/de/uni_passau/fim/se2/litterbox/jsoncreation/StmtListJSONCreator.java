@@ -1270,10 +1270,34 @@ public class StmtListJSONCreator
     @Override
     public void visit(TurnVideo node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        String fieldsString = createFields(VIDEO_STATE_KEY, node.getVideoState(), null);
+
+        // Create shadow block metadata
+        // Manually create metadata to ensure unique but deterministic ID relative to parent
+        String shadowBlockId = metadata.getBlockId() + "_video_state";
+        NonDataBlockMetadata shadowMeta = new NonDataBlockMetadata(
+                "",
+                shadowBlockId,
+                true,
+                new de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoMutationMetadata()
+        );
+
+        // serialize shadow block
+        String shadowFields = createFields(VIDEO_STATE_KEY, node.getVideoState(), null);
+        finishedJSONStrings.add(createBlockWithoutMutationString(
+                shadowMeta,
+                null,
+                metadata.getBlockId(),
+                EMPTY_VALUE,
+                shadowFields,
+                DependentBlockOpcode.videoSensing_menu_VIDEO_STATE
+        ));
+
+        // serialize parent block with input referencing shadow block
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createReferenceInput(VIDEO_STATE_KEY, INPUT_SAME_BLOCK_SHADOW, shadowBlockId, false));
 
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, getNextId(),
-                previousBlockId, EMPTY_VALUE, fieldsString, node.getOpcode()));
+                previousBlockId, createInputs(inputs), EMPTY_VALUE, node.getOpcode()));
         previousBlockId = metadata.getBlockId();
     }
 

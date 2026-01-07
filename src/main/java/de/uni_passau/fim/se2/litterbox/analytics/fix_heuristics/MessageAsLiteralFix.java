@@ -34,6 +34,8 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Fix heuristic for the MessageAsLiteral bug.
@@ -71,6 +73,15 @@ public class MessageAsLiteralFix extends AbstractFixHeuristic {
     }
 
     @Override
+    public void visit(ActorDefinition node) {
+        if (getBugLocationBlockId() == null && getOriginalIssue().sprite() != null
+                && node.getIdent().getName().equals(getOriginalIssue().sprite())) {
+            foundActor = node;
+        }
+        super.visit(node);
+    }
+
+    @Override
     public void visit(Broadcast node) {
         if (node.getMessage().getMessage() instanceof StringLiteral stringLiteral) {
             sentMessages.add(stringLiteral.getText());
@@ -88,15 +99,56 @@ public class MessageAsLiteralFix extends AbstractFixHeuristic {
 
     @Override
     public void visit(StringLiteral node) {
-        // Bug finder reports on parent node (Say, Think, etc.) which has block ID,
-        // not on StringLiteral which has no block ID. Check ancestors too.
-        if (matchesBugLocationOrAncestor(node)) {
+        boolean match = false;
+
+        if (getBugLocationBlockId() != null) {
+            // Bug finder reports on parent node (Say, Think, etc.) which has block ID,
+            // not on StringLiteral which has no block ID. Check ancestors too.
+            if (matchesBugLocationOrAncestor(node)) {
+                match = true;
+            }
+        } else {
+            // If block ID is null (e.g. ActorDefinition context or serialization issue),
+            // check actor and message text from hint.
+            if (currentActor != null && getOriginalIssue().sprite() != null
+                    && currentActor.getIdent().getName().equals(getOriginalIssue().sprite())) {
+                String bugText = getMessageFromHint();
+                if (node.getText().equalsIgnoreCase(bugText)) {
+                    match = true;
+                }
+            }
+        }
+
+        if (match) {
             foundLiteral = node;
             // Capture context for later use in addFix
             foundActor = currentActor;
             foundScript = currentScript;
             foundProcedure = currentProcedure;
         }
+    }
+
+    private String getMessageFromHint() {
+        String hint = getOriginalIssue().hint();
+        if (hint == null) {
+            return null;
+        }
+
+        // Format 1: Raw toString() format - MESSAGE=Value[value=SOME MESSAGE]
+        Pattern p1 = java.util.regex.Pattern.compile("MESSAGE=Value\\[value=(.*?)\\]");
+        Matcher m1 = p1.matcher(hint);
+        if (m1.find()) {
+            return m1.group(1);
+        }
+
+        // Format 2: Translated format - broadcast (MESSAGE v) or broadcast (MESSAGE v) and wait
+        Pattern p2 = java.util.regex.Pattern.compile("broadcast \\(([^)]+) v\\)");
+        Matcher m2 = p2.matcher(hint);
+        if (m2.find()) {
+            return m2.group(1);
+        }
+
+        return null;
     }
 
     @Override
@@ -120,6 +172,11 @@ public class MessageAsLiteralFix extends AbstractFixHeuristic {
                 addFix(foundLiteral, getMetadata(foundLiteral),
                         foundActor, foundScript != null ? foundScript : foundProcedure);
             }
+        } else if (foundLiteral == null && foundActor != null && getBugLocationBlockId() == null
+                && getMessageFromHint() != null) {
+            // If we targeted a specific literal by hint, and didn't find it in the actor,
+            // it implies the literal was removed or replaced (Fixed).
+            addFix(foundActor, getMetadata(foundActor), foundActor, null);
         }
 
         return Collections.unmodifiableSet(fixes);

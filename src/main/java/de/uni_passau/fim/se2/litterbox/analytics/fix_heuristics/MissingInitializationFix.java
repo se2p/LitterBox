@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -112,7 +113,7 @@ public class MissingInitializationFix extends AbstractFixHeuristic {
             // If we have a hint, check if the hint matches (same variable)
             if (originalHint != null && !originalHint.isBlank()) {
                 String issueHint = issue.getHint() != null
-                        ? issue.getHint().toString()
+                        ? issue.getHint().getHintText(IssueTranslatorFactory.getIssueTranslator())
                         : "";
                 if (hintsMatch(originalHint, issueHint)) {
                     return true;
@@ -128,12 +129,11 @@ public class MissingInitializationFix extends AbstractFixHeuristic {
     /**
      * Checks if two hints match, indicating the same variable is affected.
      *
-     * <p>MissingInitialization hints contain the variable/attribute name, so we can
-     * compare them to distinguish between bugs for different variables at the same block.
+     * <p>Uses exact string matching to compare hints. MissingInitialization hints
+     * contain the variable/attribute name in a format like:
+     * "missing_initialization{variable=x position}"
      */
     private boolean hintsMatch(String hint1, String hint2) {
-        // Simple substring matching - if hints contain the same key components, they match
-        // The hint format is like: "missing_initialization{variable=x position}"
         if (hint1 == null || hint2 == null) {
             return false;
         }

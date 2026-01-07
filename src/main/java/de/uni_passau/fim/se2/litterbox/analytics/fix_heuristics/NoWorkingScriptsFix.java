@@ -38,7 +38,7 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
  */
 public class NoWorkingScriptsFix extends AbstractFixHeuristic {
 
-    private boolean stillFullfilledEmptyScript;
+    private boolean hasEmptyEventScript;
     private boolean deadCodeFound;
     private boolean foundEvent;
 
@@ -55,7 +55,7 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
 
     @Override
     protected void resetState() {
-        stillFullfilledEmptyScript = false;
+        hasEmptyEventScript = false;
         deadCodeFound = false;
         foundEvent = false;
     }
@@ -67,7 +67,7 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
             return;
         }
 
-        stillFullfilledEmptyScript = true;
+        hasEmptyEventScript = true;
         deadCodeFound = false;
         foundEvent = false;
 
@@ -75,7 +75,7 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
         super.visit(actor);
 
         // Bug condition: deadCode AND emptyScript AND foundEvent
-        boolean bugPresent = deadCodeFound && stillFullfilledEmptyScript && foundEvent;
+        boolean bugPresent = deadCodeFound && hasEmptyEventScript && foundEvent;
 
         if (!bugPresent) {
             // Fixed!
@@ -88,7 +88,7 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
         currentScript = node;
 
         // Replicate bug finder logic exactly
-        if (stillFullfilledEmptyScript) {
+        if (hasEmptyEventScript) {
             if (node.getEvent() instanceof Never) {
                 // Script without event handler
                 if (!node.getStmtList().getStmts().isEmpty()) {
@@ -98,7 +98,7 @@ public class NoWorkingScriptsFix extends AbstractFixHeuristic {
                 // Script with event handler
                 foundEvent = true;
                 if (!node.getStmtList().getStmts().isEmpty()) {
-                    stillFullfilledEmptyScript = false;
+                    hasEmptyEventScript = false;
                 }
             }
         }

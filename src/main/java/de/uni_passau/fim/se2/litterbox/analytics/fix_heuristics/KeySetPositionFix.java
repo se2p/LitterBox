@@ -35,7 +35,10 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
 import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Fix heuristic for the KeySetPosition bug.
@@ -51,8 +54,19 @@ import java.util.*;
  */
 public class KeySetPositionFix extends AbstractFixHeuristic {
 
-    // Context tracking
-    private int currentArrowKey = -1;
+    /**
+     * Sentinel value indicating no arrow key context.
+     */
+    private static final int NO_ARROW_KEY = -1;
+
+    /**
+     * Current arrow key context (-1 if not in arrow key context).
+     */
+    private int currentArrowKey = NO_ARROW_KEY;
+
+    /**
+     * Whether we're inside an arrow key event or if-key-pressed block.
+     */
     private boolean isInKeyContext = false;
 
     private final KeySetPosition relatedBugFinder = new KeySetPosition();
@@ -68,92 +82,85 @@ public class KeySetPositionFix extends AbstractFixHeuristic {
 
     @Override
     protected void resetState() {
-        currentArrowKey = -1;
+        currentArrowKey = NO_ARROW_KEY;
         isInKeyContext = false;
     }
 
     @Override
     public Set<FixResult> check(Program program) {
-        this.program = program;
-        this.fixes = new LinkedHashSet<>();
-        resetState();
+        Optional<BlockIdNodeFinder.NodeContext> contextOpt = initializeAndCheckBlockDeletion(program);
 
-        // Handle deleted blocks
-        if (getBugLocationBlockId() != null && getBugLocationBlockId().startsWith("__")) {
-            addFix(null, null);
+        // If block was deleted, fix already added
+        if (!fixes.isEmpty()) {
             return Collections.unmodifiableSet(fixes);
         }
 
-        Optional<BlockIdNodeFinder.NodeContext> contextOpt = BlockIdNodeFinder.find(program, getBugLocationBlockId());
-
+        // Check if block type changed (e.g., SetX replaced with ChangeX)
         if (contextOpt.isPresent()) {
             BlockIdNodeFinder.NodeContext context = contextOpt.get();
             ASTNode node = context.node();
 
-            // If the node exists but is not a SetX or SetY, it means it was replaced (e.g. by ChangeX)
-            // enabling the fix condition.
             if (!(node instanceof SetXTo) && !(node instanceof SetYTo)) {
-                this.currentActor = context.actor();
-                this.currentScript = context.script();
-                this.currentProcedure = context.procedure();
+                // Block was replaced with a different type - fixed!
+                setContext(context);
                 addFix(node, node.getMetadata());
+                return Collections.unmodifiableSet(fixes);
             }
-        } else {
-            // Block was deleted
-            addFix(null, null);
         }
 
-        if (fixes.isEmpty()) {
-            refreshBugInstances(program);
-            program.accept(this);
-        }
+        // Traverse to check if context changed (no longer in arrow key handler)
+        refreshBugInstances(program);
+        program.accept(this);
 
         return Collections.unmodifiableSet(fixes);
     }
 
+    /**
+     * Sets the actor/script/procedure context from the NodeContext.
+     */
+    private void setContext(BlockIdNodeFinder.NodeContext context) {
+        this.currentActor = context.actor();
+        this.currentScript = context.script();
+        this.currentProcedure = context.procedure();
+    }
+
     @Override
     public void visit(Script node) {
-        currentArrowKey = -1;
+        currentArrowKey = NO_ARROW_KEY;
         isInKeyContext = false;
 
         if (node.getEvent() instanceof KeyPressed keyPressed
                 && !node.getStmtList().getStmts().isEmpty()) {
-            Key keyNode = keyPressed.getKey();
-            if (keyNode.getKey() instanceof NumberLiteral keyNum) {
-                int key = (int) keyNum.getValue();
-                if (isArrowKey(key)) {
-                    currentArrowKey = key;
-                    isInKeyContext = true;
-                }
+            int arrowKey = extractArrowKey(keyPressed.getKey());
+            if (arrowKey != NO_ARROW_KEY) {
+                currentArrowKey = arrowKey;
+                isInKeyContext = true;
             }
         }
+
         visitChildren(node);
+
         isInKeyContext = false;
-        currentArrowKey = -1;
+        currentArrowKey = NO_ARROW_KEY;
     }
 
     @Override
     public void visit(IfThenStmt node) {
-        // Check for if(key pressed?) context
         int savedArrowKey = currentArrowKey;
         boolean savedInKeyContext = isInKeyContext;
 
+        // Check for if(key pressed?) with arrow key
         if (node.getBoolExpr() instanceof IsKeyPressed isKeyPressed) {
-            Key keyNode = isKeyPressed.getKey();
-            if (keyNode.getKey() instanceof NumberLiteral keyNum) {
-                int key = (int) keyNum.getValue();
-                if (isArrowKey(key)) {
-                    currentArrowKey = key;
-                    isInKeyContext = true;
-                }
+            int arrowKey = extractArrowKey(isKeyPressed.getKey());
+            if (arrowKey != NO_ARROW_KEY) {
+                currentArrowKey = arrowKey;
+                isInKeyContext = true;
             }
         }
 
-        // Check statements inside the if
-        checkStmts(node.getThenStmts().getStmts());
+        checkFirstTwoStatements(node.getThenStmts().getStmts());
         visitChildren(node);
 
-        // Restore context
         currentArrowKey = savedArrowKey;
         isInKeyContext = savedInKeyContext;
     }
@@ -174,65 +181,74 @@ public class KeySetPositionFix extends AbstractFixHeuristic {
         visitChildren(node);
     }
 
-    private void checkStmts(List<Stmt> stmts) {
+    /**
+     * Checks the first two statements for SetX/SetY at bug location.
+     * The bug finder only reports on statements at the start of the block.
+     */
+    private void checkFirstTwoStatements(List<Stmt> stmts) {
         for (int i = 0; i < stmts.size() && i < 2; i++) {
             Stmt stmt = stmts.get(i);
-            if (stmt instanceof SetXTo setX) {
-                if (matchesBugLocation(setX)) {
-                    checkIfFixed(setX, true);
-                }
-            } else if (stmt instanceof SetYTo setY) {
-                if (matchesBugLocation(setY)) {
-                    checkIfFixed(setY, false);
-                }
+            if (stmt instanceof SetXTo setX && matchesBugLocation(setX)) {
+                checkIfFixed(setX, true);
+            } else if (stmt instanceof SetYTo setY && matchesBugLocation(setY)) {
+                checkIfFixed(setY, false);
             }
         }
     }
 
     /**
-     * Check if the bug is fixed for the given node.
+     * Checks if the bug is fixed for the given SetX/SetY node.
+     *
+     * <p>The bug triggers when:
+     * <ul>
+     *   <li>SetY is used with UP/DOWN arrow keys</li>
+     *   <li>SetX is used with LEFT/RIGHT arrow keys</li>
+     * </ul>
+     *
+     * <p>So the bug is fixed if we're not in a matching arrow key context.
      *
      * @param node   the SetX/SetY node
      * @param isSetX true if SetXTo, false if SetYTo
      */
     private void checkIfFixed(Stmt node, boolean isSetX) {
-        // The bug triggers when:
-        // - SetY is used with UP/DOWN arrow keys
-        // - SetX is used with LEFT/RIGHT arrow keys
-        //
-        // So the bug is FIXED if:
-        // - We're not in an arrow key context at all, OR
-        // - SetY is used but NOT with UP/DOWN, OR
-        // - SetX is used but NOT with LEFT/RIGHT
-
         if (!isInKeyContext) {
-            // Not in any arrow key context - fixed!
             addFix(node, node.getMetadata());
             return;
         }
 
-        boolean isBuggyContext;
-        if (isSetX) {
-            // SetX is buggy with LEFT/RIGHT arrows
-            isBuggyContext = currentArrowKey == KeyCode.LEFT_ARROW.getKeycode()
-                    || currentArrowKey == KeyCode.RIGHT_ARROW.getKeycode();
-        } else {
-            // SetY is buggy with UP/DOWN arrows
-            isBuggyContext = currentArrowKey == KeyCode.UP_ARROW.getKeycode()
-                    || currentArrowKey == KeyCode.DOWN_ARROW.getKeycode();
-        }
+        boolean isBuggyContext = isSetX
+                ? isHorizontalArrowKey(currentArrowKey)
+                : isVerticalArrowKey(currentArrowKey);
 
         if (!isBuggyContext) {
-            // The arrow key context doesn't match the bug pattern - fixed!
             addFix(node, node.getMetadata());
         }
-        // Otherwise, the bug still exists - don't report a fix
+    }
+
+    /**
+     * Extracts the arrow key code from a Key node, or returns NO_ARROW_KEY if not an arrow key.
+     */
+    private int extractArrowKey(Key keyNode) {
+        if (keyNode.getKey() instanceof NumberLiteral keyNum) {
+            int key = (int) keyNum.getValue();
+            if (isArrowKey(key)) {
+                return key;
+            }
+        }
+        return NO_ARROW_KEY;
     }
 
     private boolean isArrowKey(int key) {
-        return key == KeyCode.UP_ARROW.getKeycode()
-                || key == KeyCode.DOWN_ARROW.getKeycode()
-                || key == KeyCode.LEFT_ARROW.getKeycode()
+        return isHorizontalArrowKey(key) || isVerticalArrowKey(key);
+    }
+
+    private boolean isHorizontalArrowKey(int key) {
+        return key == KeyCode.LEFT_ARROW.getKeycode()
                 || key == KeyCode.RIGHT_ARROW.getKeycode();
+    }
+
+    private boolean isVerticalArrowKey(int key) {
+        return key == KeyCode.UP_ARROW.getKeycode()
+                || key == KeyCode.DOWN_ARROW.getKeycode();
     }
 }

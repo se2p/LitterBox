@@ -45,18 +45,16 @@ import java.util.*;
  *
  * <h2>Implementation Patterns</h2>
  *
- * <p>Subclasses can use one of three implementation patterns:
+ * <p>Subclasses can use one of four implementation patterns:
  *
- * <h3>Pattern A: checkWithNodeFinder (Recommended for simple cases)</h3>
+ * <h3>Pattern A: checkWithNodeFinder utility (Simplest)</h3>
  *
- * <p>Override {@link #checkWithNodeFinder(ASTNode)} to check if the bug condition is fixed
- * at the found node location. The base class handles deletion detection automatically.
+ * <p>Override {@link #check(Program)} to call {@link #checkWithNodeFinder(Program)} which
+ * handles block deletion detection and uses {@link #isBugStillPresent(ASTNode)} to check
+ * if the bug finder still reports an issue at that location.
  * <pre>{@code
- * protected boolean checkWithNodeFinder(ASTNode node) {
- *     if (node instanceof MyBuggyNode buggyNode) {
- *         return !isBuggyCondition(buggyNode); // true = fixed
- *     }
- *     return false;
+ * public Set<FixResult> check(Program program) {
+ *     return checkWithNodeFinder(program);
  * }
  * }</pre>
  *
@@ -72,26 +70,71 @@ import java.util.*;
  * }
  * }</pre>
  *
- * <h3>Pattern C: Custom check() (For special cases)</h3>
+ * <h3>Pattern C: Custom check() with BlockIdNodeFinder</h3>
  *
- * <p>Override {@link #check(Program)} for bugs that don't have block IDs (actor-level bugs)
- * or need custom deletion detection. Use {@link BlockIdNodeFinder} for robust node finding.
+ * <p>Override {@link #check(Program)} for bugs that need custom deletion detection or
+ * hint-based disambiguation (multiple bugs at same block ID).
  * <pre>{@code
  * public Set<FixResult> check(Program program) {
- *     // Custom logic for actor-level bugs or special deletion handling
- *     if (actorNoLongerHasBug) {
- *         addFixWithLooseComment(actor);
+ *     Optional<NodeContext> ctx = BlockIdNodeFinder.find(program, blockId);
+ *     if (ctx.isEmpty()) {
+ *         addFixWithLooseComment(); // Block deleted
+ *     } else if (!isSameBugStillPresent(ctx.get())) {
+ *         addFix(ctx.get().node(), ...);
  *     }
  *     return Collections.unmodifiableSet(fixes);
  * }
  * }</pre>
  *
+ * <h3>Pattern D: Actor-level bugs (No block ID)</h3>
+ *
+ * <p>For bugs reported at the actor level (not tied to a specific block), match by
+ * actor name using {@code originalIssue.sprite()} instead of block ID.
+ * <pre>{@code
+ * public void visit(ActorDefinition actor) {
+ *     if (!actor.getIdent().getName().equals(originalIssue.sprite())) {
+ *         return; // Not the target actor
+ *     }
+ *     super.visit(actor);
+ *     if (!bugConditionStillApplies) {
+ *         addFixWithLooseComment(actor);
+ *     }
+ * }
+ * }</pre>
+ *
  * <h3>Examples by Pattern</h3>
  * <ul>
- *   <li><b>Pattern A:</b> ComparingLiteralsFix, MissingPenDownFix</li>
- *   <li><b>Pattern B:</b> MessageNeverSentFix, MissingCloneCallFix (most implementations)</li>
- *   <li><b>Pattern C:</b> NoWorkingScriptsFix (actor-level), VariableAsLiteralFix (custom deletion)</li>
+ *   <li><b>Pattern A:</b> TypeErrorFix, ExpressionAsTouchingOrColorFix, RedundantAssignmentFix</li>
+ *   <li><b>Pattern B:</b> ComparingLiteralsFix, EndlessRecursionFix, ForeverInsideLoopFix (most implementations)</li>
+ *   <li><b>Pattern C:</b> MissingInitializationFix, VariableAsLiteralFix,
+ *       ParameterAsLiteralFix (hint disambiguation)</li>
+ *   <li><b>Pattern D:</b> NoWorkingScriptsFix, HideWithoutShowFix, MissingCloneCallFix (actor-level)</li>
  * </ul>
+ *
+ * <h3>check() Override Audit</h3>
+ *
+ * <p>The following 16 heuristics override {@link #check(Program)} with reason:
+ *
+ * <table border="1">
+ *   <tr><th>Heuristic</th><th>Pattern</th><th>Reason</th></tr>
+ *   <tr><td>TypeErrorFix</td><td>A</td><td>Delegates to checkWithNodeFinder</td></tr>
+ *   <tr><td>ExpressionAsTouchingOrColorFix</td><td>A</td><td>Delegates to checkWithNodeFinder</td></tr>
+ *   <tr><td>RedundantAssignmentFix</td><td>A</td><td>Delegates to checkWithNodeFinder</td></tr>
+ *   <tr><td>MissingInitializationFix</td><td>C</td>
+ *       <td>Hint-based disambiguation for multiple bugs at same block</td></tr>
+ *   <tr><td>VariableAsLiteralFix</td><td>C</td><td>Custom deletion handling and scope checking</td></tr>
+ *   <tr><td>ParameterAsLiteralFix</td><td>C</td><td>Custom scope checking</td></tr>
+ *   <tr><td>MessageAsLiteralFix</td><td>C</td><td>Message name extraction and verification</td></tr>
+ *   <tr><td>HideWithoutShowFix</td><td>D</td><td>Actor-level bug with actor name matching</td></tr>
+ *   <tr><td>MissingCloneCallFix</td><td>D</td><td>Actor-level with cloning context</td></tr>
+ *   <tr><td>MissingCloneInitializationFix</td><td>D</td><td>Clone context checking</td></tr>
+ *   <tr><td>MessageNeverSentFix</td><td>C</td><td>Custom message sender search</td></tr>
+ *   <tr><td>MessageNeverReceivedFix</td><td>C</td><td>Custom receiver search</td></tr>
+ *   <tr><td>MissingAskFix</td><td>C</td><td>Answer usage verification</td></tr>
+ *   <tr><td>MissingBackdropSwitchFix</td><td>C</td><td>Backdrop availability check</td></tr>
+ *   <tr><td>MissingEraseAllFix</td><td>C</td><td>Pen command verification</td></tr>
+ *   <tr><td>KeySetPositionFix</td><td>C</td><td>Arrow key context and type replacement detection</td></tr>
+ * </table>
  */
 public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisitor {
 
@@ -220,10 +263,9 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
             ASTNode bugLoc = issue.getCodeLocation();
 
             // If we have a block ID, try to match specifically on that
-            if (originalBlockId != null && !originalBlockId.isBlank() &&
-                    AstNodeUtil.hasBlockId(bugLoc, originalBlockId)) {
+            if (originalBlockId != null && !originalBlockId.isBlank()
+                    && AstNodeUtil.hasBlockId(bugLoc, originalBlockId)) {
                 return true;
-
             }
 
             // Fallback: check if the bug location is a descendant of the given node
@@ -256,24 +298,53 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
         // Default: no additional state to reset
     }
 
-    @Override
-    public Set<FixResult> check(Program program) {
+    /**
+     * Initializes state and checks if the buggy block was deleted.
+     *
+     * <p>This is a common initialization step used by both {@link #check(Program)}
+     * and {@link #checkWithNodeFinder(Program)}. It:
+     * <ol>
+     *   <li>Sets {@code this.program} and initializes {@code fixes}</li>
+     *   <li>Calls {@link #resetState()}</li>
+     *   <li>Checks if the block ID is valid</li>
+     *   <li>Looks up the block in the program</li>
+     *   <li>If block is deleted, adds a fix and returns empty Optional</li>
+     *   <li>If block exists, returns the NodeContext</li>
+     * </ol>
+     *
+     * @param program the program to check
+     * @return Optional.empty() if block ID is null/blank or block was deleted (check fixes.isEmpty() to distinguish),
+     * or Optional containing the NodeContext if block exists
+     */
+    protected Optional<BlockIdNodeFinder.NodeContext> initializeAndCheckBlockDeletion(Program program) {
         this.program = program;
         this.fixes = new LinkedHashSet<>();
         resetState();
 
         String blockId = getBugLocationBlockId();
-        boolean blockExists;
+        if (blockId == null || blockId.isBlank()) {
+            // No block ID - caller should continue with visitor traversal
+            return Optional.empty();
+        }
 
-        if (blockId != null && !blockId.isBlank()) {
-            blockExists = BlockIdNodeFinder.find(program, blockId).isPresent();
+        Optional<BlockIdNodeFinder.NodeContext> contextOpt = BlockIdNodeFinder.find(program, blockId);
 
-            // If the block is not found, it implies the buggy block was deleted,
-            // which is considered a valid fix.
-            if (!blockExists) {
-                addFixWithLooseComment();
-                return Collections.unmodifiableSet(fixes);
-            }
+        if (contextOpt.isEmpty()) {
+            // Block deleted - this is a valid fix
+            addFixWithLooseComment();
+            return Optional.empty();
+        }
+
+        return contextOpt;
+    }
+
+    @Override
+    public Set<FixResult> check(Program program) {
+        initializeAndCheckBlockDeletion(program);
+
+        // If a fix was already added (block was deleted), return early
+        if (!fixes.isEmpty()) {
+            return Collections.unmodifiableSet(fixes);
         }
 
         refreshBugInstances(program);
@@ -294,30 +365,22 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
      * @return a set of fix results
      */
     protected Set<FixResult> checkWithNodeFinder(Program program) {
-        this.program = program;
-        this.fixes = new LinkedHashSet<>();
-        resetState();
+        Optional<BlockIdNodeFinder.NodeContext> contextOpt = initializeAndCheckBlockDeletion(program);
 
-        String blockId = getBugLocationBlockId();
-        if (blockId == null || blockId.isBlank()) {
-            return Collections.emptySet();
+        // If empty, block was deleted (fix already added) or no valid block ID
+        if (contextOpt.isEmpty()) {
+            return Collections.unmodifiableSet(fixes);
         }
 
-        Optional<BlockIdNodeFinder.NodeContext> contextOpt = BlockIdNodeFinder.find(program, blockId);
+        refreshBugInstances(program);
+        BlockIdNodeFinder.NodeContext context = contextOpt.get();
 
-        if (contextOpt.isEmpty()) {
-            // Block deleted - valid fix
-            addFixWithLooseComment();
-        } else {
-            refreshBugInstances(program);
-            BlockIdNodeFinder.NodeContext context = contextOpt.get();
-            if (!isBugStillPresent(context.node())) {
-                // Fixed! The block exists but the bug no longer applies.
-                currentActor = context.actor();
-                currentScript = context.script();
-                currentProcedure = context.procedure();
-                addFix(context.node(), context.node().getMetadata());
-            }
+        if (!isBugStillPresent(context.node())) {
+            // Fixed! The block exists but the bug no longer applies.
+            currentActor = context.actor();
+            currentScript = context.script();
+            currentProcedure = context.procedure();
+            addFix(context.node(), context.node().getMetadata());
         }
 
         return Collections.unmodifiableSet(fixes);

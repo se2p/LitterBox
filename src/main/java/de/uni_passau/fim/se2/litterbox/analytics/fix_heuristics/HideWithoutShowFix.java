@@ -159,4 +159,3 @@ public class HideWithoutShowFix extends AbstractFixHeuristic {
         super.visit(node);
     }
 }
-

@@ -110,45 +110,47 @@ public class MissingLoopSensingFix extends AbstractFixHeuristic implements Video
         }
     }
 
-    @Override
-    public void visit(IsKeyPressed node) {
+    /**
+     * Common pattern for sensing expression visitors: check location and visit children.
+     */
+    private void checkAndVisitChildren(ASTNode node) {
         check(node);
         visitChildren(node);
+    }
+
+    @Override
+    public void visit(IsKeyPressed node) {
+        checkAndVisitChildren(node);
     }
 
     @Override
     public void visit(Touching node) {
-        check(node);
-        visitChildren(node);
+        checkAndVisitChildren(node);
     }
 
     @Override
     public void visit(IsMouseDown node) {
-        check(node);
-        visitChildren(node);
+        checkAndVisitChildren(node);
     }
 
     @Override
     public void visit(ColorTouchingColor node) {
-        check(node);
-        visitChildren(node);
+        checkAndVisitChildren(node);
     }
 
     @Override
     public void visit(SpriteTouchingColor node) {
-        check(node);
-        visitChildren(node);
+        checkAndVisitChildren(node);
     }
 
     @Override
     public void visit(DistanceTo node) {
-        check(node);
-        visitChildren(node);
+        checkAndVisitChildren(node);
     }
 
     @Override
     public void visit(VideoOn node) {
-        check(node);
-        visitChildren(node);
+        checkAndVisitChildren(node);
     }
 }
+

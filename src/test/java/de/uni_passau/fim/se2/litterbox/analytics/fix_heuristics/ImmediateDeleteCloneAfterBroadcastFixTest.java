@@ -114,8 +114,8 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
     }
 
     @Test
-    public void testNoFix_MultipleNonYieldingStmts() throws IOException, ParsingException {
-        // No Fix: Multiple non-yielding statements between Broadcast and DeleteClone
+    public void testFix_MultipleNonYieldingStmts() throws IOException, ParsingException {
+        // Fix: Multiple non-yielding statements between Broadcast and DeleteClone breaks the "Immediate" condition
         String source = """
                 when I start as a clone
                 broadcast (hello v)
@@ -128,7 +128,7 @@ public class ImmediateDeleteCloneAfterBroadcastFixTest extends AbstractFixHeuris
         String bugLocationBlockId = findBlockId(program, Broadcast.class);
 
         ImmediateDeleteCloneAfterBroadcastFix heuristic = new ImmediateDeleteCloneAfterBroadcastFix(createTestIssueDTO(bugLocationBlockId));
-        assertNoFixFound(heuristic, program);
+        assertFixFound(heuristic, program);
     }
 
     @Test

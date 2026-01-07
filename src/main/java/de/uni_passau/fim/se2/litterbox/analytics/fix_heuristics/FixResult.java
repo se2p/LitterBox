@@ -32,20 +32,28 @@ import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
  * Unlike {@link de.uni_passau.fim.se2.litterbox.analytics.Issue}, which represents
  * a problem, a FixResult represents the confirmation that a problem was fixed.
  *
- * @param program       the program that was analyzed
- * @param fixedNode     the AST node where the fix was detected
- * @param originalIssue the original issue that was fixed (contains bug finder info, block ID, etc.)
- * @param actor         the actor containing the fixed code
- * @param script        the script or procedure containing the fixed code
- * @param metadata      the metadata associated with the fixed node
+ * <p><b>Nullability:</b>
+ * <ul>
+ *   <li>{@code fixedNode} - nullable: null if block was deleted (deletion is a valid fix)</li>
+ *   <li>{@code actor} - nullable: null for program-level issues or loose fixes</li>
+ *   <li>{@code script} - nullable: null for actor-level bugs with no specific script</li>
+ *   <li>{@code metadata} - nullable: null if fix is inferred without specific metadata</li>
+ * </ul>
+ *
+ * @param program       the program that was analyzed (never null)
+ * @param fixedNode     the AST node where the fix was detected, or null if deleted
+ * @param originalIssue the original issue that was fixed (never null)
+ * @param actor         the actor containing the fixed code, or null
+ * @param script        the script or procedure containing the fixed code, or null
+ * @param metadata      the metadata associated with the fixed node, or null
  */
 public record FixResult(
         Program program,
-        ASTNode fixedNode,
+        /* nullable */ ASTNode fixedNode,
         IssueDTO originalIssue,
-        ActorDefinition actor,
-        ScriptEntity script,
-        Metadata metadata
+        /* nullable */ ActorDefinition actor,
+        /* nullable */ ScriptEntity script,
+        /* nullable */ Metadata metadata
 ) {
     /**
      * Returns the name of the bug finder that originally reported the bug.
@@ -63,6 +71,8 @@ public record FixResult(
 
     /**
      * Returns the name of the actor containing the fixed code.
+     *
+     * @return the actor name, or null if no actor context
      */
     public String getActorName() {
         return actor != null ? actor.getIdent().getName() : null;
