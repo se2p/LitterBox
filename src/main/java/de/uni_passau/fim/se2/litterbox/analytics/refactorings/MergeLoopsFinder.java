@@ -69,8 +69,7 @@ public class MergeLoopsFinder extends AbstractDependencyRefactoringFinder {
      * this method simply applies the merge and checks for dependencies in
      * the resulting script that span across the two parent scripts.
      */
-    private boolean hasDependencies(Script script1, Script script2) {
-
+    protected boolean hasDependencies(Script script1, Script script2) {
         MergeLoops refactoring = new MergeLoops(script1, script2);
         Script merged = refactoring.getMergedScript();
         StmtList mergedStatements = ((LoopStmt) merged.getStmtList().getStatement(0)).getStmtList();

@@ -153,7 +153,7 @@ public abstract class AbstractDependencyRefactoringFinder extends AbstractRefact
      * this method simply applies the merge and checks for dependencies in
      * the resulting script that span across the two parent scripts.
      */
-    protected boolean hasDependencies(Script script1, Script script2, Script mergedScript) {
+    protected boolean hasDependencies(Script script1, Script mergedScript) {
 
         ControlFlowGraph cfg = getControlFlowGraphForScript(mergedScript);
 
@@ -162,7 +162,7 @@ public abstract class AbstractDependencyRefactoringFinder extends AbstractRefact
         );
         List<Stmt> stmtScript2 = new ArrayList<>(
                 mergedScript.getStmtList().getStmts().subList(
-                        script2.getStmtList().getNumberOfStatements(),
+                        script1.getStmtList().getNumberOfStatements(),
                         mergedScript.getStmtList().getNumberOfStatements()
                 )
         );
