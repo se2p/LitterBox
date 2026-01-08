@@ -354,9 +354,34 @@ public class HTMLReportGenerator implements ReportGenerator {
 
         StringBuilder styled = new StringBuilder(dot.substring(0, idx + 1));
         styled.append("\n");
-        styled.append("  graph [fontname=\"sans-serif\", bgcolor=\"transparent\", ranksep=\"0.5\", nodesep=\"0.2\", ratio=\"0.75\"];\n");
-        styled.append("  node [fontname=\"sans-serif\", shape=\"box\", style=\"filled,rounded\", fillcolor=\"#ffffff\", color=\"#007bff\", penwidth=\"0\", margin=\"0.1,0.1\"];\n");
-        styled.append("  edge [fontname=\"sans-serif\", color=\"#6c757d\", penwidth=\"0.8\", arrowsize=\"0.8\"];\n");
+        styled.append("""
+                graph [
+                    fontname="sans-serif",
+                    bgcolor="transparent",
+                    ranksep="0.5",
+                    nodesep="0.2",
+                    ratio="0.75"
+                ];
+                """);
+        styled.append("""
+                node [
+                    fontname="sans-serif",
+                    shape="box",
+                    style="filled,rounded",
+                    fillcolor="#ffffff",
+                    color="#007bff",
+                    penwidth="0",
+                    margin="0.1,0.1"
+                ];
+                """);
+        styled.append("""
+                edge [
+                    fontname="sans-serif",
+                    color="#6c757d",
+                    penwidth="0.8",
+                    arrowsize="0.8"
+                ];
+                """);
 
         String rest = dot.substring(idx + 1);
         rest = rest.replaceAll("(label=\"(Entry|Exit)\")", "$1, penwidth=\"1.5\"");
