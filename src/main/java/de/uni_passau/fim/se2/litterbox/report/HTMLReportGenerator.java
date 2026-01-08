@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.report;
 
+import com.google.common.escape.Escaper;
+import com.google.common.html.HtmlEscapers;
 import de.uni_passau.fim.se2.litterbox.analytics.DotGraphAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.GraphType;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
@@ -39,7 +41,6 @@ import gg.jte.TemplateEngine;
 import gg.jte.TemplateOutput;
 import gg.jte.output.PrintWriterOutput;
 import gg.jte.resolve.ResourceCodeResolver;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
@@ -63,6 +64,8 @@ public class HTMLReportGenerator implements ReportGenerator {
     // below to have the precompiled template as part of the JAR (otherwise a JDK would be required when running
     // LitterBox)
     // private static final TemplateEngine templateEngine = TemplateEngine.createPrecompiled(ContentType.Html);
+
+    private static final Escaper HTML_ESCAPER = HtmlEscapers.htmlEscaper();
 
     private final IssueTranslator translator;
     private final OutputStream outputStream;
@@ -253,7 +256,7 @@ public class HTMLReportGenerator implements ReportGenerator {
     }
 
     private String formatHint(String hint) {
-        String escaped = StringEscapeUtils.escapeHtml4(hint);
+        String escaped = HTML_ESCAPER.escape(hint);
         escaped = escaped.replace("&lt;", "<").replace("&gt;", ">")
                 .replace("[b]", "<b>").replace("[/b]", "</b>")
                 .replace("[i]", "<i>").replace("[/i]", "</i>")
@@ -280,7 +283,7 @@ public class HTMLReportGenerator implements ReportGenerator {
     private String replaceToken(String text, String tag, String key) {
         if (text.contains(tag)) {
             String translated = translator.getInfo(key);
-            return text.replace(tag, "<code>" + StringEscapeUtils.escapeHtml4(translated) + "</code>");
+            return text.replace(tag, "<code>" + HTML_ESCAPER.escape(translated) + "</code>");
         }
         return text;
     }
