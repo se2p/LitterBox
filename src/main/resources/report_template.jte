@@ -96,6 +96,54 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             font-weight: bold;
         }
 
+        /* issues */
+        .issue {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 1.2rem;
+            margin-bottom: 1.2rem;
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .issue-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 0.8rem;
+        }
+
+        .issue-title {
+            font-size: 1.15em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .hint {
+            background: #f1f3f5;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #17a2b8;
+        }
+
+        pre.blocks {
+            background: #fff;
+            border: 1px solid #eee;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 0;
+        }
+
+        code.scratchblocks {
+            font-family: sans-serif;
+            font-weight: bold;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
         /* Graphs */
         .graphs-container {
             background: #fff;
@@ -549,7 +597,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                                         </div>
                                         @if (issue.scratchBlocks() != null && !issue.scratchBlocks().isEmpty())
                                             <pre class="blocks">
-                                                $unsafe{issue.scratchBlocks()}
+                                                ${issue.scratchBlocks()}
                                             </pre>
                                         @endif
                                         @if (issue.refactoredScript() != null && !issue.refactoredScript().isEmpty())
@@ -558,7 +606,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                                             </button>
                                             <div id="refactoring-${issue.id()}" class="refactoring-content">
                                                 <pre class="blocks">
-                                                    $unsafe{issue.refactoredScript()}
+                                                    ${issue.refactoredScript()}
                                                 </pre>
                                             </div>
                                         @endif
@@ -794,6 +842,17 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
         const section = document.getElementById('section-' + idSuffix);
         if (section) {
             section.classList.toggle('collapsed');
+        }
+    }
+
+    function toggleRefactoring(issueId) {
+        const content = document.getElementById('refactoring-' + issueId);
+        if (content) {
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+            } else {
+                content.style.display = 'block';
+            }
         }
     }
 
