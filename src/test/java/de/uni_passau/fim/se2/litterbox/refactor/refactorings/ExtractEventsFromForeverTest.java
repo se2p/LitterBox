@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -59,7 +60,7 @@ public class ExtractEventsFromForeverTest implements JsonTest {
         List<Refactoring> refactorings = finder.check(program);
         Refactoring r = refactorings.getFirst();
         Program refactored = r.apply(program);
-        Script refactoredScriptEvent1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScriptEvent1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         Script refactoredScriptEvent2 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1);
         assertInstanceOf(KeyPressed.class, refactoredScriptEvent1.getEvent());
         assertInstanceOf(KeyPressed.class, refactoredScriptEvent2.getEvent());
@@ -71,5 +72,23 @@ public class ExtractEventsFromForeverTest implements JsonTest {
         ExtractEventsFromForeverFinder finder = new ExtractEventsFromForeverFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).isEmpty();
+    }
+
+
+    @Test
+    void testExtractEventsFromForever() throws IOException, ParsingException {
+        String code = """
+                when green flag clicked
+                forever
+                    if <key (space v) pressed?> then
+                        change [var1 v] by (1)
+                    end
+                end
+                """;
+        
+        Program program = parseScratchBlocks(code);
+        ExtractEventsFromForeverFinder finder = new ExtractEventsFromForeverFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).isNotEmpty();
     }
 }

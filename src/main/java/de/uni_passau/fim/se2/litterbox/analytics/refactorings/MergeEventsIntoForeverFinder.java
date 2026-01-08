@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -39,7 +39,7 @@ public class MergeEventsIntoForeverFinder extends AbstractRefactoringFinder {
             }
         }
 
-        if(!eventList.isEmpty()) {
+        if (!eventList.isEmpty()) {
             refactorings.add(new MergeEventsIntoForever(eventList));
         }
     }

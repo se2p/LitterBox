@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -39,7 +39,7 @@ public class MergeScriptsTest implements JsonTest {
         MergeScriptsFinder finder = new MergeScriptsFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(2);
-        assertThat(refactorings.get(0)).isInstanceOf(MergeScripts.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(MergeScripts.class);
         assertThat(refactorings.get(1)).isInstanceOf(MergeScripts.class);
     }
 
@@ -63,7 +63,7 @@ public class MergeScriptsTest implements JsonTest {
     @Test
     public void testMergeScriptsRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/mergableBothWays.json");
-        Script script1 = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script1 = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         Script script2 = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1);
 
 
@@ -82,7 +82,7 @@ public class MergeScriptsTest implements JsonTest {
     @Test
     public void testMergeScriptsRefactoring2() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/mergableOneWay.json");
-        Script script1 = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script1 = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         Script script2 = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1);
 
 

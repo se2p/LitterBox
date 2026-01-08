@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -21,6 +21,10 @@ package de.uni_passau.fim.se2.litterbox.jsoncreation;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.Main;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
+import de.uni_passau.fim.se2.litterbox.ast.util.StructuralEquality;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -64,5 +68,33 @@ public class JSONStringCreationTest implements JsonTest {
 
         // the hint description should be in German
         assertThat(json).contains("falls <Taste (Pfeil nach rechts ) gedrückt?>");
+    }
+
+    @Test
+    void testCrashInNPEFixture() throws ParsingException, IOException {
+        final var program = getAST("src/test/fixtures/refactoring/NPE.json");
+        // This should not throw NPE
+        String json = JSONStringCreator.createProgramJSONString(program);
+
+        // Check if the json results in the same program
+        Scratch3Parser parser = new Scratch3Parser();
+        Program parsedProgram = parser.parseString("NPE", json);
+
+        Assertions.assertTrue(StructuralEquality.areStructurallyEqual(program, parsedProgram));
+    }
+
+    @Test
+    void testEscapeQuotesInString() throws ParsingException, IOException {
+        final var program = getAST("src/test/fixtures/escape-special-chars.json");
+        final String json = JSONStringCreator.createProgramJSONString(program);
+        assertThat(json).contains("\\\"the quotes should have been escaped\\\"");
+    }
+
+    @Test
+    void testEscapeQuotesInBroadcastMessage() throws ParsingException, IOException {
+        final var program = getAST("src/test/fixtures/escape-special-chars-broadcast-message.json");
+        final String json = JSONStringCreator.createProgramJSONString(program);
+        assertThat(json).contains("the \\\"quotes\\\" should have been escaped");
+        assertThat(json).doesNotContain("the \"quotes\" should have been escaped");
     }
 }

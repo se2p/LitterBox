@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -36,7 +36,7 @@ import java.util.concurrent.Callable;
 @CommandLine.Command(
         name = "LitterBox",
         mixinStandardHelpOptions = true,
-        version = "LitterBox 1.11-SNAPSHOT",
+        version = "LitterBox 1.12-SNAPSHOT",
         subcommands = {
                 // general commands
                 Main.CheckProgramsSubcommand.class,
@@ -118,11 +118,6 @@ public class Main implements Callable<Integer> {
     }
 
     static class CommonOptions {
-        @CommandLine.Option(
-                names = {"-l", "--lang"},
-                description = "Language of the hints in the output."
-        )
-        String language = "en";
 
         @CommandLine.Option(
                 names = {"-o", "--output"},
@@ -155,7 +150,7 @@ public class Main implements Callable<Integer> {
 
         protected abstract FileAnalyzer<?> getAnalyzer() throws Exception;
 
-        protected IssueTranslator translator;
+
 
         /**
          * Override to implement custom parameter validation before the analyzer is run.
@@ -168,8 +163,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         public final Integer call() throws Exception {
-            final Locale locale = Locale.of(commonOptions.language);
-            translator = IssueTranslatorFactory.getIssueTranslator(locale);
+
 
             validateParams();
 
@@ -214,6 +208,14 @@ public class Main implements Callable<Integer> {
     )
     static class CheckProgramsSubcommand extends LitterBoxSubcommand {
         @CommandLine.Option(
+                names = {"-l", "--lang"},
+                description = "Language of the hints in the output."
+        )
+        String language = "en";
+
+        private IssueTranslator translator;
+
+        @CommandLine.Option(
                 names = {"-d", "--detectors"},
                 description = "All detectors or detector groups you want to run, separated by commas. "
                     + "Prefix group names or names of individual detectors with '-' to exclude them.",
@@ -249,12 +251,15 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected BugAnalyzer getAnalyzer() throws IOException {
+            translator = IssueTranslatorFactory.getIssueTranslator(Locale.of(language));
+
             if (projectInput.projectPath == null) {
                 projectInput.projectPath = Files.createTempDirectory("litterbox-bug");
             }
 
             final String detector = String.join(",", detectors);
             final BugAnalyzer analyzer;
+
             if (priorResultPath == null) {
                 analyzer = new BugAnalyzer(
                         translator,
@@ -383,20 +388,17 @@ public class Main implements Callable<Integer> {
     )
     static class RefactoringSubcommand extends LitterBoxSubcommand {
 
-        @CommandLine.Option(
-                names = {"-r", "--refactored-projects"},
-                description = "Path where the refactored Scratch projects should be created."
-        )
-        Path refactoredPath;
+
 
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
+            requireOutputPath();
         }
 
         @Override
         protected RefactoringAnalyzer getAnalyzer() {
-            return new RefactoringAnalyzer(commonOptions.outputPath, refactoredPath, commonOptions.deleteProject);
+            return new RefactoringAnalyzer(commonOptions.outputPath, commonOptions.deleteProject);
         }
     }
 

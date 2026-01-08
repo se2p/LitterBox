@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -365,7 +365,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
 
     @Override
     public void visit(StageClicked stageClicked) {
-        emitNoSpace("when this stage clicked");
+        emitNoSpace("when stage clicked");
         storeNotesForIssue(stageClicked);
         newLine();
     }
@@ -2076,7 +2076,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         }
     }
 
-    private String getParameterName(ParameterDefinition node) {
+    protected String getParameterName(ParameterDefinition node) {
         // FIXME: Terrible hack
         PrintStream origStream = printStream;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -3345,7 +3345,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         emitNoSpace(" v)");
     }
 
-    private String escapeBrackets(String name) {
+    protected String escapeBrackets(String name) {
         name = name.replace("(", "\\(");
         name = name.replace(")", "\\)");
         name = name.replace("[", "\\[");

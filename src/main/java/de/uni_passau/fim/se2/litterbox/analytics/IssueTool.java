@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -194,6 +194,7 @@ public class IssueTool {
             registerSmellFinder(new DuplicateSprite(), smellFinders);
             registerSmellFinder(new EmptyControlBody(), smellFinders);
             registerSmellFinder(new EmptyCustomBlock(), smellFinders);
+            registerSmellFinder(new EmptyParameter(), smellFinders);
             registerSmellFinder(new EmptyProject(), smellFinders);
             registerSmellFinder(new EmptyScript(), smellFinders);
             registerSmellFinder(new EmptySprite(), smellFinders);
@@ -471,7 +472,7 @@ public class IssueTool {
         perfumeFinders.put(finder.getName(), finder);
     }
 
-    static List<String> generateFixHeuristicsNames() {
+    public static List<String> generateFixHeuristicsNames() {
         List<String> fixHeuristicsNames = new ArrayList<>();
         fixHeuristicsNames.add(ComparingLiteralsFix.NAME);
         fixHeuristicsNames.add(ForeverInsideLoopFix.NAME);

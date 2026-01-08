@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -62,6 +62,10 @@ public final class RefactoringTool {
         registerRefactoring(new SplitSliceFinder(), refactorings); // extract independent subscripts
         registerRefactoring(new SwapStatementsFinder(), refactorings); // swap statements
         registerRefactoring(new SplitScriptAfterUntilFinder(), refactorings); // split script after repeat until
+        registerRefactoring(new SplitInitializationScriptFinder(), refactorings); // split initialization script
+        registerRefactoring(new MergeInitializationScriptFinder(), refactorings); // merge initialization script
+        registerRefactoring(new SplitLoopingScriptFinder(), refactorings); // split looping script
+        registerRefactoring(new MergeLoopingScriptFinder(), refactorings); // merge looping script
 
         return refactorings;
     }

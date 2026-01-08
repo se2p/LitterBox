@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -69,11 +69,11 @@ class RefactorSequenceCrossoverTest {
         mockedRandomness.when(() -> Randomness.nextInt(2)).thenReturn(1);
         Pair<RefactorSequence> children = parent1.crossover(parent2);
 
-        assertEquals(0, children.getFst().getProductions().get(0));
+        assertEquals(0, children.getFst().getProductions().getFirst());
         assertEquals(0, children.getFst().getProductions().get(1));
         assertEquals(1, children.getFst().getProductions().get(2));
 
-        assertEquals(1, children.getSnd().getProductions().get(0));
+        assertEquals(1, children.getSnd().getProductions().getFirst());
         assertEquals(1, children.getSnd().getProductions().get(1));
         assertEquals(0, children.getSnd().getProductions().get(2));
     }
@@ -92,7 +92,7 @@ class RefactorSequenceCrossoverTest {
 
         assertEquals(0, children.getFst().getProductions().getFirst());
 
-        assertEquals(1, children.getSnd().getProductions().get(0));
+        assertEquals(1, children.getSnd().getProductions().getFirst());
         assertEquals(0, children.getSnd().getProductions().get(1));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -100,6 +100,10 @@ public final class IssueTranslator {
         // translate the currently set language into a displayable String in English.
         // E.g. `de` will be returned as `German`.
         return locale.getDisplayLanguage(Locale.ENGLISH);
+    }
+
+    public Locale getLocale() {
+        return locale;
     }
 
     /**

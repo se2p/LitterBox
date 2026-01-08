@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -21,6 +21,6 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 /**
  * Anything that can be defined in a Scratch program, i.e. variables and attributes
  */
-public interface Defineable {
+public interface Defineable extends DataflowFact {
 
 }

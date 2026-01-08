@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -35,16 +35,21 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.StartSound
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnLeft;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnRight;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.TurnLeft;
+import de.uni_passau.fim.se2.litterbox.ast.util.StructuralEquality;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class ScratchBlocksParserTest implements JsonTest {
     @Test
@@ -297,6 +302,74 @@ public class ScratchBlocksParserTest implements JsonTest {
     }
 
     @Test
+    void testParsing() {
+        String code = """
+        when green flag clicked
+        turn cw (15) degrees
+        repeat (2)
+            move (10) steps
+        end
+        turn ccw (15) degrees
+        turn cw (15) degrees
+        """;
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Script script = parser.parseScript("Sprite1", code);
+        Assertions.assertInstanceOf(TurnRight.class, script.getStmtList().getStatement(0));
+        Assertions.assertInstanceOf(RepeatTimesStmt.class, script.getStmtList().getStatement(1));
+        Assertions.assertInstanceOf(TurnLeft.class, script.getStmtList().getStatement(2));
+        Assertions.assertInstanceOf(TurnRight.class, script.getStmtList().getStatement(3));
+    }
+    
+    @Test
+    void testIndentation() {
+        String code1 = """
+            when green flag clicked
+            if <key (space v) pressed?> then
+                if <mouse down?> then
+                    change [var1 v] by (1)
+                else
+                    change [var2 v] by (1)
+                end
+            end
+            """;
+        String code2 = """
+when green flag clicked
+if <key (space v) pressed?> then
+if <mouse down?> then
+change [var1 v] by (1)
+else
+change [var2 v] by (1)
+end
+end
+""";
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Script script = parser.parseScript("Stage", code1);
+        Script script2 = parser.parseScript("Stage", code2);
+
+        Assertions.assertTrue(StructuralEquality.areStructurallyEqual(script, script2));
+    }
+
+    @Test
+    void testIndentation2() {
+        String code1 = """
+                when green flag clicked
+                if <key (space v) pressed?> then
+                    if  <mouse down?> then
+                        say [Hello!]
+                    else
+                        say [Bye!]
+                    end
+                end
+                """;
+        String code2 = Arrays.stream(code1.split("\n")).map(String::stripLeading).collect(Collectors.joining("\n"));
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Script script = parser.parseScript("Stage", code1);
+        Script script2 = parser.parseScript("Stage", code2);
+
+        Assertions.assertTrue(script.getStmtList().getNumberOfStatements() > 0);
+        Assertions.assertTrue(StructuralEquality.areStructurallyEqual(script, script2));
+    }
+
     void testGreenFlagAliases() {
         ScratchBlocksParser parser = new ScratchBlocksParser();
         String input1 = "when flag clicked\n";
@@ -366,5 +439,4 @@ public class ScratchBlocksParserTest implements JsonTest {
         Assertions.assertEquals(1, script.getStmtList().getStmts().size());
         Assertions.assertInstanceOf(StartSound.class, script.getStmtList().getStatement(0));
     }
-
 }

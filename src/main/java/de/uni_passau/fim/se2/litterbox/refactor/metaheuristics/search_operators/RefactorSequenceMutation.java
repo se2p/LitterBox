@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -92,8 +92,12 @@ public class RefactorSequenceMutation implements Mutation<RefactorSequence> {
             }
             case 1 -> mutatedProductions.set(index, Randomness.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS));
             default -> {
-                mutatedProductions.remove(index);
-                index--;
+                if (mutatedProductions.size() > 1) {
+                    mutatedProductions.remove(index);
+                    index--;
+                } else {
+                    mutatedProductions.set(index, Randomness.nextInt(NUMBER_OF_POSSIBLE_PRODUCTIONS));
+                }
             }
         }
         return index;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -150,6 +150,10 @@ public class ControlFlowGraphBuilder {
     public void addEdgeToExit() {
         currentNodes.forEach(n -> cfg.addEdgeToExit(n));
         currentNodes.clear();
+    }
+
+    public void addEdgeToExit(CFGNode node) {
+        cfg.addEdgeToExit(node);
     }
 
     public void setCurrentStatement(CFGNode... nodes) {

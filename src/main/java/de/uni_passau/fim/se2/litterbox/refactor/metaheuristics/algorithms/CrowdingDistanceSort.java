@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -38,14 +38,23 @@ public class CrowdingDistanceSort<C extends Solution<C>> {
     }
 
     private void updateCrowdingDistances(List<C> front) {
-        List<C> sorted = new LinkedList<>(front);
-        Map<C, Double> newDistancesPerSolution = new IdentityHashMap<>();
         int l = front.size();
+        if (l == 0) {
+            return;
+        }
 
-        Map<FitnessFunction<C>, Pair<Double>> minMaxPairPerFF = new LinkedHashMap<>();
+        List<C> sorted = new ArrayList<>(front);
+        Map<C, Double> newDistancesPerSolution = new IdentityHashMap<>();
+
+        // Initialize distances to 0
+        for (C c : front) {
+            newDistancesPerSolution.put(c, 0d);
+        }
+
+        Map<FitnessFunction<C>, Double> rangeFitnessPerFF = new LinkedHashMap<>();
 
         for (FitnessFunction<C> ff : fitnessFunctions) {
-            double ffMax = Double.MIN_VALUE;
+            double ffMax = -Double.MAX_VALUE; // Use -MAX_VALUE instead of MIN_VALUE (which is smallest positive)
             double ffMin = Double.MAX_VALUE;
 
             for (C c : front) {
@@ -58,21 +67,31 @@ public class CrowdingDistanceSort<C extends Solution<C>> {
                 if (currentFitness < ffMin) {
                     ffMin = currentFitness;
                 }
-
-                newDistancesPerSolution.put(c, 0d);
             }
-            minMaxPairPerFF.put(ff, Pair.of(ffMin, ffMax));
+            rangeFitnessPerFF.put(ff, ffMax - ffMin);
         }
 
-
         for (FitnessFunction<C> ff : fitnessFunctions) {
-            double rangeFitness = minMaxPairPerFF.get(ff).getSnd() - minMaxPairPerFF.get(ff).getFst();
+            double rangeFitness = rangeFitnessPerFF.get(ff);
 
             sorted.sort(Comparator.comparingDouble(c -> c.getFitness(ff)));
+
+            // Boundary points get MAX_VALUE
             newDistancesPerSolution.put(sorted.getFirst(), Double.MAX_VALUE);
             newDistancesPerSolution.put(sorted.get(l - 1), Double.MAX_VALUE);
+
+            if (rangeFitness == 0) {
+                sorted.forEach((s) -> newDistancesPerSolution.put(s, Double.MAX_VALUE));
+                continue;
+            }
+
             for (int k = 1; k < l - 1; k++) {
-                double newDistance = newDistancesPerSolution.get(sorted.get(k))
+                double currentDistance = newDistancesPerSolution.get(sorted.get(k));
+                if (currentDistance == Double.MAX_VALUE) {
+                    continue; // Already max, stay max
+                }
+
+                double newDistance = currentDistance
                         + (sorted.get(k + 1).getFitness(ff) - sorted.get(k - 1).getFitness(ff))
                         / rangeFitness;
                 newDistancesPerSolution.put(sorted.get(k), newDistance);

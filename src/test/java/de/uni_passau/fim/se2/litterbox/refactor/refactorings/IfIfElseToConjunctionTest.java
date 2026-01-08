@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+
 import de.uni_passau.fim.se2.litterbox.analytics.refactorings.IfIfElseToConjunctionFinder;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -27,6 +28,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.And;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+
+
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -70,4 +74,23 @@ public class IfIfElseToConjunctionTest implements JsonTest {
         assertThat(if4.getThenStmts()).isEqualTo(if2.getElseStmts());
     }
 
+    @Test
+    void testIfIfElseToConjunction() throws IOException, ParsingException {
+        String code = """
+            when green flag clicked
+            if <key (space v) pressed?> then
+                if <mouse down?> then
+                    change [var1 v] by (1)
+                else
+                    change [var2 v] by (1)
+                end
+            end
+            """;
+        
+        Program program = parseScratchBlocks(code);
+        IfIfElseToConjunctionFinder finder = new IfIfElseToConjunctionFinder();
+        List<Refactoring> refactorings = finder.check(program);
+        assertThat(refactorings).hasSize(1);
+        assertThat(refactorings.getFirst()).isInstanceOf(IfIfElseToConjunction.class);
+    }
 }

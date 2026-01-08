@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -37,7 +37,7 @@ public class MergeLoopsTest implements JsonTest {
         MergeLoopsFinder finder = new MergeLoopsFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(2);
-        assertThat(refactorings.get(0)).isInstanceOf(MergeLoops.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(MergeLoops.class);
         assertThat(refactorings.get(1)).isInstanceOf(MergeLoops.class);
     }
 

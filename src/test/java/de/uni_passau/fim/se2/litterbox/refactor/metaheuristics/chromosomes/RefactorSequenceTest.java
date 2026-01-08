@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -110,5 +110,72 @@ class RefactorSequenceTest {
         emptySequence.getExecutedRefactorings().clear();
         emptySequence = emptySequence.copy(); // force re-creation of the refactoredProgram supplier
         assertNotEquals(refactorSequence.hashCode(), emptySequence.hashCode());
+    }
+    @Test
+    void testEqualityContract() {
+        // Reflexivity
+        assertEquals(refactorSequence, refactorSequence);
+
+        // Null check
+        assertNotEquals(null, refactorSequence);
+
+        // Type check
+        assertNotEquals(new Object(), refactorSequence);
+
+        // Symmetry
+        RefactorSequence copy = refactorSequence.copy();
+        assertEquals(refactorSequence, copy);
+        assertEquals(copy, refactorSequence);
+    }
+
+    @Test
+    void testEqualityBasedOnProductions() {
+        // Setup refactorings to produce different programs
+        Program p1 = mock(Program.class);
+        Program p2 = mock(Program.class);
+        Program p3 = mock(Program.class);
+        
+        Refactoring r1 = mock(Refactoring.class);
+        when(r1.apply(any())).thenReturn(p1);
+        Refactoring r2 = mock(Refactoring.class);
+        when(r2.apply(any())).thenReturn(p2);
+        Refactoring r3 = mock(Refactoring.class);
+        when(r3.apply(any())).thenReturn(p3);
+        
+        when(refactoringFinder.check(any())).thenReturn(List.of(r1, r2, r3));
+
+        RefactorSequence seq1 = new RefactorSequence(program, mutation, crossover, List.of(0), refactoringFinders);
+        RefactorSequence seq2 = new RefactorSequence(program, mutation, crossover, List.of(0), refactoringFinders);
+        RefactorSequence seq3 = new RefactorSequence(program, mutation, crossover, List.of(1), refactoringFinders);
+
+        // Should be equal based on productions (executedRefactorings is null)
+        assertEquals(seq1, seq2);
+        
+        // Should not be equal due to different productions resulting in different programs
+        assertNotEquals(seq1, seq3);
+    }
+
+    @Test
+    void testEqualityBasedOnPhenotype() {
+        // Setup: Two sequences with different productions but same resulting program
+        Program resultProgram = mock(Program.class);
+        
+        // Mock refactoring finder to return refactorings that produce the SAME program
+        Refactoring r1 = mock(Refactoring.class);
+        when(r1.apply(any())).thenReturn(resultProgram);
+        Refactoring r2 = mock(Refactoring.class);
+        when(r2.apply(any())).thenReturn(resultProgram);
+        
+        when(refactoringFinder.check(any())).thenReturn(List.of(r1, r2));
+
+        // Sequence 1: Productions [0] -> r1 -> resultProgram
+        RefactorSequence seq1 = new RefactorSequence(program, mutation, crossover, List.of(0), refactoringFinders);
+        
+        // Sequence 2: Productions [1] -> r2 -> resultProgram
+        RefactorSequence seq2 = new RefactorSequence(program, mutation, crossover, List.of(1), refactoringFinders);
+
+        // Should be equal because they result in the same phenotype, even though genotypes differ.
+        // The equals method will compute the phenotype because genotypes differ.
+        assertEquals(seq1, seq2, "Should be equal based on same phenotype");
     }
 }

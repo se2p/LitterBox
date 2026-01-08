@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -98,7 +98,7 @@ class OffspringGeneratorTest {
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedSelection);
         List<RefactorSequence> generation1 = offspringGenerator.generateOffspring(generation0);
         assertEquals(2, generation1.size());
-        assertEquals(mutant1, generation1.get(0));
+        assertEquals(mutant1, generation1.getFirst());
         assertEquals(mutant2, generation1.get(1));
     }
 
@@ -117,7 +117,7 @@ class OffspringGeneratorTest {
         OffspringGenerator<RefactorSequence> offspringGenerator = new OffspringGenerator<>(mockedSelection);
         List<RefactorSequence> generation1 = offspringGenerator.generateOffspring(generation0);
         assertEquals(2, generation1.size());
-        assertEquals(mutant1, generation1.get(0));
+        assertEquals(mutant1, generation1.getFirst());
         assertEquals(mutant2, generation1.get(1));
     }
 
