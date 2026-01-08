@@ -529,7 +529,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
     <div class="main-content boxed">
         <div id="main-content-block"></div>
     </div>
-    <a href="#top" id="back-to-top">▲</a>
+    <a href="#top" id="back-to-top" title="${model.translator().getInfo("back_to_top")}">▲</a>
 </main>
 
 <footer>
