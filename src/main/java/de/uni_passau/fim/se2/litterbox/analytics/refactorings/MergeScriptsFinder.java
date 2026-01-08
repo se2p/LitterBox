@@ -59,15 +59,13 @@ public class MergeScriptsFinder extends AbstractDependencyRefactoringFinder {
      * this method simply applies the merge and checks for dependencies in
      * the resulting script that span across the two parent scripts.
      */
-    private boolean hasDependencies(Script script1, Script script2) {
-
+    protected boolean hasDependencies(Script script1, Script script2) {
         MergeScripts refactoring = new MergeScripts(script1, script2);
         Script merged = refactoring.getMergedScript();
-        return hasDependencies(script1, script2, merged);
+        return hasMergedDependencies(script1, merged);
     }
 
-    @Override
-    protected boolean hasDependencies(Script script1, Script script2, Script mergedScript) {
+    protected boolean hasMergedDependencies(Script script1, Script mergedScript) {
         ControlFlowGraph cfg = getControlFlowGraphForScript(mergedScript);
 
         List<Stmt> stmtScript1 = new ArrayList<>(

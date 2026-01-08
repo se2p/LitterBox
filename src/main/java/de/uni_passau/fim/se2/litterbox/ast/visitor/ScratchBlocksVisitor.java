@@ -2134,7 +2134,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         }
     }
 
-    private String getParameterName(ParameterDefinition node) {
+    protected String getParameterName(ParameterDefinition node) {
         // FIXME: Terrible hack
         PrintStream origStream = printStream;
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -3403,7 +3403,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         emitNoSpace(" v)");
     }
 
-    private String escapeBrackets(String name) {
+    protected String escapeBrackets(String name) {
         name = name.replace("(", "\\(");
         name = name.replace(")", "\\)");
         name = name.replace("[", "\\[");

@@ -104,6 +104,10 @@ public final class IssueTranslator {
         return locale.getDisplayLanguage(Locale.ENGLISH);
     }
 
+    public Locale getLocale() {
+        return locale;
+    }
+
     /**
      * Returns a translated version of the hint for a given finder.
      *
