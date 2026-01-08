@@ -575,7 +575,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                                 </div>
                             </div>
                         </div>
-                        <div id="content-${issueGroup.category()}-${project.id()}" class="containered">
+                        <div class="containered">
                             @for (var issueEntry : issueGroup.issues().entrySet())
                                 @for (HTMLReportGenerator.RenderedIssue issue : issueEntry.getValue())
                                     <div
