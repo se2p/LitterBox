@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.refactor.refactorings;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.refactorings.SplitScriptAfterUntilFinder;
+
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -32,6 +33,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SplitScriptAfterUntilTest implements JsonTest {
 
@@ -54,7 +56,7 @@ public class SplitScriptAfterUntilTest implements JsonTest {
         SplitScriptAfterUntil refactoring = new SplitScriptAfterUntil(script, untilStmt);
         Program refactored = refactoring.apply(program);
 
-        Script refactoredScript1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script refactoredScript1 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         Script refactoredScript2 = refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1);
 
         StmtList refactoredStmtList1 = refactoredScript1.getStmtList();
@@ -63,5 +65,37 @@ public class SplitScriptAfterUntilTest implements JsonTest {
 
         WaitUntil waitUntil = (WaitUntil) refactoredStmtList2.getStatement(0);
         assertThat(waitUntil.getUntil()).isEqualTo(untilStmt.getBoolExpr());
+    }
+    @Test
+    public void testSplitScriptAfterUntilWithScratchblocks() throws ParsingException, IOException {
+        String code = """
+                when green flag clicked
+                set y to (170)
+                set x to (pick random (-220) to (220))
+                repeat until <touching color [#be362e] ?>
+                if <touching (Bowl v) ?> then
+                change [Punkte v] by (5)
+                end
+                if <touching (Bowl v) ?> then
+                set y to (170)
+                set x to (pick random (-220) to (220))
+                end
+                change y by (-5)
+                end
+                say [Hello!]
+                stop [all v]
+                """;
+        Program program = parseScratchBlocks(code);
+        SplitScriptAfterUntilFinder finder = new SplitScriptAfterUntilFinder();
+        
+        List<Refactoring> refactorings = finder.check(program);
+        
+        // We expect exactly one refactoring because there is one repeat until loop followed by statements.
+        // However, we should also check if applying them produces a valid program.
+        assertThat(refactorings).hasSize(1);
+        
+        Program refactored = refactorings.getFirst().apply(program);
+        assertThat(refactored).isNotNull();
+        assertEquals(2, refactored.getActorDefinitionList().getDefinitions().get(1).getScripts().getSize());
     }
 }

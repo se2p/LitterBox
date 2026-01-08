@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -50,7 +50,7 @@ public class SplitIfTest implements JsonTest {
         SplitIfFinder finder = new SplitIfFinder();
         List<Refactoring> refactorings = finder.check(program);
         assertThat(refactorings).hasSize(3);
-        assertThat(refactorings.get(0)).isInstanceOf(SplitIf.class);
+        assertThat(refactorings.getFirst()).isInstanceOf(SplitIf.class);
         assertThat(refactorings.get(1)).isInstanceOf(SplitIf.class);
         assertThat(refactorings.get(2)).isInstanceOf(SplitIf.class);
     }

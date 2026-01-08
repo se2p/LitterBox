@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -199,6 +199,7 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
 
         // Edge back to loop header, and update current node
         builder.addEdge(node);
+        builder.addEdgeToExit(node);
     }
 
     @Override

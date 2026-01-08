@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -46,14 +46,17 @@ public class SequenceToLoop extends OnlyCodeCloneVisitor implements Refactoring 
     private final RepeatTimesStmt replacementLoop;
 
     public SequenceToLoop(StmtList stmtList, List<Stmt> repeatedStatements, int times) {
+        this(stmtList, repeatedStatements, times, stmtList.getStmts().indexOf(repeatedStatements.getFirst()));
+    }
+
+    public SequenceToLoop(StmtList stmtList, List<Stmt> repeatedStatements, int times, int startIndex) {
         Preconditions.checkArgument(!repeatedStatements.isEmpty());
         this.targetStatement = repeatedStatements.getFirst();
         this.repeatedStatements = repeatedStatements;
         this.times = times;
 
         this.allRepeatedStatements = new ArrayList<>();
-        int startingpoint = stmtList.getStmts().indexOf(targetStatement);
-        for (int i = startingpoint; i < startingpoint + (times * repeatedStatements.size()); i++) {
+        for (int i = startIndex; i < startIndex + (times * repeatedStatements.size()); i++) {
             allRepeatedStatements.add(stmtList.getStatement(i));
         }
 

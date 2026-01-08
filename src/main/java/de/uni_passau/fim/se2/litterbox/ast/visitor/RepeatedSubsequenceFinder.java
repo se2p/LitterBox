@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -27,8 +27,12 @@ import java.util.List;
 
 public abstract class RepeatedSubsequenceFinder {
 
-    public static final int MIN_LENGTH = PropertyLoader.getSystemIntProperty("smell.repeated_subsequence.min_length");
-    public static final int MIN_OCCURRENCE = PropertyLoader.getSystemIntProperty("smell.repeated_subsequence.min_occurrence");
+    public static final int MIN_LENGTH = PropertyLoader.getSystemIntProperty(
+            "smell.repeated_subsequence.min_length"
+    );
+    public static final int MIN_OCCURRENCE = PropertyLoader.getSystemIntProperty(
+            "smell.repeated_subsequence.min_occurrence"
+    );
 
     private final int minLength;
     private final int minOccurrence;
@@ -43,7 +47,9 @@ public abstract class RepeatedSubsequenceFinder {
         this.minOccurrence = minOccurrence;
     }
 
-    protected abstract void handleRepetition(StmtList stmtList, List<Stmt> subsequence, int occurrences);
+    protected abstract void handleRepetition(
+            StmtList stmtList, List<Stmt> subsequence, int occurrences, int startIndex
+    );
 
     public void findRepetitions(StmtList statementList) {
         List<Stmt> statements = statementList.getStmts();
@@ -51,7 +57,10 @@ public abstract class RepeatedSubsequenceFinder {
         for (int i = 0; i < statements.size(); i++) {
             int maxSequenceLength = (statements.size() - i) / minOccurrence;
 
-            for (int sequenceLength = maxSequenceLength; sequenceLength > 0 && sequenceLength < statements.size() - i; sequenceLength--) {
+            for (int sequenceLength = maxSequenceLength;
+                    sequenceLength > 0 && sequenceLength < statements.size() - i;
+                    sequenceLength--
+            ) {
                 List<Stmt> currentSequence = statements.subList(i, i + sequenceLength);
                 if (getSequenceLength(currentSequence) < minLength) {
                     // Check for minimal length including statements inside control statements
@@ -59,7 +68,7 @@ public abstract class RepeatedSubsequenceFinder {
                 }
                 int numSubsequences = findSubsequences(statements.subList(i, statements.size()), currentSequence);
                 if (numSubsequences >= minOccurrence) {
-                    handleRepetition(statementList, currentSequence, numSubsequences);
+                    handleRepetition(statementList, currentSequence, numSubsequences, i);
                     i += numSubsequences * currentSequence.size();
                 }
             }

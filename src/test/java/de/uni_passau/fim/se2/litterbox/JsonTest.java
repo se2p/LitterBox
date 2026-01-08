@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.extraction.NameExtraction;
 import de.uni_passau.fim.se2.litterbox.analytics.metrics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
@@ -63,17 +64,23 @@ public interface JsonTest {
         return visitor.getControlFlowGraph();
     }
 
-    default Program parseScratchBlocks(String scratchBlocksCode) throws IOException, ParsingException {
-        Program program = getAST("src/test/fixtures/emptyProject.json");
-        ScratchBlocksParser parser = new ScratchBlocksParser();
-        return parser.extendProject(program, "Sprite1", scratchBlocksCode);
-    }
-
     // TODO: This is a bit redundant wrt getAST (it is added for the tests that have a static test fixture)
     static Program parseProgram(String fileName) throws IOException, ParsingException {
         Scratch3Parser parser = new Scratch3Parser();
         return parser.parseFile(Path.of(fileName).toFile());
     }
+
+    default Program parseScratchBlocks(String code) throws IOException, ParsingException {
+        Program baseProject = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        String spriteName = baseProject.getActorDefinitionList().getDefinitions().stream()
+                .filter(ActorDefinition::isSprite)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No sprite found in emptyProject.json"))
+                .getIdent().getName();
+        return parser.extendProject(baseProject, spriteName, code);
+    }
+
 
     default Set<Issue> generateIssues(IssueFinder finder, String filePath) throws IOException, ParsingException {
         Program prog = getAST(filePath);

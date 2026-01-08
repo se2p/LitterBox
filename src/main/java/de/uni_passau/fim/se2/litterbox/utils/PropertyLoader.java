@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -72,6 +72,23 @@ public final class PropertyLoader {
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("The value for key " + name + " is not a Boolean value!", e);
             }
+        }
+    }
+
+    /**
+     * Load the string value of the given key from the system properties.
+     * If the key has a value assigned, return that value.
+     * Otherwise, write a warning to the logs and return null.
+     *
+     * @param name The key to the system variable.
+     * @return The value to the given key as string or null otherwise.
+     */
+    public static String getSystemStringProperty(String name) {
+        String stringValue = System.getProperty(name);
+        if (stringValue == null) {
+            throw getMissingValueForKeyException(name);
+        } else {
+            return stringValue;
         }
     }
 

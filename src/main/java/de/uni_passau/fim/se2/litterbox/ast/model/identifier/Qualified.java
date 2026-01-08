@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -73,5 +73,10 @@ public class Qualified extends AbstractNode implements Identifier, ComparableExp
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), first, second);
+    }
+
+    @Override
+    public String toString() {
+        return first.getName() + "." + second.getName().getName();
     }
 }

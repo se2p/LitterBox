@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -27,7 +27,9 @@ import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 public class LoopUnrollingFinder extends AbstractRefactoringFinder {
 
-    private static final int MAX_UNROLLING = PropertyLoader.getSystemIntProperty("refactoring.loop_unrolling.max_loopunrolling");
+    private static final int MAX_UNROLLING = PropertyLoader.getSystemIntProperty(
+            "refactoring.loop_unrolling.max_loopunrolling"
+    );
 
     @Override
     public void visit(RepeatTimesStmt loop) {

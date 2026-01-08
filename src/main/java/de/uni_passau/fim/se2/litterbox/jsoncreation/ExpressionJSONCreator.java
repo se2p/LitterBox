@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -135,7 +135,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     @Override
     public void visit(StringLiteral node) {
         finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, TEXT_PRIMITIVE,
-                node.getText()));
+                escape(node.getText())));
     }
 
     @Override

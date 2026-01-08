@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -46,7 +46,7 @@ public class MergeScriptsAfterUntilTest implements JsonTest {
     @Test
     public void testSplitScriptAfterUntilRefactoring() throws ParsingException, IOException {
         Program program = getAST("src/test/fixtures/refactoring/mergeScriptsAfterUntil.json");
-        Script script1 = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(0);
+        Script script1 = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().getFirst();
         Script script2 = program.getActorDefinitionList().getDefinitions().get(1).getScripts().getScriptList().get(1);
         StmtList stmtList1 = script1.getStmtList();
         StmtList stmtList2 = script2.getStmtList();

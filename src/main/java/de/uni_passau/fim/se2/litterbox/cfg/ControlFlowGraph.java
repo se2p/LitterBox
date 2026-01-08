@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -22,17 +22,24 @@ import com.google.common.graph.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Message;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -142,22 +149,42 @@ public class ControlFlowGraph {
     }
 
     public String toDotString() {
+        return toDotString(node -> node.toString());
+    }
+
+    public String toDotString(Function<CFGNode, String> labelProvider) {
         StringBuilder builder = new StringBuilder();
 
         builder.append("digraph {");
         builder.append(System.lineSeparator());
+
+        for (CFGNode node : graph.nodes()) {
+            builder.append("  \"");
+            builder.append(node);
+            builder.append("\" [label=\"");
+            builder.append(escapeDotLabel(labelProvider.apply(node)));
+            builder.append("\"];");
+            builder.append(System.lineSeparator());
+        }
 
         for (EndpointPair<CFGNode> edge : graph.edges()) {
             builder.append("  \"");
             builder.append(edge.nodeU());
             builder.append("\" -> \"");
             builder.append(edge.nodeV());
-            builder.append("\";");
+            builder.append("\" [penwidth=2];");
             builder.append(System.lineSeparator());
         }
 
         builder.append('}');
         return builder.toString();
+    }
+
+    private String escapeDotLabel(String label) {
+        if (label == null) {
+            return "";
+        }
+        return label.replace("\"", "\\\"").replace("\n", "\\n");
     }
 
     public Set<Definition> getDefinitions() {
@@ -226,4 +253,64 @@ public class ControlFlowGraph {
         return newCFG;
     }
 
+    public static List<Stmt> getStatementsInOrder(StmtList stmtList) {
+        List<Stmt> result = new ArrayList<>();
+        collectStmts(stmtList, result);
+        return result;
+    }
+
+    public static List<Stmt> getStatementsInReverseOrder(StmtList stmtList) {
+        List<Stmt> result = getStatementsInOrder(stmtList);
+        Collections.reverse(result);
+        return result;
+    }
+
+    private static void collectStmts(StmtList stmtList, List<Stmt> result) {
+        for (Stmt stmt : stmtList.getStmts()) {
+            result.add(stmt);
+            if (stmt instanceof LoopStmt loop) {
+                collectStmts(loop.getStmtList(), result);
+            } else if (stmt instanceof IfThenStmt ifThen) {
+                collectStmts(ifThen.getThenStmts(), result);
+            } else if (stmt instanceof IfElseStmt ifElse) {
+                collectStmts(ifElse.getThenStmts(), result);
+                collectStmts(ifElse.getElseStmts(), result);
+            }
+        }
+    }
+
+    public void ensureAllNodesReachableFromEntry() {
+        Set<CFGNode> reachable = new HashSet<>();
+        List<CFGNode> queue = new ArrayList<>();
+        queue.add(entryNode);
+        reachable.add(entryNode);
+
+        int head = 0;
+        while (head < queue.size()) {
+            CFGNode current = queue.get(head++);
+            for (CFGNode successor : graph.successors(current)) {
+                if (reachable.add(successor)) {
+                    queue.add(successor);
+                }
+            }
+        }
+
+        for (CFGNode node : graph.nodes()) {
+            if (!reachable.contains(node)) {
+                graph.putEdge(entryNode, node);
+                // Continue BFS from the newly connected node to find its reachable subgraph
+                // This avoids adding edges to every single node in a disconnected component, just the root we found
+                reachable.add(node);
+                queue.add(node);
+                while (head < queue.size()) {
+                    CFGNode current = queue.get(head++);
+                    for (CFGNode successor : graph.successors(current)) {
+                        if (reachable.add(successor)) {
+                            queue.add(successor);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

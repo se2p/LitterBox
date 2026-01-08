@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -69,8 +69,7 @@ public class MergeLoopsFinder extends AbstractDependencyRefactoringFinder {
      * this method simply applies the merge and checks for dependencies in
      * the resulting script that span across the two parent scripts.
      */
-    private boolean hasDependencies(Script script1, Script script2) {
-
+    protected boolean hasDependencies(Script script1, Script script2) {
         MergeLoops refactoring = new MergeLoops(script1, script2);
         Script merged = refactoring.getMergedScript();
         StmtList mergedStatements = ((LoopStmt) merged.getStmtList().getStatement(0)).getStmtList();
@@ -85,8 +84,15 @@ public class MergeLoopsFinder extends AbstractDependencyRefactoringFinder {
 
         ControlFlowGraph cfg = getControlFlowGraphForScript(merged);
 
-        List<Stmt> stmtScript1 = new ArrayList<>(mergedStatements.getStmts().subList(0, loop1.getStmtList().getNumberOfStatements()));
-        List<Stmt> stmtScript2 = new ArrayList<>(mergedStatements.getStmts().subList(loop1.getStmtList().getNumberOfStatements(), mergedStatements.getNumberOfStatements()));
+        List<Stmt> stmtScript1 = new ArrayList<>(
+                mergedStatements.getStmts().subList(0, loop1.getStmtList().getNumberOfStatements())
+        );
+        List<Stmt> stmtScript2 = new ArrayList<>(
+                mergedStatements.getStmts().subList(
+                        loop1.getStmtList().getNumberOfStatements(),
+                        mergedStatements.getNumberOfStatements()
+                )
+        );
 
         if (hasControlDependency(cfg, stmtScript1, stmtScript2)
                 || hasDataDependency(cfg, stmtScript1, stmtScript2)

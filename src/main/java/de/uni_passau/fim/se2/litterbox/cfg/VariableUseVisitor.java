@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -18,13 +18,17 @@
  */
 package de.uni_passau.fim.se2.litterbox.cfg;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
@@ -32,6 +36,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariable
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 
 import java.util.LinkedHashSet;
@@ -39,7 +44,16 @@ import java.util.Set;
 
 public class VariableUseVisitor implements DefinableCollector<Variable> {
 
+    private ActorDefinition actor;
     private Set<Variable> uses = new LinkedHashSet<>();
+
+    public VariableUseVisitor() {
+        this(null);
+    }
+
+    public VariableUseVisitor(ActorDefinition actor) {
+        this.actor = actor;
+    }
 
     @Override
     public Set<Variable> getDefineables() {
@@ -107,10 +121,15 @@ public class VariableUseVisitor implements DefinableCollector<Variable> {
             uses.add(new Variable(q));
         } else if (owner instanceof Qualified && attribute instanceof AttributeFromVariable) {
             owner.accept(this);
+        } else {
+            attribute.accept(this);
         }
 
-        // Always visit children to pick up uses in the object expression (e.g. variables used to specify the object)
-        visitChildren(node);
+        node.getElementChoice().accept(this);
+
+        if (node.getMetadata() != null) {
+            ((ASTNode) node.getMetadata()).accept(this);
+        }
     }
 
     @Override
@@ -118,6 +137,26 @@ public class VariableUseVisitor implements DefinableCollector<Variable> {
         if (!(node.getSecond() instanceof ScratchList)) {
             uses.add(new Variable(node));
         }
+    }
+
+    @Override
+    public void visit(de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable node) {
+        if (actor != null) {
+            Qualified q = new Qualified(actor.getIdent(), node);
+            uses.add(new Variable(q));
+        } else {
+            uses.add(new Variable(node.getName()));
+        }
+    }
+
+    @Override
+    public void visit(Parameter node) {
+        // Parameters are not variables
+    }
+
+    @Override
+    public void visit(Answer node) {
+        uses.add(new Variable(new StrId("answer")));
     }
 
     @Override

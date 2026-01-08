@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -29,16 +29,22 @@ import java.util.List;
 
 public class SequenceToLoopFinder extends AbstractRefactoringFinder {
 
-    private static final int MIN_LENGTH = PropertyLoader.getSystemIntProperty("refactoring.sequence_to_loop.min_length");
-    private static final int MIN_OCCURRENCE = PropertyLoader.getSystemIntProperty("refactoring.sequence_to_loop.min_occurrence");
+    private static final int MIN_LENGTH = PropertyLoader.getSystemIntProperty(
+            "refactoring.sequence_to_loop.min_length"
+    );
+    private static final int MIN_OCCURRENCE = PropertyLoader.getSystemIntProperty(
+            "refactoring.sequence_to_loop.min_occurrence"
+    );
 
 
     @Override
     public void visit(StmtList statementList) {
         new RepeatedSubsequenceFinder(MIN_LENGTH, MIN_OCCURRENCE) {
             @Override
-            protected void handleRepetition(StmtList stmtList, List<Stmt> subsequence, int occurrences) {
-                refactorings.add(new SequenceToLoop(statementList, subsequence, occurrences));
+            protected void handleRepetition(
+                    StmtList stmtList, List<Stmt> subsequence, int occurrences, int startIndex
+            ) {
+                refactorings.add(new SequenceToLoop(statementList, subsequence, occurrences, startIndex));
             }
         }.findRepetitions(statementList);
 

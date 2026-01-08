@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -42,7 +42,7 @@ public class BinaryRankTournament<C extends Solution<C>> implements Selection<C>
             throw new IllegalArgumentException("Empty population given to binary rank tournament.");
         }
         if (population.size() == 1) {
-            return population.getFirst();
+            return population.getFirst().copy();
         }
 
 

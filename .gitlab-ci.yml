@@ -14,7 +14,6 @@ variables:
 cache: &cache
   paths:
     - .m2/repository/
-    - target/
 
 build:
   stage: build
@@ -23,46 +22,59 @@ build:
 
 test:
   stage: test
+  needs: []
   coverage: '/Total.*?([0-9]{1,3})%./'
   script:
-    - mvn test checkstyle:checkstyle
+    - mvn integration-test
     - mvn jacoco:report
     - cat target/site/jacoco/index.html | grep -o '<tfoot>.*</tfoot>'
-    - |
-        file="";
-        first=1;
-        output="checkstyle-report.json"
-        path="$(pwd)";
-        echo "[" > "$output";
-        tail -n +3 target/checkstyle-result.xml | while read p; do
-          if echo "$p" | grep -q "<file name.*" ; then
-            file=$(expr "$p" : '<file name=\"\(.*\)\".*' | sed 's@'"$path"'@@g' | sed 's@^/@@');
-            echo "$file";
-          fi
-          if echo "$p" | grep -q "<error.*" ; then
-            line="$(expr "$p" : '.*line=\"\([0-9]*\)\".*')";
-            message="$(expr "$p" : '.*message=\"\(.*\)\" source.*' | sed -e 's/&apos;/`/g' -e 's/&lt;/</g' -e 's/&gt;/>/g' -e 's/&quot;/\\\"/g' -e 's/&amp;/\&/g')"
-            checksum=$(echo "$file $line $message" | sha1sum | awk '{print $1}')
-            if [ "$first" == 1 ] ; then
-              echo "{ \"description\": \"$message\", \"fingerprint\": \"$checksum\", \"severity\": \"minor\", \"location\": { \"path\": \"$file\", \"lines\": { \"begin\": $line }}}" >> "$output";
-              first=0;
-            else
-              echo ",{ \"description\": \"$message\", \"fingerprint\": \"$checksum\", \"severity\": \"minor\", \"location\": { \"path\": \"$file\", \"lines\": { \"begin\": $line }}}" >> "$output"
-            fi
-          fi
-        done ;
-        echo "]" >> "$output"
   artifacts:
     paths:
       - target/site/jacoco/
     reports:
-      codequality:
-        - checkstyle-report.json
       coverage_report:
         coverage_format: jacoco
         path: target/site/jacoco/jacoco.xml
       junit:
         - target/surefire-reports/TEST-*.xml
+        - target/failsafe-reports/TEST-*.xml
+
+checkstyle:
+  stage: test
+  needs: []
+  cache:
+    <<: *cache
+    policy: pull
+  script:
+    - mvn checkstyle:checkstyle
+    - |
+      file="";
+      first=1;
+      output="checkstyle-report.json"
+      path="$(pwd)";
+      echo "[" > "$output";
+      tail -n +3 target/checkstyle-result.xml | while read p; do
+        if echo "$p" | grep -q "<file name.*" ; then
+          file=$(expr "$p" : '<file name=\"\(.*\)\".*' | sed 's@'"$path"'@@g' | sed 's@^/@@');
+          echo "$file";
+        fi
+        if echo "$p" | grep -q "<error.*" ; then
+          line="$(expr "$p" : '.*line=\"\([0-9]*\)\".*')";
+          message="$(expr "$p" : '.*message=\"\(.*\)\" source.*' | sed -e 's/&apos;/`/g' -e 's/&lt;/</g' -e 's/&gt;/>/g' -e 's/&quot;/\\\"/g' -e 's/&amp;/\&/g')"
+          checksum=$(echo "$file $line $message" | sha1sum | awk '{print $1}')
+          if [ "$first" == 1 ] ; then
+            echo "{ \"description\": \"$message\", \"fingerprint\": \"$checksum\", \"severity\": \"minor\", \"location\": { \"path\": \"$file\", \"lines\": { \"begin\": $line }}}" >> "$output";
+            first=0;
+          else
+            echo ",{ \"description\": \"$message\", \"fingerprint\": \"$checksum\", \"severity\": \"minor\", \"location\": { \"path\": \"$file\", \"lines\": { \"begin\": $line }}}" >> "$output"
+          fi
+        fi
+      done ;
+      echo "]" >> "$output"
+  artifacts:
+    reports:
+      codequality:
+        - checkstyle-report.json
 
 check-license-headers:
   stage: test

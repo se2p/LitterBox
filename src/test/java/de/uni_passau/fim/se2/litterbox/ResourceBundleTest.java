@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -16,8 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.analytics;
+package de.uni_passau.fim.se2.litterbox;
 
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueTool;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.ProgramExtractionAnalyzer;
+import de.uni_passau.fim.se2.litterbox.analytics.ProgramMetricAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.llm.LLMIssueFinder;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
@@ -37,6 +42,8 @@ public class ResourceBundleTest {
     private static final List<String> DOUBLE_TAGS = Arrays.asList("[sbi]", "[var]", "[list]", "[bc]", "[item]", "[b]", "[i]", "[u]", "[s]");
 
     private static final List<String> SINGLE_TAGS = Arrays.asList("[TRUE]", "[FALSE]", "[LEQ]", "[EQ]", "[GEQ]", "[IF]", "[ELSE]", "[sbVariables]", "[newLine]");
+
+    public static final String[] LANGUAGES = {"de", "en", "es"};
 
     @ParameterizedTest(name = "Testing existence of bug names for language {0}")
     @ValueSource(strings = {"de", "en", "es"})
@@ -211,4 +218,36 @@ public class ResourceBundleTest {
 //            assertWithMessage("Language "+locale+", key "+key +" is not used").that(hintKeys).contains(key);
 //        }
 //    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"GeneralTerms", "IssueHints", "IssueNames"})
+    void checkSameKeysAllLanguages(final String resourceBundle) {
+        final Map<String, Set<String>> keys = new HashMap<>();
+        for (final String language : LANGUAGES) {
+            final Set<String> resourceBundleKeys = getResourceBundleKeys(resourceBundle, language);
+            keys.put(language, resourceBundleKeys);
+        }
+
+        for (int i = 0; i < LANGUAGES.length; ++i) {
+            for (int j = 0; j < LANGUAGES.length; ++j) {
+                if (i == j) {
+                    continue;
+                }
+
+                final String languageA = LANGUAGES[i];
+                final Set<String> keysA = keys.get(languageA);
+                final String languageB = LANGUAGES[j];
+                final Set<String> keysB = keys.get(languageB);
+
+                assertWithMessage(
+                        String.format("Keys in resource bundle %s should be the same for languages '%s' and '%s'", resourceBundle, languageA, languageB)
+                ).that(keysA).containsExactlyElementsIn(keysB);
+            }
+        }
+    }
+
+    private Set<String> getResourceBundleKeys(final String resourceBundle, final String language) {
+        final ResourceBundle bundle = ResourceBundle.getBundle(resourceBundle, Locale.forLanguageTag(language));
+        return bundle.keySet();
+    }
 }

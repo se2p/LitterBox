@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -36,16 +36,8 @@ public abstract class BlockJsonCreatorHelper {
 
         createField(jsonString, meta.getBlockId()).append("{");
         createFieldValue(jsonString, OPCODE_KEY, opcode.getName()).append(",");
-        if (nextId == null) {
-            createFieldValueNull(jsonString, NEXT_KEY).append(",");
-        } else {
-            createFieldValue(jsonString, NEXT_KEY, nextId).append(",");
-        }
-        if (parentId == null) {
-            createFieldValueNull(jsonString, PARENT_KEY);
-        } else {
-            createFieldValue(jsonString, PARENT_KEY, parentId);
-        }
+        createFieldValue(jsonString, NEXT_KEY, nextId).append(",");
+        createFieldValue(jsonString, PARENT_KEY, parentId);
         return jsonString;
     }
 
@@ -112,7 +104,7 @@ public abstract class BlockJsonCreatorHelper {
         StringBuilder jsonString = new StringBuilder();
         jsonString.append("{");
         createField(jsonString, fieldName).append("[");
-        jsonString.append("\"").append(fieldValue).append("\",");
+        jsonString.append("\"").append(escape(fieldValue)).append("\",");
         if (fieldReference == null) {
             //No " needed because it should represent the value null
             jsonString.append((String) null);

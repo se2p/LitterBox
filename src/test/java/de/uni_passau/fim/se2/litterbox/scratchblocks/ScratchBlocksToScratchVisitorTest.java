@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -69,6 +69,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -254,7 +255,7 @@ class ScratchBlocksToScratchVisitorTest {
     @Test
     void testParameterParsingCornerCases() {
         final ProcedureDefinition procDef = parseProcDef("define my block <param1> (param2)");
-        
+
         List<ParameterDefinition> params = procDef.getParameterDefinitionList().getParameterDefinitions();
         assertEquals(2, params.size());
         assertEquals("param1", params.get(0).getIdent().getName());
