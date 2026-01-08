@@ -2016,12 +2016,27 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         String procedureName = node.getIdent().getName();
         procedureName = escapeBrackets(procedureName);
         List<Expression> parameters = node.getExpressions().getExpressions();
-        for (Expression param : parameters) {
+        for (int i = 0; i < parameters.size(); i++) {
+            Expression param = parameters.get(i);
             int nextIndex = procedureName.indexOf('%');
+            // Guard: if no more placeholders, append remaining params and break
+            if (nextIndex == -1) {
+                StringBuilder remaining = new StringBuilder(procedureName);
+                remaining.append(" ");
+                for (int j = i; j < parameters.size(); j++) {
+                    remaining.append(getParameterName(parameters.get(j)));
+                    if (j < parameters.size() - 1) {
+                        remaining.append(" ");
+                    }
+                }
+                procedureName = remaining.toString();
+                break;
+            }
             procedureName = procedureName.substring(0, nextIndex)
                     + getParameterName(param)
                     + procedureName.substring(nextIndex + 2);
         }
+
         if (procedureName.startsWith("+") || procedureName.startsWith("-")) {
             procedureName = "\\" + procedureName;
         }
