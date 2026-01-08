@@ -19,16 +19,15 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class ConsoleReportGenerator implements ReportGenerator {
 
-    private List<String> detectors;
+    private final List<String> detectors;
 
     public ConsoleReportGenerator(List<String> detectors) {
         this.detectors = new ArrayList<>(detectors);
@@ -42,20 +41,61 @@ public class ConsoleReportGenerator implements ReportGenerator {
             return;
         }
 
-        for (String detector : detectors) {
-            List<Issue> relevantIssues = issues
-                    .stream()
-                    .filter(i -> i.getFinderName().equals(detector))
-                    .toList();
+        // Group issues by IssueType
+        Map<IssueType, List<Issue>> issuesByType = new EnumMap<>(IssueType.class);
+        for (Issue issue : issues) {
+            issuesByType.computeIfAbsent(issue.getIssueType(), k -> new ArrayList<>()).add(issue);
+        }
 
-            if (!relevantIssues.isEmpty()) {
-                Issue firstIssue = relevantIssues.getFirst();
-                System.out.println("Issue "
-                        + firstIssue.getFinderName()
-                        + " was found "
-                        + relevantIssues.size()
-                        + " time(s)");
+        // Print header
+        System.out.println("=== CHECK REPORT ===");
+        System.out.println("Project: " + program.getIdent().getName());
+        System.out.println();
+
+        // Print summary (only categories with issues)
+        System.out.println("SUMMARY:");
+        printSummaryLine("BUGS", issuesByType.get(IssueType.BUG));
+        printSummaryLine("SMELLS", issuesByType.get(IssueType.SMELL));
+        printSummaryLine("PERFUMES", issuesByType.get(IssueType.PERFUME));
+        printSummaryLine("QUESTIONS", issuesByType.get(IssueType.QUESTION));
+        System.out.println();
+
+        // Print detailed lists by category
+        printCategoryDetails("BUGS", IssueType.BUG, issuesByType);
+        printCategoryDetails("SMELLS", IssueType.SMELL, issuesByType);
+        printCategoryDetails("PERFUMES", IssueType.PERFUME, issuesByType);
+        printCategoryDetails("QUESTIONS", IssueType.QUESTION, issuesByType);
+    }
+
+    private void printSummaryLine(String label, List<Issue> issues) {
+        if (issues != null && !issues.isEmpty()) {
+            System.out.printf("  %-10s %d%n", label + ":", issues.size());
+        }
+    }
+
+    private void printCategoryDetails(String header, IssueType type, Map<IssueType, List<Issue>> issuesByType) {
+        List<Issue> categoryIssues = issuesByType.get(type);
+        if (categoryIssues == null || categoryIssues.isEmpty()) {
+            return;
+        }
+
+        System.out.println(header + ":");
+
+        // Group by finder name to show counts
+        Map<String, List<Issue>> byFinder = new LinkedHashMap<>();
+        for (String detector : detectors) {
+            for (Issue issue : categoryIssues) {
+                if (issue.getFinderName().equals(detector)) {
+                    byFinder.computeIfAbsent(detector, k -> new ArrayList<>()).add(issue);
+                }
             }
         }
+
+        for (Map.Entry<String, List<Issue>> entry : byFinder.entrySet()) {
+            int count = entry.getValue().size();
+            String plural = count == 1 ? "" : "s";
+            System.out.printf("  • %s (%d occurrence%s)%n", entry.getKey(), count, plural);
+        }
+        System.out.println();
     }
 }
