@@ -46,6 +46,12 @@ public class IssueCategorizer {
     private final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator();
 
     /**
+     * Tracks which after issues have been matched to a before issue.
+     * Used to prevent double-matching and correctly identify new issues.
+     */
+    private final Set<Issue> matchedAfterIssues = new HashSet<>();
+
+    /**
      * Categorizes issues between before and after versions.
      *
      * @param beforeIssuesByFinder issues from the before version, grouped by finder name
@@ -58,7 +64,6 @@ public class IssueCategorizer {
             Program afterProgram
     ) {
         Map<String, List<Issue>> afterIssuesByFinder = groupByFinder(afterIssues);
-        Set<String> beforeIssueKeys = extractAllIssueKeys(beforeIssuesByFinder);
 
         // Process each finder from before version
         for (Map.Entry<String, List<IssueDTO>> entry : beforeIssuesByFinder.entrySet()) {
@@ -69,10 +74,9 @@ public class IssueCategorizer {
             categorizeFinderIssues(finderName, beforeFinderIssues, afterFinderIssues, afterProgram);
         }
 
-        // Find NEW issues (in after but not in before)
+        // Find NEW issues (in after but not matched to any before issue)
         for (Issue issue : afterIssues) {
-            String issueKey = getIssueKey(issue);
-            if (!beforeIssueKeys.contains(issueKey)) {
+            if (!matchedAfterIssues.contains(issue)) {
                 newIssues.add(issue);
             }
         }
@@ -92,10 +96,20 @@ public class IssueCategorizer {
             if (isBlockIdEmpty(blockId)) {
                 categorizeByActorName(finderName, beforeIssue, afterIssues, afterActorNames, afterProgram);
             } else {
-                Optional<Issue> existingIssue = findMatchingIssue(afterIssues, beforeIssue.sprite(), blockId, beforeIssue.hint());
+                // First try exact block ID matching
+                Optional<Issue> match = findMatchingIssueByBlockId(
+                        afterIssues, beforeIssue.sprite(), blockId, beforeIssue.hint());
 
-                if (existingIssue.isPresent()) {
-                    persisting.add(existingIssue.get());
+                if (match.isEmpty()) {
+                    // Fallback: match by actor + hint only (block IDs may have been regenerated)
+                    match = findUnmatchedIssueByActorAndHint(
+                            afterIssues, beforeIssue.sprite(), beforeIssue.hint());
+                }
+
+                if (match.isPresent()) {
+                    Issue matched = match.get();
+                    persisting.add(matched);
+                    matchedAfterIssues.add(matched);
                 } else {
                     categorizeAsFixedOrRemoved(finderName, beforeIssue, afterProgram);
                 }
@@ -103,10 +117,21 @@ public class IssueCategorizer {
         }
     }
 
-    private Optional<Issue> findMatchingIssue(List<Issue> issues, String actorName, String blockId, String hint) {
+    private Optional<Issue> findMatchingIssueByBlockId(
+            List<Issue> issues, String actorName, String blockId, String hint) {
         return issues.stream()
+                .filter(i -> !matchedAfterIssues.contains(i))
                 .filter(i -> Objects.equals(actorName, i.getActorName()))
                 .filter(i -> Objects.equals(blockId, getBlockId(i)))
+                .filter(i -> hintsMatch(hint, i.getHint()))
+                .findFirst();
+    }
+
+    private Optional<Issue> findUnmatchedIssueByActorAndHint(
+            List<Issue> issues, String actorName, String hint) {
+        return issues.stream()
+                .filter(i -> !matchedAfterIssues.contains(i))
+                .filter(i -> Objects.equals(actorName, i.getActorName()))
                 .filter(i -> hintsMatch(hint, i.getHint()))
                 .findFirst();
     }
@@ -126,23 +151,18 @@ public class IssueCategorizer {
         String actorName = beforeIssue.sprite();
 
         if (afterActorNames.contains(actorName)) {
-            Optional<Issue> matchingIssue = findIssueByActorAndHint(afterIssues, actorName, beforeIssue.hint());
+            Optional<Issue> matchingIssue = findUnmatchedIssueByActorAndHint(afterIssues, actorName, beforeIssue.hint());
 
             if (matchingIssue.isPresent()) {
-                persisting.add(matchingIssue.get());
+                Issue matched = matchingIssue.get();
+                persisting.add(matched);
+                matchedAfterIssues.add(matched);
             } else {
                 categorizeAsFixedOrRemoved(finderName, beforeIssue, afterProgram);
             }
         } else {
             categorizeAsFixedOrRemoved(finderName, beforeIssue, afterProgram);
         }
-    }
-
-    private Optional<Issue> findIssueByActorAndHint(List<Issue> issues, String actorName, String hint) {
-        return issues.stream()
-                .filter(i -> actorName != null && actorName.equals(i.getActorName()))
-                .filter(i -> hintsMatch(hint, i.getHint()))
-                .findFirst();
     }
 
     private void categorizeAsFixedOrRemoved(String finderName, IssueDTO beforeIssue, Program afterProgram) {
@@ -187,24 +207,7 @@ public class IssueCategorizer {
                 .collect(Collectors.toSet());
     }
 
-    private Set<String> extractAllIssueKeys(Map<String, List<IssueDTO>> issuesByFinder) {
-        return issuesByFinder.values().stream()
-                .flatMap(List::stream)
-                .map(dto -> getIssueKeyFromDTO(dto))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-    }
 
-    private String getIssueKey(Issue issue) {
-        String blockId = getBlockId(issue);
-        String actorName = issue.getActorName();
-        String hint = issue.getHint() != null ? issue.getHint().getHintText(translator) : null;
-        return actorName + ":" + blockId + ":" + hint;
-    }
-
-    private String getIssueKeyFromDTO(IssueDTO dto) {
-        return dto.sprite() + ":" + dto.issueLocationBlockId() + ":" + dto.hint();
-    }
 
     private Map<String, List<Issue>> groupByFinder(Set<Issue> issues) {
         return issues.stream().collect(Collectors.groupingBy(Issue::getFinderName));

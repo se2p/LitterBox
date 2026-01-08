@@ -40,11 +40,6 @@ public final class IssueConverter {
 
     private static final Logger log = Logger.getLogger(IssueConverter.class.getName());
 
-    /**
-     * Synthetic finder name for removed issues that couldn't be verified as fixed.
-     */
-    public static final String REMOVED_ISSUE_FINDER = "removed_issue";
-
     private IssueConverter() {
         // Utility class
     }
@@ -135,17 +130,17 @@ public final class IssueConverter {
             return removed;
         }
 
-        IssueFinder removedFinder = new SyntheticIssueFinder(REMOVED_ISSUE_FINDER, IssueType.BUG);
-
         for (IssueCategorizer.RemovedIssueInfo info : removedInfos) {
             ActorDefinition actor = findActorByName(actors, info.actorName());
+            IssueFinder removedFinder = new SyntheticIssueFinder(info.finderName(), IssueType.BUG);
 
             Issue issue = new IssueBuilder()
                     .withFinder(removedFinder)
                     .withProgram(program)
                     .withActor(actor)
                     .withSeverity(IssueSeverity.LOW)
-                    .withHint(REMOVED_ISSUE_FINDER)
+                    .withHint(info.finderName())
+                    .withOriginalBlockId(info.blockId())
                     .build();
             removed.add(issue);
         }
