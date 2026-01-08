@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.io.File;
@@ -47,7 +48,6 @@ public class DiffAnalyzer {
 
     private final String detectors;
     private final boolean ignoreLooseBlocks;
-    private final Scratch3Parser parser;
 
     /**
      * Creates a new DiffAnalyzer.
@@ -58,7 +58,6 @@ public class DiffAnalyzer {
     public DiffAnalyzer(String detectors, boolean ignoreLooseBlocks) {
         this.detectors = detectors;
         this.ignoreLooseBlocks = ignoreLooseBlocks;
-        this.parser = new Scratch3Parser();
     }
 
     /**
@@ -71,45 +70,66 @@ public class DiffAnalyzer {
      * @throws ParsingException if files cannot be parsed
      */
     public DiffResult analyze(Path beforePath, Path afterPath) throws IOException, ParsingException {
-        String beforeSource = beforePath.toString();
-        String afterSource = afterPath.toString();
+        Program afterProgram = parseProject(afterPath);
 
-        Program afterProgram = parser.parseFile(afterPath.toFile());
-
-        Map<String, List<IssueDTO>> beforeIssuesByFinder = loadBeforeIssues(beforePath);
-
+        BeforeData beforeData = loadBeforeData(beforePath);
         Set<Issue> afterIssues = analyzeProgram(afterProgram);
 
         IssueCategorizer categorizer = new IssueCategorizer();
-        categorizer.categorize(beforeIssuesByFinder, afterIssues, afterProgram);
+        categorizer.categorize(beforeData.issues(), afterIssues, beforeData.program(), afterProgram);
 
-        List<Issue> fixedIssues = IssueConverter.convertFixResultsToIssues(
-                categorizer.getFixed(), afterProgram);
         List<Issue> removedIssues = IssueConverter.createRemovedIssues(
                 categorizer.getRemoved(), afterProgram);
 
         return new DiffResult(
-                beforeSource,
-                afterSource,
-                fixedIssues,
+                beforePath.toString(),
+                afterPath.toString(),
+                categorizer.getFixed(),
                 categorizer.getNewIssues(),
                 categorizer.getPersisting(),
                 removedIssues
         );
     }
 
-    private Map<String, List<IssueDTO>> loadBeforeIssues(Path beforePath)
-            throws IOException, ParsingException {
+    // ========== Before Data Loading ==========
+
+    /**
+     * Data loaded from the before source: issues and optionally the program.
+     *
+     * @param issues  issues from the before version, grouped by finder name
+     * @param program the parsed program (null if loaded from LitterBox JSON report)
+     */
+    private record BeforeData(Map<String, List<IssueDTO>> issues, Program program) {
+    }
+
+    private BeforeData loadBeforeData(Path beforePath) throws IOException, ParsingException {
         if (isJsonFile(beforePath)) {
             if (isLitterBoxReport(beforePath)) {
-                return loadIssuesFromJson(beforePath);
+                // LitterBox JSON report has no program for structural mapping
+                return new BeforeData(loadIssuesFromJson(beforePath), null);
             } else {
-                // It's a project.json file, parse as Scratch project
-                return analyzeAndConvertToDTO(beforePath);
+                // project.json file
+                return analyzeAndReturnBoth(beforePath);
             }
         } else {
-            return analyzeAndConvertToDTO(beforePath);
+            // .sb3 file
+            return analyzeAndReturnBoth(beforePath);
         }
+    }
+
+    private BeforeData analyzeAndReturnBoth(Path projectPath) throws ParsingException {
+        Program program = parseProject(projectPath);
+        Set<Issue> issues = analyzeProgram(program);
+
+        Map<String, List<IssueDTO>> issuesByFinder = convertToSortedDTOs(issues);
+        return new BeforeData(issuesByFinder, program);
+    }
+
+    // ========== Program Analysis ==========
+
+    private Program parseProject(Path projectPath) throws ParsingException {
+        Scratch3Parser parser = new Scratch3Parser();
+        return parser.parseFile(projectPath.toFile());
     }
 
     private Set<Issue> analyzeProgram(Program program) {
@@ -117,19 +137,40 @@ public class DiffAnalyzer {
         return analyzer.analyze(program);
     }
 
-    private Map<String, List<IssueDTO>> analyzeAndConvertToDTO(Path projectPath)
-            throws ParsingException {
-        Program program = parser.parseFile(projectPath.toFile());
-        Set<Issue> issues = analyzeProgram(program);
+    // ========== Issue Conversion ==========
+
+    /**
+     * Converts issues to DTOs with deterministic ordering.
+     *
+     * <p>Sorting BEFORE issues complements {@link IssueCategorizer} which
+     * sorts AFTER issues. In Pass 3 (hint fallback), when multiple issues share the
+     * same actor + hint, iteration order determines matching priority.
+     */
+    private Map<String, List<IssueDTO>> convertToSortedDTOs(Set<Issue> issues) {
+        List<Issue> sortedIssues = issues.stream()
+                .sorted(createIssueComparator())
+                .toList();
 
         Map<String, List<IssueDTO>> result = new HashMap<>();
-        for (Issue issue : issues) {
+        for (Issue issue : sortedIssues) {
             String finderName = issue.getFinderName();
-            IssueDTO dto = IssueConverter.toMinimalDTO(issue);
-            result.computeIfAbsent(finderName, k -> new ArrayList<>()).add(dto);
+            result.computeIfAbsent(finderName, k -> new ArrayList<>())
+                    .add(IssueConverter.toMinimalDTO(issue));
         }
         return result;
     }
+
+    private Comparator<Issue> createIssueComparator() {
+        return Comparator
+                .comparing((Issue i) -> i.getActorName() == null ? "" : i.getActorName())
+                .thenComparing(i -> {
+                    var loc = i.getCodeLocation();
+                    return loc != null ? AstNodeUtil.getBlockId(loc) : "";
+                }, Comparator.nullsFirst(Comparator.naturalOrder()))
+                .thenComparingInt(Issue::getId);
+    }
+
+    // ========== JSON Loading ==========
 
     private Map<String, List<IssueDTO>> loadIssuesFromJson(Path jsonPath)
             throws IOException, ParsingException {
@@ -150,6 +191,8 @@ public class DiffAnalyzer {
                 .collect(Collectors.toSet());
     }
 
+    // ========== File Type Detection ==========
+
     private boolean isJsonFile(Path path) {
         return path.toString().toLowerCase().endsWith(".json");
     }
@@ -157,18 +200,10 @@ public class DiffAnalyzer {
     /**
      * Detects whether a JSON file is a LitterBox report or a project.json.
      *
-     * <p>This method checks for the presence of the "targets" field which is
-     * unique to Scratch project.json files. LitterBox reports have "metrics"
-     * and "issues" fields instead.
-     *
-     * @param path path to the JSON file
-     * @return true if the file is a LitterBox report, false if it's a project.json
-     * @throws IOException if the file cannot be read
+     * <p>project.json files have a "targets" field; LitterBox reports do not.
      */
     private boolean isLitterBoxReport(Path path) throws IOException {
-        // Read the first portion of the file to check for distinguishing fields
         String content = Files.readString(path);
-        // project.json files have a "targets" field; LitterBox reports do not
         return !content.contains("\"targets\"");
     }
 }
