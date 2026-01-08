@@ -259,6 +259,7 @@ public class Main implements Callable<Integer> {
 
             final String detector = String.join(",", detectors);
             final BugAnalyzer analyzer;
+
             if (priorResultPath == null) {
                 analyzer = new BugAnalyzer(
                         translator,

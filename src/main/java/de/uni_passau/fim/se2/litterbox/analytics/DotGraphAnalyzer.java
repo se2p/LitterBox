@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.DotVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.dependency.*;
+import de.uni_passau.fim.se2.litterbox.utils.ScratchBlocksLabeler;
 
 public class DotGraphAnalyzer implements ProgramAnalyzer<String> {
 
@@ -46,14 +47,16 @@ public class DotGraphAnalyzer implements ProgramAnalyzer<String> {
         cfgVisitor.visit(program);
         ControlFlowGraph cfg = cfgVisitor.getControlFlowGraph();
 
+        ScratchBlocksLabeler labeler = new ScratchBlocksLabeler(program);
+
         return switch (graphType) {
-            case CFG -> cfg.toDotString();
-            case CDG -> new ControlDependenceGraph(cfg).toDotString();
-            case DDG -> new DataDependenceGraph(cfg).toDotString();
-            case DT -> new DominatorTree(cfg).toDotString();
-            case PDT -> new PostDominatorTree(cfg).toDotString();
-            case TDG -> new TimeDependenceGraph(cfg).toDotString();
-            case PDG -> new ProgramDependenceGraph(cfg).toDotString();
+            case CFG -> cfg.toDotString(labeler);
+            case CDG -> new ControlDependenceGraph(cfg).toDotString(labeler);
+            case DDG -> new DataDependenceGraph(cfg).toDotString(labeler);
+            case DT -> new DominatorTree(cfg).toDotString(labeler);
+            case PDT -> new PostDominatorTree(cfg).toDotString(labeler);
+            case TDG -> new TimeDependenceGraph(cfg).toDotString(labeler);
+            case PDG -> new ProgramDependenceGraph(cfg).toDotString(labeler);
             default -> throw new IllegalStateException("Unexpected value: " + graphType);
         };
     }

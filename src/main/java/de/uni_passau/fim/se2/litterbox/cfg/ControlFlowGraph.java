@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -148,22 +149,42 @@ public class ControlFlowGraph {
     }
 
     public String toDotString() {
+        return toDotString(node -> node.toString());
+    }
+
+    public String toDotString(Function<CFGNode, String> labelProvider) {
         StringBuilder builder = new StringBuilder();
 
         builder.append("digraph {");
         builder.append(System.lineSeparator());
+
+        for (CFGNode node : graph.nodes()) {
+            builder.append("  \"");
+            builder.append(node);
+            builder.append("\" [label=\"");
+            builder.append(escapeDotLabel(labelProvider.apply(node)));
+            builder.append("\"];");
+            builder.append(System.lineSeparator());
+        }
 
         for (EndpointPair<CFGNode> edge : graph.edges()) {
             builder.append("  \"");
             builder.append(edge.nodeU());
             builder.append("\" -> \"");
             builder.append(edge.nodeV());
-            builder.append("\";");
+            builder.append("\" [penwidth=2];");
             builder.append(System.lineSeparator());
         }
 
         builder.append('}');
         return builder.toString();
+    }
+
+    private String escapeDotLabel(String label) {
+        if (label == null) {
+            return "";
+        }
+        return label.replace("\"", "\\\"").replace("\n", "\\n");
     }
 
     public Set<Definition> getDefinitions() {
@@ -258,4 +279,38 @@ public class ControlFlowGraph {
         }
     }
 
+    public void ensureAllNodesReachableFromEntry() {
+        Set<CFGNode> reachable = new HashSet<>();
+        List<CFGNode> queue = new ArrayList<>();
+        queue.add(entryNode);
+        reachable.add(entryNode);
+
+        int head = 0;
+        while (head < queue.size()) {
+            CFGNode current = queue.get(head++);
+            for (CFGNode successor : graph.successors(current)) {
+                if (reachable.add(successor)) {
+                    queue.add(successor);
+                }
+            }
+        }
+
+        for (CFGNode node : graph.nodes()) {
+            if (!reachable.contains(node)) {
+                graph.putEdge(entryNode, node);
+                // Continue BFS from the newly connected node to find its reachable subgraph
+                // This avoids adding edges to every single node in a disconnected component, just the root we found
+                reachable.add(node);
+                queue.add(node);
+                while (head < queue.size()) {
+                    CFGNode current = queue.get(head++);
+                    for (CFGNode successor : graph.successors(current)) {
+                        if (reachable.add(successor)) {
+                            queue.add(successor);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
