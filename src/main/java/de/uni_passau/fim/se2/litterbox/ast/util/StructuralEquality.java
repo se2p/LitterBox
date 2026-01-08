@@ -272,7 +272,7 @@ public final class StructuralEquality {
 
     private static class LeafEqualityVisitor implements
             ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor,
-            TranslateExtensionVisitor {
+            TranslateExtensionVisitor, VideoSensingExtensionVisitor {
 
         private static final double EPSILON = 1e-4;
 
