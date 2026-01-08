@@ -73,7 +73,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
         .logo > svg {
             height: 3em;
             vertical-align: middle;
-            margin-right: 15px;
+            margin-bottom: 1em;
         }
 
         .report-header h1 {
@@ -348,9 +348,79 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
         .hidden {
             display: none !important;
         }
+
+        /* collapsibles */
+        .collapsible-header {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+
+        .collapsible-header:hover {
+            background-color: #f8f9fa;
+        }
+
+        .toggle-icon {
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+            font-size: 0.8em;
+            color: #777;
+        }
+
+        .issue-section.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .issue-section.collapsed .collapsible-content {
+            display: none;
+        }
+
+        .refactoring-toggle {
+            background: #e9ecef;
+            border: 1px solid #ced4da;
+            color: #495057;
+            cursor: pointer;
+            font-size: 0.85em;
+            text-decoration: none;
+            margin-top: 10px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            transition: background-color 0.2s;
+        }
+
+        .refactoring-toggle:hover {
+            background-color: #dee2e6;
+        }
+
+        .refactoring-content {
+            display: none;
+            margin-top: 10px;
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            border-left: 4px solid #28a745;
+        }
+
+        #back-to-top {
+            position: fixed;
+            bottom: 20px;
+            float: right;
+            right: 40px;
+            max-width: 30px;
+            border-color: rgba(85, 85, 85, 0.2);
+            background-color: rgb(100, 100, 100);
+            color: white;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-size: 18pt;
+        }
     </style>
 </head>
 <body>
+<a id="top"></a>
 <header class="report-header boxed">
     <div class="logo">
         $unsafe{model.logo()}
@@ -372,9 +442,9 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
         </ul>
     </div>
     <div class="main-content boxed">
-        <a id="top"></a>
         <div id="main-content-block"></div>
     </div>
+    <a href="#top" id="back-to-top">▲</a>
 </main>
 
 <footer>
@@ -424,84 +494,90 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             <p style="text-align: center; color: #28a745;">${model.translator().getInfo("no_issues_found")}</p>
         @else
             @for (HTMLReportGenerator.IssueGroup issueGroup : project.issues())
-                <details id="section-${issueGroup.category()}-${project.id()}" class="issue-section">
-                    <summary
+                <div id="section-${issueGroup.category()}-${project.id()}" class="issue-section">
+                    <h2
                             id="${issueGroup.category()}-${project.id()}"
                             class="collapsible-header"
                             onclick="toggleSection('${issueGroup.category()}-${project.id()}')"
-                    ><strong>${model.translator().getInfo(issueGroup.category())}</strong></summary>
-                    <div class="filter-container" id="filter-ui-${issueGroup.category()}-${project.id()}">
-                        <div class="filter-row">
-                            <!-- finder filter -->
-                            <div class="filter-group">
-                                !{var selectIdFinder = "finder-select-" + issueGroup.category() + "-" + project.id();}
-                                <label for="${selectIdFinder}">${model.translator().getInfo("filter_by_finder")}</label>
-                                <select id="${selectIdFinder}" onchange="filterSection('${issueGroup.category()}', '${project.id()}')" class="finder-select">
-                                    <option value="all">${model.translator().getInfo("filter_all_finders")}</option>
-                                    @for (var entry : issueGroup.finders().entrySet())
-                                        <option value="${entry.getKey()}">${entry.getValue()}</option>
-                                    @endfor
-                                </select>
-                            </div>
-                            <!-- sprite filter -->
-                            <div class="filter-group">
-                                !{var selectIdSprite = "sprite-select-" + issueGroup.category() + "-" + project.id();}
-                                <label for="${selectIdSprite}">${model.translator().getInfo("filter_by_sprite")}</label>
-                                <select id="${selectIdSprite}" onchange="filterSection('${issueGroup.category()}', '${project.id()}')" class="sprite-select">
-                                    <option value="all">${model.translator().getInfo("filter_all_sprites")}</option>
-                                    @for (var sprite : issueGroup.sprites())
-                                        <option value="${sprite}">${sprite}</option>
-                                    @endfor
-                                </select>
+                    ><span class="toggle-icon">▼</span>${model.translator().getInfo(issueGroup.category())}</h2>
+                    <div id="content-${issueGroup.category()}-${project.id()}" class="collapsible-content">
+                        <p class="category-description">${model.translator().getInfo("description_" + issueGroup.category())}</p>
+                        <div class="filter-container" id="filter-ui-${issueGroup.category()}-${project.id()}">
+                            <div class="filter-row">
+                                <!-- finder filter -->
+                                <div class="filter-group">
+                                    !{var selectIdFinder = "finder-select-" + issueGroup.category() + "-" + project.id();}
+                                    <label for="${selectIdFinder}">${model.translator().getInfo("filter_by_finder")}</label>
+                                    <select id="${selectIdFinder}" onchange="filterSection('${issueGroup.category()}', '${project.id()}')" class="finder-select">
+                                        <option value="all">${model.translator().getInfo("filter_all_finders")}</option>
+                                        @for (var entry : issueGroup.finders().entrySet())
+                                            <option value="${entry.getKey()}">${entry.getValue()}</option>
+                                        @endfor
+                                    </select>
+                                </div>
+                                <!-- sprite filter -->
+                                <div class="filter-group">
+                                    !{var selectIdSprite = "sprite-select-" + issueGroup.category() + "-" + project.id();}
+                                    <label for="${selectIdSprite}">${model.translator().getInfo("filter_by_sprite")}</label>
+                                    <select id="${selectIdSprite}" onchange="filterSection('${issueGroup.category()}', '${project.id()}')" class="sprite-select">
+                                        <option value="all">${model.translator().getInfo("filter_all_sprites")}</option>
+                                        @for (var sprite : issueGroup.sprites())
+                                            <option value="${sprite}">${sprite}</option>
+                                        @endfor
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div id="content-${issueGroup.category()}-${project.id()}" class="containered">
-                        <p class="category-description">${model.translator().getInfo("description_" + issueGroup.category())}</p>
-                        @for (var issueEntry : issueGroup.issues().entrySet())
-                            @for (HTMLReportGenerator.RenderedIssue issue : issueEntry.getValue())
-                                <div
-                                        class="issue"
-                                        data-type="${issue.category()}"
-                                        data-finder="${issue.finder()}"
-                                        data-sprite="${issue.sprite()}"
-                                >
-                                    <div class="issue-header">
-                                        <span class="issue-title">${issue.translatedFinderName()}</span>
-                                        <span class="severity ${issue.severityClass()}">
-                                            <span class="severity-icon">$unsafe{issue.severityIcon()}</span>
-                                            ${model.translator().getInfo("severity_" + issue.severity())}
-                                        </span>
-                                    </div>
-                                    <div class="hint">
-                                        $unsafe{issue.hintText()}
-                                    </div>
-                                    @if (issue.scratchBlocks() != null && !issue.scratchBlocks().isEmpty())
-                                        <pre class="blocks">
-                                            $unsafe{issue.scratchBlocks()}
-                                        </pre>
-                                    @endif
-                                    @if (issue.refactoredScript() != null && !issue.refactoredScript().isEmpty())
-                                        <button class="refactoring-toggle" onclick="toggleRefactoring('${issue.id()}')">
-                                            ${model.translator().getInfo("show_fix")}
-                                        </button>
-                                        <div id="refactoring-${issue.id()}" class="refactoring-content">
-                                            <pre class="blocks">
-                                                $unsafe{issue.refactoredScript()}
-                                            </pre>
+                        <div id="content-${issueGroup.category()}-${project.id()}" class="containered">
+                            @for (var issueEntry : issueGroup.issues().entrySet())
+                                @for (HTMLReportGenerator.RenderedIssue issue : issueEntry.getValue())
+                                    <div
+                                            class="issue"
+                                            data-type="${issue.category()}"
+                                            data-finder="${issue.finder()}"
+                                            data-sprite="${issue.sprite()}"
+                                    >
+                                        <div class="issue-header">
+                                            <span class="issue-title">${issue.translatedFinderName()}</span>
+                                            <span class="severity ${issue.severityClass()}">
+                                                <span class="severity-icon">$unsafe{issue.severityIcon()}</span>
+                                                ${model.translator().getInfo("severity_" + issue.severity())}
+                                            </span>
                                         </div>
-                                    @endif
-                                </div>
+                                        <div class="hint">
+                                            $unsafe{issue.hintText()}
+                                        </div>
+                                        @if (issue.scratchBlocks() != null && !issue.scratchBlocks().isEmpty())
+                                            <pre class="blocks">
+                                                $unsafe{issue.scratchBlocks()}
+                                            </pre>
+                                        @endif
+                                        @if (issue.refactoredScript() != null && !issue.refactoredScript().isEmpty())
+                                            <button class="refactoring-toggle" onclick="toggleRefactoring('${issue.id()}')">
+                                                ${model.translator().getInfo("show_fix")}
+                                            </button>
+                                            <div id="refactoring-${issue.id()}" class="refactoring-content">
+                                                <pre class="blocks">
+                                                    $unsafe{issue.refactoredScript()}
+                                                </pre>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endfor
                             @endfor
-                        @endfor
+                        </div>
                     </div>
-                </details>
+                </div>
             @endfor
         @endif
 
-        <details id="section-graphs-${project.id()}" class="issue-section">
-            <summary><strong>${model.translator().getInfo("label_graphs")}</strong></summary>
-            <div class="graphs-container">
+        <div id="section-graphs-${project.id()}" class="issue-section collapsible">
+            <h2
+                    id="graphs-${project.id()}"
+                    class="collapsible-header"
+                    onclick="toggleSection('graphs-${project.id()}')"
+            ><span class="toggle-icon">▼</span>${model.translator().getInfo("label_graphs")}</h2>
+            <div id="content-graphs-${project.id()}" class="graphs-container collapsible-content">
                 <div class="graph-tabs">
                 @for (var graph : ForSupport.of(project.graphs()))
                     <div
@@ -520,20 +596,26 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                 </div>
                 @endfor
             </div>
-        </details>
+        </div>
 
-        <details id="section-metrics-${project.id()}" class="issue-section">
-            <summary><strong>${model.translator().getInfo("label_metrics")}</strong></summary>
-            <p class="category-description">${model.translator().getInfo("description_metrics")}</p>
-            <div class="metrics-container">
-                @for (var metric : project.metrics())
-                    <div class="metric-item">
-                        <span class="metric-name">${metric.name()}</span>
-                        <span class="metric-value">${String.format("%.2f", metric.value())}</span>
-                    </div>
-                @endfor
+        <div id="section-metrics-${project.id()}" class="issue-section">
+            <h2
+                    id="metrics-${project.id()}"
+                    class="collapsible-header"
+                    onclick="toggleSection('metrics-${project.id()}')"
+            ><span class="toggle-icon">▼</span>${model.translator().getInfo("label_metrics")}</h2>
+            <div id="content-metrics-${project.id()}" class="collapsible-content">
+                <p class="category-description">${model.translator().getInfo("description_metrics")}</p>
+                <div class="metrics-container">
+                    @for (var metric : project.metrics())
+                        <div class="metric-item">
+                            <span class="metric-name">${metric.name()}</span>
+                            <span class="metric-value">${String.format("%.2f", metric.value())}</span>
+                        </div>
+                    @endfor
+                </div>
             </div>
-        </details>
+        </div>
     </template>
 @endfor
 
@@ -553,10 +635,6 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
 
         });
     }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        renderScratchBlocks();
-    });
 
     // project switching
     function selectProject(projectId, projectName) {
@@ -710,6 +788,13 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             console.error(e);
             container.innerHTML = '<div style="color:red; padding:20px;">Error rendering graph: ' + e + '</div>';
         });
+    }
+
+    function toggleSection(idSuffix) {
+        const section = document.getElementById('section-' + idSuffix);
+        if (section) {
+            section.classList.toggle('collapsed');
+        }
     }
 
     function filterSection(category, projectId) {
