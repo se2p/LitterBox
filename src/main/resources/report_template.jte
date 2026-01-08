@@ -1,4 +1,3 @@
-@import de.uni_passau.fim.se2.litterbox.analytics.IssueType
 @import de.uni_passau.fim.se2.litterbox.report.HTMLReportGenerator
 @import de.uni_passau.fim.se2.litterbox.report.HTMLReportGenerator.TemplateModel
 @import de.uni_passau.fim.se2.litterbox.report.HTMLReportGenerator.ProjectModel
@@ -694,7 +693,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
         const clone = document.importNode(template.content, true);
 
         const mainBody = document.getElementById('main-content-block');
-        mainBody.replaceChildren(clone)
+        mainBody.replaceChildren(clone);
 
         renderScratchBlocks();
         showGraph('CFG', projectId);
@@ -703,7 +702,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
     // graphs
     window.graphData = window.graphData || {};
     @for (var project : ForSupport.of(model.projects()))
-        window.graphData['${project.get().id()}'] = {
+        window.graphData['$unsafe{project.get().id()}'] = {
             @for (var entry : project.get().graphs())
                 '${entry.type()}': '${entry.dotGraph()}',
             @endfor
@@ -711,7 +710,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
 
         @if (project.isFirst())
             window.addEventListener('load', function () {
-                showGraph('CFG', '${project.get().id()}')
+                showGraph('CFG', '$unsafe{project.get().id()}')
             });
         @endif
     @endfor
@@ -893,8 +892,6 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                 issue.classList.add('hidden');
             }
         });
-
-        renderScratchBlocks();
     }
 
     const initialSelected = document.querySelector('.project-nav-item.active');

@@ -62,23 +62,17 @@ public class HTMLReportGeneratorTest implements JsonTest {
         assertThat(html).contains("<span class=\"stat-label\">Sprites</span>"); // Check stat label
         assertThat(html).contains("<pre class=\"blocks\">");
 
-        // Multi-project structure checks
-        // For single project, we expect "single-project" class and NO nav items
-        assertThat(html).contains("class=\"single-project\"");
-        assertThat(html).doesNotContain("class=\"project-nav-item\"");
+        // for single projects we do not have a navigation sidebar
+        assertThat(html).contains("class=\"sidebar boxed\" style=\"display: none;\"");
 
         // Should contain the new header
-        assertThat(html).contains("Code Report for Project");
-        assertThat(html).contains("class=\"report-header\"");
+        assertThat(html).contains("<h1>Project ");
+        assertThat(html).contains("id=\"project-name-header\"");
 
         // Logo check
         assertThat(html).doesNotContain("{{LOGO}}");
-        if (!html.contains("data:image/png;base64")) {
-            assertThat(html).contains("<img src=\"\" class=\"header-logo\">"); // src might be empty in test if resource missing
-        } else {
-            assertThat(html).contains("data:image/png;base64");
-            assertThat(html).contains("class=\"header-logo\"");
-        }
+        assertThat(html).contains("data:image/png;base64");
+        assertThat(html).contains("class=\"logo\"");
     }
 
     @Test
@@ -172,24 +166,24 @@ public class HTMLReportGeneratorTest implements JsonTest {
 
         // For multi project, we DO expect sidebar
         assertThat(html).doesNotContain("class=\"single-project\"");
-        assertThat(html).contains("class=\"sidebar\"");
+        assertThat(html).contains("class=\"sidebar");
 
         // Check sidebar contains both projects
         assertThat(html).contains("ProjectA");
         assertThat(html).contains("ProjectB");
-        assertThat(html).contains("onclick=\"showProject('project-ProjectA')\"");
-        assertThat(html).contains("onclick=\"showProject('project-ProjectB')\"");
+        assertThat(html).contains("onclick=\"selectProject('project-ProjectA'");
+        assertThat(html).contains("onclick=\"selectProject('project-ProjectB'");
 
         // Check content sections exist
-        assertThat(html).contains("id=\"project-ProjectA\"");
-        assertThat(html).contains("id=\"project-ProjectB\"");
+        assertThat(html).contains("id=\"project-template-project-ProjectA\"");
+        assertThat(html).contains("id=\"project-template-project-ProjectB\"");
 
         // Check Header NOT present
         assertThat(html).doesNotContain("class=\"report-header\"");
         assertThat(html).doesNotContain("Code Report for");
 
-        // Check Project Titles ARE present (h2)
-        assertThat(html).contains("<h2 class=\"project-title\">ProjectA</h2>");
+        // Check Project Titles ARE present
+        assertThat(html).contains("id=\"project-name-header\"");
 
         // Check issues for ProjectA are present
         // We now use internal name for data-finder, e.g. "FloatingPointComparison" (class simple name or name field)
@@ -240,7 +234,7 @@ public class HTMLReportGeneratorTest implements JsonTest {
         String html = os.toString();
 
         assertThat(html).contains("id=\"section-graphs-project-Project\"");
-        assertThat(html).contains("class=\"graphs-container\"");
+        assertThat(html).contains("class=\"graphs-container");
         // Check for scripts being included (embedded)
         assertThat(html).contains("Viz.js");
         assertThat(html).contains("svg-pan-zoom");
@@ -251,10 +245,10 @@ public class HTMLReportGeneratorTest implements JsonTest {
         // Check for graphviz container
         assertThat(html).contains("id=\"graphviz-CFG-project-Project\"");
         // Check for JS data injection
-        assertThat(html).contains("window.graphData['project-Project'] = {};");
-        assertThat(html).contains("window.graphData['project-Project']['CFG'] = \"");
+        assertThat(html).contains("window.graphData['project-Project'] = {");
+        assertThat(html).contains("'CFG': '");
         // Check for render call
-        assertThat(html).contains("Viz(data, 'svg')");
+        assertThat(html).contains("Viz.instance().then(viz =>");
         assertThat(html).contains("typeof svgPanZoom !== 'undefined'");
     }
 }

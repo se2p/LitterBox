@@ -40,7 +40,6 @@ import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.TemplateOutput;
 import gg.jte.output.PrintWriterOutput;
-import gg.jte.resolve.ResourceCodeResolver;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
@@ -57,13 +56,12 @@ import java.util.stream.Collectors;
  */
 public class HTMLReportGenerator implements ReportGenerator {
 
-    private static final TemplateEngine templateEngine = TemplateEngine.create(
-            new ResourceCodeResolver(""), ContentType.Html
-    );
-    // the one above only for local development, if the template does not change much, we should switch to the one
-    // below to have the precompiled template as part of the JAR (otherwise a JDK would be required when running
-    // LitterBox)
-    // private static final TemplateEngine templateEngine = TemplateEngine.createPrecompiled(ContentType.Html);
+    // private static final TemplateEngine templateEngine = TemplateEngine.create(
+    //         new ResourceCodeResolver(""), ContentType.Html
+    // );
+    // The one above only for local development to support quick reloading when the template changes.
+    // We cannot use it for the final JAR, since otherwise a JDK would be required when running LitterBox.
+    private static final TemplateEngine templateEngine = TemplateEngine.createPrecompiled(ContentType.Html);
 
     private static final Escaper HTML_ESCAPER = HtmlEscapers.htmlEscaper();
 
@@ -356,9 +354,9 @@ public class HTMLReportGenerator implements ReportGenerator {
 
         StringBuilder styled = new StringBuilder(dot.substring(0, idx + 1));
         styled.append("\n");
-        styled.append("  graph [fontname=\"Segoe UI, sans-serif\", bgcolor=\"transparent\", ranksep=\"0.5\", nodesep=\"0.2\", ratio=\"0.75\"];\n");
-        styled.append("  node [fontname=\"Segoe UI, sans-serif\", shape=\"box\", style=\"filled,rounded\", fillcolor=\"#ffffff\", color=\"#007bff\", penwidth=\"0\", margin=\"0.1,0.1\"];\n");
-        styled.append("  edge [fontname=\"Segoe UI, sans-serif\", color=\"#6c757d\", penwidth=\"0.8\", arrowsize=\"0.8\"];\n");
+        styled.append("  graph [fontname=\"sans-serif\", bgcolor=\"transparent\", ranksep=\"0.5\", nodesep=\"0.2\", ratio=\"0.75\"];\n");
+        styled.append("  node [fontname=\"sans-serif\", shape=\"box\", style=\"filled,rounded\", fillcolor=\"#ffffff\", color=\"#007bff\", penwidth=\"0\", margin=\"0.1,0.1\"];\n");
+        styled.append("  edge [fontname=\"sans-serif\", color=\"#6c757d\", penwidth=\"0.8\", arrowsize=\"0.8\"];\n");
 
         String rest = dot.substring(idx + 1);
         rest = rest.replaceAll("(label=\"(Entry|Exit)\")", "$1, penwidth=\"1.5\"");

@@ -400,6 +400,12 @@
             <groupId>gg.jte</groupId>
             <artifactId>jte</artifactId>
             <version>${jte.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>gg.jte</groupId>
+                    <artifactId>jte-kotlin</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
