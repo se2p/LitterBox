@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -75,11 +75,26 @@ public class JSONStringCreationTest implements JsonTest {
         final var program = getAST("src/test/fixtures/refactoring/NPE.json");
         // This should not throw NPE
         String json = JSONStringCreator.createProgramJSONString(program);
-        
+
         // Check if the json results in the same program
         Scratch3Parser parser = new Scratch3Parser();
         Program parsedProgram = parser.parseString("NPE", json);
-        
+
         Assertions.assertTrue(StructuralEquality.areStructurallyEqual(program, parsedProgram));
+    }
+
+    @Test
+    void testEscapeQuotesInString() throws ParsingException, IOException {
+        final var program = getAST("src/test/fixtures/escape-special-chars.json");
+        final String json = JSONStringCreator.createProgramJSONString(program);
+        assertThat(json).contains("\\\"the quotes should have been escaped\\\"");
+    }
+
+    @Test
+    void testEscapeQuotesInBroadcastMessage() throws ParsingException, IOException {
+        final var program = getAST("src/test/fixtures/escape-special-chars-broadcast-message.json");
+        final String json = JSONStringCreator.createProgramJSONString(program);
+        assertThat(json).contains("the \\\"quotes\\\" should have been escaped");
+        assertThat(json).doesNotContain("the \"quotes\" should have been escaped");
     }
 }

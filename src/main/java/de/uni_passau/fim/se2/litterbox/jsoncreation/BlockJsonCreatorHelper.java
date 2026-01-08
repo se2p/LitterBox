@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -104,7 +104,7 @@ public abstract class BlockJsonCreatorHelper {
         StringBuilder jsonString = new StringBuilder();
         jsonString.append("{");
         createField(jsonString, fieldName).append("[");
-        jsonString.append("\"").append(fieldValue).append("\",");
+        jsonString.append("\"").append(escape(fieldValue)).append("\",");
         if (fieldReference == null) {
             //No " needed because it should represent the value null
             jsonString.append((String) null);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -54,11 +54,10 @@ public class MergeScriptsFinder extends AbstractDependencyRefactoringFinder {
      * this method simply applies the merge and checks for dependencies in
      * the resulting script that span across the two parent scripts.
      */
-    private boolean hasDependencies(Script script1, Script script2) {
-
+    protected boolean hasDependencies(Script script1, Script script2) {
         MergeScripts refactoring = new MergeScripts(script1, script2);
         Script merged = refactoring.getMergedScript();
-        return hasDependencies(script1, script2, merged);
+        return super.hasDependencies(script1, merged);
     }
 
 

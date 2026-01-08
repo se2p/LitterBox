@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -35,6 +35,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
@@ -43,40 +44,42 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetSoundEffectTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SetVolumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPosXY;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointTowards;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.cfg.Attribute;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.Defineable;
 import de.uni_passau.fim.se2.litterbox.cfg.Definition;
 import de.uni_passau.fim.se2.litterbox.cfg.Use;
-import de.uni_passau.fim.se2.litterbox.cfg.Attribute;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysis;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysisBuilder;
 import de.uni_passau.fim.se2.litterbox.dataflow.ForwardFlowDirection;
 import de.uni_passau.fim.se2.litterbox.dataflow.TransferFunction;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.Arrays;
@@ -85,8 +88,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-
 
 public class RedundantAssignment extends AbstractIssueFinder {
 
@@ -98,11 +99,11 @@ public class RedundantAssignment extends AbstractIssueFinder {
     public Set<Issue> check(Program program) {
         Preconditions.checkNotNull(program);
 
-        ControlFlowGraph cfg = buildCFG(program);        
-        DataflowAnalysis<Defineable> livenessAnalysis = performLivenessAnalysis(cfg, program);        
-        DataflowAnalysis<Definition> reachingCandidatesAnalysis = performReachingAnalysis(cfg, program);
-        Set<Issue> issues = findRedundantAssignments(cfg, livenessAnalysis, reachingCandidatesAnalysis, program);
-        
+        ControlFlowGraph cfg = buildCFG(program);
+        DataflowAnalysis<Defineable> livenessAnalysis = performLivenessAnalysis(cfg);
+        DataflowAnalysis<ReachingDefinitionState> reachingAnalysis = performReachingAnalysis(cfg);
+        Set<Issue> issues = findRedundantAssignments(cfg, livenessAnalysis, reachingAnalysis, program);
+
         return issues;
     }
 
@@ -112,7 +113,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
         return visitor.getControlFlowGraph();
     }
 
-    private DataflowAnalysis<Defineable> performLivenessAnalysis(ControlFlowGraph cfg, Program program) {
+    private DataflowAnalysis<Defineable> performLivenessAnalysis(ControlFlowGraph cfg) {
         // We use a custom Transfer Function that treats Exit nodes as "Using All Variables"
         // to distinguish "Overwritten" from "Unused"
         DataflowAnalysisBuilder<Defineable> builder = new DataflowAnalysisBuilder<>(cfg);
@@ -125,19 +126,24 @@ public class RedundantAssignment extends AbstractIssueFinder {
         return analysis;
     }
 
-    private DataflowAnalysis<Definition> performReachingAnalysis(ControlFlowGraph cfg, Program program) {
-        // Build Forward Analysis to track reaching unused definitions
-        DataflowAnalysisBuilder<Definition> builder = new DataflowAnalysisBuilder<>(cfg);
-        DataflowAnalysis<Definition> analysis = builder.withForward()
+    private DataflowAnalysis<ReachingDefinitionState> performReachingAnalysis(ControlFlowGraph cfg) {
+        // Build Forward Analysis to track reaching definitions and their usage status
+        DataflowAnalysisBuilder<ReachingDefinitionState> builder = new DataflowAnalysisBuilder<>(cfg);
+        DataflowAnalysis<ReachingDefinitionState> analysis = builder.withForward()
                 .withMay()
-                .withTransferFunction(new ReachingUnusedDefinitionsTransferFunction())
+                .withTransferFunction(new ReachingDefinitionsTransferFunction())
                 .build();
 
         analysis.applyAnalysis();
         return analysis;
     }
 
-    private Set<Issue> findRedundantAssignments(ControlFlowGraph cfg, DataflowAnalysis<Defineable> livenessAnalysis, DataflowAnalysis<Definition> reachingAnalysis, Program program) {
+    private Set<Issue> findRedundantAssignments(
+            ControlFlowGraph cfg,
+            DataflowAnalysis<Defineable> livenessAnalysis,
+            DataflowAnalysis<ReachingDefinitionState> reachingAnalysis,
+            Program program
+    ) {
         Set<Issue> issues = new LinkedHashSet<>();
         Set<Definition> alwaysRedundantDefs = new HashSet<>();
 
@@ -163,43 +169,61 @@ public class RedundantAssignment extends AbstractIssueFinder {
             if (definitions.isEmpty()) {
                 continue;
             }
-            Set<Definition> reachingDefs = reachingAnalysis.getDataflowFacts(node);
+            Set<ReachingDefinitionState> reachingStates = reachingAnalysis.getDataflowFacts(node);
             for (Definition def : definitions) {
-                checkPossibleRedundancy(def, reachingDefs, program, issues, alwaysRedundantDefs);
+                checkPossibleRedundancy(def, reachingStates, program, issues, alwaysRedundantDefs);
             }
         }
 
         return Collections.unmodifiableSet(issues);
     }
 
-
-    private void checkPossibleRedundancy(Definition currentDef, Set<Definition> reachingDefs, Program program, Set<Issue> issues, Set<Definition> alwaysRedundantDefs) {
+    private void checkPossibleRedundancy(Definition currentDef,
+                                         Set<ReachingDefinitionState> reachingStates,
+                                         Program program,
+                                         Set<Issue> issues,
+                                         Set<Definition> alwaysRedundantDefs) {
         Defineable variable = currentDef.getDefinable();
         CFGNode currentNode = currentDef.getDefinitionSource();
         ASTNode stmt = currentNode.getASTNode();
-        
+
+        // If the assignment uses a variable, this variable may be changed concurrently,
+        // so we can't know if it is redundant
         if (stmt != null && isDynamicAssignment(stmt)) {
-             return;
+            return;
         }
 
         // If the variable is USED in the same node (e.g. "change x by 1"), then the reaching definition was used!
-        // So checking "overwrite without use" must incorrectly flag it.
         for (Use use : currentNode.getUses()) {
             if (use.getDefinable().equals(variable)) {
                 return;
             }
         }
 
-        for (Definition reached : reachingDefs) {
+        for (ReachingDefinitionState state : reachingStates) {
+            if (state.isUsed()) {
+                continue; // We only care about unused definitions
+            }
+            Definition reached = state.getDefinition();
+
             if (alwaysRedundantDefs.contains(reached)) {
                 continue;
             }
             if (reached.getDefinable().equals(variable)) {
+
+                // Refinement: If this overwrite point is reached by a definition that is unused on THIS path,
+                // check if it was used on ANY incoming path.
+                // Since the analysis merges facts (May Analysis), if it was used on any path,
+                // reachingStates will contain ReachingDefinitionState(reached, true).
+                if (reachingStates.contains(new ReachingDefinitionState(reached, true))) {
+                    continue; // Suppress (Partially Dead)
+                }
+
                 ASTNode reachedStmt = reached.getDefinitionSource().getASTNode();
                 if (reachedStmt != null && isDynamicAssignment(reachedStmt)) {
-                    continue; 
+                    continue;
                 }
-                
+
                 createAndAddIssue(reached, program, issues, HINT_POSSIBLE);
             }
         }
@@ -259,6 +283,18 @@ public class RedundantAssignment extends AbstractIssueFinder {
         return null;
     }
 
+    /**
+     * Checks if the assignment involves a dynamic value (non-constant).
+     *
+     * <p>This method enumerates all AST nodes that result in a variable or attribute definition
+     * but do not inherently "read" the value (unlike "Change Variable By").
+     * We check these blocks to see if the assigned value is dynamic (e.g., depends on a sensor
+     * or user input). If it is dynamic, we conservatively assume the assignment is necessary
+     * (e.g., updating state in a loop) and suppress redundancy warnings.
+     *
+     * @param statement The AST node performing definitions.
+     * @return true if the assignment is dynamic/interactive and should be ignored; false otherwise.
+     */
     private boolean isDynamicAssignment(ASTNode statement) {
         return switch (statement) {
             case SetVariableTo stmt -> !isConstant(stmt.getExpr());
@@ -276,6 +312,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
             case GoToPos stmt -> isDynamic(stmt.getPosition());
             case PointTowards stmt -> isDynamic(stmt.getPosition());
             case null, default -> false;
+            // AskAndWait would qualify, but dataflow analysis does not consider answer
         };
     }
 
@@ -342,8 +379,13 @@ public class RedundantAssignment extends AbstractIssueFinder {
 
     /**
      * Custom Transfer Function for Liveness Analysis.
-     * Treats all variables/attributes defined in this script as "Live" at exit nodes,
-     * ensuring that an assignment is only redundant if it is overwritten before any use *and* before the end of the script.
+     *
+     * <p>Treats all variables/attributes defined in this script as "Live" at exit nodes, ensuring that an assignment
+     * is only redundant if it is overwritten before any use *and* before the end of the script.
+     *
+     * <p>Note: We track {@code Defineable} (variables) instead of {@code Use} objects.
+     * Since we only care *if* a variable is used, not *where*, tracking the variable itself reduces
+     * the size of the dataflow sets (O(|Variables|) vs O(|Uses|)), improving performance and convergence time.
      */
     private static class RedundantAssignmentTransferFunction implements TransferFunction<Defineable> {
         private final ControlFlowGraph cfg;
@@ -366,10 +408,10 @@ public class RedundantAssignment extends AbstractIssueFinder {
             if (isExitNode(node)) {
                 outFacts.addAll(allDefinedVariables);
             }
-            
+
             // Remove variables defined at this node (Kill)
             for (Definition def : node.getDefinitions()) {
-                 outFacts.remove(def.getDefinable());
+                outFacts.remove(def.getDefinable());
             }
 
             // Add variables used at this node (Gen)
@@ -389,44 +431,86 @@ public class RedundantAssignment extends AbstractIssueFinder {
     }
 
     /**
-     * Forward Transfer Function for Reaching Unused Definitions analysis.
-     * <p>
-     * Tracks a set of Definitions that have been assigned but NOT yet used.
-     * If such a definition reaches another assignment to the same variable, the previous assignment is redundant.
+     * Reaching Definitions Transfer Function that also tracks usage status.
      */
-    private static class ReachingUnusedDefinitionsTransferFunction implements TransferFunction<Definition> {
+    private static class ReachingDefinitionsTransferFunction implements TransferFunction<ReachingDefinitionState> {
 
         @Override
-        public Set<Definition> apply(CFGNode node, Set<Definition> inFacts) {
-            Set<Definition> outFacts = new HashSet<>(inFacts);
+        public Set<ReachingDefinitionState> apply(CFGNode node, Set<ReachingDefinitionState> inFacts) {
+            Set<ReachingDefinitionState> outFacts = new HashSet<>();
 
-            // Kill: Eliminate definitions if their variable is Used or Redefined here
-            // Note: If redefined, the OLD definition is killed (and potentially reported as redundant in the main checker),
-            // and the NEW definition is generated.
-            
             Set<Defineable> usedVariables = new HashSet<>();
             for (Use use : node.getUses()) {
                 usedVariables.add(use.getDefinable());
             }
-            // Implicit uses (halting)
-            for (Defineable def : getHaltingUses(node)) {
-                usedVariables.add(def);
-            }
+            usedVariables.addAll(getHaltingUses(node));
 
             Set<Defineable> definedVariables = new HashSet<>();
             for (Definition def : node.getDefinitions()) {
                 definedVariables.add(def.getDefinable());
             }
 
-            // Kill step
-            outFacts.removeIf(def -> 
-                usedVariables.contains(def.getDefinable()) || definedVariables.contains(def.getDefinable())
-            );
+            // Process IN facts
+            for (ReachingDefinitionState state : inFacts) {
+                // Kill if redefined
+                if (definedVariables.contains(state.getDefinition().getDefinable())) {
+                    continue;
+                }
 
-            // Gen step: Add new definitions from this node
-            outFacts.addAll(node.getDefinitions());
+                // Gen Use: If variable used, mark as used
+                if (usedVariables.contains(state.getDefinition().getDefinable())) {
+                    outFacts.add(new ReachingDefinitionState(state.getDefinition(), true));
+                } else {
+                    outFacts.add(state);
+                }
+            }
+
+            // Gen Definitions: Add new definitions as Unused
+            for (Definition def : node.getDefinitions()) {
+                outFacts.add(new ReachingDefinitionState(def, false));
+            }
 
             return outFacts;
+        }
+    }
+
+    private static class ReachingDefinitionState implements de.uni_passau.fim.se2.litterbox.cfg.DataflowFact {
+        private final Definition definition;
+        private final boolean isUsed;
+
+        public ReachingDefinitionState(Definition definition, boolean isUsed) {
+            this.definition = definition;
+            this.isUsed = isUsed;
+        }
+
+        public Definition getDefinition() {
+            return definition;
+        }
+
+        public boolean isUsed() {
+            return isUsed;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            ReachingDefinitionState that = (ReachingDefinitionState) o;
+            return isUsed == that.isUsed && definition.equals(that.definition);
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * definition.hashCode() + (isUsed ? 1 : 0);
+        }
+
+        @Override
+        public String toString() {
+            return definition.toString() + (isUsed ? "(USED)" : "(UNUSED)");
         }
     }
 
@@ -467,13 +551,23 @@ public class RedundantAssignment extends AbstractIssueFinder {
         return false;
     }
 
+
+
     private static boolean isHalting(Stmt stmt) {
-        return stmt instanceof WaitSeconds
-                || stmt instanceof ThinkForSecs
-                || stmt instanceof SayForSecs
+        return stmt instanceof AskAndWait
+                || stmt instanceof BroadcastAndWait
+                || stmt instanceof DeleteClone
                 || stmt instanceof GlideSecsToXY
                 || stmt instanceof GlideSecsTo
+                || stmt instanceof LoopStmt
                 || stmt instanceof PlaySoundUntilDone
-                || stmt instanceof Speak;
+                || stmt instanceof SayForSecs
+                || stmt instanceof Speak
+                || stmt instanceof StopThisScript
+                || stmt instanceof StopAll
+                || stmt instanceof SwitchBackdropAndWait
+                || stmt instanceof ThinkForSecs
+                || stmt instanceof WaitSeconds
+                || stmt instanceof WaitUntil;
     }
 }

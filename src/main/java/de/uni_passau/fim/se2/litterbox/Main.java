@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 LitterBox contributors
+ * Copyright (C) 2019-2026 LitterBox contributors
  *
  * This file is part of LitterBox.
  *
@@ -36,7 +36,7 @@ import java.util.concurrent.Callable;
 @CommandLine.Command(
         name = "LitterBox",
         mixinStandardHelpOptions = true,
-        version = "LitterBox 1.11-SNAPSHOT",
+        version = "LitterBox 1.12-SNAPSHOT",
         subcommands = {
                 // general commands
                 Main.CheckProgramsSubcommand.class,
