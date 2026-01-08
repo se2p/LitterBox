@@ -69,8 +69,14 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             text-align: center;
         }
 
+        .logo {
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 1em;
+        }
+
         .logo > svg {
-            height: 3em;
+            height: 5em;
             vertical-align: middle;
             margin-bottom: 1em;
         }
@@ -81,6 +87,31 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             margin: 0;
             color: #333;
             font-size: 1.8em;
+        }
+
+        .report-nav > ul {
+            padding-left: 0;
+        }
+
+        .report-nav li {
+            display: inline;
+        }
+
+        .report-nav a {
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            font-size: large;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.2s ease;
+            display: inline-block;
+            background: #f8f9fa;
+        }
+
+        .report-nav a:hover {
+            background-color: #e9ecef;
+            color: #000;
         }
 
         footer {
@@ -117,6 +148,13 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             font-size: 1.15em;
             font-weight: 600;
             color: #333;
+        }
+
+        .category-description {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
         }
 
         .hint {
