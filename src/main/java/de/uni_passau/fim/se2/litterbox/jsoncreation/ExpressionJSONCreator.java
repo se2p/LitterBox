@@ -30,8 +30,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.ExprDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.ExprInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.FixedInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.ExprNote;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.ViewerLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -53,7 +63,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TranslateExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.VideoSensingExtensionVisitor;
@@ -70,7 +80,7 @@ import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelpe
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.createField;
 
 public class ExpressionJSONCreator
-        implements ScratchVisitor,
+        implements MusicExtensionVisitor,
         TextToSpeechExtensionVisitor,
         TranslateExtensionVisitor,
         VideoSensingExtensionVisitor {
@@ -784,5 +794,81 @@ public class ExpressionJSONCreator
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, EMPTY_VALUE, fieldsString, node.getOpcode()));
         previousBlockId = metadata.getBlockId();
+    }
+
+    // Music Extension
+
+    @Override
+    public void visit(FixedNote node) {
+        fixedExprCreator.visit(node);
+        addExpressionJSONString(fixedExprCreator.getFinishedJSONStrings().getFirst(), ((NonDataBlockMetadata) node.getMetadata()).getBlockId());
+    }
+
+    @Override
+    public void visit(FixedDrum node) {
+        fixedExprCreator.visit(node);
+        addExpressionJSONString(fixedExprCreator.getFinishedJSONStrings().getFirst(), ((NonDataBlockMetadata) node.getMetadata()).getBlockId());
+    }
+
+    @Override
+    public void visit(FixedInstrument node) {
+        fixedExprCreator.visit(node);
+        addExpressionJSONString(fixedExprCreator.getFinishedJSONStrings().getFirst(), ((NonDataBlockMetadata) node.getMetadata()).getBlockId());
+    }
+
+    @Override
+    public void visit(ExprNote node) {
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(ExprDrum node) {
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(ExprInstrument node) {
+        node.getExpr().accept(this);
+    }
+
+    // Translate Extension
+
+    @Override
+    public void visit(TranslateTo node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createExpr(metadata, node.getText(), WORDS_KEY, true));
+        inputs.add(createExpr(metadata, node.getLanguage(), LANGUAGE_INPUT_KEY, true));
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, createInputs(inputs), EMPTY_VALUE, node.getOpcode()));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(ViewerLanguage node) {
+        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+    }
+
+    @Override
+    public void visit(TFixedLanguage node) {
+        fixedExprCreator.visit(node);
+        addExpressionJSONString(fixedExprCreator.getFinishedJSONStrings().getFirst(), ((NonDataBlockMetadata) node.getMetadata()).getBlockId());
+    }
+
+    @Override
+    public void visit(TExprLanguage node) {
+        node.getExpr().accept(this);
+    }
+
+    private void addExpressionJSONString(String jsonString, String id) {
+        finishedJSONStrings.add(jsonString);
+        if (topExpressionId == null) {
+            topExpressionId = id;
+        }
+        previousBlockId = id;
     }
 }

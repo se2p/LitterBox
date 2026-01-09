@@ -19,6 +19,9 @@
 package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.FixedInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
@@ -27,6 +30,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.languag
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.ViewerLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
@@ -46,7 +53,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 
-public class IdVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor, VideoSensingExtensionVisitor {
+public class IdVisitor
+        implements ScratchVisitor,
+        PenExtensionVisitor,
+        TextToSpeechExtensionVisitor,
+        MusicExtensionVisitor,
+        VideoSensingExtensionVisitor,
+        TranslateExtensionVisitor {
     private String id;
 
     public String getBlockId(Stmt stmt) {
@@ -548,6 +561,43 @@ public class IdVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpe
 
     @Override
     public void visit(RestForBeats node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(FixedNote node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(FixedDrum node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(FixedInstrument node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    // Translate Extension
+
+    @Override
+    public void visit(TranslateTo node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(ViewerLanguage node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(TFixedLanguage node) {
+        id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+    }
+
+    @Override
+    public void visit(TExprLanguage node) {
         id = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
     }
 }
