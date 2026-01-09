@@ -92,7 +92,10 @@ public class VariableAsLiteralFix extends AbstractFixHeuristic {
 
             if (!(context.get().node() instanceof StringLiteral)) {
                 // Type changed (e.g. reverted to parameter/variable)
-                addFixWithLooseComment();
+                BlockIdNodeFinder.NodeContext ctx = context.get();
+                addFix(ctx.node(), ctx.node().getMetadata(),
+                        ctx.actor(),
+                        ctx.script() != null ? ctx.script() : ctx.procedure());
                 return Collections.unmodifiableSet(fixes);
             }
         }
