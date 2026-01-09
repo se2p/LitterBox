@@ -25,6 +25,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
+import de.uni_passau.fim.se2.litterbox.report.HTMLDiffReportGenerator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import org.apache.commons.csv.CSVPrinter;
 import picocli.CommandLine;
 import tools.jackson.databind.SerializationFeature;
@@ -105,9 +108,12 @@ public class DiffSubcommand implements Callable<Integer> {
             writeJsonOutput(result);
         } else if (outputPath.getFileName().toString().endsWith(".csv")) {
             writeCsvOutput(result);
+        } else if (outputPath.getFileName().toString().endsWith(".html")
+                || outputPath.getFileName().toString().endsWith(".htm")) {
+            writeHtmlOutput(result);
         } else {
             throw new IllegalArgumentException("Unknown output file type: " + outputPath
-                    + ". Supported extensions: .json, .csv");
+                    + ". Supported extensions: .json, .csv, .html");
         }
 
         return 0;
@@ -244,6 +250,13 @@ public class DiffSubcommand implements Callable<Integer> {
         }
 
         spec.commandLine().getOut().println("Diff report written to: " + outputPath);
+    }
+
+    private void writeHtmlOutput(DiffResult result) throws IOException {
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator();
+        HTMLDiffReportGenerator generator = new HTMLDiffReportGenerator(translator, outputPath);
+        generator.generateReport(result);
+        spec.commandLine().getOut().println("HTML diff report written to: " + outputPath);
     }
 
     private void writeIssuesToCsv(
