@@ -23,6 +23,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysis;
@@ -230,6 +234,11 @@ public class RedundantAssignment extends AbstractIssueFinder {
      * <p>Treats all variables/attributes defined in this script as "Live" at exit nodes, ensuring that an assignment
      * is only redundant if it is overwritten before any use *and* before the end of the script.
      *
+     * <p>Also treats interprocedural edge statements (broadcast, clone, call) as implicit uses of all variables.
+     * This prevents false positives where a definition in one script is reported as redundant because it is
+     * overwritten in a different script (reached via broadcast). The visual state change is observable before
+     * control transfers to the other script.
+     *
      * <p>Note: We track {@code Defineable} (variables) instead of {@code Use} objects.
      * Since we only care *if* a variable is used, not *where*, tracking the variable itself reduces
      * the size of the dataflow sets (O(|Variables|) vs O(|Uses|)), improving performance and convergence time.
@@ -271,6 +280,13 @@ public class RedundantAssignment extends AbstractIssueFinder {
                 outFacts.addAll(allDefinedVariables);
             }
 
+            // Treat interprocedural edge statements as implicit uses
+            // This prevents false positives where a definition before a broadcast/clone/call
+            // is reported as redundant due to overwrites in a different script.
+            if (isInterproceduralEdgeNode(node)) {
+                outFacts.addAll(allDefinedVariables);
+            }
+
             return outFacts;
         }
 
@@ -280,6 +296,22 @@ public class RedundantAssignment extends AbstractIssueFinder {
 
         private boolean isExitNode(CFGNode node) {
             return new ForwardFlowDirection().getOutNodes(cfg, node).isEmpty();
+        }
+
+        /**
+         * Checks if the node represents an interprocedural edge (broadcast, clone, or call).
+         * These statements transfer control to another script/procedure, and any visual state
+         * changes before them are observable.
+         */
+        private boolean isInterproceduralEdgeNode(CFGNode node) {
+            ASTNode astNode = node.getASTNode();
+            if (astNode == null) {
+                return false;
+            }
+            return astNode instanceof Broadcast
+                    || astNode instanceof BroadcastAndWait
+                    || astNode instanceof CreateCloneOf
+                    || astNode instanceof CallStmt;
         }
     }
 
@@ -302,6 +334,8 @@ public class RedundantAssignment extends AbstractIssueFinder {
                 definedVariables.add(def.getDefinable());
             }
 
+            boolean isImplicitUse = isHaltingNode(node) || isInterproceduralEdgeNode(node);
+
             // Process IN facts
             for (ReachingDefinitionState state : inFacts) {
                 // Kill if redefined
@@ -312,7 +346,7 @@ public class RedundantAssignment extends AbstractIssueFinder {
                 // Gen Use: If variable used, mark as used
                 if (usedVariables.contains(state.definition().getDefinable())) {
                     outFacts.add(new ReachingDefinitionState(state.definition(), true));
-                } else if (isHaltingNode(node)) {
+                } else if (isImplicitUse) {
                     outFacts.add(new ReachingDefinitionState(state.definition(), true));
                 } else {
                     outFacts.add(state);
@@ -329,6 +363,22 @@ public class RedundantAssignment extends AbstractIssueFinder {
 
         private boolean isHaltingNode(CFGNode node) {
             return AstNodeUtil.containsHaltingStatement(node.getASTNode());
+        }
+
+        /**
+         * Checks if the node represents an interprocedural edge (broadcast, clone, or call).
+         * These statements transfer control to another script/procedure, and any visual state
+         * changes before them are observable.
+         */
+        private boolean isInterproceduralEdgeNode(CFGNode node) {
+            ASTNode astNode = node.getASTNode();
+            if (astNode == null) {
+                return false;
+            }
+            return astNode instanceof Broadcast
+                    || astNode instanceof BroadcastAndWait
+                    || astNode instanceof CreateCloneOf
+                    || astNode instanceof CallStmt;
         }
     }
 

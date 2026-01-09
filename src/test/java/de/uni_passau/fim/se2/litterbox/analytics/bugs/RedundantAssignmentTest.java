@@ -822,4 +822,85 @@ public class RedundantAssignmentTest implements JsonTest, FinderTest {
 
         Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment because loop causes implicit thread switch");
     }
+
+    @Test
+    public void testSwitchCostumeFollowedByBroadcast() throws IOException, ParsingException {
+        // This test verifies the fix for the interprocedural false positive:
+        // A script with "switch costume" followed by "broadcast" should NOT be reported
+        // as redundant, even if the receiving script also changes the costume.
+        // The costume change is observable before the broadcast is sent.
+        //
+        // Note: The test fixture contains 1 legitimate redundant assignment in sprite "FA"'s
+        // broadcast receiver script (two consecutive switch costume blocks). This is a real
+        // bug and should be reported. The interprocedural false positives (costume before
+        // broadcast) should NOT be reported.
+        assertThatFinderReports(1, new RedundantAssignment(),
+                "src/test/fixtures/bugs/broadcastCostumeFix.json");
+    }
+
+    @Test
+    public void testSwitchCostumeSameScriptStillRedundant() throws IOException, ParsingException {
+        // This test ensures that genuine redundant assignments (switch costume
+        // followed by switch costume in the SAME script) are still detected.
+        String script = """
+                when green flag clicked
+                switch costume to (costume1 v)
+                switch costume to (costume2 v)""";
+
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+
+        Assertions.assertEquals(1, issues.size(), "Should report redundant costume switch in same script");
+    }
+
+    @Test
+    public void testVariableSetFollowedByBroadcast() throws IOException, ParsingException {
+        // Variable assignments before broadcasts should also not be falsely reported.
+        // The variable value is "used" by being visible/observable before the broadcast.
+        String script = """
+                when green flag clicked
+                set [SpriteLocalVariable v] to (1)
+                broadcast [message v]""";
+
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment before broadcast");
+    }
+
+    @Test
+    public void testPositionSetFollowedByBroadcast() throws IOException, ParsingException {
+        // Position changes before broadcasts are observable.
+        String script = """
+                when green flag clicked
+                set x to (100)
+                broadcast [message v]""";
+
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant position assignment before broadcast");
+    }
+
+    @Test
+    public void testCallStmtDoesNotCauseFalsePositive() throws IOException, ParsingException {
+        // Similar to broadcast, custom block calls should not cause false positives
+        // for assignments made before the call.
+        String script = """
+                define myblock
+                set x to (200)
+
+                when green flag clicked
+                set x to (100)
+                myblock""";
+
+        Program program = parseScratchBlocks(script);
+        RedundantAssignment finder = new RedundantAssignment();
+        Set<Issue> issues = finder.check(program);
+
+        Assertions.assertEquals(0, issues.size(), "Should NOT report redundant assignment before custom block call");
+    }
 }
