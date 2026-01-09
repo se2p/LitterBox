@@ -95,15 +95,23 @@ public class DiffSubcommand implements Callable<Integer> {
     )
     boolean ignoreLooseBlocks;
 
+    @CommandLine.Option(
+            names = {"-l", "--lang"},
+            description = "Language of the hints in the output.",
+            defaultValue = "en"
+    )
+    String language = "en";
+
     @Override
     public Integer call() throws Exception {
         validateParams();
 
-        DiffAnalyzer analyzer = new DiffAnalyzer(detectors, ignoreLooseBlocks);
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(java.util.Locale.of(language));
+        DiffAnalyzer analyzer = new DiffAnalyzer(detectors, ignoreLooseBlocks, translator);
         DiffResult result = analyzer.analyze(beforePath, afterPath);
 
         if (outputPath == null) {
-            writeConsoleOutput(result);
+            writeConsoleOutput(result, translator);
         } else if (outputPath.getFileName().toString().endsWith(".json")) {
             writeJsonOutput(result);
         } else if (outputPath.getFileName().toString().endsWith(".csv")) {
@@ -148,7 +156,7 @@ public class DiffSubcommand implements Callable<Integer> {
         }
     }
 
-    private void writeConsoleOutput(DiffResult result) {
+    private void writeConsoleOutput(DiffResult result, IssueTranslator translator) {
         PrintWriter out = spec.commandLine().getOut();
 
         out.println("=== BUG DIFF REPORT ===");
@@ -160,13 +168,13 @@ public class DiffSubcommand implements Callable<Integer> {
         out.printf("  PERSISTING: %d%n", result.persistingCount());
         out.printf("  REMOVED:    %d%n%n", result.removedCount());
 
-        printIssueList(out, "FIXED BUGS", "✓", result.fixed());
-        printIssueList(out, "NEW BUGS", "✗", result.newIssues());
-        printIssueList(out, "PERSISTING BUGS", "-", result.persisting());
-        printIssueList(out, "REMOVED (unverified)", "?", result.removed());
+        printIssueList(out, "FIXED BUGS", "✓", result.fixed(), translator);
+        printIssueList(out, "NEW BUGS", "✗", result.newIssues(), translator);
+        printIssueList(out, "PERSISTING BUGS", "-", result.persisting(), translator);
+        printIssueList(out, "REMOVED (unverified)", "?", result.removed(), translator);
     }
 
-    private void printIssueList(PrintWriter out, String header, String marker, List<Issue> issues) {
+    private void printIssueList(PrintWriter out, String header, String marker, List<Issue> issues, IssueTranslator translator) {
         if (issues.isEmpty()) {
             return;
         }
@@ -176,7 +184,7 @@ public class DiffSubcommand implements Callable<Integer> {
             String codeSnippet = getCodeSnippet(issue);
             out.printf("  %s %s in %s: %s%n",
                     marker,
-                    issue.getFinderName(),
+                    issue.getTranslatedFinderName(translator),
                     issue.getActorName(),
                     codeSnippet
             );
@@ -253,7 +261,7 @@ public class DiffSubcommand implements Callable<Integer> {
     }
 
     private void writeHtmlOutput(DiffResult result) throws IOException {
-        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator();
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(java.util.Locale.of(language));
         HTMLDiffReportGenerator generator = new HTMLDiffReportGenerator(translator, outputPath);
         generator.generateReport(result);
         spec.commandLine().getOut().println("HTML diff report written to: " + outputPath);

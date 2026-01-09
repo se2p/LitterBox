@@ -1,9 +1,13 @@
-@import de.uni_passau.fim.se2.litterbox.report.HTMLDiffReportGenerator
+@import de.uni_passau.fim.se2.litterbox.diff.ProjectCodeDiff
+@import de.uni_passau.fim.se2.litterbox.diff.ActorCodeDiff
+@import de.uni_passau.fim.se2.litterbox.diff.ScriptCodeDiff
+@import de.uni_passau.fim.se2.litterbox.diff.ScriptChangeType
 @import de.uni_passau.fim.se2.litterbox.report.HTMLDiffReportGenerator.DiffTemplateModel
 @import de.uni_passau.fim.se2.litterbox.report.HTMLDiffReportGenerator.DiffCategory
 @import de.uni_passau.fim.se2.litterbox.report.HTMLDiffReportGenerator.RenderedDiffIssue
 
 @param DiffTemplateModel model
+
 
 <!--
 Copyright (C) 2019-2026 LitterBox contributors
@@ -156,8 +160,11 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
 
         .report-nav a.nav-fixed { border-left: 3px solid #28a745; }
         .report-nav a.nav-new { border-left: 3px solid #dc3545; }
-        .report-nav a.nav-persisting { border-left: 3px solid #6c757d; }
         .report-nav a.nav-removed { border-left: 3px solid #ffc107; }
+
+        .report-nav a.nav-code-changes {
+            border-left: 3px solid #17a2b8;
+        }
 
         /* Category sections */
         .category-section {
@@ -267,9 +274,9 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
         }
 
         .issue-actor {
-            font-size: 0.9em;
-            color: #666;
-            margin-left: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            color: #333;
         }
 
         .hint {
@@ -289,12 +296,95 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             margin: 0;
         }
 
+        /* Side-by-side code diff */
+        .code-diff {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .code-diff.single-panel {
+            grid-template-columns: 1fr;
+        }
+
+        .diff-panel {
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .diff-panel-header {
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .diff-panel-before {
+            border: 2px solid #dc3545;
+        }
+
+        .diff-panel-before .diff-panel-header {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .diff-panel-after {
+            border: 2px solid #28a745;
+        }
+
+        .diff-panel-after .diff-panel-header {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .diff-panel-unchanged {
+            border: 2px solid #e0e0e0;
+        }
+
+        .diff-panel-unchanged .diff-panel-header {
+            background: #f0f0f0;
+            color: #555;
+        }
+
+        .diff-panel-after-failure {
+            border: 2px solid #dc3545;
+        }
+
+        .diff-panel-after-failure .diff-panel-header {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .diff-panel pre.blocks {
+            border: none;
+            border-radius: 0;
+            margin: 0;
+        }
+
         code.scratchblocks {
             font-family: sans-serif;
             font-weight: bold;
             padding: 2px 4px;
             border-radius: 4px;
         }
+
+        .diff-panel-before, .diff-panel-after {
+            position: relative;
+        }
+
+        .diff-panel pre.blocks {
+            padding-left: 45px; /* Space for emojis */
+            overflow: visible; /* Allow emojis to hang outside parent if needed */
+        }
+
+        .emoji-gutter-marker {
+            font-size: 1.2em;
+            pointer-events: none;
+        }
+
+
 
         /* Severity badges */
         .severity {
@@ -389,6 +479,13 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                 </a>
             </li>
         @endfor
+        @if (!model.projectCodeDiff().isEmpty())
+            <li>
+                <a href="#section-code-changes" class="nav-code-changes">
+                    ${model.translator().getInfo("diff_code_changes")}
+                </a>
+            </li>
+        @endif
     </ul>
 </nav>
 @endif
@@ -423,9 +520,35 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                         <div class="hint">
                             $unsafe{issue.hintText()}
                         </div>
-                        @if (issue.scratchBlocks() != null && !issue.scratchBlocks().isEmpty())
-                            <pre class="blocks">
-${issue.scratchBlocks()}</pre>
+                        @if (issue.isCodeUnchanged())
+                            <div class="code-diff single-panel">
+                                <div class="diff-panel diff-panel-unchanged">
+                                    <div class="diff-panel-header">${model.translator().getInfo("diff_unchanged")}</div>
+                                    <pre class="blocks">
+${issue.afterScratchBlocks()}</pre>
+                                </div>
+                            </div>
+                        @elseif ((issue.beforeScratchBlocks() != null && !issue.beforeScratchBlocks().isEmpty()) || (issue.afterScratchBlocks() != null && !issue.afterScratchBlocks().isEmpty()))
+                            !{var hasBefore = issue.beforeScratchBlocks() != null && !issue.beforeScratchBlocks().isEmpty();}
+                            !{var hasAfter = issue.afterScratchBlocks() != null && !issue.afterScratchBlocks().isEmpty();}
+                            !{var showBothPanels = hasBefore && hasAfter && (issue.categoryId().equals("FIXED") || issue.categoryId().equals("NEW") || issue.categoryId().equals("PERSISTING"));}
+                            <div class="code-diff${showBothPanels ? "" : " single-panel"}">
+                                @if (hasBefore && (issue.categoryId().equals("FIXED") || issue.categoryId().equals("REMOVED") || showBothPanels))
+                                    <div class="diff-panel diff-panel-before">
+                                        <div class="diff-panel-header">${model.translator().getInfo("diff_before")}</div>
+                                        <pre class="blocks">
+${issue.beforeScratchBlocks()}</pre>
+                                    </div>
+                                @endif
+                                @if (hasAfter && (issue.categoryId().equals("NEW") || issue.categoryId().equals("PERSISTING") || showBothPanels))
+                                    !{String afterPanelClass = issue.categoryId().equals("FIXED") ? "diff-panel-after" : "diff-panel-after-failure";}
+                                    <div class="diff-panel ${afterPanelClass}">
+                                        <div class="diff-panel-header">${model.translator().getInfo("diff_after")}</div>
+                                        <pre class="blocks">
+${issue.afterScratchBlocks()}</pre>
+                                    </div>
+                                @endif
+                            </div>
                         @endif
                     </div>
                 @endfor
@@ -433,6 +556,75 @@ ${issue.scratchBlocks()}</pre>
         </div>
     @endfor
 @endif
+
+@if (!model.projectCodeDiff().isEmpty())
+    <div class="category-section category-code-changes" id="section-code-changes">
+        <div class="category-header" onclick="toggleCategory('code-changes')">
+            <span class="toggle-icon">▼</span>
+            <span class="category-title">${model.translator().getInfo("diff_code_changes")}</span>
+        </div>
+        <div class="category-content" id="content-code-changes">
+            @for (ActorCodeDiff actor : model.projectCodeDiff().actorDiffs())
+                @if (actor.hasResultingDiffs())
+                    <div class="issue" style="margin-bottom: 1.5rem;">
+                        <div class="issue-header"
+                             style="background: #f8f9fa; border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1rem;">
+                            <span class="issue-title" style="font-size: 1.2em;">
+                                ${actor.actorName()} ${actor.isStage() ? "(Stage)" : ""}
+                            </span>
+                        </div>
+                        @for (ScriptCodeDiff script : actor.scriptDiffs())
+                            @if (!script.isUnchanged())
+                                !{boolean isAdded = script.changeType() == ScriptChangeType.ADDED;}
+                                !{boolean isDeleted = script.changeType() == ScriptChangeType.DELETED;}
+                                !{boolean isChanged = script.changeType() == ScriptChangeType.CHANGED;}
+                                <div style="margin-bottom: 1rem; padding: 0.5rem; border: 1px solid #eee; border-radius: 6px;">
+                                    <div style="margin-bottom: 0.5rem;">
+                                        @if (isAdded)
+                                            <span style="background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 4px; font-size: 0.85em; font-weight: 600;">+ ${model.translator().getInfo("diff_added")}</span>
+                                        @elseif (isDeleted)
+                                            <span style="background: #f8d7da; color: #721c24; padding: 2px 8px; border-radius: 4px; font-size: 0.85em; font-weight: 600;">− ${model.translator().getInfo("diff_deleted")}</span>
+                                        @elseif (isChanged)
+                                            <span style="background: #fff3cd; color: #856404; padding: 2px 8px; border-radius: 4px; font-size: 0.85em; font-weight: 600;">↔ ${model.translator().getInfo("diff_changed")}</span>
+                                        @endif
+                                    </div>
+                                    <div class="code-diff${isChanged ? "" : " single-panel"}">
+                                        @if (isDeleted)
+                                            <div class="diff-panel diff-panel-before">
+                                                <div class="diff-panel-header">${model.translator().getInfo("diff_before")}</div>
+                                                <pre class="blocks">
+${script.beforeCode()}</pre>
+                                            </div>
+                                        @elseif (isAdded)
+                                            <div class="diff-panel diff-panel-after">
+                                                <div class="diff-panel-header">${model.translator().getInfo("diff_after")}</div>
+                                                <pre class="blocks">
+${script.afterCode()}</pre>
+                                            </div>
+                                        @elseif (isChanged)
+                                            <div class="diff-panel diff-panel-before">
+                                                <div class="diff-panel-header">${model.translator().getInfo("diff_before")}</div>
+                                                <pre class="blocks">
+${script.annotatedBeforeCode()}</pre>
+                                            </div>
+                                            <div class="diff-panel diff-panel-after">
+                                                <div class="diff-panel-header">${model.translator().getInfo("diff_after")}</div>
+                                                <pre class="blocks">
+${script.annotatedAfterCode()}</pre>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+                        @endfor
+                    </div>
+                @endif
+            @endfor
+        </div>
+    </div>
+@endif
+
+
 
 <a href="#top" id="back-to-top" title="${model.translator().getInfo("back_to_top")}">▲</a>
 
@@ -447,6 +639,13 @@ ${issue.scratchBlocks()}</pre>
 </footer>
 
 <script>
+    function toggleCategory(categoryId) {
+        const section = document.getElementById('section-' + categoryId);
+        if (section) {
+            section.classList.toggle('collapsed');
+        }
+    }
+
     // ScratchBlocks rendering
     function renderScratchBlocks() {
         scratchblocks.renderMatching('pre.blocks', {
@@ -462,15 +661,42 @@ ${issue.scratchBlocks()}</pre>
         });
     }
 
-    function toggleCategory(categoryId) {
-        const section = document.getElementById('section-' + categoryId);
-        if (section) {
-            section.classList.toggle('collapsed');
-        }
-    }
-
     // Render scratchblocks on load
-    window.addEventListener('load', renderScratchBlocks);
+    window.addEventListener('load', function () {
+        renderScratchBlocks();
+
+        // Post-process to move emojis to the left
+        setTimeout(() => {
+            const labels = document.querySelectorAll('text.sb3-label');
+            labels.forEach(label => {
+                const text = label.textContent;
+                if (text.endsWith('🔴') || text.endsWith('🟢')) {
+                    const emoji = text.slice(-2);
+                    // Remove emoji from block text
+                    label.textContent = text.slice(0, -2).trim();
+
+                    // Find the SVG parent
+                    const svg = label.closest('svg');
+                    if (svg) {
+                        // Create a new text element for the emoji
+                        const newText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                        newText.setAttribute("x", "-35"); // Move further to the left gutter
+                        newText.setAttribute("y", label.getAttribute("y"));
+                        newText.setAttribute("dy", "0.15em"); // Fine-tune vertical centering for emojis
+                        newText.setAttribute("dominant-baseline", "central");
+                        newText.setAttribute("class", "sb3-label emoji-gutter-marker");
+                        newText.textContent = emoji;
+
+                        // Add to the same group as the original label
+                        label.parentNode.appendChild(newText);
+
+                        // Ensure SVG doesn't clip the gutter
+                        svg.style.overflow = "visible";
+                    }
+                }
+            });
+        }, 100); // Small delay to let ScratchBlocks finish internal layout
+    });
 </script>
 </body>
 </html>

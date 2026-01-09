@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.FixHeuristicRegi
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -44,7 +45,7 @@ class DiffAnalyzerTest implements JsonTest {
         // Note: DiffAnalyzer expects .sb3 files for comparison
         Path projectPath = Path.of("src/test/fixtures/emptyProject.sb3");
 
-        DiffAnalyzer analyzer = new DiffAnalyzer(BUGS_DETECTORS, false);
+        DiffAnalyzer analyzer = new DiffAnalyzer(BUGS_DETECTORS, false, IssueTranslatorFactory.getIssueTranslator());
         DiffResult result = analyzer.analyze(projectPath, projectPath);
 
         assertNotNull(result);
@@ -62,7 +63,7 @@ class DiffAnalyzerTest implements JsonTest {
         // Empty .sb3 project should not crash
         Path emptyProject = Path.of("src/test/fixtures/emptyProject.sb3");
 
-        DiffAnalyzer analyzer = new DiffAnalyzer(BUGS_DETECTORS, false);
+        DiffAnalyzer analyzer = new DiffAnalyzer(BUGS_DETECTORS, false, IssueTranslatorFactory.getIssueTranslator());
         DiffResult result = analyzer.analyze(emptyProject, emptyProject);
 
         assertNotNull(result);
@@ -77,7 +78,7 @@ class DiffAnalyzerTest implements JsonTest {
     void testDiffResultCounts() throws IOException, ParsingException {
         Path projectPath = Path.of("src/test/fixtures/emptyProject.sb3");
 
-        DiffAnalyzer analyzer = new DiffAnalyzer(BUGS_DETECTORS, false);
+        DiffAnalyzer analyzer = new DiffAnalyzer(BUGS_DETECTORS, false, IssueTranslatorFactory.getIssueTranslator());
         DiffResult result = analyzer.analyze(projectPath, projectPath);
 
         // Verify count methods match list sizes
@@ -109,11 +110,11 @@ class DiffAnalyzerTest implements JsonTest {
         Path projectPath = Path.of("src/test/fixtures/emptyProject.sb3");
 
         // Both with and without ignoring loose blocks should work
-        DiffAnalyzer analyzerIgnore = new DiffAnalyzer(BUGS_DETECTORS, true);
+        DiffAnalyzer analyzerIgnore = new DiffAnalyzer(BUGS_DETECTORS, true, IssueTranslatorFactory.getIssueTranslator());
         DiffResult resultIgnore = analyzerIgnore.analyze(projectPath, projectPath);
         assertNotNull(resultIgnore);
 
-        DiffAnalyzer analyzerNoIgnore = new DiffAnalyzer(BUGS_DETECTORS, false);
+        DiffAnalyzer analyzerNoIgnore = new DiffAnalyzer(BUGS_DETECTORS, false, IssueTranslatorFactory.getIssueTranslator());
         DiffResult resultNoIgnore = analyzerNoIgnore.analyze(projectPath, projectPath);
         assertNotNull(resultNoIgnore);
     }
@@ -137,7 +138,7 @@ class DiffAnalyzerTest implements JsonTest {
         Path projectJsonPath = Path.of("src/test/fixtures/emptyProject.json");
         Path sb3Path = Path.of("src/test/fixtures/emptyProject.sb3");
 
-        DiffAnalyzer analyzer = new DiffAnalyzer(BUGS_DETECTORS, false);
+        DiffAnalyzer analyzer = new DiffAnalyzer(BUGS_DETECTORS, false, IssueTranslatorFactory.getIssueTranslator());
         DiffResult result = analyzer.analyze(projectJsonPath, sb3Path);
 
         assertNotNull(result);
@@ -151,7 +152,7 @@ class DiffAnalyzerTest implements JsonTest {
         Path sb3Path = Path.of("src/test/fixtures/emptyProject.sb3");
         Path projectJsonPath = Path.of("src/test/fixtures/emptyProject.json");
 
-        DiffAnalyzer analyzer = new DiffAnalyzer(BUGS_DETECTORS, false);
+        DiffAnalyzer analyzer = new DiffAnalyzer(BUGS_DETECTORS, false, IssueTranslatorFactory.getIssueTranslator());
         DiffResult result = analyzer.analyze(sb3Path, projectJsonPath);
 
         assertNotNull(result);
@@ -164,7 +165,7 @@ class DiffAnalyzerTest implements JsonTest {
         // Test that project.json files can be used for both before and after
         Path projectJsonPath = Path.of("src/test/fixtures/emptyProject.json");
 
-        DiffAnalyzer analyzer = new DiffAnalyzer(BUGS_DETECTORS, false);
+        DiffAnalyzer analyzer = new DiffAnalyzer(BUGS_DETECTORS, false, IssueTranslatorFactory.getIssueTranslator());
         DiffResult result = analyzer.analyze(projectJsonPath, projectJsonPath);
 
         assertNotNull(result);

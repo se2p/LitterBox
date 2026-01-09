@@ -27,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
-import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +87,7 @@ public final class IssueConverter {
         }
 
         IssueBuilder builder = new IssueBuilder()
-                .withFinder(new SyntheticIssueFinder(fix.getOriginalBugFinder(), IssueType.BUG))
+                .withFinder(new SyntheticIssueFinder(fix.getOriginalBugFinder(), IssueType.FIX))
                 .withProgram(program)
                 .withActor(actor)
                 .withMetadata(fix.metadata())
@@ -141,27 +140,37 @@ public final class IssueConverter {
                     .withSeverity(IssueSeverity.LOW)
                     .withHint(info.finderName())
                     .withOriginalBlockId(info.blockId())
+                    .withOriginalCodeSnippet(info.codeSnippet())
                     .build();
             removed.add(issue);
         }
         return removed;
     }
 
-    private static final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator();
-
     /**
      * Creates a minimal IssueDTO from an Issue for comparison purposes.
      *
-     * @param issue the issue to convert
+     * @param issue      the issue to convert
+     * @param translator the translator to use for hint text generation
      * @return a minimal IssueDTO with key fields populated
      */
-    public static IssueDTO toMinimalDTO(Issue issue) {
+    public static IssueDTO toMinimalDTO(Issue issue, IssueTranslator translator) {
         String blockId = null;
         String scratchBlocksCode = null;
         ASTNode codeLocation = issue.getCodeLocation();
         if (codeLocation != null) {
             blockId = AstNodeUtil.getBlockId(codeLocation);
-            scratchBlocksCode = ScratchBlocksVisitor.of(codeLocation);
+
+            ScriptEntity script = AstNodeUtil.findParent(codeLocation, de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity.class);
+            ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
+            visitor.begin();
+            if (script != null) {
+                script.accept(visitor);
+            } else {
+                codeLocation.accept(visitor);
+            }
+            visitor.end();
+            scratchBlocksCode = visitor.getScratchBlocks();
         }
 
         // Include the hint text for proper issue matching by fix heuristics

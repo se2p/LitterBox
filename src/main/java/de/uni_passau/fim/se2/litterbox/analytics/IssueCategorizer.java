@@ -59,7 +59,15 @@ public class IssueCategorizer {
      */
     private Set<IssueDTO> matchedBeforeIssues;
 
-    private final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator();
+    private final IssueTranslator translator;
+
+    public IssueCategorizer() {
+        this(IssueTranslatorFactory.getIssueTranslator());
+    }
+
+    public IssueCategorizer(IssueTranslator translator) {
+        this.translator = translator;
+    }
 
     /**
      * Categorizes issues between before and after versions.
@@ -306,7 +314,8 @@ public class IssueCategorizer {
             removed.add(new RemovedIssueInfo(
                     finderName,
                     beforeIssue.sprite(),
-                    isBlockIdEmpty(blockId) ? "N/A" : blockId
+                    isBlockIdEmpty(blockId) ? "N/A" : blockId,
+                    beforeIssue.scratchBlocksCode()
             ));
         }
     }
@@ -366,6 +375,6 @@ public class IssueCategorizer {
     /**
      * Info about a removed issue that couldn't be verified as fixed.
      */
-    public record RemovedIssueInfo(String finderName, String actorName, String blockId) {
+    public record RemovedIssueInfo(String finderName, String actorName, String blockId, String codeSnippet) {
     }
 }

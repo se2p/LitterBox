@@ -2101,7 +2101,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         for (Issue issue : issues) {
             if (issue.isCodeLocation(node)) {
                 if (!hasIssue) {
-                    if (issue.getIssueType() == IssueType.PERFUME) {
+                    if (issue.getIssueType() == IssueType.PERFUME || issue.getIssueType() == IssueType.FIX) {
                         emitNoSpace(" :: #167700");
                     } else {
                         emitNoSpace(" :: #ff0000");
@@ -2109,7 +2109,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                 }
                 hasIssue = true;
                 if (!issue.hasMultipleBlocks()) {
-                    if (issue.getIssueType() == IssueType.PERFUME) {
+                    if (issue.getIssueType() == IssueType.PERFUME || issue.getIssueType() == IssueType.FIX) {
                         issueNote.add(PERFUME_NOTE);
                     } else if (issue.getIssueType() == IssueType.QUESTION) {
                         issueNote.add(QUESTION_NOTE);
@@ -2119,7 +2119,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                 } else {
                     List<ASTNode> nodes = ((MultiBlockIssue) issue).getNodes();
                     if (node == (nodes.getFirst())) {
-                        if (issue.getIssueType() == IssueType.PERFUME) {
+                        if (issue.getIssueType() == IssueType.PERFUME || issue.getIssueType() == IssueType.FIX) {
                             issueNote.add(PERFUME_NOTE);
                         } else if (issue.getIssueType() == IssueType.QUESTION) {
                             issueNote.add(QUESTION_NOTE);

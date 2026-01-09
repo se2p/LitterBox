@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.diff.ProjectCodeDiff;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
@@ -103,7 +104,8 @@ public class HTMLDiffReportGenerator {
                     result.beforeSource(),
                     result.afterSource(),
                     summary,
-                    categories
+                    categories,
+                    result.projectDiff()
             );
             templateEngine.render("diff_report_template.jte", model, output);
         }
@@ -126,7 +128,7 @@ public class HTMLDiffReportGenerator {
                     "new_bugs",
                     "✗",
                     "category-new",
-                    buildRenderedIssues(result.newIssues(), false)
+                    buildRenderedIssues(result.newIssues(), false, "NEW")
             ));
         }
 
@@ -137,7 +139,7 @@ public class HTMLDiffReportGenerator {
                     "fixed_bugs",
                     "✓",
                     "category-fixed",
-                    buildRenderedIssues(result.fixed(), true)
+                    buildRenderedIssues(result.fixed(), true, "FIXED")
             ));
         }
 
@@ -148,7 +150,7 @@ public class HTMLDiffReportGenerator {
                     "persisting_bugs",
                     "-",
                     "category-persisting",
-                    buildRenderedIssues(result.persisting(), false)
+                    buildRenderedIssues(result.persisting(), false, "PERSISTING")
             ));
         }
 
@@ -159,23 +161,34 @@ public class HTMLDiffReportGenerator {
                     "removed_bugs",
                     "?",
                     "category-removed",
-                    buildRenderedIssues(result.removed(), true)
+                    buildRenderedIssues(result.removed(), true, "REMOVED")
             ));
         }
 
         return categories;
     }
 
-    private List<RenderedDiffIssue> buildRenderedIssues(List<Issue> issues, boolean useOriginalData) {
+    private List<RenderedDiffIssue> buildRenderedIssues(List<Issue> issues, boolean useOriginalData, String categoryId) {
         return issues.stream()
-                .map(issue -> convertIssue(issue, useOriginalData))
+                .map(issue -> convertIssue(issue, useOriginalData, categoryId))
                 .toList();
     }
 
-    private RenderedDiffIssue convertIssue(Issue issue, boolean useOriginalData) {
-        String scratchBlocks = getScratchBlocksCode(issue, useOriginalData);
-        if (scratchBlocks != null) {
-            scratchBlocks = scratchBlocks.replace("[scratchblocks]", "").replace("[/scratchblocks]", "").trim();
+    private RenderedDiffIssue convertIssue(Issue issue, boolean useOriginalData, String categoryId) {
+        // Get before code (from original snapshot)
+        String beforeCode = issue.getOriginalCodeSnippet();
+        if (beforeCode == null && issue.getCodeLocation() != null) {
+            beforeCode = getScratchBlocksFromCurrentAst(issue);
+        }
+
+        if (beforeCode != null) {
+            beforeCode = beforeCode.replace("[scratchblocks]", "").replace("[/scratchblocks]", "").trim();
+        }
+
+        // Get after code (from current AST)
+        String afterCode = getScratchBlocksFromCurrentAst(issue);
+        if (afterCode != null) {
+            afterCode = afterCode.replace("[scratchblocks]", "").replace("[/scratchblocks]", "").trim();
         }
 
         // The Hint object is stored on the Issue, so getHintText() works for all cases
@@ -187,23 +200,16 @@ public class HTMLDiffReportGenerator {
                 issue.getTranslatedFinderName(translator),
                 issue.getActorName(),
                 formatHint(hintText),
-                scratchBlocks,
+                beforeCode,
+                afterCode,
+                categoryId,
                 getSeverityClass(issue),
                 issue.getSeverity().name(),
                 getSeverityIcon(issue)
         );
     }
 
-    private String getScratchBlocksCode(Issue issue, boolean useOriginalData) {
-        if (useOriginalData) {
-            // For fixed/removed issues, try to use stored code snippet
-            String originalCode = issue.getOriginalCodeSnippet();
-            if (originalCode != null && !originalCode.isBlank()) {
-                return originalCode;
-            }
-        }
-
-        // Otherwise generate from current AST node
+    private String getScratchBlocksFromCurrentAst(Issue issue) {
         if (issue instanceof MultiBlockIssue multi) {
             return getScratchBlocksCode(issue, multi.getScriptEntities());
         }
@@ -320,7 +326,8 @@ public class HTMLDiffReportGenerator {
             String beforeSource,
             String afterSource,
             DiffSummary summary,
-            List<DiffCategory> categories
+            List<DiffCategory> categories,
+            ProjectCodeDiff projectCodeDiff
     ) {}
 
     public record Scripts(
@@ -349,9 +356,18 @@ public class HTMLDiffReportGenerator {
             String translatedFinderName,
             String sprite,
             String hintText,
-            @Nullable String scratchBlocks,
+            @Nullable String beforeScratchBlocks,
+            @Nullable String afterScratchBlocks,
+            String categoryId,
             String severityClass,
             String severity,
             String severityIcon
-    ) {}
+    ) {
+        public boolean isCodeUnchanged() {
+            if (beforeScratchBlocks == null || afterScratchBlocks == null) {
+                return false;
+            }
+            return beforeScratchBlocks.trim().equals(afterScratchBlocks.trim());
+        }
+    }
 }

@@ -22,7 +22,10 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.diff.CodeDiffGenerator;
+import de.uni_passau.fim.se2.litterbox.diff.ProjectCodeDiff;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,16 +51,19 @@ public class DiffAnalyzer {
 
     private final String detectors;
     private final boolean ignoreLooseBlocks;
+    private final IssueTranslator translator;
 
     /**
      * Creates a new DiffAnalyzer.
      *
      * @param detectors         comma-separated list of detector names or groups
      * @param ignoreLooseBlocks whether to ignore loose blocks during analysis
+     * @param translator        the translator to use for hint text generation
      */
-    public DiffAnalyzer(String detectors, boolean ignoreLooseBlocks) {
+    public DiffAnalyzer(String detectors, boolean ignoreLooseBlocks, IssueTranslator translator) {
         this.detectors = detectors;
         this.ignoreLooseBlocks = ignoreLooseBlocks;
+        this.translator = translator;
     }
 
     /**
@@ -75,11 +81,19 @@ public class DiffAnalyzer {
         BeforeData beforeData = loadBeforeData(beforePath);
         Set<Issue> afterIssues = analyzeProgram(afterProgram);
 
-        IssueCategorizer categorizer = new IssueCategorizer();
+        IssueCategorizer categorizer = new IssueCategorizer(translator);
         categorizer.categorize(beforeData.issues(), afterIssues, beforeData.program(), afterProgram);
 
         List<Issue> removedIssues = IssueConverter.createRemovedIssues(
                 categorizer.getRemoved(), afterProgram);
+
+        ProjectCodeDiff projectCodeDiff;
+        if (beforeData.program() != null) {
+            CodeDiffGenerator codeDiffGenerator = new CodeDiffGenerator();
+            projectCodeDiff = codeDiffGenerator.generate(beforeData.program(), afterProgram);
+        } else {
+            projectCodeDiff = ProjectCodeDiff.empty();
+        }
 
         return new DiffResult(
                 beforePath.toString(),
@@ -87,7 +101,8 @@ public class DiffAnalyzer {
                 categorizer.getFixed(),
                 categorizer.getNewIssues(),
                 categorizer.getPersisting(),
-                removedIssues
+                removedIssues,
+                projectCodeDiff
         );
     }
 
@@ -155,7 +170,7 @@ public class DiffAnalyzer {
         for (Issue issue : sortedIssues) {
             String finderName = issue.getFinderName();
             result.computeIfAbsent(finderName, k -> new ArrayList<>())
-                    .add(IssueConverter.toMinimalDTO(issue));
+                    .add(IssueConverter.toMinimalDTO(issue, translator));
         }
         return result;
     }
