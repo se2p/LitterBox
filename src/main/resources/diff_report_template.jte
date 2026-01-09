@@ -661,41 +661,32 @@ ${script.annotatedAfterCode()}</pre>
         });
     }
 
-    // Render scratchblocks on load
+    // Apply thick borders to tinted blocks
+    function applyCustomBorders() {
+        const blobs = document.querySelectorAll('svg path');
+        blobs.forEach(blob => {
+            const fill = blob.getAttribute('fill');
+            if (fill) {
+                // Check for red (removed) or green (added) tints
+                const lowerFill = fill.toLowerCase();
+                if (lowerFill === '#dc3545' || lowerFill === '#28a745') {
+                    // Apply thick border with contrasting color
+                    if (lowerFill === '#dc3545') {
+                        blob.style.stroke = '#bd2130'; // Darker red
+                    } else {
+                        blob.style.stroke = '#1e7e34'; // Darker green
+                    }
+                    blob.style.strokeWidth = '3px';
+                }
+            }
+        });
+    }
+
+    // Initialize on load
     window.addEventListener('load', function () {
         renderScratchBlocks();
-
-        // Post-process to move emojis to the left
-        setTimeout(() => {
-            const labels = document.querySelectorAll('text.sb3-label');
-            labels.forEach(label => {
-                const text = label.textContent;
-                if (text.endsWith('🔴') || text.endsWith('🟢')) {
-                    const emoji = text.slice(-2);
-                    // Remove emoji from block text
-                    label.textContent = text.slice(0, -2).trim();
-
-                    // Find the SVG parent
-                    const svg = label.closest('svg');
-                    if (svg) {
-                        // Create a new text element for the emoji
-                        const newText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                        newText.setAttribute("x", "-35"); // Move further to the left gutter
-                        newText.setAttribute("y", label.getAttribute("y"));
-                        newText.setAttribute("dy", "0.15em"); // Fine-tune vertical centering for emojis
-                        newText.setAttribute("dominant-baseline", "central");
-                        newText.setAttribute("class", "sb3-label emoji-gutter-marker");
-                        newText.textContent = emoji;
-
-                        // Add to the same group as the original label
-                        label.parentNode.appendChild(newText);
-
-                        // Ensure SVG doesn't clip the gutter
-                        svg.style.overflow = "visible";
-                    }
-                }
-            });
-        }, 100); // Small delay to let ScratchBlocks finish internal layout
+        // Run immediately after rendering, no timeout needed as renderMatching is synchronous
+        applyCustomBorders();
     });
 </script>
 </body>

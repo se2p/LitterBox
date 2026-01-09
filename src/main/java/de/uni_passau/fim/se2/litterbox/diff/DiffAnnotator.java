@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.diff;
 
 import com.github.difflib.DiffUtils;
 import com.github.difflib.patch.AbstractDelta;
+import com.github.difflib.patch.Chunk;
 import com.github.difflib.patch.Patch;
 
 import java.util.Arrays;
@@ -32,10 +33,8 @@ import java.util.List;
 public final class DiffAnnotator {
 
     // Emojis as suffixes
-    private static final String REMOVED_MARKER = " 🔴";
     private static final String REMOVED_TINT = " :: #dc3545";
 
-    private static final String ADDED_MARKER = " 🟢";
     private static final String ADDED_TINT = " :: #28a745";
 
     private DiffAnnotator() {
@@ -50,35 +49,9 @@ public final class DiffAnnotator {
             return "";
         }
         if (afterCode == null || afterCode.isEmpty()) {
-            return annotateAllLines(beforeCode, REMOVED_MARKER, REMOVED_TINT);
+            return annotateAllLines(beforeCode, REMOVED_TINT);
         }
-
-        List<String> beforeLines = Arrays.asList(beforeCode.split("\n", -1));
-        List<String> afterLines = Arrays.asList(afterCode.split("\n", -1));
-
-        Patch<String> patch = DiffUtils.diff(beforeLines, afterLines);
-        boolean[] deleted = new boolean[beforeLines.size()];
-        for (AbstractDelta<String> delta : patch.getDeltas()) {
-            int start = delta.getSource().getPosition();
-            int size = delta.getSource().size();
-            for (int i = start; i < start + size; i++) {
-                if (i < deleted.length) {
-                    deleted[i] = true;
-                }
-            }
-        }
-
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < beforeLines.size(); i++) {
-            sb.append(beforeLines.get(i));
-            if (deleted[i]) {
-                sb.append(REMOVED_MARKER).append(REMOVED_TINT);
-            }
-            if (i < beforeLines.size() - 1) {
-                sb.append("\n");
-            }
-        }
-        return sb.toString();
+        return annotate(beforeCode, afterCode, REMOVED_TINT, true);
     }
 
     /**
@@ -89,42 +62,50 @@ public final class DiffAnnotator {
             return "";
         }
         if (beforeCode == null || beforeCode.isEmpty()) {
-            return annotateAllLines(afterCode, ADDED_MARKER, ADDED_TINT);
+            return annotateAllLines(afterCode, ADDED_TINT);
         }
+        return annotate(beforeCode, afterCode, ADDED_TINT, false);
+    }
 
+    private static String annotate(String beforeCode, String afterCode, String tint, boolean isSource) {
         List<String> beforeLines = Arrays.asList(beforeCode.split("\n", -1));
         List<String> afterLines = Arrays.asList(afterCode.split("\n", -1));
 
         Patch<String> patch = DiffUtils.diff(beforeLines, afterLines);
-        boolean[] added = new boolean[afterLines.size()];
+
+        // Determine which lines to iterate and mark (source or target)
+        List<String> linesToAnnotate = isSource ? beforeLines : afterLines;
+        boolean[] marked = new boolean[linesToAnnotate.size()];
+
         for (AbstractDelta<String> delta : patch.getDeltas()) {
-            int start = delta.getTarget().getPosition();
-            int size = delta.getTarget().size();
+            Chunk<String> chunk = isSource ? delta.getSource() : delta.getTarget();
+            int start = chunk.getPosition();
+            int size = chunk.size();
             for (int i = start; i < start + size; i++) {
-                if (i < added.length) {
-                    added[i] = true;
+                if (i < marked.length) {
+                    marked[i] = true;
                 }
             }
         }
 
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < afterLines.size(); i++) {
-            sb.append(afterLines.get(i));
-            if (added[i]) {
-                sb.append(ADDED_MARKER).append(ADDED_TINT);
+        for (int i = 0; i < linesToAnnotate.size(); i++) {
+            sb.append(linesToAnnotate.get(i));
+            if (marked[i]) {
+                sb.append(tint);
             }
-            if (i < afterLines.size() - 1) {
+            if (i < linesToAnnotate.size() - 1) {
                 sb.append("\n");
             }
         }
         return sb.toString();
     }
 
-    private static String annotateAllLines(String code, String marker, String tint) {
+    private static String annotateAllLines(String code, String tint) {
         String[] lines = code.split("\n", -1);
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < lines.length; i++) {
-            sb.append(lines[i]).append(marker).append(tint);
+            sb.append(lines[i]).append(tint);
             if (i < lines.length - 1) {
                 sb.append("\n");
             }

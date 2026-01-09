@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.util.StructuralEquality;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -163,6 +164,14 @@ public class CodeDiffGenerator {
             }
         }
 
+        // 4. Fallback: Similarity Matching (Levenshtein) -> CHANGED
+        beforeIt = beforeUnmatched.iterator();
+        while (beforeIt.hasNext()) {
+            Script beforeScript = beforeIt.next();
+            String beforeCode = generateCode(beforeScript);
+            findSimilarityMatch(beforeScript, beforeCode, afterScriptsById, afterUnmatched, processedAfterIds, processedAfterScripts, diffs, beforeIt);
+        }
+
         // 4. Remaining Before -> DELETED
         for (Script beforeScript : beforeUnmatched) {
             diffs.add(new ScriptCodeDiff(generateCode(beforeScript), null, ScriptChangeType.DELETED));
@@ -223,6 +232,96 @@ public class CodeDiffGenerator {
         }
 
         return Optional.empty();
+    }
+
+    private void findSimilarityMatch(
+            Script target,
+            String targetCode,
+            Map<String, Script> afterScriptsById,
+            List<Script> afterUnmatched,
+            Set<String> processedAfterIds,
+            Set<Script> processedAfterScripts,
+            List<ScriptCodeDiff> diffs,
+            Iterator<Script> beforeIt
+    ) {
+        // Find best match in remaining 'after' scripts
+        Script bestMatch = null;
+        String bestMatchCode = null;
+        String bestMatchId = null; // if matched from map
+        double bestSimilarity = -1.0;
+
+        // Threshold for similarity (0.0 to 1.0)
+        double similarityThreshold = PropertyLoader.getSystemDoubleProperty("diff.levenshtein_threshold");
+        if (similarityThreshold <= 0.0) {
+            similarityThreshold = 0.6; // fallback if not set or invalid
+        }
+
+        // Check in ID-mapped scripts that haven't been processed yet
+        for (Map.Entry<String, Script> entry : afterScriptsById.entrySet()) {
+            if (!processedAfterIds.contains(entry.getKey())) {
+                Script candidate = entry.getValue();
+                String candidateCode = generateCode(candidate);
+                double similarity = calculateSimilarity(targetCode, candidateCode);
+
+                if (similarity > bestSimilarity) {
+                    bestSimilarity = similarity;
+                    bestMatch = candidate;
+                    bestMatchCode = candidateCode;
+                    bestMatchId = entry.getKey();
+                }
+            }
+        }
+
+        // Check in unmatched scripts
+        for (Script candidate : afterUnmatched) {
+            if (!processedAfterScripts.contains(candidate)) {
+                String candidateCode = generateCode(candidate);
+                double similarity = calculateSimilarity(targetCode, candidateCode);
+
+                if (similarity > bestSimilarity) {
+                    bestSimilarity = similarity;
+                    bestMatch = candidate;
+                    bestMatchCode = candidateCode;
+                    bestMatchId = null; // matched from unmatched list
+                }
+            }
+        }
+
+        if (bestSimilarity >= similarityThreshold && bestMatch != null) {
+            diffs.add(new ScriptCodeDiff(targetCode, bestMatchCode, ScriptChangeType.CHANGED));
+            beforeIt.remove();
+            if (bestMatchId != null) {
+                processedAfterIds.add(bestMatchId);
+            } else {
+                processedAfterScripts.add(bestMatch);
+            }
+        }
+    }
+
+    private double calculateSimilarity(String s1, String s2) {
+        if (s1 == null || s2 == null) {
+            return 0.0;
+        }
+
+        // Normalize strings to reduce noise (like whitespace differences)
+        String n1 = normalize(s1);
+        String n2 = normalize(s2);
+
+        if (n1.equals(n2)) {
+            return 1.0;
+        }
+
+        int maxLength = Math.max(n1.length(), n2.length());
+        if (maxLength == 0) {
+            return 1.0;
+        }
+
+        int distance = org.apache.commons.lang3.StringUtils.getLevenshteinDistance(n1, n2);
+        return 1.0 - ((double) distance / maxLength);
+    }
+
+    private String normalize(String s) {
+        return s.trim().replaceAll("\\s+", " ");
     }
 
     private ScriptCodeDiff createDiff(Script before, Script after) {
