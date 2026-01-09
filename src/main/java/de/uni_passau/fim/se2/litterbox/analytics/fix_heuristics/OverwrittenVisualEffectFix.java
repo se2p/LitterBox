@@ -22,18 +22,10 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.OverwrittenVisualEffect;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.HashMap;
@@ -148,7 +140,7 @@ public class OverwrittenVisualEffectFix extends AbstractFixHeuristic {
      * Recursively checks if the given node or any of its descendants is a halting statement.
      */
     private boolean containsHalting(ASTNode node) {
-        if (node instanceof Stmt stmt && isHalting(stmt)) {
+        if (node instanceof Stmt stmt && AstNodeUtil.isHaltingStatement(stmt)) {
             return true;
         }
         for (ASTNode child : node.getChildren()) {
@@ -157,20 +149,5 @@ public class OverwrittenVisualEffectFix extends AbstractFixHeuristic {
             }
         }
         return false;
-    }
-
-    private boolean isHalting(Stmt stmt) {
-        return stmt instanceof WaitSeconds
-                || stmt instanceof ThinkForSecs
-                || stmt instanceof SayForSecs
-                || stmt instanceof GlideSecsToXY
-                || stmt instanceof GlideSecsTo
-                || stmt instanceof PlaySoundUntilDone
-                || stmt instanceof AskAndWait
-                || stmt instanceof Speak
-                || stmt instanceof RepeatTimesStmt
-                || stmt instanceof RepeatForeverStmt
-                || stmt instanceof UntilStmt
-                || stmt instanceof WaitUntil;
     }
 }
