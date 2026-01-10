@@ -261,7 +261,7 @@ public abstract class BlockJsonCreatorHelper {
                 .append(",\"")
                 .append(value)
                 .append("\",\"")
-                .append(reference)
+                .append(escape(reference))
                 .append("\"]");
 
         if (withDefault) {
