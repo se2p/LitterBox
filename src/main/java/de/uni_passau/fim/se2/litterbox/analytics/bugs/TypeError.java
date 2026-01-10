@@ -76,6 +76,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
+import de.uni_passau.fim.se2.litterbox.ast.util.NumberUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TranslateExtensionVisitor;
@@ -195,8 +196,14 @@ public class TypeError extends AbstractIssueFinder implements TextToSpeechExtens
         if (node instanceof Expression expr) {
             Type actual = inferType(expr, createNodeResolver(node));
 
-            if (actual == Type.STRING && expr instanceof StringLiteral lit && lit.getText().isEmpty()) {
-                return;
+            if (actual == Type.STRING && expr instanceof StringLiteral lit) {
+                if (lit.getText().isEmpty()) {
+                    return;
+                }
+                // Allow valid number strings if Number is expected
+                if (expected == Type.NUMBER && NumberUtil.VALID_NUMBER.matcher(lit.getText().trim()).matches()) {
+                    return;
+                }
             }
 
             if (!isCompatible(expected, actual)) {
@@ -298,7 +305,7 @@ public class TypeError extends AbstractIssueFinder implements TextToSpeechExtens
         // Literals (Number/String) produce output like (4) or [text] which should not be wrapped in [sbi].
         // Blocks produce output that needs [sbi] to be rendered correctly.
         if (node instanceof NumberLiteral || node instanceof StringLiteral) {
-            return "\"" + sb + "\"";
+            return sb;
         }
         return "[sbi]" + sb + "[/sbi]";
     }
