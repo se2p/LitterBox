@@ -107,6 +107,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.util.KeyValueTranslator;
+import de.uni_passau.fim.se2.litterbox.ast.util.NumberUtil;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 
@@ -1468,6 +1469,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
             return;
         }
         node.getName().accept(this);
+        if (NumberUtil.isNumberLike(node.getName().getName())) {
+            emitNoSpace(" :: list");
+        }
         storeNotesForIssue(node);
     }
 
@@ -1477,6 +1481,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
             return;
         }
         node.getName().accept(this);
+        if (NumberUtil.isNumberLike(node.getName().getName())) {
+            emitNoSpace(" :: variables");
+        }
         storeNotesForIssue(node);
     }
 
