@@ -27,7 +27,6 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CodeDiffGenerator {
 
@@ -35,10 +34,8 @@ public class CodeDiffGenerator {
         List<ActorCodeDiff> actorDiffs = new ArrayList<>();
 
         // Map actors by name
-        Map<String, ActorDefinition> beforeActors = AstNodeUtil.getActors(before, true)
-                .collect(Collectors.toMap(a -> a.getIdent().getName(), a -> a));
-        Map<String, ActorDefinition> afterActors = AstNodeUtil.getActors(after, true)
-                .collect(Collectors.toMap(a -> a.getIdent().getName(), a -> a));
+        Map<String, ActorDefinition> beforeActors = mapActorsByName(before);
+        Map<String, ActorDefinition> afterActors = mapActorsByName(after);
 
         Set<String> allActorNames = new HashSet<>();
         allActorNames.addAll(beforeActors.keySet());
@@ -71,6 +68,21 @@ public class CodeDiffGenerator {
                 .toList();
 
         return new ProjectCodeDiff(filteredDiffs);
+    }
+
+    private Map<String, ActorDefinition> mapActorsByName(Program program) {
+        Map<String, ActorDefinition> actorMap = new LinkedHashMap<>();
+        AstNodeUtil.getActors(program, true).forEach(actor -> {
+            String originalName = actor.getIdent().getName();
+            String uniqueName = originalName;
+            int counter = 2;
+            while (actorMap.containsKey(uniqueName)) {
+                uniqueName = originalName + " (" + counter + ")";
+                counter++;
+            }
+            actorMap.put(uniqueName, actor);
+        });
+        return actorMap;
     }
 
     private ActorCodeDiff diffActors(String name, ActorDefinition beforeActor, ActorDefinition afterActor) {
