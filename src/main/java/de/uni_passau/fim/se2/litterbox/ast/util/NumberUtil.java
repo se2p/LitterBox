@@ -49,7 +49,8 @@ public final class NumberUtil {
         if (text == null) {
             return false;
         }
-        return ALLOWED_CHARS.matcher(text).matches() && !VALID_NUMBER.matcher(text).matches();
+        String trimmed = text.trim();
+        return ALLOWED_CHARS.matcher(trimmed).matches() && !VALID_NUMBER.matcher(trimmed).matches();
     }
 
     /**
@@ -62,6 +63,6 @@ public final class NumberUtil {
         if (text == null) {
             return false;
         }
-        return ALLOWED_CHARS.matcher(text).matches();
+        return ALLOWED_CHARS.matcher(text.trim()).matches();
     }
 }
