@@ -150,6 +150,12 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             color: #333;
         }
 
+        .issue-actor {
+            font-size: 1em;
+            font-weight: 600;
+            color: #333;
+        }
+
         .category-description {
             font-style: italic;
             color: #666;
@@ -623,7 +629,10 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                                             data-sprite="${issue.sprite()}"
                                     >
                                         <div class="issue-header">
-                                            <span class="issue-title">${issue.translatedFinderName()}</span>
+                                            <span class="issue-title">
+                                                ${issue.translatedFinderName()}
+                                                <span class="issue-actor">in ${issue.sprite() != null ? issue.sprite() : "Stage"}</span>
+                                            </span>
                                             <span class="severity ${issue.severityClass()}">
                                                 <span class="severity-icon">$unsafe{issue.severityIcon()}</span>
                                                 ${model.translator().getInfo("severity_" + issue.severity())}
