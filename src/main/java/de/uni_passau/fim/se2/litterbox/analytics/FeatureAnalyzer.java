@@ -77,7 +77,6 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
         headers.add("project");
         headers.add("id");
         analyzer.getMetrics().stream().map(MetricExtractor::getName).forEach(headers::add);
-        headers.add("scratch_block_code");
         if (output == null) {
             // Use default format but manually print headers to avoid double printing issues and control behavior
             printer = new CSVPrinter(System.out, CSVFormat.DEFAULT);
@@ -130,8 +129,6 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
                 for (MetricExtractor<ASTNode> extractor : analyzer.getMetrics()) {
                     row.add(Double.toString(extractor.calculateMetric(target)));
                 }
-                String stringScratchCode = getScratchBlockCode(target, program, actorDefinition);
-                row.add(stringScratchCode);
         if (fileName == null) {
             printer.printRecord(row);
         } else {
@@ -140,17 +137,5 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
             }
         }
         printer.flush();
-    }
-
-    private String getScratchBlockCode(ASTNode target, Program program, ActorDefinition actorDefinition) {
-        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
-        if (target instanceof ProcedureDefinition) {
-            visitor.setProgram(program);
-            visitor.setCurrentActor(actorDefinition);
-        }
-        visitor.begin();
-        target.accept(visitor);
-        visitor.end();
-        return visitor.getScratchBlocks();
     }
 }
