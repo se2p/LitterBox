@@ -39,13 +39,14 @@ public class MaxScriptWidthCount<T extends ASTNode> implements ScratchVisitor, M
     }
 
     private double countMaxScriptWidthCount(T node) {
+        String lineSep = System.lineSeparator();
         String scriptString = getScriptString(node);
-        scriptString = scriptString.replace("[scratchblocks]\r\n", "");
-        scriptString = scriptString.replace("[/scratchblocks]\r\n", "");
-        scriptString = scriptString.replace("end\r\n", "");
+        scriptString = scriptString.replace("[scratchblocks]" + lineSep, "");
+        scriptString = scriptString.replace("[/scratchblocks]" + lineSep, "");
+        scriptString = scriptString.replace("end" + lineSep, "");
 
         ArrayList<Integer> scriptWidths = new ArrayList<>();
-        String[] scriptBlocks = scriptString.split("\r\n");
+        String[] scriptBlocks = scriptString.split(lineSep);
         for (String scriptBlock : scriptBlocks) {
             scriptWidths.add(scriptBlock.length());
         }
