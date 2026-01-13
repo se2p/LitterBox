@@ -314,6 +314,7 @@ public class IssueCategorizer {
             removed.add(new RemovedIssueInfo(
                     finderName,
                     beforeIssue.sprite(),
+                    beforeIssue.hint(),
                     isBlockIdEmpty(blockId) ? "N/A" : blockId,
                     beforeIssue.scratchBlocksCode()
             ));
@@ -375,6 +376,7 @@ public class IssueCategorizer {
     /**
      * Info about a removed issue that couldn't be verified as fixed.
      */
-    public record RemovedIssueInfo(String finderName, String actorName, String blockId, String codeSnippet) {
+    public record RemovedIssueInfo(String finderName, String actorName, String hintText, String blockId,
+                                   String codeSnippet) {
     }
 }

@@ -92,7 +92,7 @@ public final class IssueConverter {
                 .withActor(actor)
                 .withMetadata(fix.metadata())
                 .withSeverity(IssueSeverity.LOW)
-                .withHint(fix.getOriginalBugFinder())
+                .withHint(Hint.fromText(fix.originalIssue().hint()))
                 .withOriginalBlockId(fix.getBugLocationBlockId())
                 .withOriginalCodeSnippet(codeSnippet);
 
@@ -138,7 +138,7 @@ public final class IssueConverter {
                     .withProgram(program)
                     .withActor(actor)
                     .withSeverity(IssueSeverity.LOW)
-                    .withHint(info.finderName())
+                    .withHint(Hint.fromText(info.hintText()))
                     .withOriginalBlockId(info.blockId())
                     .withOriginalCodeSnippet(info.codeSnippet())
                     .build();
@@ -159,7 +159,12 @@ public final class IssueConverter {
         String scratchBlocksCode = null;
         ASTNode codeLocation = issue.getCodeLocation();
         if (codeLocation != null) {
-            blockId = AstNodeUtil.getBlockId(codeLocation);
+            ASTNode nodeWithId = AstNodeUtil.findNearestNodeWithBlockId(codeLocation);
+            if (nodeWithId != null) {
+                blockId = AstNodeUtil.getBlockId(nodeWithId);
+            } else {
+                blockId = AstNodeUtil.getBlockId(codeLocation);
+            }
 
             ScriptEntity script = AstNodeUtil.findParent(codeLocation, de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity.class);
             ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(issue);
