@@ -354,6 +354,12 @@ public class Main implements Callable<Integer> {
         )
         String actor;
 
+        @CommandLine.Option(
+                names = {"-c", "--combine"},
+                description = "Combine metrics per actor."
+        )
+        boolean combine;
+
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
@@ -361,7 +367,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected FeatureAnalyzer getAnalyzer() {
-            return new FeatureAnalyzer(commonOptions.outputPath, commonOptions.deleteProject, actor);
+            return new FeatureAnalyzer(commonOptions.outputPath, commonOptions.deleteProject, actor, combine);
         }
     }
 

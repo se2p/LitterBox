@@ -45,6 +45,7 @@ public class AvgScriptWidthCount<T extends ASTNode> implements ScratchVisitor, M
         scriptString = scriptString.replace("[scratchblocks]" + lineSep, "");
         scriptString = scriptString.replace("[/scratchblocks]" + lineSep, "");
         scriptString = scriptString.replace("end" + lineSep, "");
+         scriptString = scriptString.replaceAll("(?m)^\\r?\\n", ""); // empty lines
 
         ArrayList<Integer> scriptWidths = new ArrayList<>();
         String[] scriptBlocks = scriptString.split(lineSep);
@@ -65,6 +66,9 @@ public class AvgScriptWidthCount<T extends ASTNode> implements ScratchVisitor, M
             Program program = (Program) node.getParentNode().getParentNode().getParentNode().getParentNode();
             visitor.setProgram(program);
             visitor.setCurrentActor(actorDefinition);
+        } else if (node instanceof ActorDefinition) {
+            visitor.setProgram((Program) node.getParentNode().getParentNode());
+            visitor.setCurrentActor((ActorDefinition) node);
         }
         visitor.begin();
         node.accept(visitor);

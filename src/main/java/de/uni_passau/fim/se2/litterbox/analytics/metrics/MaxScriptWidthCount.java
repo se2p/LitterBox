@@ -61,6 +61,9 @@ public class MaxScriptWidthCount<T extends ASTNode> implements ScratchVisitor, M
             Program program = (Program) node.getParentNode().getParentNode().getParentNode().getParentNode();
             visitor.setProgram(program);
             visitor.setCurrentActor(actorDefinition);
+        } else if (node instanceof ActorDefinition) {
+            visitor.setProgram((Program) node.getParentNode().getParentNode());
+            visitor.setCurrentActor((ActorDefinition) node);
         }
         visitor.begin();
         node.accept(visitor);

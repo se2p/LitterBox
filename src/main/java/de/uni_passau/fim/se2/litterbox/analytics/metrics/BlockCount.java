@@ -74,6 +74,9 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TranslateExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BlockCount<T extends ASTNode>
         implements MetricExtractor<T>, ScratchVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor,
         TranslateExtensionVisitor {
@@ -90,7 +93,16 @@ public class BlockCount<T extends ASTNode>
         insideProcedure = false;
         fixedBlock = false;
         insideScript = !(node instanceof Script || node instanceof ProcedureDefinition || node instanceof Program);
-        node.accept(this);
+        if (node instanceof ActorDefinition) {
+            List<ASTNode> targets = new ArrayList<>();
+            targets.addAll(((ActorDefinition) node).getScripts().getScriptList());
+            targets.addAll(((ActorDefinition) node).getProcedureDefinitionList().getList());
+            for (ASTNode target : targets) {
+                target.accept(this);
+            }
+        } else {
+            node.accept(this);
+        }
         insideScript = false;
         return count;
     }

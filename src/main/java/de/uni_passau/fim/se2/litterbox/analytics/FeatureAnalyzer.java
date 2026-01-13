@@ -40,14 +40,16 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
     private static final Logger log = Logger.getLogger(FeatureAnalyzer.class.getName());
 
     private final String actor;
+    private final boolean combine;
 
     private final ProgramFeatureAnalyzer analyzer;
     private CSVPrinter printer;
 
-    public FeatureAnalyzer(Path output, boolean delete, String actor) {
+    public FeatureAnalyzer(Path output, boolean delete, String actor, boolean combine) {
         super(new ProgramFeatureAnalyzer(), output, delete);
         this.analyzer = (ProgramFeatureAnalyzer) super.analyzer;
         this.actor = actor;
+        this.combine = combine;
     }
 
     @Override
@@ -109,8 +111,17 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
             int procedureDefCount = 0;
             actorCount = actorCount + 1;
             List<ASTNode> targets = new ArrayList<>();
-            targets.addAll(actorDefinition.getScripts().getScriptList());
-            targets.addAll(actorDefinition.getProcedureDefinitionList().getList());
+            List<Script> scripts = actorDefinition.getScripts().getScriptList();
+            List<ProcedureDefinition> procedures = actorDefinition.getProcedureDefinitionList().getList();
+
+            if (combine) {
+                if ((scripts.size() + procedures.size()) > 0) {
+                    targets.add(actorDefinition);
+                }
+            } else {
+                targets.addAll(scripts);
+                targets.addAll(procedures);
+            }
 
             for (ASTNode target : targets) {
                 List<String> row = new ArrayList<>();
@@ -122,6 +133,8 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
                 } else if (target instanceof ProcedureDefinition) {
                     procedureDefCount = procedureDefCount + 1;
                     uniqueId = "ACTOR" + actorCount + "_" + "PROCEDUREDEFINITION" + procedureDefCount;
+                } else if (target instanceof ActorDefinition) {
+                    uniqueId = actorName;
                 }
 
                 row.add(uniqueId);
