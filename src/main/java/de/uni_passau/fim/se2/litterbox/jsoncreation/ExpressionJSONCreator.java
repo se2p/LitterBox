@@ -185,7 +185,7 @@ public class ExpressionJSONCreator
         finishedJSONStrings.add(input);
     }
 
-    private void createSimpleExpression(NonDataBlockMetadata metadata, Opcode opcode) {
+    private void createSimpleExpression(BlockMetadata metadata, Opcode opcode) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -196,73 +196,73 @@ public class ExpressionJSONCreator
 
     @Override
     public void visit(Answer node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(MouseX node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(MouseY node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(PositionX node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(PositionY node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(Direction node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(Size node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(Volume node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(IsMouseDown node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(Loudness node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(Timer node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(DaysSince2000 node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(Username node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(Costume node) {
         createFieldsExpression(
-                (NonDataBlockMetadata) node.getMetadata(),
+                node.getMetadata(),
                 NUMBER_NAME_KEY,
                 node.getType().getTypeName(),
                 node.getOpcode()
@@ -272,7 +272,7 @@ public class ExpressionJSONCreator
     @Override
     public void visit(Backdrop node) {
         createFieldsExpression(
-                (NonDataBlockMetadata) node.getMetadata(),
+                node.getMetadata(),
                 NUMBER_NAME_KEY,
                 node.getType().getTypeName(),
                 node.getOpcode()
@@ -282,7 +282,7 @@ public class ExpressionJSONCreator
     @Override
     public void visit(Current node) {
         createFieldsExpression(
-                (NonDataBlockMetadata) node.getMetadata(),
+                node.getMetadata(),
                 CURRENT_YEAR_FIELD,
                 node.getTimeComp().getTypeName(),
                 node.getOpcode()
@@ -290,7 +290,7 @@ public class ExpressionJSONCreator
     }
 
     private void createFieldsExpression(
-            NonDataBlockMetadata metadata, String fieldName, String fieldValue, Opcode opcode
+            BlockMetadata metadata, String fieldName, String fieldValue, Opcode opcode
     ) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
@@ -304,7 +304,7 @@ public class ExpressionJSONCreator
 
     @Override
     public void visit(LengthOfVar node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -325,103 +325,103 @@ public class ExpressionJSONCreator
 
     @Override
     public void visit(Add node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 NUM1_KEY,
                 NUM2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(Minus node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 NUM1_KEY,
                 NUM2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(Mult node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 NUM1_KEY,
                 NUM2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(Div node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 NUM1_KEY,
                 NUM2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(LessThan node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 OPERAND1_KEY,
                 OPERAND2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(BiggerThan node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 OPERAND1_KEY,
                 OPERAND2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(Equals node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 OPERAND1_KEY,
                 OPERAND2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(PickRandom node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 FROM_KEY,
                 TO_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(Join node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 STRING1_KEY,
                 STRING2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(LetterOf node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getNum(), node.getStringExpr(), LETTER_KEY,
+        mathStringOperations(node.getMetadata(), node.getNum(), node.getStringExpr(), LETTER_KEY,
                 STRING_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(Mod node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 NUM1_KEY,
                 NUM2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(StringContains node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getContaining(), node.getContained(),
+        mathStringOperations(node.getMetadata(), node.getContaining(), node.getContained(),
                 STRING1_KEY, STRING2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(Or node) {
         boolOperations(
-                (NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), node.getOpcode()
+                node.getMetadata(), node.getOperand1(), node.getOperand2(), node.getOpcode()
         );
     }
 
     @Override
     public void visit(And node) {
         boolOperations(
-                (NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), node.getOpcode()
+                node.getMetadata(), node.getOperand1(), node.getOperand2(), node.getOpcode()
         );
     }
 
     @Override
     public void visit(Round node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -434,7 +434,7 @@ public class ExpressionJSONCreator
 
     @Override
     public void visit(LengthOfString node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -447,7 +447,7 @@ public class ExpressionJSONCreator
 
     @Override
     public void visit(Not node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -465,7 +465,7 @@ public class ExpressionJSONCreator
 
     @Override
     public void visit(Touching node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -488,7 +488,7 @@ public class ExpressionJSONCreator
 
     @Override
     public void visit(DistanceTo node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -521,7 +521,7 @@ public class ExpressionJSONCreator
 
     @Override
     public void visit(AttributeOf node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -555,7 +555,7 @@ public class ExpressionJSONCreator
 
     @Override
     public void visit(NumFunctOf node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -571,7 +571,7 @@ public class ExpressionJSONCreator
 
     @Override
     public void visit(IsKeyPressed node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -594,25 +594,25 @@ public class ExpressionJSONCreator
 
     @Override
     public void visit(ItemOfVariable node) {
-        createListBlockWithExpr((NonDataBlockMetadata) node.getMetadata(), node.getNum(), INDEX_KEY,
+        createListBlockWithExpr(node.getMetadata(), node.getNum(), INDEX_KEY,
                 node.getIdentifier(), node.getOpcode());
     }
 
     @Override
     public void visit(IndexOf node) {
-        createListBlockWithExpr((NonDataBlockMetadata) node.getMetadata(), node.getExpr(), ITEM_KEY,
+        createListBlockWithExpr(node.getMetadata(), node.getExpr(), ITEM_KEY,
                 node.getIdentifier(), node.getOpcode());
     }
 
     @Override
     public void visit(ListContains node) {
-        createListBlockWithExpr((NonDataBlockMetadata) node.getMetadata(), node.getElement(), ITEM_KEY,
+        createListBlockWithExpr(node.getMetadata(), node.getElement(), ITEM_KEY,
                 node.getIdentifier(), node.getOpcode());
     }
 
     @Override
     public void visit(SpriteTouchingColor node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -626,7 +626,7 @@ public class ExpressionJSONCreator
 
     @Override
     public void visit(ColorTouchingColor node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -702,11 +702,11 @@ public class ExpressionJSONCreator
     @Override
     public void visit(Parameter node) {
         createFieldsExpression(
-                (NonDataBlockMetadata) node.getMetadata(), VALUE_KEY, node.getName().getName(), node.getOpcode()
+                node.getMetadata(), VALUE_KEY, node.getName().getName(), node.getOpcode()
         );
     }
 
-    private void createListBlockWithExpr(NonDataBlockMetadata metadata, Expression expr, String inputName,
+    private void createListBlockWithExpr(BlockMetadata metadata, Expression expr, String inputName,
                                          Identifier identifier, Opcode opcode) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
@@ -719,7 +719,7 @@ public class ExpressionJSONCreator
         previousBlockId = metadata.getBlockId();
     }
 
-    private void boolOperations(NonDataBlockMetadata metadata, BoolExpr expr1, BoolExpr expr2, Opcode opcode) {
+    private void boolOperations(BlockMetadata metadata, BoolExpr expr1, BoolExpr expr2, Opcode opcode) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -740,7 +740,7 @@ public class ExpressionJSONCreator
         previousBlockId = metadata.getBlockId();
     }
 
-    private void mathStringOperations(NonDataBlockMetadata metadata, Expression expr1, Expression expr2,
+    private void mathStringOperations(BlockMetadata metadata, Expression expr1, Expression expr2,
                                       String inputName1,
                                       String inputName2, Opcode opcode) {
         if (topExpressionId == null) {
@@ -756,7 +756,7 @@ public class ExpressionJSONCreator
         previousBlockId = metadata.getBlockId();
     }
 
-    private String createExpr(NonDataBlockMetadata metadata, ASTNode expr, String inputName, boolean withDefault) {
+    private String createExpr(BlockMetadata metadata, ASTNode expr, String inputName, boolean withDefault) {
         IdJsonStringTuple tuple = expressionJSONCreator.createExpressionJSON(metadata.getBlockId(), expr, symbolTable);
         if (tuple.id() == null) {
             StringBuilder jsonString = new StringBuilder();
@@ -780,7 +780,7 @@ public class ExpressionJSONCreator
 
     @Override
     public void visit(VideoOn node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -841,7 +841,16 @@ public class ExpressionJSONCreator
         }
         List<String> inputs = new ArrayList<>();
         inputs.add(createExpr(metadata, node.getText(), WORDS_KEY, true));
-        inputs.add(createExpr(metadata, node.getLanguage(), LANGUAGE_INPUT_KEY, true));
+
+        if (node.getLanguage() instanceof TFixedLanguage) {
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
+                    metadata.getBlockId(), node.getLanguage(), node.getMenuLanguageOpcode()
+            );
+            finishedJSONStrings.add(tuple.jsonString());
+            inputs.add(createReferenceInput(LANGUAGE_INPUT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
+        } else {
+            inputs.add(createExpr(metadata, node.getLanguage(), LANGUAGE_INPUT_KEY, true));
+        }
 
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, createInputs(inputs), EMPTY_VALUE, node.getOpcode()));
