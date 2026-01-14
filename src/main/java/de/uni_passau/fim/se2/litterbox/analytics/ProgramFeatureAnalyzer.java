@@ -50,7 +50,7 @@ public class ProgramFeatureAnalyzer implements ProgramAnalyzer<List<FeatureResul
             // new SliceOverlap<>(),
             // new SliceTightness<>(),
             new SoundBlockCount<>(),
-            new StackedStatementCount<>(),
+            new MaxStackedStatementCount<>(),
             new StatementCount<>(),
             new VariableCount<>(),
             new VariablesBlockCount<>(),

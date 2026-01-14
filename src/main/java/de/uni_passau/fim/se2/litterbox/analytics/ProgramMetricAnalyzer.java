@@ -101,7 +101,7 @@ public class ProgramMetricAnalyzer implements ProgramAnalyzer<List<MetricResult>
             metricList.add(new SensingBlockCount<>());
             metricList.add(new SoundBlockCount<>());
             metricList.add(new SpriteCount<>());
-            metricList.add(new StackedStatementCount<>());
+            metricList.add(new MaxStackedStatementCount<>());
             metricList.add(new StatementCount<>());
             metricList.add(new TokenEntropy<>());
             metricList.add(new TranslateBlockCount<>());
