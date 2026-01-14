@@ -43,7 +43,7 @@ public class ProgramFeatureAnalyzer implements ProgramAnalyzer<List<FeatureResul
             new LooksBlockCount<>(),
             new MotionBlockCount<>(),
             new MyBlocksBlockCount<>(),
-            new NestedBlockCount<>(),
+            new MaxNestedBlockCount<>(),
             new OperatorsBlockCount<>(),
             new SensingBlockCount<>(),
             // new SliceCoverage<>(),

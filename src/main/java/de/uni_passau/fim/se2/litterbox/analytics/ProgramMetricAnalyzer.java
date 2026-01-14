@@ -92,7 +92,7 @@ public class ProgramMetricAnalyzer implements ProgramAnalyzer<List<MetricResult>
             metricList.add(new MotionBlockCount<>());
             metricList.add(new MusicBlockCount<>());
             metricList.add(new MyBlocksBlockCount<>());
-            metricList.add(new NestedBlockCount<>());
+            metricList.add(new MaxNestedBlockCount<>());
             metricList.add(new OperatorsBlockCount<>());
             metricList.add(new PenBlockCount<>());
             metricList.add(new ProcedureCount<>());
