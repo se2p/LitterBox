@@ -30,37 +30,41 @@ import java.util.List;
 
 public class ProgramFeatureAnalyzer implements ProgramAnalyzer<List<FeatureResult>> {
     private final List<MetricExtractor<ASTNode>> metrics = Arrays.asList(
+            // B&W inspired Avg/Max Counts
             new AvgBlockStatementCount<>(),
+            new MaxBlockStatementCount<>(),
             new AvgLineWidthCount<>(),
+            new MaxLineWidthCount<>(),
             new AvgVariableLengthCount<>(),
+            new MaxVariableLengthCount<>(),
             new BlockCount<>(),
             new ControlBlockCount<>(),
             new EventsBlockCount<>(),
-            new HalsteadVolume<>(),
-            new HalsteadLength<>(),
-            new HalsteadVocabulary<>(),
-            new HalsteadDifficulty<>(),
-            new HalsteadEffort<>(),
             new LooksBlockCount<>(),
-            new MaxBlockStatementCount<>(),
-            new MaxLineWidthCount<>(),
-            new MaxVariableLengthCount<>(),
             new MotionBlockCount<>(),
             new MyBlocksBlockCount<>(),
             new NestedBlockCount<>(),
             new OperatorsBlockCount<>(),
             new SensingBlockCount<>(),
-//            new SliceCoverage<>(),
-//            new SliceOverlap<>(),
-//            new SliceTightness<>(),
+            // new SliceCoverage<>(),
+            // new SliceOverlap<>(),
+            // new SliceTightness<>(),
             new SoundBlockCount<>(),
             new StackedStatementCount<>(),
             new StatementCount<>(),
-            new TokenEntropy<>(),
             new VariableCount<>(),
             new VariablesBlockCount<>(),
+            new WeightedMethodCount<>(),
             new HatCount<>(),
-            new WeightedMethodCount<>()
+            new ScriptCount<>(),
+
+            // Posnett inspired
+            new HalsteadVolume<>(),
+            new HalsteadLength<>(),
+            new HalsteadVocabulary<>(),
+            new HalsteadDifficulty<>(),
+            new HalsteadEffort<>(),
+            new TokenEntropy<>()
     );
 
     @Override
