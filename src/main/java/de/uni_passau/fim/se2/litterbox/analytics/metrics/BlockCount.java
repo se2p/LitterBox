@@ -93,10 +93,10 @@ public class BlockCount<T extends ASTNode>
         insideProcedure = false;
         fixedBlock = false;
         insideScript = !(node instanceof Script || node instanceof ProcedureDefinition || node instanceof Program);
-        if (node instanceof ActorDefinition) {
+        if (node instanceof ActorDefinition actor) {
             List<ASTNode> targets = new ArrayList<>();
-            targets.addAll(((ActorDefinition) node).getScripts().getScriptList());
-            targets.addAll(((ActorDefinition) node).getProcedureDefinitionList().getList());
+            targets.addAll(actor.getScripts().getScriptList());
+            targets.addAll(actor.getProcedureDefinitionList().getList());
             for (ASTNode target : targets) {
                 target.accept(this);
             }
