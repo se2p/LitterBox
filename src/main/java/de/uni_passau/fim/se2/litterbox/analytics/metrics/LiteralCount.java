@@ -1,0 +1,78 @@
+package de.uni_passau.fim.se2.litterbox.analytics.metrics;
+
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+public class LiteralCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
+    public static final String NAME = "literal_count";
+
+    private final boolean average;
+    private int literalCount = 0;
+
+    public LiteralCount() {
+        this.average = false;
+    }
+
+    public LiteralCount(boolean average) {
+        this.average = average;
+    }
+
+    @Override
+    public double calculateMetric(T node) {
+        Preconditions.checkNotNull(node);
+        double totalCount = new BlockCount<T>().calculateMetric(node);
+        if (totalCount == 0) {
+            return 0.0;
+        }
+        literalCount = 0;
+        node.accept(this);
+        return average ? literalCount / totalCount : literalCount;
+    }
+
+    @Override
+    public void visit(Program program) {
+        for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
+            visit(actor.getScripts());
+            visit(actor.getProcedureDefinitionList());
+        }
+    }
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        visit(actor.getScripts());
+        visit(actor.getProcedureDefinitionList());
+    }
+
+    @Override
+    public void visit(ProcedureDefinition procedure) {
+        visit(procedure.getParameterDefinitionList());
+        visit(procedure.getStmtList());
+    }
+
+    @Override
+    public void visit(StringLiteral node) {
+        if (!(node.getParentNode() instanceof StrId)) {
+            literalCount++;
+        }
+    }
+
+    @Override
+    public void visit(NumberLiteral node) {
+        literalCount++;
+    }
+
+    @Override
+    public String getName() {
+        if (average) {
+            return "average_" + NAME;
+        }
+        return NAME;
+    }
+}
