@@ -367,7 +367,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected FeatureAnalyzer getAnalyzer() {
-            return new FeatureAnalyzer(commonOptions.outputPath, commonOptions.deleteProject, actor, combine);
+            return new FeatureAnalyzer(commonOptions.outputPath, commonOptions.deleteProject, actor, perActor);
         }
     }
 
