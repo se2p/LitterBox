@@ -47,7 +47,6 @@ public class LeilaAnalyzer extends FileAnalyzer<Void> {
         super(new LeilaProgramAnalyzer(), output, delete);
         this.nonDet = nonDet;
         this.onNever = onNever;
-
     }
 
     @Override

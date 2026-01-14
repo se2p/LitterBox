@@ -28,8 +28,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.LetterOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.PlayDrumForBeats;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.PlayNoteForBeats;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.RestForBeats;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetadataList;
@@ -89,6 +99,27 @@ public class AstNodeUtil {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Finds the nearest ancestor of the node (including the node itself) that has a block ID.
+     *
+     * <p>This is useful for expression nodes (like {@code AsNumber}) which typically don't have
+     * their own block ID. In Scratch, block IDs are assigned to statement-level blocks, not to
+     * nested expressions.
+     *
+     * @param node Some node in the AST.
+     * @return The nearest node (including itself) that has a block ID, or {@code null} if none found.
+     */
+    public static ASTNode findNearestNodeWithBlockId(final ASTNode node) {
+        ASTNode current = node;
+        while (current != null) {
+            if (getBlockId(current) != null) {
+                return current;
+            }
+            current = current.getParentNode();
+        }
+        return null;
     }
 
     public static boolean isMetadata(final ASTNode node) {
@@ -256,7 +287,7 @@ public class AstNodeUtil {
     }
 
     private static class BlockMapVisitor implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor,
-            TextToSpeechExtensionVisitor, TranslateExtensionVisitor {
+            TextToSpeechExtensionVisitor, TranslateExtensionVisitor, VideoSensingExtensionVisitor {
         private final Map<String, ASTNode> blockMap = new LinkedHashMap<>();
 
         private BlockMapVisitor() {
@@ -320,7 +351,7 @@ public class AstNodeUtil {
         return visitor.inputs.containsKey(inputKind) && visitor.inputs.get(inputKind) == child;
     }
 
-    private static class IsInputOfVisitor implements ScratchVisitor, PenExtensionVisitor {
+    private static class IsInputOfVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor, TranslateExtensionVisitor, VideoSensingExtensionVisitor {
         private final Map<String, ASTNode> inputs = new LinkedHashMap<>();
 
         private IsInputOfVisitor() {
@@ -795,6 +826,59 @@ public class AstNodeUtil {
         public void visit(final SetPenColorToColorStmt node) {
             inputs.put(COLOR_KEY, node.getColorExpr());
         }
+
+        /*
+         * Text to Speech blocks
+         */
+
+        @Override
+        public void visit(final Speak node) {
+            inputs.put(WORDS_KEY, node.getText());
+        }
+
+        @Override
+        public void visit(final SetVoice node) {
+            inputs.put(VOICE_INPUT_KEY, node.getVoice());
+        }
+
+        @Override
+        public void visit(final SetLanguage node) {
+            inputs.put(LANGUAGE_INPUT_KEY, node.getLanguage());
+        }
+
+        /*
+         * Translate blocks
+         */
+
+        @Override
+        public void visit(final TranslateTo node) {
+            inputs.put(WORDS_KEY, node.getText());
+            inputs.put(LANGUAGE_INPUT_KEY, node.getLanguage());
+        }
+
+        /*
+         * Video Sensing blocks
+         */
+
+        @Override
+        public void visit(WhenVideoMotionGreaterThan node) {
+            inputs.put(REFERENCE_KEY, node.getReference());
+        }
+
+        @Override
+        public void visit(VideoOn node) {
+            // no inputs
+        }
+
+        @Override
+        public void visit(TurnVideo node) {
+            // no inputs
+        }
+
+        @Override
+        public void visit(SetVideoTransparency node) {
+            inputs.put(TRANSPARENCY_KEY, node.getTransparency());
+        }
     }
 
     /**
@@ -822,6 +906,9 @@ public class AstNodeUtil {
                 || stmt instanceof GlideSecsTo
                 || stmt instanceof LoopStmt
                 || stmt instanceof PlaySoundUntilDone
+                || stmt instanceof PlayDrumForBeats
+                || stmt instanceof PlayNoteForBeats
+                || stmt instanceof RestForBeats
                 || stmt instanceof SayForSecs
                 || stmt instanceof Speak
                 || stmt instanceof StopThisScript
@@ -849,6 +936,9 @@ public class AstNodeUtil {
                 || stmt instanceof GlideSecsToXY
                 || stmt instanceof GlideSecsTo
                 || stmt instanceof PlaySoundUntilDone
+                || stmt instanceof PlayDrumForBeats
+                || stmt instanceof PlayNoteForBeats
+                || stmt instanceof RestForBeats
                 || stmt instanceof Speak;
     }
 

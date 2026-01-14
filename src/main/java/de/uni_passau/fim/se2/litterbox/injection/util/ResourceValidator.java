@@ -71,7 +71,7 @@ public class ResourceValidator {
     private static <T> boolean checkResourceExists(
             List<T> resources, Function<T, String> nameExtractor, String targetName) {
         if (resources == null || resources.isEmpty()) {
-            return true;
+            return false;
         }
 
         // Check for placeholder test metadata (where name equals class simple name)

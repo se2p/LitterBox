@@ -20,6 +20,9 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -32,13 +35,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.VideoSensingExtensionVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ControlFlowGraphVisitor implements ScratchVisitor {
+public class ControlFlowGraphVisitor implements ScratchVisitor, VideoSensingExtensionVisitor {
 
-    private ControlFlowGraphBuilder builder = new ControlFlowGraphBuilder();
+    private final ControlFlowGraphBuilder builder = new ControlFlowGraphBuilder();
 
     private boolean inScript = false;
 
@@ -274,6 +278,21 @@ public class ControlFlowGraphVisitor implements ScratchVisitor {
     @Override
     public void visit(AttributeAboveValue node) {
         builder.addVariableEventHandler(node);
+    }
+
+    @Override
+    public void visit(WhenVideoMotionGreaterThan node) {
+        builder.addUserEventHandler(node);
+    }
+
+    @Override
+    public void visit(TurnVideo node) {
+        builder.addStatement(node);
+    }
+
+    @Override
+    public void visit(SetVideoTransparency node) {
+        builder.addStatement(node);
     }
 
     private boolean isInScript() {

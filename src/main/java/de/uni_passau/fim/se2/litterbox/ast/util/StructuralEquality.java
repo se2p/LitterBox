@@ -65,7 +65,7 @@ public final class StructuralEquality {
      *
      * @param node1 Some node of the AST.
      * @param node2 Some other node of the AST.
-     * @param <N> The type of the nodes.
+     * @param <N>   The type of the nodes.
      * @return True, if the two given nodes are structurally equal.
      */
     public static <N extends ASTNode> boolean areStructurallyEqual(final N node1, final N node2) {
@@ -87,7 +87,7 @@ public final class StructuralEquality {
      *
      * @param node1 Some node of the AST.
      * @param node2 Some other node of the AST.
-     * @param <N> The type of the nodes.
+     * @param <N>   The type of the nodes.
      * @return True, if the two given nodes are structurally equal.
      */
     public static <N extends ASTNode> boolean areStructurallyEqualIgnoringLiterals(final N node1, final N node2) {
@@ -103,8 +103,8 @@ public final class StructuralEquality {
      *
      * <p>We don’t care about other metadata in the project but only the actual sprite definitions.
      *
-     * @param program1 Some program.
-     * @param program2 Another program.
+     * @param program1       Some program.
+     * @param program2       Another program.
      * @param ignoreLiterals If literal values should not be considered to be part of the structure.
      * @return True, if the two programs are structurally equal.
      */
@@ -132,8 +132,8 @@ public final class StructuralEquality {
      * current state of variables and sprite attributes. We ignore those as part of the comparison and only check the
      * actual structure of the sprites (ie scripts and procedures).
      *
-     * @param actor1 Some sprite.
-     * @param actor2 Another sprite.
+     * @param actor1         Some sprite.
+     * @param actor2         Another sprite.
      * @param ignoreLiterals If literal values should not be considered to be part of the structure.
      * @return True, if the two sprites are structurally equal.
      */
@@ -147,7 +147,6 @@ public final class StructuralEquality {
         if (!scriptCountEqual || !procedureCountEqual) {
             return false;
         }
-
 
         final boolean scriptsEqual = allHaveStructurallyEqualPartner(
                 actor1.getScripts().getScriptList(),
@@ -273,7 +272,7 @@ public final class StructuralEquality {
 
     private static class LeafEqualityVisitor implements
             ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor,
-            TranslateExtensionVisitor {
+            TranslateExtensionVisitor, VideoSensingExtensionVisitor {
 
         private static final double EPSILON = 1e-4;
 

@@ -25,13 +25,10 @@ import java.util.Objects;
 
 public class Variable implements Defineable {
 
-    private final int cachedHash;
-
     private final Identifier identifier;
 
     public Variable(Identifier identifier) {
         this.identifier = identifier;
-        this.cachedHash = getCachedHash();
     }
 
     public Identifier getIdentifier() {
@@ -58,10 +55,6 @@ public class Variable implements Defineable {
 
     @Override
     public int hashCode() {
-        return cachedHash;
-    }
-
-    private int getCachedHash() {
         if (identifier instanceof Qualified q) {
             return Objects.hash(q.getFirst(), q.getSecond().getName());
         }

@@ -35,7 +35,6 @@ public class GlidingMotion extends AbstractIssueFinder {
     public static final String NAME = "gliding_motion";
     private boolean keyPressed;
 
-
     @Override
     public void visit(Script node) {
         keyPressed = false;
@@ -65,10 +64,7 @@ public class GlidingMotion extends AbstractIssueFinder {
         if (first == other) {
             return false;
         }
-        if (first.getFinder() != other.getFinder()) {
-            return false;
-        }
-        return true;
+        return first.getFinder() == other.getFinder();
     }
 
     @Override

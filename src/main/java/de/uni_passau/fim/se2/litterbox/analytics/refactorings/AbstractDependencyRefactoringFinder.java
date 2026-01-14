@@ -58,9 +58,7 @@ public abstract class AbstractDependencyRefactoringFinder extends AbstractRefact
         int numStatements1 = stmtList.getNumberOfStatements();
         if (numStatements1 > 0) {
             Stmt lastStmt = stmtList.getStatement(numStatements1 - 1);
-            if (isTerminationStatement(lastStmt)) {
-                return true;
-            }
+            return isTerminationStatement(lastStmt);
         }
         return false;
     }
@@ -140,20 +138,15 @@ public abstract class AbstractDependencyRefactoringFinder extends AbstractRefact
             return true;
         }
         // Generic Attribute
-        if (stmt instanceof SetAttributeTo) {
-            return true;
-        }
-
-        return false;
+        return stmt instanceof SetAttributeTo;
     }
-
 
     /*
      * Since the dependency analysis does not take concurrency into account
      * this method simply applies the merge and checks for dependencies in
      * the resulting script that span across the two parent scripts.
      */
-    protected boolean hasDependencies(Script script1, Script script2, Script mergedScript) {
+    protected boolean hasDependencies(Script script1, Script mergedScript) {
 
         ControlFlowGraph cfg = getControlFlowGraphForScript(mergedScript);
 
@@ -167,14 +160,9 @@ public abstract class AbstractDependencyRefactoringFinder extends AbstractRefact
                 )
         );
 
-        if (hasControlDependency(cfg, stmtScript1, stmtScript2)
+        return hasControlDependency(cfg, stmtScript1, stmtScript2)
                 || hasDataDependency(cfg, stmtScript1, stmtScript2)
                 || hasTimeDependency(cfg, stmtScript1, stmtScript2)
-                || wouldCreateDataDependency(mergedScript, stmtScript2, stmtScript1)) {
-            return true;
-        }
-
-        return false;
+                || wouldCreateDataDependency(mergedScript, stmtScript2, stmtScript1);
     }
-
 }

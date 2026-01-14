@@ -20,22 +20,16 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.jsoncreation.JSONFileCreator;
-import de.uni_passau.fim.se2.litterbox.report.CSVReportGenerator;
+import de.uni_passau.fim.se2.litterbox.report.AnalysisResultHandler;
 import de.uni_passau.fim.se2.litterbox.report.CommentGenerator;
-import de.uni_passau.fim.se2.litterbox.report.ConsoleReportGenerator;
-import de.uni_passau.fim.se2.litterbox.report.JSONReportGenerator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
-
-import static de.uni_passau.fim.se2.litterbox.analytics.IssueTool.generateFixHeuristicsNames;
 
 public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
 
@@ -44,33 +38,25 @@ public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
     private static final String ANNOTATED_PROGRAM_SUFFIX = "_annotated";
 
     private final IssueTranslator translator;
-    private final List<String> detectorNames;
+    private final AnalysisResultHandler resultHandler;
     private Path annotationOutput;
-    private final boolean outputPerScript;
-
-    private final Path priorResultPath;
 
     public BugAnalyzer(
             IssueTranslator translator, Path output, String detectors,
             boolean ignoreLooseBlocks, boolean delete, boolean outputPerScript
     ) {
-        super(new ProgramBugAnalyzer(detectors, ignoreLooseBlocks, null), output, delete);
-
+        super(new ProgramBugAnalyzer(detectors, ignoreLooseBlocks), output, delete);
         this.translator = translator;
-        this.outputPerScript = outputPerScript;
-        this.detectorNames = IssueTool.getFinders(detectors).stream().map(IssueFinder::getName).toList();
-        priorResultPath = null;
+        this.resultHandler = AnalysisResultHandler.create(translator, output, detectors, outputPerScript);
     }
 
     public BugAnalyzer(
             IssueTranslator translator, Path output, String detectors,
             boolean ignoreLooseBlocks, boolean delete, boolean outputPerScript, Path priorResultPath
     ) {
-        super(new ProgramBugAnalyzer(detectors, ignoreLooseBlocks, priorResultPath), output, delete);
+        super(new ProgramBugAnalyzer(detectors, ignoreLooseBlocks), output, delete);
         this.translator = translator;
-        this.outputPerScript = outputPerScript;
-        this.detectorNames = IssueTool.getFinders(detectors).stream().map(IssueFinder::getName).toList();
-        this.priorResultPath = priorResultPath;
+        this.resultHandler = AnalysisResultHandler.create(translator, output, detectors, outputPerScript);
     }
 
     public void setAnnotationOutput(Path annotationOutput) {
@@ -78,35 +64,21 @@ public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
     }
 
     @Override
-    protected void writeResultToFile(Path projectFile, Program program, Set<Issue> result) {
-        generateOutput(program, result, output, outputPerScript);
-        createAnnotatedFile(projectFile.toFile(), program, result, annotationOutput);
+    protected void beginAnalysis() throws IOException {
+        resultHandler.begin();
+        super.beginAnalysis();
     }
 
-    private void generateOutput(Program program, Set<Issue> issues, Path reportFileName, boolean outputPerScript) {
-        List<String> detectorsToWrite = new ArrayList<>(detectorNames);
-        if (priorResultPath != null) {
-            detectorsToWrite.addAll(generateFixHeuristicsNames());
-        }
-        try {
-            if (reportFileName == null) {
-                ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorsToWrite);
-                reportGenerator.generateReport(program, issues);
-            } else if (reportFileName.getFileName().toString().endsWith(".json")) {
-                JSONReportGenerator reportGenerator = new JSONReportGenerator(translator, reportFileName);
-                reportGenerator.generateReport(program, issues);
-            } else if (reportFileName.getFileName().toString().endsWith(".csv")) {
-                try (CSVReportGenerator reportGenerator
-                             = new CSVReportGenerator(reportFileName, detectorsToWrite, outputPerScript)
-                ) {
-                    reportGenerator.generateReport(program, issues);
-                }
-            } else {
-                throw new IllegalArgumentException("Unknown file type: " + reportFileName);
-            }
-        } catch (IOException e) {
-            log.warning(e.getMessage());
-        }
+    @Override
+    protected void endAnalysis() throws IOException {
+        resultHandler.finish();
+        super.endAnalysis();
+    }
+
+    @Override
+    protected void writeResultToFile(Path projectFile, Program program, Set<Issue> result) {
+        resultHandler.handleResult(projectFile, program, result);
+        createAnnotatedFile(projectFile.toFile(), program, result, annotationOutput);
     }
 
     private void createAnnotatedFile(File fileEntry, Program program, Set<Issue> issues, Path annotatePath) {
@@ -131,5 +103,3 @@ public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
         }
     }
 }
-
-

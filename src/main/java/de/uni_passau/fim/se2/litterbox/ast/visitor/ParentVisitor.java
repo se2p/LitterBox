@@ -20,12 +20,25 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 
-public class ParentVisitor implements ScratchVisitor {
+public class ParentVisitor implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor,
+        TextToSpeechExtensionVisitor, TranslateExtensionVisitor, VideoSensingExtensionVisitor {
+
+    /**
+     * Links all nodes in the AST to their parent nodes.
+     *
+     * @param root The root of the tree.
+     */
+    public static void apply(final ASTNode root) {
+        root.accept(new ParentVisitor());
+    }
+
     @Override
-    public void visitChildren(ASTNode node) {
+    public void visit(ASTNode node) {
         for (ASTNode child : node.getChildren()) {
-            child.setParentNode(node);
-            child.accept(this);
+            if (child != null) {
+                child.setParentNode(node);
+                child.accept(this);
+            }
         }
     }
 }

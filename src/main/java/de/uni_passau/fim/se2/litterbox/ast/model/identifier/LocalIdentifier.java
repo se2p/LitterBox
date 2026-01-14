@@ -26,15 +26,11 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import java.util.Objects;
 
 public abstract class LocalIdentifier extends AbstractNode implements Identifier, Expression {
-
-    private final int cachedHash;
-
     private final StringLiteral name;
 
     protected LocalIdentifier(StringLiteral name) {
         super(name);
         this.name = name;
-        this.cachedHash = getCachedHash();
     }
 
     public String getName() {
@@ -59,10 +55,6 @@ public abstract class LocalIdentifier extends AbstractNode implements Identifier
 
     @Override
     public int hashCode() {
-        return cachedHash;
-    }
-
-    private int getCachedHash() {
         return Objects.hash(name);
     }
 }

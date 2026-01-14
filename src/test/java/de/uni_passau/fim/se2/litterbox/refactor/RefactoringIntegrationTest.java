@@ -691,7 +691,7 @@ class RefactoringIntegrationTest implements JsonTest {
         }
 
         public boolean publicHasDependencies(Script s1, Script s2, Script merged) {
-            return hasDependencies(s1, s2, merged);
+            return hasDependencies(s1, merged);
         }
     }
 }

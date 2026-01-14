@@ -242,7 +242,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("glide_secs_to"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
-        if (visitOuter) {
+        if (visitOuter && blockName != null) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("glide_secs_to"));
@@ -258,7 +258,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("glide_secs_to_xy"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
-        if (visitOuter) {
+        if (visitOuter && blockName != null) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("glide_secs_to_xy"));
@@ -274,7 +274,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("wait_seconds"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
-        if (visitOuter) {
+        if (visitOuter && blockName != null) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("wait_seconds"));
@@ -290,7 +290,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("think_seconds"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
-        if (visitOuter) {
+        if (visitOuter && blockName != null) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("think_seconds"));
@@ -306,7 +306,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("play_sound_until_done"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
-        if (visitOuter) {
+        if (visitOuter && blockName != null) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("play_sound_until_done"));
@@ -322,7 +322,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("say_seconds"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
-        if (visitOuter) {
+        if (visitOuter && blockName != null) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("say_seconds"));

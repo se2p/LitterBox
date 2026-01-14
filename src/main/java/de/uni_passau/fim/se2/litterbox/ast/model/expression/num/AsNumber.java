@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.model.expression.num;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.AsExprType;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
@@ -29,6 +30,10 @@ public class AsNumber extends AsExprType implements NumExpr {
 
     public AsNumber(Expression expr) {
         super(expr, new NoBlockMetadata());
+    }
+
+    public AsNumber(Expression expr, BlockMetadata metadata) {
+        super(expr, metadata);
     }
 
     @Override

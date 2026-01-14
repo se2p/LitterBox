@@ -23,21 +23,26 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugs.ExpressionAsTouchingOrColo
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Username;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
+import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
-import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
@@ -45,15 +50,16 @@ import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
 
 /**
  * Injects ExpressionAsTouchingOrColor bug by replacing a Touching or ColorTouchingColor
- * expression's operand with an expression (variable) instead of a literal touchable/color.
+ * expression's operand with a reporter expression instead of a literal touchable/color.
  */
 public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
 
     private final IssueFinder issueFinder = new ExpressionAsTouchingOrColor();
+    private static final Random RANDOM = new Random();
 
     @Override
     public IssueFinder getIssueFinder() {
@@ -102,10 +108,32 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
         return super.findContextNode(node);
     }
 
+    private Expression getRandomReporter() {
+        // Create new metadata with unique ID for the injected block
+        BlockMetadata metadata = new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0);
+        int choice = RANDOM.nextInt(9);
+        return switch (choice) {
+            case 0 -> new Add(new NumberLiteral(1), new NumberLiteral(1), metadata);
+            case 1 ->
+                    new DistanceTo(new MousePos(new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)), metadata);
+            case 2 -> new MouseX(metadata);
+            case 3 -> new MouseY(metadata);
+            case 4 -> new Loudness(metadata);
+            case 5 -> new Timer(metadata);
+            case 6 -> new Current(new TimeComp("year"), metadata);
+            case 7 -> new Join(new StringLiteral("a"), new StringLiteral("b"), metadata);
+            case 8 -> new Username(metadata);
+            default ->
+                // Fallback to simple number literal if something goes wrong (shouldn't happen)
+                    new NumberLiteral(1);
+        };
+    }
+
     private static class CustomMappingCloneVisitor extends CloneVisitor {
         private boolean modified = false;
         ASTNode firstModifiedNode = null;
         ASTNode firstModifiedNodeReplacement = null;
+        private final ExpressionAsTouchingOrColorInjector injector = new ExpressionAsTouchingOrColorInjector();
 
         public boolean isModified() {
             return modified;
@@ -124,12 +152,11 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
             if (node.getTouchable() instanceof MousePointer
                     || node.getTouchable() instanceof Edge
                     || node.getTouchable() instanceof SpriteTouchable) {
+                // Touching block expects an Expression wrapped in AsTouchable
+                // Any reporter is fine here
                 Touching replacement = new Touching(
-                        new AsTouchable(
-                                new Variable(
-                                        new StrId(new StringLiteral("var_" + UUID.randomUUID())),
-                                        new NoBlockMetadata()
-                                )
+                        new AsTouchable(injector.getRandomReporter(),
+                                new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
                         ),
                         apply(node.getMetadata())
                 );
@@ -142,14 +169,21 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
         @Override
         public ASTNode visit(ColorTouchingColor node) {
             if (node.getOperand1() instanceof ColorLiteral) {
+                // ColorTouchingColor (operand 1) expects Color. FromNumber implements Color.
+                // FromNumber expects NumExpr.
+                Expression randomReporter = injector.getRandomReporter();
+                NumExpr numExpr;
+
+                if (randomReporter instanceof NumExpr) {
+                    numExpr = (NumExpr) randomReporter;
+                } else {
+                    // Wrap non-number reporters in AsNumber
+                    numExpr = new AsNumber(randomReporter, new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0));
+                }
+
                 ColorTouchingColor replacement = new ColorTouchingColor(
-                        new FromNumber(
-                                new AsNumber(
-                                        new Variable(
-                                                new StrId(new StringLiteral("var_" + UUID.randomUUID())),
-                                                new NoBlockMetadata()
-                                        )
-                                )
+                        new FromNumber(numExpr,
+                                new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
                         ),
                         apply(node.getOperand2()),
                         apply(node.getMetadata())
@@ -163,14 +197,18 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
         @Override
         public ASTNode visit(SpriteTouchingColor node) {
             if (node.getColor() instanceof ColorLiteral) {
+                // SpriteTouchingColor expects Color. FromNumber implements Color.
+                Expression randomReporter = injector.getRandomReporter();
+                NumExpr numExpr;
+                if (randomReporter instanceof NumExpr) {
+                    numExpr = (NumExpr) randomReporter;
+                } else {
+                    numExpr = new AsNumber(randomReporter, new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0));
+                }
+
                 SpriteTouchingColor replacement = new SpriteTouchingColor(
-                        new FromNumber(
-                                new AsNumber(
-                                        new Variable(
-                                                new StrId(new StringLiteral("var_" + UUID.randomUUID())),
-                                                new NoBlockMetadata()
-                                        )
-                                )
+                        new FromNumber(numExpr,
+                                new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
                         ),
                         apply(node.getMetadata())
                 );
@@ -183,14 +221,18 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
         @Override
         public ASTNode visit(SetPenColorToColorStmt node) {
             if (node.getColorExpr() instanceof ColorLiteral) {
+                // SetPenColorToColorStmt expects Color.
+                Expression randomReporter = injector.getRandomReporter();
+                NumExpr numExpr;
+                if (randomReporter instanceof NumExpr) {
+                    numExpr = (NumExpr) randomReporter;
+                } else {
+                    numExpr = new AsNumber(randomReporter, new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0));
+                }
+
                 SetPenColorToColorStmt replacement = new SetPenColorToColorStmt(
-                        new FromNumber(
-                                new AsNumber(
-                                        new Variable(
-                                                new StrId(new StringLiteral("var_" + UUID.randomUUID())),
-                                                new NoBlockMetadata()
-                                        )
-                                )
+                        new FromNumber(numExpr,
+                                new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
                         ),
                         apply(node.getMetadata())
                 );

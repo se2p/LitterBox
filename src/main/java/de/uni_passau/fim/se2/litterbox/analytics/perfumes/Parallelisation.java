@@ -85,7 +85,6 @@ public class Parallelisation extends AbstractIssueFinder {
         events.add(node);
     }
 
-
     private void checkEvents(AbstractNode event) {
         for (Event e : events) {
             if (e.equals(event)) {
@@ -100,10 +99,7 @@ public class Parallelisation extends AbstractIssueFinder {
         if (first == other) {
             return false;
         }
-        if (first.getFinder() != other.getFinder()) {
-            return false;
-        }
-        return true;
+        return first.getFinder() == other.getFinder();
     }
 
     @Override

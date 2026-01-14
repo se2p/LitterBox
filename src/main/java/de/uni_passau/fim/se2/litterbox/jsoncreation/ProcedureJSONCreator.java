@@ -28,6 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutatio
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
@@ -113,7 +114,12 @@ public class ProcedureJSONCreator {
 
         if (!stmtList.getStmts().isEmpty()) {
             IdVisitor vis = new IdVisitor();
-            nextId = vis.getBlockId(stmtList.getStmts().getFirst());
+            for (Stmt stmt : stmtList.getStmts()) {
+                nextId = vis.getBlockId(stmt);
+                if (nextId != null) {
+                    break;
+                }
+            }
         }
 
         StrId id = (StrId) definition.getIdent();
@@ -136,14 +142,15 @@ public class ProcedureJSONCreator {
         List<ParameterInfo> parameterInfos = new ArrayList<>();
         int i = 0;
         for (ParameterDefinition parameterDefinition : parameterDefinitions) {
-            if (!(parameterDefinition.getMetadata() instanceof NoBlockMetadata)) {
-                parameterInfos.add(createParameters(jsonString, protoId, parameterDefinition));
-                String argumentId = procInfo.getName().replace(" ", "_") + "_argument_" + i;
-                argumentIds.add(argumentId);
+            // Always serialize parameters - generate synthetic block ID if needed
+            parameterInfos.add(createParameters(jsonString, protoId, parameterDefinition));
+            String argumentId = procInfo.getName().replace(" ", "_") + "_argument_" + i;
+            argumentIds.add(argumentId);
+            if (!parameterInfos.isEmpty()) {
                 jsonString.append(",");
-                inputs.add(createReferenceInput(argumentId,
-                        INPUT_SAME_BLOCK_SHADOW, parameterInfos.get(i).getId(), false));
             }
+            inputs.add(createReferenceInput(argumentId,
+                    INPUT_SAME_BLOCK_SHADOW, parameterInfos.get(i).getId(), false));
             i++;
         }
 
@@ -166,7 +173,13 @@ public class ProcedureJSONCreator {
 
     private static ParameterInfo createParameters(StringBuilder jsonString, String prototypeId,
                                                   ParameterDefinition parameterDefinition) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) parameterDefinition.getMetadata();
+        NonDataBlockMetadata metadata;
+        if (parameterDefinition.getMetadata() instanceof NoBlockMetadata) {
+            metadata = NonDataBlockMetadata.emptyNonBlockMetadata();
+        } else {
+            metadata = (NonDataBlockMetadata) parameterDefinition.getMetadata();
+        }
+
         jsonString.append(createBlockWithoutMutationString(metadata,
                 null,
                 prototypeId, EMPTY_VALUE, createFields(VALUE_KEY,

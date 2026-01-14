@@ -23,14 +23,26 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.ExprDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.ExprInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.FixedInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.ExprNote;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.ViewerLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -51,8 +63,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TranslateExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.VideoSensingExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.text.DecimalFormat;
@@ -65,7 +79,11 @@ import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.createField;
 
-public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtensionVisitor {
+public class ExpressionJSONCreator
+        implements MusicExtensionVisitor,
+        TextToSpeechExtensionVisitor,
+        TranslateExtensionVisitor,
+        VideoSensingExtensionVisitor {
     private List<String> finishedJSONStrings;
     private String previousBlockId = null;
     private String topExpressionId = null;
@@ -81,12 +99,18 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         expressionJSONCreator = new ExpressionJSONCreator();
         fixedExprCreator = new FixedExpressionJSONCreator();
         expression.accept(this);
+
         StringBuilder jsonString = new StringBuilder();
-        for (int i = 0; i < finishedJSONStrings.size() - 1; i++) {
-            jsonString.append(finishedJSONStrings.get(i)).append(",");
+        // Filter out empty/null strings to prevent double-comma JSON corruption
+        List<String> validJsonStrings = finishedJSONStrings.stream()
+                .filter(s -> s != null && !s.isEmpty())
+                .toList();
+
+        for (int i = 0; i < validJsonStrings.size() - 1; i++) {
+            jsonString.append(validJsonStrings.get(i)).append(",");
         }
-        if (!finishedJSONStrings.isEmpty()) {
-            jsonString.append(finishedJSONStrings.getLast());
+        if (!validJsonStrings.isEmpty()) {
+            jsonString.append(validJsonStrings.getLast());
         }
         return new IdJsonStringTuple(topExpressionId, jsonString.toString());
     }
@@ -103,6 +127,12 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(UnspecifiedBoolExpr node) {
+        finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, TEXT_PRIMITIVE, ""));
+    }
+
+    @Override
+    public void visit(UnspecifiedExpression node) {
+        // Generic unspecified expression - use empty text as fallback
         finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, TEXT_PRIMITIVE, ""));
     }
 
@@ -135,7 +165,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     @Override
     public void visit(StringLiteral node) {
         finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, TEXT_PRIMITIVE,
-                escape(node.getText())));
+                node.getText()));
     }
 
     @Override
@@ -155,7 +185,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         finishedJSONStrings.add(input);
     }
 
-    private void createSimpleExpression(NonDataBlockMetadata metadata, Opcode opcode) {
+    private void createSimpleExpression(BlockMetadata metadata, Opcode opcode) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -166,73 +196,73 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(Answer node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(MouseX node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(MouseY node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(PositionX node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(PositionY node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(Direction node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(Size node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(Volume node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(IsMouseDown node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(Loudness node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(Timer node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(DaysSince2000 node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(Username node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(Costume node) {
         createFieldsExpression(
-                (NonDataBlockMetadata) node.getMetadata(),
+                node.getMetadata(),
                 NUMBER_NAME_KEY,
                 node.getType().getTypeName(),
                 node.getOpcode()
@@ -242,7 +272,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     @Override
     public void visit(Backdrop node) {
         createFieldsExpression(
-                (NonDataBlockMetadata) node.getMetadata(),
+                node.getMetadata(),
                 NUMBER_NAME_KEY,
                 node.getType().getTypeName(),
                 node.getOpcode()
@@ -252,7 +282,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     @Override
     public void visit(Current node) {
         createFieldsExpression(
-                (NonDataBlockMetadata) node.getMetadata(),
+                node.getMetadata(),
                 CURRENT_YEAR_FIELD,
                 node.getTimeComp().getTypeName(),
                 node.getOpcode()
@@ -260,7 +290,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     }
 
     private void createFieldsExpression(
-            NonDataBlockMetadata metadata, String fieldName, String fieldValue, Opcode opcode
+            BlockMetadata metadata, String fieldName, String fieldValue, Opcode opcode
     ) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
@@ -274,7 +304,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(LengthOfVar node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -295,103 +325,103 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(Add node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 NUM1_KEY,
                 NUM2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(Minus node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 NUM1_KEY,
                 NUM2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(Mult node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 NUM1_KEY,
                 NUM2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(Div node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 NUM1_KEY,
                 NUM2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(LessThan node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 OPERAND1_KEY,
                 OPERAND2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(BiggerThan node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 OPERAND1_KEY,
                 OPERAND2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(Equals node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 OPERAND1_KEY,
                 OPERAND2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(PickRandom node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 FROM_KEY,
                 TO_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(Join node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 STRING1_KEY,
                 STRING2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(LetterOf node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getNum(), node.getStringExpr(), LETTER_KEY,
+        mathStringOperations(node.getMetadata(), node.getNum(), node.getStringExpr(), LETTER_KEY,
                 STRING_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(Mod node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(),
+        mathStringOperations(node.getMetadata(), node.getOperand1(), node.getOperand2(),
                 NUM1_KEY,
                 NUM2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(StringContains node) {
-        mathStringOperations((NonDataBlockMetadata) node.getMetadata(), node.getContaining(), node.getContained(),
+        mathStringOperations(node.getMetadata(), node.getContaining(), node.getContained(),
                 STRING1_KEY, STRING2_KEY, node.getOpcode());
     }
 
     @Override
     public void visit(Or node) {
         boolOperations(
-                (NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), node.getOpcode()
+                node.getMetadata(), node.getOperand1(), node.getOperand2(), node.getOpcode()
         );
     }
 
     @Override
     public void visit(And node) {
         boolOperations(
-                (NonDataBlockMetadata) node.getMetadata(), node.getOperand1(), node.getOperand2(), node.getOpcode()
+                node.getMetadata(), node.getOperand1(), node.getOperand2(), node.getOpcode()
         );
     }
 
     @Override
     public void visit(Round node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -404,7 +434,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(LengthOfString node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -417,7 +447,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(Not node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -435,7 +465,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(Touching node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -445,8 +475,8 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
             IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
                     metadata.getBlockId(), touchable, node.getTouchingObjectMenuOpcode()
             );
-            finishedJSONStrings.add(tuple.getJsonString());
-            inputs.add(createReferenceInput(TOUCHINGOBJECTMENU, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            finishedJSONStrings.add(tuple.jsonString());
+            inputs.add(createReferenceInput(TOUCHINGOBJECTMENU, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         } else {
             AsTouchable asTouchable = (AsTouchable) touchable;
             inputs.add(createExpr(metadata, asTouchable.getOperand1(), TOUCHINGOBJECTMENU, true));
@@ -458,7 +488,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(DistanceTo node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -468,8 +498,8 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
             IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
                     metadata.getBlockId(), pos, node.getDistanceToMenuOpcode()
             );
-            finishedJSONStrings.add(tuple.getJsonString());
-            inputs.add(createReferenceInput(DISTANCETOMENU_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            finishedJSONStrings.add(tuple.jsonString());
+            inputs.add(createReferenceInput(DISTANCETOMENU_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         } else {
             FromExpression fromPos = (FromExpression) pos;
             IdJsonStringTuple tuple;
@@ -480,8 +510,8 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
                 tuple = fixedExprCreator.createFixedExpressionJSON(
                         metadata.getBlockId(), pos, node.getDistanceToMenuOpcode()
                 );
-                finishedJSONStrings.add(tuple.getJsonString());
-                inputs.add(createReferenceInput(DISTANCETOMENU_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+                finishedJSONStrings.add(tuple.jsonString());
+                inputs.add(createReferenceInput(DISTANCETOMENU_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
             }
         }
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
@@ -491,7 +521,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(AttributeOf node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -505,8 +535,8 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
             IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
                     metadata.getBlockId(), elem, node.getSensingOfObjectMenuOpcode()
             );
-            finishedJSONStrings.add(tuple.getJsonString());
-            inputs.add(createReferenceInput(OBJECT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            finishedJSONStrings.add(tuple.jsonString());
+            inputs.add(createReferenceInput(OBJECT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         }
 
         String fieldValue;
@@ -525,7 +555,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(NumFunctOf node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -541,7 +571,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(IsKeyPressed node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -553,8 +583,8 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
             IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
                     metadata.getBlockId(), key, node.getKeyOptionsOpcode()
             );
-            finishedJSONStrings.add(tuple.getJsonString());
-            inputs.add(createReferenceInput(KEY_OPTION, INPUT_SAME_BLOCK_SHADOW, tuple.getId(), false));
+            finishedJSONStrings.add(tuple.jsonString());
+            inputs.add(createReferenceInput(KEY_OPTION, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         }
 
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
@@ -564,25 +594,25 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(ItemOfVariable node) {
-        createListBlockWithExpr((NonDataBlockMetadata) node.getMetadata(), node.getNum(), INDEX_KEY,
+        createListBlockWithExpr(node.getMetadata(), node.getNum(), INDEX_KEY,
                 node.getIdentifier(), node.getOpcode());
     }
 
     @Override
     public void visit(IndexOf node) {
-        createListBlockWithExpr((NonDataBlockMetadata) node.getMetadata(), node.getExpr(), ITEM_KEY,
+        createListBlockWithExpr(node.getMetadata(), node.getExpr(), ITEM_KEY,
                 node.getIdentifier(), node.getOpcode());
     }
 
     @Override
     public void visit(ListContains node) {
-        createListBlockWithExpr((NonDataBlockMetadata) node.getMetadata(), node.getElement(), ITEM_KEY,
+        createListBlockWithExpr(node.getMetadata(), node.getElement(), ITEM_KEY,
                 node.getIdentifier(), node.getOpcode());
     }
 
     @Override
     public void visit(SpriteTouchingColor node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -596,7 +626,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
 
     @Override
     public void visit(ColorTouchingColor node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -620,8 +650,8 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
             BlockMetadata metadata = list.getMetadata();
             if (metadata instanceof DataBlockMetadata dataBlockMetadata) {
                 createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(LIST_PRIMITIVE);
-                jsonString.append(",\"").append(listName).append("\",\"");
-                jsonString.append(listId);
+                jsonString.append(",\"").append(BlockJsonCreatorHelper.escape(listName)).append("\",\"");
+                jsonString.append(BlockJsonCreatorHelper.escape(listId));
                 if (dataBlockMetadata.getCommentId() != null) {
                     jsonString.append("\",\"")
                             .append(dataBlockMetadata.getCommentId())
@@ -634,7 +664,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
                         .append(dataBlockMetadata.getY())
                         .append("]");
             } else {
-                jsonString.append(createReferenceType(INPUT_DIFF_BLOCK_SHADOW, LIST_PRIMITIVE, listName, listId,
+                jsonString.append(createReferenceType(INPUT_DIFF_BLOCK_SHADOW, LIST_PRIMITIVE, BlockJsonCreatorHelper.escape(listName), BlockJsonCreatorHelper.escape(listId),
                         true));
             }
         } else if (node.getSecond() instanceof Variable variable) {
@@ -643,8 +673,8 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
             BlockMetadata metadata = variable.getMetadata();
             if (metadata instanceof DataBlockMetadata dataBlockMetadata) {
                 createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(VAR_PRIMITIVE);
-                jsonString.append(",\"").append(variableName).append("\",\"");
-                jsonString.append(variableId);
+                jsonString.append(",\"").append(BlockJsonCreatorHelper.escape(variableName)).append("\",\"");
+                jsonString.append(BlockJsonCreatorHelper.escape(variableId));
                 if (dataBlockMetadata.getCommentId() != null) {
                     jsonString.append("\",\"")
                             .append(dataBlockMetadata.getCommentId())
@@ -657,7 +687,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
                         .append(dataBlockMetadata.getY())
                         .append("]");
             } else {
-                jsonString.append(createReferenceType(INPUT_DIFF_BLOCK_SHADOW, VAR_PRIMITIVE, variableName, variableId,
+                jsonString.append(createReferenceType(INPUT_DIFF_BLOCK_SHADOW, VAR_PRIMITIVE, BlockJsonCreatorHelper.escape(variableName), BlockJsonCreatorHelper.escape(variableId),
                         true));
             }
         }
@@ -672,11 +702,11 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     @Override
     public void visit(Parameter node) {
         createFieldsExpression(
-                (NonDataBlockMetadata) node.getMetadata(), VALUE_KEY, node.getName().getName(), node.getOpcode()
+                node.getMetadata(), VALUE_KEY, node.getName().getName(), node.getOpcode()
         );
     }
 
-    private void createListBlockWithExpr(NonDataBlockMetadata metadata, Expression expr, String inputName,
+    private void createListBlockWithExpr(BlockMetadata metadata, Expression expr, String inputName,
                                          Identifier identifier, Opcode opcode) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
@@ -689,7 +719,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         previousBlockId = metadata.getBlockId();
     }
 
-    private void boolOperations(NonDataBlockMetadata metadata, BoolExpr expr1, BoolExpr expr2, Opcode opcode) {
+    private void boolOperations(BlockMetadata metadata, BoolExpr expr1, BoolExpr expr2, Opcode opcode) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -710,7 +740,7 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         previousBlockId = metadata.getBlockId();
     }
 
-    private void mathStringOperations(NonDataBlockMetadata metadata, Expression expr1, Expression expr2,
+    private void mathStringOperations(BlockMetadata metadata, Expression expr1, Expression expr2,
                                       String inputName1,
                                       String inputName2, Opcode opcode) {
         if (topExpressionId == null) {
@@ -726,15 +756,15 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
         previousBlockId = metadata.getBlockId();
     }
 
-    private String createExpr(NonDataBlockMetadata metadata, ASTNode expr, String inputName, boolean withDefault) {
+    private String createExpr(BlockMetadata metadata, ASTNode expr, String inputName, boolean withDefault) {
         IdJsonStringTuple tuple = expressionJSONCreator.createExpressionJSON(metadata.getBlockId(), expr, symbolTable);
-        if (tuple.getId() == null) {
+        if (tuple.id() == null) {
             StringBuilder jsonString = new StringBuilder();
-            createField(jsonString, inputName).append(tuple.getJsonString());
+            createField(jsonString, inputName).append(tuple.jsonString());
             return jsonString.toString();
         } else {
-            finishedJSONStrings.add(tuple.getJsonString());
-            return createReferenceJSON(tuple.getId(), inputName, withDefault);
+            finishedJSONStrings.add(tuple.jsonString());
+            return createReferenceJSON(tuple.id(), inputName, withDefault);
         }
     }
 
@@ -746,5 +776,108 @@ public class ExpressionJSONCreator implements ScratchVisitor, TextToSpeechExtens
     @Override
     public void visit(ExprVoice node) {
         node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(VideoOn node) {
+        BlockMetadata metadata = node.getMetadata();
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+
+        // Build a single fields object with both fields to avoid invalid JSON like {...},{...}
+        String fieldsString = "{" +
+                "\"" + ATTRIBUTE_KEY + "\":[\"" + escape(node.getAttribute()) + "\",null]," +
+                "\"" + SUBJECT_KEY + "\":[\"" + escape(node.getSubject()) + "\",null]" +
+                "}";
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, EMPTY_VALUE, fieldsString, node.getOpcode()));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    // Music Extension
+
+    @Override
+    public void visit(FixedNote node) {
+        fixedExprCreator.visit(node);
+        addExpressionJSONString(fixedExprCreator.getFinishedJSONStrings().getFirst(), ((NonDataBlockMetadata) node.getMetadata()).getBlockId());
+    }
+
+    @Override
+    public void visit(FixedDrum node) {
+        fixedExprCreator.visit(node);
+        addExpressionJSONString(fixedExprCreator.getFinishedJSONStrings().getFirst(), ((NonDataBlockMetadata) node.getMetadata()).getBlockId());
+    }
+
+    @Override
+    public void visit(FixedInstrument node) {
+        fixedExprCreator.visit(node);
+        addExpressionJSONString(fixedExprCreator.getFinishedJSONStrings().getFirst(), ((NonDataBlockMetadata) node.getMetadata()).getBlockId());
+    }
+
+    @Override
+    public void visit(ExprNote node) {
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(ExprDrum node) {
+        node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(ExprInstrument node) {
+        node.getExpr().accept(this);
+    }
+
+    // Translate Extension
+
+    @Override
+    public void visit(TranslateTo node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        if (topExpressionId == null) {
+            topExpressionId = metadata.getBlockId();
+        }
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createExpr(metadata, node.getText(), WORDS_KEY, true));
+
+        if (node.getLanguage() instanceof TFixedLanguage) {
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
+                    metadata.getBlockId(), node.getLanguage(), node.getMenuLanguageOpcode()
+            );
+            finishedJSONStrings.add(tuple.jsonString());
+            inputs.add(createReferenceInput(LANGUAGE_INPUT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
+        } else {
+            inputs.add(createExpr(metadata, node.getLanguage(), LANGUAGE_INPUT_KEY, true));
+        }
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
+                previousBlockId, createInputs(inputs), EMPTY_VALUE, node.getOpcode()));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(ViewerLanguage node) {
+        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+    }
+
+    @Override
+    public void visit(TFixedLanguage node) {
+        fixedExprCreator.visit(node);
+        addExpressionJSONString(fixedExprCreator.getFinishedJSONStrings().getFirst(), ((NonDataBlockMetadata) node.getMetadata()).getBlockId());
+    }
+
+    @Override
+    public void visit(TExprLanguage node) {
+        node.getExpr().accept(this);
+    }
+
+    private void addExpressionJSONString(String jsonString, String id) {
+        finishedJSONStrings.add(jsonString);
+        if (topExpressionId == null) {
+            topExpressionId = id;
+        }
+        previousBlockId = id;
     }
 }

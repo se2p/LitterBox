@@ -36,7 +36,6 @@ public class SequenceToLoopFinder extends AbstractRefactoringFinder {
             "refactoring.sequence_to_loop.min_occurrence"
     );
 
-
     @Override
     public void visit(StmtList statementList) {
         new RepeatedSubsequenceFinder(MIN_LENGTH, MIN_OCCURRENCE) {

@@ -18,151 +18,154 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageNeverSent;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
-public class MessageNeverSentFix extends AbstractIssueFinder {
-    public static final String NAME = "message_never_sent_fix";
-    private final String bugLocationBlockId;
-    private String message = null;
-    private Map<String, Map<ActorDefinition, Map<ScriptEntity, List<ASTNode>>>> broadcastsScriptsActorPerMessage;
+/**
+ * Fix heuristic for the MessageNeverSent bug.
+ *
+ * <p>The bug is reported when a message handler exists but the message is never sent.
+ * The bug is fixed if the message is now sent.
+ */
+public class MessageNeverSentFix extends AbstractFixHeuristic {
+    private final MessageNeverSent relatedBugFinder = new MessageNeverSent();
 
-    public MessageNeverSentFix(String bugLocationBlockId) {
-        this.bugLocationBlockId = bugLocationBlockId;
+    public MessageNeverSentFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
-    public Set<Issue> check(Program program) {
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
+    @Override
+    public Set<FixResult> check(Program program) {
         Preconditions.checkNotNull(program);
-        this.program = program;
-        issues = new LinkedHashSet<>();
-        broadcastsScriptsActorPerMessage = new LinkedHashMap<>();
-        program.accept(this);
-        if (message != null) {
-            var actorScripts = broadcastsScriptsActorPerMessage.get(message);
-            if (actorScripts != null) {
-                var entry = actorScripts.entrySet().iterator().next();
-                currentActor = entry.getKey();
-                Map<ScriptEntity, List<ASTNode>> scriptsNodes = entry.getValue();
-                if (scriptsNodes != null) {
-                    Map.Entry<ScriptEntity, List<ASTNode>> entryList = scriptsNodes.entrySet().iterator().next();
 
-                    ScriptEntity scriptEntity = entryList.getKey();
-                    List<ASTNode> nodes = entryList.getValue();
-                    if (scriptEntity instanceof Script script) {
-                        currentScript = script;
-                    } else {
-                        currentProcedure = (ProcedureDefinition) scriptEntity;
+        Set<FixResult> results = super.check(program);
+        if (!results.isEmpty()) {
+            return results;
+        }
+
+        // 1. Find the buggy node using the block ID
+        Optional<BlockIdNodeFinder.NodeContext> bugContextOpt =
+                BlockIdNodeFinder.find(program, getBugLocationBlockId());
+
+        // If not empty (handled by super), get node
+        if (bugContextOpt.isPresent()) {
+            ASTNode buggyNode = bugContextOpt.get().node();
+
+            // Handle case where BlockIdNodeFinder returns the Script instead of the Event
+            if (buggyNode instanceof Script script) {
+                buggyNode = script.getEvent();
+            }
+
+            if (buggyNode instanceof ReceptionOfMessage receptionNode) {
+                // 2. Extract the message name
+                String targetMessage = null;
+                if (scriptNotEmpty(receptionNode.getParentNode())) {
+                    Expression msgExpr = receptionNode.getMsg().getMessage();
+                    if (msgExpr instanceof StringLiteral text) {
+                        targetMessage = text.getText();
+                    } else if (msgExpr instanceof StrId strId) {
+                        targetMessage = strId.getName();
                     }
-                    addIssue(nodes.getFirst(), nodes.getFirst().getMetadata());
+                }
+
+                if (targetMessage != null) {
+                    // 3. Search for a valid sender for this specific message
+                    ValidSenderFinder senderFinder = new ValidSenderFinder(targetMessage);
+                    program.accept(senderFinder);
+
+                    if (senderFinder.foundSender != null) {
+                        ASTNode sender = senderFinder.foundSender;
+                        currentActor = AstNodeUtil.findParent(sender, ActorDefinition.class);
+                        ScriptEntity scriptEntity = AstNodeUtil.findParent(sender, ScriptEntity.class);
+
+                        if (scriptEntity instanceof Script script) {
+                            currentScript = script;
+                            currentProcedure = null;
+                        } else if (scriptEntity instanceof ProcedureDefinition proc) {
+                            currentProcedure = proc;
+                            currentScript = null;
+                        }
+
+                        addFix(receptionNode, receptionNode.getMetadata());
+                    }
                 }
             }
         }
-        return Collections.unmodifiableSet(issues);
-    }
 
-    @Override
-    public void visit(ReceptionOfMessage node) {
-        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
-            if (scriptNotEmpty(node.getParentNode())) {
-                if (node.getMsg().getMessage() instanceof StringLiteral text) {
-                    message = text.getText();
-                }
-            }
-        }
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(Broadcast node) {
-        if (node.getMessage().getMessage() instanceof StringLiteral text) {
-            if (scriptHasHead(node)) {
-                addNodeToMap(text.getText(), node);
-            }
-        }
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(BroadcastAndWait node) {
-        if (node.getMessage().getMessage() instanceof StringLiteral text) {
-            if (scriptHasHead(node)) {
-                addNodeToMap(text.getText(), node);
-            }
-        }
-        visitChildren(node);
-    }
-
-    private void addNodeToMap(String text, ASTNode node) {
-        ScriptEntity script;
-        if (currentScript != null) {
-            script = currentScript;
-        } else {
-            script = currentProcedure;
-        }
-        if (broadcastsScriptsActorPerMessage.containsKey(text)) {
-            var actorScripts = broadcastsScriptsActorPerMessage.get(text);
-            if (actorScripts.containsKey(currentActor)) {
-                Map<ScriptEntity, List<ASTNode>> scriptsNodes = actorScripts.get(currentActor);
-                if (scriptsNodes.containsKey(script)) {
-                    List<ASTNode> nodes = scriptsNodes.get(script);
-                    nodes.add(node);
-                } else {
-                    List<ASTNode> nodes = new ArrayList<>();
-                    nodes.add(node);
-                    scriptsNodes.put(script, nodes);
-                }
-            } else {
-                List<ASTNode> nodes = new ArrayList<>();
-                nodes.add(node);
-                Map<ScriptEntity, List<ASTNode>> scriptsNodes = new LinkedHashMap<>();
-                scriptsNodes.put(script, nodes);
-                actorScripts.put(currentActor, scriptsNodes);
-            }
-        } else {
-            List<ASTNode> nodes = new ArrayList<>();
-            nodes.add(node);
-            Map<ScriptEntity, List<ASTNode>> scriptsNodes = new LinkedHashMap<>();
-            scriptsNodes.put(script, nodes);
-            Map<ActorDefinition, Map<ScriptEntity, List<ASTNode>>> actorScripts = new LinkedHashMap<>();
-            actorScripts.put(currentActor, scriptsNodes);
-            broadcastsScriptsActorPerMessage.put(text, actorScripts);
-        }
-    }
-
-    private boolean scriptHasHead(ASTNode node) {
-        ScriptEntity script = AstNodeUtil.findParent(node, ScriptEntity.class);
-        if (script instanceof Script scr) {
-            return !(scr.getEvent() instanceof Never);
-        } else {
-            return true;
-        }
+        return Collections.unmodifiableSet(fixes);
     }
 
     private boolean scriptNotEmpty(ASTNode parentNode) {
-        assert (parentNode instanceof Script);
-        return ((Script) parentNode).getStmtList().hasStatements();
+        if (!(parentNode instanceof Script script)) {
+            return false;
+        }
+        return script.getStmtList().hasStatements();
     }
 
-    @Override
-    public String getName() {
-        return NAME;
-    }
+    private static class ValidSenderFinder implements ScratchVisitor {
+        private final String targetMessage;
+        ASTNode foundSender = null;
 
-    @Override
-    public IssueType getIssueType() {
-        return IssueType.FIX;
+        public ValidSenderFinder(String targetMessage) {
+            this.targetMessage = targetMessage;
+        }
+
+        @Override
+        public void visit(ASTNode node) {
+            // Default traversal for all nodes
+            if (foundSender == null) {
+                visitChildren(node);
+            }
+        }
+
+        @Override
+        public void visit(Broadcast node) {
+            if (foundSender == null && matchesMessage(node.getMessage().getMessage())) {
+                foundSender = node;
+            }
+            // Don't traverse deeper into Broadcast's children
+        }
+
+        @Override
+        public void visit(BroadcastAndWait node) {
+            if (foundSender == null && matchesMessage(node.getMessage().getMessage())) {
+                foundSender = node;
+            }
+            // Don't traverse deeper into BroadcastAndWait's children
+        }
+
+        private boolean matchesMessage(Expression msgExpr) {
+            if (msgExpr instanceof StringLiteral text) {
+                // Use case-insensitive comparison to match bug finder behavior
+                return text.getText().equalsIgnoreCase(targetMessage);
+            }
+            // ScratchBlocks parser may produce StrId for broadcast (msg v) syntax
+            if (msgExpr instanceof StrId strId) {
+                return strId.getName().equalsIgnoreCase(targetMessage);
+            }
+            return false;
+        }
     }
 }

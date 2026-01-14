@@ -30,6 +30,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Backdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -43,11 +45,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.VideoSensingExtensionVisitor;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class AttributeUseVisitor implements DefinableCollector<Attribute> {
+public class AttributeUseVisitor implements DefinableCollector<Attribute>, VideoSensingExtensionVisitor {
 
     private final Set<Attribute> uses = new LinkedHashSet<>();
 
@@ -311,5 +314,19 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     @Override
     public void visit(ProcedureDefinition node) {
         // Do not visit children
+    }
+
+    //---------------------------------------------------------------
+    // Video Sensing
+
+    @Override
+    public void visit(VideoOn node) {
+        uses.add(Attribute.videoStateOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    @Override
+    public void visit(WhenVideoMotionGreaterThan node) {
+        uses.add(Attribute.videoStateOf(getActorSprite(currentActor).getIdent()));
+        node.getReference().accept(this);
     }
 }

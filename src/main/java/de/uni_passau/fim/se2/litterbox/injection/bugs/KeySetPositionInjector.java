@@ -31,7 +31,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockM
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
 import de.uni_passau.fim.se2.litterbox.ast.parser.KeyCode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
@@ -109,7 +112,12 @@ public class KeySetPositionInjector extends AbstractBugInjector {
     }
 
     /**
-     * Identifies "If [supported key] Pressed then [motion]" statements.
+     * Identifies "If [supported key] Pressed then [convertible motion]" statements.
+     *
+     * <p>Only matches patterns where ChangeXBy/ChangeYBy can be converted to SetXTo/SetYTo,
+     * which is the bug pattern the finder looks for. The axis must also match:
+     * - UP/DOWN/W/S keys: ChangeYBy
+     * - LEFT/RIGHT/A/D keys: ChangeXBy
      */
     private boolean isCandidate(Stmt stmt) {
         if (!(stmt instanceof IfThenStmt ifStmt)) {
@@ -124,21 +132,64 @@ public class KeySetPositionInjector extends AbstractBugInjector {
         if (!(cond instanceof IsKeyPressed keyPressed)) {
             return false;
         }
-        if (!isSupportedKey(keyPressed)) {
+        int keyCode = getKeyCode(keyPressed);
+        if (keyCode == -1) {
             return false;
         }
 
-        // The finder typically checks the first 1-2 statements
+        // Check if the body has a convertible motion statement matching the key axis
         List<Stmt> body = ifStmt.getThenStmts().getStmts();
-        return !body.isEmpty() && (isMotion(body.get(0)) || (body.size() > 1 && isMotion(body.get(1))));
+        return !body.isEmpty() && hasMatchingMotion(body, keyCode);
     }
 
-    private boolean isMotion(Stmt stmt) {
-        return stmt instanceof ChangeXBy || stmt instanceof ChangeYBy
-                || stmt instanceof MoveSteps || stmt instanceof SetXTo || stmt instanceof SetYTo;
+    /**
+     * Checks if any of the first two statements is a convertible motion matching the key axis.
+     */
+    private boolean hasMatchingMotion(List<Stmt> body, int keyCode) {
+        for (int i = 0; i < Math.min(body.size(), 2); i++) {
+            if (isConvertibleMotion(body.get(i), keyCode)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private boolean isSupportedKey(IsKeyPressed node) {
+    /**
+     * Checks if a statement is a motion that creates the bug pattern when extracted.
+     *
+     * <p>Valid patterns that create the bug:
+     * <ul>
+     *   <li>ChangeYBy or SetYTo with UP/DOWN/W/S keys</li>
+     *   <li>ChangeXBy or SetXTo with LEFT/RIGHT/A/D keys</li>
+     * </ul>
+     *
+     * <p>The bug is created by extracting motion from a polling loop to an event handler.
+     * ChangeXBy/ChangeYBy are converted to SetXTo/SetYTo during extraction.
+     * SetXTo/SetYTo are kept as-is but still create the bug when moved to an event.
+     */
+    private boolean isConvertibleMotion(Stmt stmt, int keyCode) {
+        if (stmt instanceof ChangeYBy || stmt instanceof SetYTo) {
+            // Vertical motion: valid with UP/DOWN/W/S keys
+            return isVerticalKey(keyCode);
+        }
+        if (stmt instanceof ChangeXBy || stmt instanceof SetXTo) {
+            // Horizontal motion: valid with LEFT/RIGHT/A/D keys
+            return isHorizontalKey(keyCode);
+        }
+        return false;
+    }
+
+    private boolean isVerticalKey(int key) {
+        return key == KeyCode.UP_ARROW.getKeycode() || key == KeyCode.DOWN_ARROW.getKeycode()
+                || key == 'w' || key == 'W' || key == 's' || key == 'S';
+    }
+
+    private boolean isHorizontalKey(int key) {
+        return key == KeyCode.LEFT_ARROW.getKeycode() || key == KeyCode.RIGHT_ARROW.getKeycode()
+                || key == 'a' || key == 'A' || key == 'd' || key == 'D';
+    }
+
+    private int getKeyCode(IsKeyPressed node) {
         ASTNode expr = node.getKey().getKey();
         if (expr instanceof AsNumber asNumber) {
             expr = asNumber.getOperand1();
@@ -146,16 +197,11 @@ public class KeySetPositionInjector extends AbstractBugInjector {
 
         if (expr instanceof NumberLiteral num) {
             int key = (int) num.getValue();
-            return isCodeSupported(key);
+            if (isVerticalKey(key) || isHorizontalKey(key)) {
+                return key;
+            }
         }
-        return false;
-    }
-
-    private boolean isCodeSupported(int key) {
-        return key == KeyCode.DOWN_ARROW.getKeycode() || key == KeyCode.UP_ARROW.getKeycode()
-                || key == KeyCode.LEFT_ARROW.getKeycode() || key == KeyCode.RIGHT_ARROW.getKeycode()
-                || key == 'w' || key == 'W' || key == 'a' || key == 'A'
-                || key == 's' || key == 'S' || key == 'd' || key == 'D';
+        return -1;
     }
 
     /**
@@ -217,7 +263,7 @@ public class KeySetPositionInjector extends AbstractBugInjector {
             IsKeyPressed keyPressed = (IsKeyPressed) cond;
             KeyPressed event = new KeyPressed(
                     apply(keyPressed.getKey()), TopNonDataBlockMetadata.emptyTopNonBlockMetadata());
-            
+
             // Convert relative motion to absolute motion to inject the bug
             StmtList convertedBody = convertToAbsoluteMotion(ifStmt.getThenStmts());
             Script newScript = new Script(event, convertedBody);

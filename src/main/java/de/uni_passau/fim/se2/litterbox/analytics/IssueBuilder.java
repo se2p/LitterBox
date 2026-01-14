@@ -34,6 +34,8 @@ public class IssueBuilder {
     private Hint hint;
     private ScriptEntity refactoring;
     private Integer id = null;
+    private String originalBlockId = null;
+    private String originalCodeSnippet = null;
 
     public IssueBuilder withFinder(IssueFinder finder) {
         this.finder = finder;
@@ -110,6 +112,16 @@ public class IssueBuilder {
         return this;
     }
 
+    public IssueBuilder withOriginalBlockId(String blockId) {
+        this.originalBlockId = blockId;
+        return this;
+    }
+
+    public IssueBuilder withOriginalCodeSnippet(String codeSnippet) {
+        this.originalCodeSnippet = codeSnippet;
+        return this;
+    }
+
     public IssueBuilder fromIssue(Issue issue) {
         this.finder = issue.getFinder();
         this.severity = issue.getSeverity();
@@ -178,5 +190,13 @@ public class IssueBuilder {
 
     public Integer getId() {
         return id;
+    }
+
+    public String getOriginalBlockId() {
+        return originalBlockId;
+    }
+
+    public String getOriginalCodeSnippet() {
+        return originalCodeSnippet;
     }
 }

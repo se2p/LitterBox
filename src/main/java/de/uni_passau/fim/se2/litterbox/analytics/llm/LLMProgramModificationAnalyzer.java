@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramAnalyzer;
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.LlmResponseParser;
 import de.uni_passau.fim.se2.litterbox.llm.ParsedLlmResponseCode;
 import de.uni_passau.fim.se2.litterbox.llm.ScratchLlm;

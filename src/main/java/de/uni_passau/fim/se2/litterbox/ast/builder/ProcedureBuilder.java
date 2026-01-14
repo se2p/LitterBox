@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -104,9 +105,24 @@ public class ProcedureBuilder {
     }
 
     /**
+     * Clears the current metadata so that fresh block IDs will be generated during build.
+     * Useful when duplicating existing procedures to avoid ID collisions.
+     */
+    public ProcedureBuilder withFreshMetadata() {
+        this.metadata = null;
+        return this;
+    }
+
+    /**
      * Builds the ProcedureDefinition with parent pointers set.
      */
     public ProcedureDefinition build() {
+        if (metadata == null) {
+            metadata = new ProcedureMetadata(
+                    TopNonDataBlockMetadata.emptyTopNonBlockMetadata(),
+                    NonDataBlockMetadata.createCallMetadata(false)
+            );
+        }
         ProcedureDefinition proc = new ProcedureDefinition(ident, parameterDefinitionList, body, metadata);
         if (ident != null) {
             ident.setParentNode(proc);

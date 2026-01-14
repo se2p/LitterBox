@@ -33,8 +33,6 @@ public class Attribute implements Defineable {
     private final AttributeType attribute;
     private final String parameter; // e.g. for specific graphic/sound effects
 
-    private final int cachedHash;
-
     public Attribute(LocalIdentifier actorIdentifier, AttributeType attribute) {
         this(actorIdentifier, attribute, null);
     }
@@ -43,8 +41,6 @@ public class Attribute implements Defineable {
         this.actorIdentifier = actorIdentifier;
         this.attribute = attribute;
         this.parameter = parameter;
-
-        this.cachedHash = getCachedHash();
     }
 
     public static Attribute positionXOf(LocalIdentifier actorIdentifier) {
@@ -115,6 +111,14 @@ public class Attribute implements Defineable {
         return new Attribute(actorIdentifier, AttributeType.DRAG_MODE);
     }
 
+    public static Attribute videoStateOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.VIDEO_STATE);
+    }
+
+    public static Attribute videoTransparencyOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.VIDEO_TRANSPARENCY);
+    }
+
     public LocalIdentifier getActorIdentifier() {
         return actorIdentifier;
     }
@@ -142,14 +146,10 @@ public class Attribute implements Defineable {
 
     @Override
     public int hashCode() {
-        return cachedHash;
-    }
-
-    private int getCachedHash() {
         return Objects.hash(actorIdentifier, attribute, parameter);
     }
 
     public enum AttributeType {
-        POSITION_X, POSITION_Y, ROTATION, ROTATION_STYLE, SIZE, VISIBILITY, GRAPHIC_EFFECT, SOUND_EFFECT, VOLUME, LAYER, COSTUME, BACKDROP, TIMER, SOUND_STATE, DRAG_MODE
+        POSITION_X, POSITION_Y, ROTATION, ROTATION_STYLE, SIZE, VISIBILITY, GRAPHIC_EFFECT, SOUND_EFFECT, VOLUME, LAYER, COSTUME, BACKDROP, TIMER, SOUND_STATE, DRAG_MODE, VIDEO_STATE, VIDEO_TRANSPARENCY
     }
 }

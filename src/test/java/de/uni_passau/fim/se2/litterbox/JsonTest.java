@@ -31,10 +31,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.BlockByIdFinder;
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
-import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
+import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -152,7 +152,7 @@ public interface JsonTest {
     static <T extends ASTNode> T getBlock(
             final ASTNode root, final String blockId, final Class<T> expectedType
     ) {
-        final ASTNode block = BlockByIdFinder.findBlock(root, blockId).orElseThrow();
+        final ASTNode block = BlockIdNodeFinder.findNode(root, blockId).orElseThrow();
         assertInstanceOf(expectedType, block);
         return expectedType.cast(block);
     }

@@ -26,11 +26,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.GreenFlag;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.VideoSensingExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 import java.util.List;
@@ -204,7 +206,7 @@ public class MissingLoopSensingInjector extends AbstractBugInjector {
     /**
      * Visitor that checks if an expression contains a sensing condition.
      */
-    private static class SensingConditionChecker implements ScratchVisitor {
+    private static class SensingConditionChecker implements ScratchVisitor, VideoSensingExtensionVisitor {
         private boolean found = false;
 
         @Override
@@ -234,6 +236,11 @@ public class MissingLoopSensingInjector extends AbstractBugInjector {
 
         @Override
         public void visit(DistanceTo node) {
+            found = true;
+        }
+
+        @Override
+        public void visit(VideoOn node) {
             found = true;
         }
 

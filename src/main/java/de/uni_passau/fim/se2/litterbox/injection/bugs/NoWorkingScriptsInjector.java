@@ -20,11 +20,16 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.NoWorkingScripts;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 import java.util.ArrayList;
@@ -48,6 +53,16 @@ import java.util.List;
  * </pre>
  */
 public class NoWorkingScriptsInjector extends AbstractBugInjector {
+
+    /**
+     * X position for loose blocks (arbitrary but consistent).
+     */
+    private static final double LOOSE_BLOCK_X = 100.0;
+
+    /**
+     * Y position for loose blocks (arbitrary but consistent).
+     */
+    private static final double LOOSE_BLOCK_Y = 100.0;
 
     private final IssueFinder issueFinder = new NoWorkingScripts();
 
@@ -105,9 +120,11 @@ public class NoWorkingScriptsInjector extends AbstractBugInjector {
                     newScripts.add(emptyEventHandler);
 
                     // Create detached code with Never event
+                    // The first statement needs TopNonDataBlockMetadata for proper serialization
+                    StmtList stmtListWithTopLevel = makeFirstStmtTopLevel(script.getStmtList());
                     Script detachedCode = new Script(
                             new Never(),
-                            script.getStmtList()
+                            stmtListWithTopLevel
                     );
                     detachedCode.setParentNode(clonedScriptList);
                     neverScripts.add(detachedCode);
@@ -118,9 +135,73 @@ public class NoWorkingScriptsInjector extends AbstractBugInjector {
             clonedScriptList.getScriptList().clear();
             clonedScriptList.getScriptList().addAll(newScripts);
             clonedScriptList.getScriptList().addAll(neverScripts);
-            clonedScriptList.getScriptList().addAll(newScripts);
-            clonedScriptList.getScriptList().addAll(neverScripts);
         }, scriptId);
     }
-}
 
+    /**
+     * Creates a new StmtList where the first statement has TopNonDataBlockMetadata.
+     * This is required for Never scripts to serialize correctly as loose/detached blocks.
+     */
+    private StmtList makeFirstStmtTopLevel(StmtList original) {
+        if (original.getStmts().isEmpty()) {
+            return original;
+        }
+
+        List<Stmt> stmts = new ArrayList<>(original.getStmts());
+        Stmt firstStmt = stmts.get(0);
+
+        // Clone the first statement with TopNonDataBlockMetadata
+        if (firstStmt.getMetadata() instanceof NonDataBlockMetadata meta
+                && !(meta instanceof TopNonDataBlockMetadata)) {
+            TopNonDataBlockMetadata topMeta = new TopNonDataBlockMetadata(
+                    meta.getCommentId(),
+                    CloneVisitor.generateUID(),  // Fresh ID to prevent circular references
+                    meta.isShadow(),
+                    meta.getMutation(),
+                    LOOSE_BLOCK_X,
+                    LOOSE_BLOCK_Y
+            );
+
+            // Use CloneVisitor to create a copy of the statement with new metadata
+            Stmt newFirstStmt = cloneStmtWithMetadata(firstStmt, topMeta);
+            stmts.set(0, newFirstStmt);
+        }
+
+        return new StmtList(stmts);
+    }
+
+    /**
+     * Clones a statement but replaces its metadata with the provided metadata.
+     */
+    private Stmt cloneStmtWithMetadata(Stmt stmt, TopNonDataBlockMetadata newMeta) {
+        // Clone the statement using a visitor that replaces the metadata
+        MetadataReplacingCloneVisitor visitor = new MetadataReplacingCloneVisitor(stmt, newMeta);
+        return (Stmt) stmt.accept(visitor);
+    }
+
+    /**
+     * A CloneVisitor that replaces the metadata of the target node.
+     */
+    private static class MetadataReplacingCloneVisitor extends CloneVisitor {
+        private final Stmt targetStmt;
+        private final TopNonDataBlockMetadata newMeta;
+        private boolean replaced = false;
+
+        MetadataReplacingCloneVisitor(Stmt targetStmt, TopNonDataBlockMetadata newMeta) {
+            this.targetStmt = targetStmt;
+            this.newMeta = newMeta;
+        }
+
+        @Override
+        public ASTNode visit(NonDataBlockMetadata node) {
+            // Replace metadata only for the target statement's metadata
+            if (!replaced && node.getBlockId() != null
+                    && targetStmt.getMetadata() instanceof NonDataBlockMetadata targetMeta
+                    && node.getBlockId().equals(targetMeta.getBlockId())) {
+                replaced = true;
+                return newMeta;
+            }
+            return super.visit(node);
+        }
+    }
+}

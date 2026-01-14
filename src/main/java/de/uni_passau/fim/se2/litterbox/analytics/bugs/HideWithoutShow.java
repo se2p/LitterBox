@@ -21,6 +21,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugs;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ActorLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Hide;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Show;
@@ -41,10 +43,8 @@ public class HideWithoutShow extends AbstractIssueFinder {
         hasShow = false;
         firstHide = null;
         super.visit(node);
-        if (hasHide && !hasShow) {
-            if (hasVisibleChange) {
-                addIssue(firstHide, firstHide.getMetadata());
-            }
+        if (hasHide && !hasShow && hasVisibleChange) {
+            addIssue(firstHide, firstHide.getMetadata());
         }
     }
 
@@ -74,6 +74,15 @@ public class HideWithoutShow extends AbstractIssueFinder {
     @Override
     public void visit(ActorLookStmt node) {
         hasVisibleChange = true;
+    }
+
+    @Override
+    public void visit(Script node) {
+        if (node.getEvent() instanceof Never) {
+            // If there is a show in dead code, it's not a bug IMHO.
+            return;
+        }
+        super.visit(node);
     }
 
     @Override

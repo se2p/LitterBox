@@ -113,7 +113,7 @@ public class ProcedureDefinitionNameMapping {
      * Use {@link #getProceduresForName(String, String)} to get all procedures with the requested name.
      *
      * @param actorName The name of the actor the procedure is defined in.
-     * @param name The name of the procedure.
+     * @param name      The name of the procedure.
      * @return A procedure with the requested name.
      */
     public Optional<ProcedureInfo> getProcedureForName(String actorName, String name) {
@@ -133,7 +133,7 @@ public class ProcedureDefinitionNameMapping {
     public ProcedureInfo getProcedureInfo(final ProcedureDefinition procedureDefinition) {
         final ActorDefinition actor = AstNodeUtil.findActor(procedureDefinition)
                 .orElseThrow(() -> new IllegalStateException("Invalid AST: Could not find actor for procedure."));
-        final String hash =  procedureDefinition.getIdent().getName();
+        final String hash = procedureDefinition.getIdent().getName();
         return getProcedureForHash(actor.getIdent().getName(), hash);
     }
 

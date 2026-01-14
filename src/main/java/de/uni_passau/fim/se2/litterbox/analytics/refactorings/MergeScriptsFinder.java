@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeScripts;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,17 +59,13 @@ public class MergeScriptsFinder extends AbstractDependencyRefactoringFinder {
      * this method simply applies the merge and checks for dependencies in
      * the resulting script that span across the two parent scripts.
      */
-    private boolean hasDependencies(Script script1, Script script2) {
-
+    protected boolean hasDependencies(Script script1, Script script2) {
         MergeScripts refactoring = new MergeScripts(script1, script2);
         Script merged = refactoring.getMergedScript();
-        return hasDependencies(script1, script2, merged);
+        return hasMergedDependencies(script1, merged);
     }
 
-
-
-    @Override
-    protected boolean hasDependencies(Script script1, Script script2, Script mergedScript) {
+    protected boolean hasMergedDependencies(Script script1, Script mergedScript) {
         ControlFlowGraph cfg = getControlFlowGraphForScript(mergedScript);
 
         List<Stmt> stmtScript1 = new ArrayList<>(

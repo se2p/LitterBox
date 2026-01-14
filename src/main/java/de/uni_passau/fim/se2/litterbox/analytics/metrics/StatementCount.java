@@ -67,7 +67,7 @@ public class StatementCount<T extends ASTNode> implements MetricExtractor<T>, Sc
 
     @Override
     public void visit(Stmt node) {
-        if (! (insideProcedure || insideScript)) {
+        if (!(insideProcedure || insideScript)) {
             return;
         }
         count++;
@@ -75,7 +75,7 @@ public class StatementCount<T extends ASTNode> implements MetricExtractor<T>, Sc
     }
 
     @Override
-    public void visit(ExpressionStmt node){
+    public void visit(ExpressionStmt node) {
         //NOP do not count
     }
 

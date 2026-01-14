@@ -28,7 +28,7 @@ import java.util.Map;
 public class ComputationalThinkingScoreParallelization implements MetricExtractor<Program>, ScratchVisitor {
     public static final String NAME = "ct_score_parallelization";
     private int score = 0;
-    private Map<Event, Integer> eventMap = new LinkedHashMap<>();
+    private final Map<Event, Integer> eventMap = new LinkedHashMap<>();
 
     @Override
     public double calculateMetric(Program program) {
@@ -49,7 +49,6 @@ public class ComputationalThinkingScoreParallelization implements MetricExtracto
             score = 3;
         }
     }
-
 
     @Override
     public void visit(BackdropSwitchTo node) {

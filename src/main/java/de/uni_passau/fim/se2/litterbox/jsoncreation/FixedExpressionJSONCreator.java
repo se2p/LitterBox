@@ -31,12 +31,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.FixedInstrument;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.FixedColorParam;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
@@ -54,9 +59,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 import de.uni_passau.fim.se2.litterbox.ast.util.KeyValueTranslator;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 
@@ -65,14 +68,20 @@ import java.util.List;
 import java.util.Locale;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
-import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
+import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.createBlockWithoutMutationString;
+import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.createFields;
 
 /**
  * This class is for creating the JSONs of predetermined drop downs, that could be replaced by expressions such as
  * {@link de.uni_passau.fim.se2.litterbox.ast.model.position.Position} or
  * {@link de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.ElementChoice}.
  */
-public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor {
+public class FixedExpressionJSONCreator
+        implements MusicExtensionVisitor,
+        PenExtensionVisitor,
+        TextToSpeechExtensionVisitor,
+        TranslateExtensionVisitor,
+        VideoSensingExtensionVisitor {
 
     private static final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
 
@@ -81,42 +90,54 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
     private String topExpressionId = null;
     private Opcode dependantOpcode;
 
+    public List<String> getFinishedJSONStrings() {
+        return finishedJSONStrings;
+    }
+
     public IdJsonStringTuple createFixedExpressionJSON(String parentId, ASTNode expression, Opcode dependantOpcode) {
         finishedJSONStrings = new ArrayList<>();
         topExpressionId = null;
         previousBlockId = parentId;
         this.dependantOpcode = dependantOpcode;
+
         expression.accept(this);
+
         StringBuilder jsonString = new StringBuilder();
-        for (int i = 0; i < finishedJSONStrings.size() - 1; i++) {
-            jsonString.append(finishedJSONStrings.get(i)).append(",");
+        // Filter out empty/null strings to prevent double-comma JSON corruption
+        List<String> validJsonStrings = finishedJSONStrings.stream()
+                .filter(s -> s != null && !s.isEmpty())
+                .toList();
+
+        for (int i = 0; i < validJsonStrings.size() - 1; i++) {
+            jsonString.append(validJsonStrings.get(i)).append(",");
         }
-        if (!finishedJSONStrings.isEmpty()) {
-            jsonString.append(finishedJSONStrings.getLast());
+        if (!validJsonStrings.isEmpty()) {
+            jsonString.append(validJsonStrings.getLast());
         }
+
         return new IdJsonStringTuple(topExpressionId, jsonString.toString());
     }
 
     @Override
     public void visit(RandomPos node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), TO_KEY, RANDOM);
+        createFieldsExpression(node.getMetadata(), TO_KEY, RANDOM);
     }
 
     @Override
     public void visit(MousePos node) {
         if (node.getParentNode() instanceof GoToPos || node.getParentNode() instanceof GlideSecsTo) {
-            createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), TO_KEY, MOUSE);
+            createFieldsExpression(node.getMetadata(), TO_KEY, MOUSE);
         } else if (node.getParentNode() instanceof PointTowards) {
-            createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), TOWARDS_KEY, MOUSE);
+            createFieldsExpression(node.getMetadata(), TOWARDS_KEY, MOUSE);
         } else if (node.getParentNode() instanceof DistanceTo) {
-            createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), DISTANCETOMENU_KEY, MOUSE);
+            createFieldsExpression(node.getMetadata(), DISTANCETOMENU_KEY, MOUSE);
         }
     }
 
     @Override
     public void visit(FromExpression node) {
         if (node.getStringExpr() instanceof AsString asString && asString.getOperand1() instanceof StrId strId) {
-            NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+            BlockMetadata metadata = node.getMetadata();
 
             if (node.getParentNode() instanceof GoToPos || node.getParentNode() instanceof GlideSecsTo) {
                 createFieldsExpression(metadata, TO_KEY, strId.getName());
@@ -145,7 +166,7 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
 
     @Override
     public void visit(WithExpr node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
 
         if (node.getExpression() instanceof StrId strId) {
             if (node.getParentNode() instanceof AttributeOf) {
@@ -208,7 +229,7 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
         }
     }
 
-    private void createFieldsExpression(NonDataBlockMetadata metadata, String fieldsName, String fieldsValue) {
+    private void createFieldsExpression(BlockMetadata metadata, String fieldsName, String fieldsValue) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
@@ -235,5 +256,34 @@ public class FixedExpressionJSONCreator implements ScratchVisitor, PenExtensionV
     @Override
     public void visit(FixedVoice node) {
         createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), VOICE_FIELDS_KEY, node.getType().getType());
+    }
+
+    // Music Extension
+
+    @Override
+    public void visit(FixedNote node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        // Format note value as string, removing decimal point for whole numbers
+        String noteValue = node.getNote() == (long) node.getNote()
+                ? String.valueOf((long) node.getNote())
+                : String.valueOf(node.getNote());
+        createFieldsExpression(metadata, NOTE, noteValue);
+    }
+
+    @Override
+    public void visit(FixedDrum node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), DRUM, node.getType().getType());
+    }
+
+    @Override
+    public void visit(FixedInstrument node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), INSTRUMENT, node.getType().getType());
+    }
+
+    // Translate Extension
+
+    @Override
+    public void visit(TFixedLanguage node) {
+        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), LANGUAGE_FIELDS_KEY, node.getType().getType());
     }
 }

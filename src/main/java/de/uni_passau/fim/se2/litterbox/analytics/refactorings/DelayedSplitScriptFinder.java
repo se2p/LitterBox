@@ -48,7 +48,6 @@ public class DelayedSplitScriptFinder extends AbstractDependencyRefactoringFinde
         // Find a common prefix of length X
         // Duplicate this prefix
 
-
         StmtList stmts = script.getStmtList();
         for (int i = 1; i < stmts.getStmts().size(); i++) {
             Stmt splitPoint = stmts.getStmts().get(i);

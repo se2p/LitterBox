@@ -32,7 +32,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.BlockByIdFinder;
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,11 +41,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class BlockMetadataTest {
     private static Program prog;
@@ -72,7 +68,7 @@ class BlockMetadataTest {
 
     @Test
     void testNoMetadataTopBlock() {
-        final ASTNode block = BlockByIdFinder.findBlock(sprite, "X)N~xB@[E,i0S}Vwwtjm").orElseThrow();
+        final ASTNode block = BlockIdNodeFinder.findNode(sprite, "X)N~xB@[E,i0S}Vwwtjm").orElseThrow();
         assertInstanceOf(ProcedureDefinition.class, block);
 
         final ProcedureDefinition procDef = (ProcedureDefinition) block;
@@ -90,7 +86,7 @@ class BlockMetadataTest {
 
     @Test
     void testMetadataBlock() {
-        final ASTNode block = BlockByIdFinder.findBlock(sprite, "X)N~xB@[E,i0S}Vwwtjm").orElseThrow();
+        final ASTNode block = BlockIdNodeFinder.findNode(sprite, "X)N~xB@[E,i0S}Vwwtjm").orElseThrow();
         assertInstanceOf(ProcedureDefinition.class, block);
 
         final ProcedureDefinition procDef = (ProcedureDefinition) block;

@@ -61,7 +61,16 @@ public class TerminatedLoopInjector extends AbstractBugInjector {
                 || lastStmt instanceof DeleteClone;
     }
 
-    private void inject(StmtList originalList) {
+    /**
+     * Adds a StopThisScript block at the end of the loop's body.
+     *
+     * @param loopNode       The loop node (RepeatForeverStmt, RepeatTimesStmt, or UntilStmt)
+     * @param stmtListGetter Function to get the StmtList from the loop node
+     * @param <T>            The type of the loop node
+     */
+    private <T extends Stmt> void injectIntoLoop(T loopNode, java.util.function.Function<T, StmtList> stmtListGetter) {
+        StmtList originalList = stmtListGetter.apply(loopNode);
+
         // Skip empty loop bodies - adding a stop block makes no sense
         if (originalList.getStmts().isEmpty()) {
             return;
@@ -72,7 +81,10 @@ public class TerminatedLoopInjector extends AbstractBugInjector {
             return;
         }
 
-        modifyClonedNode(originalList, clonedList -> {
+        // Pass the loop node to modifyClonedNode, not the StmtList
+        // This ensures the correct loop body is modified in the cloned AST
+        modifyClonedNode(loopNode, clonedLoop -> {
+            StmtList clonedList = stmtListGetter.apply(clonedLoop);
             StopThisScript stop = new StopThisScript(NonDataBlockMetadata.emptyNonBlockMetadata());
             clonedList.getStmts().add(stop);
             stop.setParentNode(clonedList);
@@ -81,19 +93,19 @@ public class TerminatedLoopInjector extends AbstractBugInjector {
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        inject(node.getStmtList());
+        injectIntoLoop(node, RepeatForeverStmt::getStmtList);
         super.visit(node);
     }
 
     @Override
     public void visit(RepeatTimesStmt node) {
-        inject(node.getStmtList());
+        injectIntoLoop(node, RepeatTimesStmt::getStmtList);
         super.visit(node);
     }
 
     @Override
     public void visit(UntilStmt node) {
-        inject(node.getStmtList());
+        injectIntoLoop(node, UntilStmt::getStmtList);
         super.visit(node);
     }
 }

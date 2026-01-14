@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
@@ -37,6 +38,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveStep
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointInDirection;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
 import java.util.function.BiFunction;
@@ -149,28 +151,28 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
     @Override
     public void visit(MoveSteps node) {
         injectIntoSingleNumericParam(node, node.getSteps(),
-                replacement -> new MoveSteps(replacement, cloner.apply(node.getMetadata())));
+                replacement -> new MoveSteps(replacement, node.getMetadata()));
         super.visit(node);
     }
 
     @Override
     public void visit(SetXTo node) {
         injectIntoSingleNumericParam(node, node.getNum(),
-                replacement -> new SetXTo(replacement, cloner.apply(node.getMetadata())));
+                replacement -> new SetXTo(replacement, node.getMetadata()));
         super.visit(node);
     }
 
     @Override
     public void visit(SetYTo node) {
         injectIntoSingleNumericParam(node, node.getNum(),
-                replacement -> new SetYTo(replacement, cloner.apply(node.getMetadata())));
+                replacement -> new SetYTo(replacement, node.getMetadata()));
         super.visit(node);
     }
 
     @Override
     public void visit(PointInDirection node) {
         injectIntoSingleNumericParam(node, node.getDirection(),
-                replacement -> new PointInDirection(replacement, cloner.apply(node.getMetadata())));
+                replacement -> new PointInDirection(replacement, node.getMetadata()));
         super.visit(node);
     }
 
@@ -179,7 +181,7 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
     @Override
     public void visit(WaitSeconds node) {
         injectIntoSingleNumericParam(node, node.getSeconds(),
-                replacement -> new WaitSeconds(replacement, cloner.apply(node.getMetadata())));
+                replacement -> new WaitSeconds(replacement, node.getMetadata()));
         super.visit(node);
     }
 
@@ -191,7 +193,7 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
             if (isValidInjectionTarget(value)) {
                 NumExpr replacement = createInvalidNumExpr(value);
                 var clonedIdent = cloner.apply(node.getIdentifier());
-                BlockMetadata clonedMeta = cloner.apply(node.getMetadata());
+                BlockMetadata clonedMeta = node.getMetadata();
                 replaceNodeImmutably(node, n -> new ChangeVariableBy(clonedIdent, replacement, clonedMeta));
             }
         }
@@ -206,7 +208,7 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
             if (isValidInjectionTarget(value)) {
                 NumExpr replacement = createInvalidNumExpr(value);
                 var clonedIdent = cloner.apply(node.getIdentifier());
-                BlockMetadata clonedMeta = cloner.apply(node.getMetadata());
+                BlockMetadata clonedMeta = node.getMetadata();
                 replaceNodeImmutably(node, n -> new SetVariableTo(clonedIdent, replacement, clonedMeta));
             }
         }
@@ -234,13 +236,13 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
         if (operand1 instanceof NumberLiteral numLit) {
             NumExpr replacement = createInvalidNumExpr(numLit.getValue());
             NumExpr clonedOp2 = cloner.apply(operand2);
-            BlockMetadata clonedMeta = cloner.apply(node.getMetadata());
+            BlockMetadata clonedMeta = node.getMetadata();
             replaceNodeImmutably(node, n -> constructor.apply(replacement, clonedOp2, clonedMeta));
         }
         if (operand2 instanceof NumberLiteral numLit) {
             NumExpr replacement = createInvalidNumExpr(numLit.getValue());
             NumExpr clonedOp1 = cloner.apply(operand1);
-            BlockMetadata clonedMeta = cloner.apply(node.getMetadata());
+            BlockMetadata clonedMeta = node.getMetadata();
             replaceNodeImmutably(node, n -> constructor.apply(clonedOp1, replacement, clonedMeta));
         }
     }
@@ -301,7 +303,10 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
      * Creates an AsNumber expression wrapping an invalid number string.
      */
     private NumExpr createInvalidNumExpr(double value) {
-        return new AsNumber(new StringLiteral(makeInvalidNumber(value)));
+        return new AsNumber(
+                new StringLiteral(makeInvalidNumber(value)),
+                new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
+        );
     }
 
     /**

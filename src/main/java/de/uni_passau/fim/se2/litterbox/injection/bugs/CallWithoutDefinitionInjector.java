@@ -74,14 +74,13 @@ public class CallWithoutDefinitionInjector extends AbstractBugInjector {
         // Collect all existing procedure names for unique typo generation
         Set<String> existingProcedures = collectAllProcedureNames();
 
-        modifyClonedNode(node, clonedCall -> {
-            String uniqueTypo = generateUniqueTypo(clonedCall.getIdent().getName(), existingProcedures);
-            CallStmt newCall = new CallStmt(
+        replaceNodeImmutably(node, originalCall -> {
+            String uniqueTypo = generateUniqueTypo(originalCall.getIdent().getName(), existingProcedures);
+            return new CallStmt(
                     new StrId(uniqueTypo),
-                    clonedCall.getExpressions(),
-                    clonedCall.getMetadata()
+                    originalCall.getExpressions(),
+                    originalCall.getMetadata()
             );
-            replaceInParent(clonedCall, newCall);
         });
         super.visit(node);
     }
@@ -127,9 +126,26 @@ public class CallWithoutDefinitionInjector extends AbstractBugInjector {
     }
 
     private String generateUniqueTypo(String originalName, Set<String> existingProcedures) {
-        String typo = TypoGenerator.generateTypo(originalName);
+        // Find where parameter placeholders start
+        int placeholderStart = originalName.indexOf('%');
+
+        String prefix;
+        String suffix;
+        if (placeholderStart == -1) {
+            // No placeholders - apply typo to entire name
+            prefix = originalName;
+            suffix = "";
+        } else {
+            // Split: apply typo only to prefix, preserve suffix with placeholders
+            prefix = originalName.substring(0, placeholderStart);
+            suffix = originalName.substring(placeholderStart);
+        }
+
+        String typoPrefix = TypoGenerator.generateTypo(prefix);
+        String typo = typoPrefix + suffix;
         while (existingProcedures.contains(typo)) {
-            typo = TypoGenerator.generateTypo(typo);
+            typoPrefix = TypoGenerator.generateTypo(typoPrefix);
+            typo = typoPrefix + suffix;
         }
         return typo;
     }

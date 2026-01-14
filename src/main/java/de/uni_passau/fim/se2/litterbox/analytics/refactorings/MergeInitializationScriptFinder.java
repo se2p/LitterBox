@@ -84,11 +84,10 @@ public class MergeInitializationScriptFinder extends AbstractDependencyRefactori
      * this method simply applies the merge and checks for dependencies in
      * the resulting script that span across the two parent scripts.
      */
-    private boolean hasDependencies(Script script1, Script script2) {
-
+    protected boolean hasDependencies(Script script1, Script script2) {
         MergeInitializationScript refactoring = new MergeInitializationScript(script1, script2);
         Script merged = refactoring.getMergedScript();
-        return hasDependencies(script1, script2, merged);
+        return super.hasDependencies(script1, merged);
     }
 
     @Override

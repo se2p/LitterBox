@@ -91,5 +91,41 @@ public class MessageNeverSentInjectorTest implements JsonTest {
                     "MessageNeverSent detector should find the injected bug when ALL broadcast blocks are changed");
         }
     }
+    @Test
+    public void testMessageNeverSentInjectorWithDetachedBroadcast() throws IOException, ParsingException {
+        // Broadcast "msg" is DETACHED (inside Never event in AST representation of loose blocks)
+        // Receiver "msg" is connected.
+        // The injector should IGNORE the detached broadcast and produce NO results.
+        String script = """
+                when green flag clicked
+                
+                broadcast (msg v)
+                
+                when I receive [msg v]
+                move (10) steps
+                """;
+        
+        // Note: The text parser might attach loose blocks to something or treat them as scripts with Never event.
+        // We need to ensure the structure mimics a detached block.
+        // In the parser, blocks separated by newlines might be separate scripts.
+        // Using 'when green flag clicked' followed by nothing makes an empty script.
+        // The 'broadcast' is a separate script. If it has no hat, it's a Script with Never event?
+        // Let's verify parser behavior or manually construct invalid program?
+        // Actually, the text format usually parses "stacks". If a stack has no hat, it's a loose block.
+        // But ScratchParser usually requires valid structure?
+        // The snippet above:
+        // Script 1: green flag (empty)
+        // Script 2: broadcast (msg) -> No Hat.
+        // Script 3: receive msg
+        
+        Program program = parseScratchBlocks(script);
+
+        // Inject
+        MessageNeverSentInjector injector = new MessageNeverSentInjector();
+        List<InjectionResult> injected = injector.inject(program);
+        
+        // Should be empty because the only broadcaster is loose/detached, so ignored.
+        Assertions.assertTrue(injected.isEmpty(), "Should NOT inject bug if the only broadcaster is detached (already buggy/invalid)");
+    }
 }
 

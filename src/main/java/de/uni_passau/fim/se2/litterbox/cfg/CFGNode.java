@@ -30,6 +30,15 @@ public abstract class CFGNode {
     protected ASTNode scriptOrProcedure = null;
     private Set<Definition> definitions = null;
     private Set<Use> uses = null;
+    private int id = -1;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public abstract ASTNode getASTNode();
 
