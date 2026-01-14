@@ -30,4 +30,15 @@ public class SoundsBlockCountTest implements JsonTest {
     public void testAll() throws IOException, ParsingException {
         assertThatMetricReports(9, new SoundBlockCount<>(), "./src/test/fixtures/metrics/allSoundsBlocks.json");
     }
+
+    @Test
+    public void testAverageAll() throws IOException, ParsingException {
+        assertThatMetricReports(1, new SoundBlockCount<>(true), "./src/test/fixtures/metrics/allSoundsBlocks.json");
+    }
+
+    @Test
+    public void testAverageTotal() throws IOException, ParsingException {
+        // sound_cleareffects twice in allBlocks -> assertion (10/132 = 0.757575...) instead of (9/132 = 0.06818181...)
+        assertThatMetricReportsWithin(0.0757575757, 1e-4, new SoundBlockCount<>(true), "./src/test/fixtures/allBlocks.json");
+    }
 }

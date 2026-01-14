@@ -27,14 +27,27 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 public class SoundBlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
     public static final String NAME = "sound_block_count";
 
+    private final boolean average;
     private int count = 0;
+
+    public SoundBlockCount() {
+        this.average = false;
+    }
+
+    public SoundBlockCount(boolean average) {
+        this.average = average;
+    }
 
     @Override
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
+        double totalCount = new BlockCount<T>().calculateMetric(node);
+        if (totalCount == 0) {
+            return 0.0;
+        }
         count = 0;
         node.accept(this);
-        return count;
+        return average ? count / totalCount : count;
     }
 
     @Override
@@ -50,6 +63,9 @@ public class SoundBlockCount<T extends ASTNode> implements MetricExtractor<T>, S
 
     @Override
     public String getName() {
+        if (average) {
+            return "average_" + NAME;
+        }
         return NAME;
     }
 }
