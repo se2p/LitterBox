@@ -30,7 +30,9 @@ import java.util.List;
 
 public class ProgramFeatureAnalyzer implements ProgramAnalyzer<List<FeatureResult>> {
     private final List<MetricExtractor<ASTNode>> metrics = Arrays.asList(
-            // B&W inspired Avg/Max Counts
+            // Readability related avg/max counts inspired by Buse & Weimer:
+            // Buse & Weimer: Learning a Metric for Code Readability,
+            //  <a href="https://doi.org/10.1109/TSE.2009.70">DOI: 10.1109/TSE.2009.70</a>)
             new AvgBlockStatementCount<>(),
             new MaxBlockStatementCount<>(),
             new AvgLineWidthCount<>(),
@@ -45,16 +47,14 @@ public class ProgramFeatureAnalyzer implements ProgramAnalyzer<List<FeatureResul
             new MaxNestedBlockCount<>(),
             new OperatorsBlockCount<>(),
             new SensingBlockCount<>(),
-            // new SliceCoverage<>(),
-            // new SliceOverlap<>(),
-            // new SliceTightness<>(),
             new SoundBlockCount<>(),
             new MaxStackedStatementCount<>(),
             new VariableCount<>(),
             new VariablesBlockCount<>(),
-            // new WeightedMethodCount<>(),
 
-            // Posnett inspired
+            // Readability related standard metrics inspired by Posnett et al.:
+            // Posnett et al.: A Simpler Model of Software Readability,
+            //  <a href="https://doi.org/10.1145/1985441.1985454">DOI: 10.1145/1985441.1985454</a>)
             new BlockCount<>(),
             new StatementCount<>(),
             new ScriptCount<>(),

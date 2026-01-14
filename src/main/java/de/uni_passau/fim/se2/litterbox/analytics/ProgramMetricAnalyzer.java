@@ -99,6 +99,9 @@ public class ProgramMetricAnalyzer implements ProgramAnalyzer<List<MetricResult>
             metricList.add(new ProgramUsingPen<>());
             metricList.add(new ScriptCount<>());
             metricList.add(new SensingBlockCount<>());
+            metricList.add(new SliceCoverage<>());
+            metricList.add(new SliceOverlap<>());
+            metricList.add(new SliceTightness<>());
             metricList.add(new SoundBlockCount<>());
             metricList.add(new SpriteCount<>());
             metricList.add(new MaxStackedStatementCount<>());
