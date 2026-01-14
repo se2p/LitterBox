@@ -113,12 +113,8 @@ public class BlockCount<T extends ASTNode>
 
     @Override
     public void visit(ActorDefinition node) {
-        List<ASTNode> targets = new ArrayList<>();
-        targets.addAll(node.getScripts().getScriptList());
-        targets.addAll(node.getProcedureDefinitionList().getList());
-        for (ASTNode target : targets) {
-            target.accept(this);
-        }
+        visit(node.getScripts());
+        visit(node.getProcedureDefinitionList());
     }
 
     @Override
