@@ -30,4 +30,14 @@ public class ControlBlockCountTest implements JsonTest {
     public void testAll() throws IOException, ParsingException {
         assertThatMetricReports(13, new ControlBlockCount<>(), "./src/test/fixtures/metrics/allControlBlocks.json");
     }
+
+    @Test
+    public void testAverageAll() throws IOException, ParsingException {
+        assertThatMetricReports(1, new ControlBlockCount<>(true), "./src/test/fixtures/metrics/allControlBlocks.json");
+    }
+
+    @Test
+    public void testAverageTotal() throws IOException, ParsingException {
+        assertThatMetricReportsWithin(0.083333333, 1e-4, new ControlBlockCount<>(true), "./src/test/fixtures/allBlocks.json");
+    }
 }
