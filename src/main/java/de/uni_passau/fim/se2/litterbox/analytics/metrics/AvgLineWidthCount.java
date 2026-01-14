@@ -45,7 +45,7 @@ public class AvgLineWidthCount<T extends ASTNode> implements ScratchVisitor, Met
         scriptString = scriptString.replace("[scratchblocks]" + lineSep, "");
         scriptString = scriptString.replace("[/scratchblocks]" + lineSep, "");
         scriptString = scriptString.replace("end" + lineSep, "");
-         scriptString = scriptString.replaceAll("(?m)^\\r?\\n", ""); // empty lines
+        scriptString = scriptString.replaceAll("(?m)^\\r?\\n", ""); // empty lines
 
         ArrayList<Integer> scriptWidths = new ArrayList<>();
         String[] scriptBlocks = scriptString.split(lineSep);
