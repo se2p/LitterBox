@@ -355,10 +355,10 @@ public class Main implements Callable<Integer> {
         String actor;
 
         @CommandLine.Option(
-                names = {"-c", "--combine"},
-                description = "Combine metrics per actor."
+                names = {"--per-actor"},
+                description = "Compute metrics per actor instead of per script/procedure."
         )
-        boolean combine;
+        boolean perActor;
 
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
