@@ -345,7 +345,8 @@ public class Main implements Callable<Integer> {
 
     @CommandLine.Command(
             name = "features",
-            description = "Extract scripts features from Scratch projects. See also 'stats' subcommand."
+            description = "Extract scripts features from Scratch projects. See also 'stats' subcommand.",
+            mixinStandardHelpOptions = true
     )
     static class FeatureSubcommand extends LitterBoxSubcommand {
         @CommandLine.Option(
@@ -362,7 +363,8 @@ public class Main implements Callable<Integer> {
 
         @CommandLine.Option(
                 names = {"--collect-average-blocktype-count"},
-                description = "Compute block-type metrics as proportion to all blocks rather than in absolute numbers. This proportion is usually called 'average' in literature."
+                description = "Compute block-type metrics as proportion to all blocks rather than in absolute numbers. "
+                    + "This proportion is usually called 'average' in literature."
         )
         boolean collectAverageBlocktypeCount;
 
@@ -373,7 +375,9 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected FeatureAnalyzer getAnalyzer() {
-            return new FeatureAnalyzer(commonOptions.outputPath, commonOptions.deleteProject, actor, perActor, collectAverageBlocktypeCount);
+            return new FeatureAnalyzer(
+                    commonOptions.outputPath, commonOptions.deleteProject, actor, perActor, collectAverageBlocktypeCount
+            );
         }
     }
 

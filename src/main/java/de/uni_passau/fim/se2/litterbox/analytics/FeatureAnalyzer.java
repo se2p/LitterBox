@@ -141,11 +141,11 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
                 for (MetricExtractor<ASTNode> extractor : analyzer.getMetrics()) {
                     row.add(Double.toString(extractor.calculateMetric(target)));
                 }
-        if (fileName == null) {
-            printer.printRecord(row);
-        } else {
-            printer.printRecord(row);
-        }
+                if (fileName == null) {
+                    printer.printRecord(row);
+                } else {
+                    printer.printRecord(row);
+                }
             }
         }
         printer.flush();

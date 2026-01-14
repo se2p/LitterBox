@@ -32,9 +32,10 @@ public class MotionBlockCount<T extends ASTNode> implements MetricExtractor<T>, 
 
     /**
      * Option to calculate the proportion of motion blocks in a program rather than their absolute count.
-     * The name "average" comes from readability research (e.g. [1]) and was retained to comply with existing literature.
-     * [1] Scalabrino et al.: A comprehensive model for code readability,
-     * <a href="https://doi.org/10.1002/smr.1958">DOI: 10.1002/smr.1958</a>)
+     * The name "average" comes from readability research (e.g. [1]) and was retained to comply with literature.
+     *
+     * <p>[1] Scalabrino et al.: A comprehensive model for code readability,
+     * <a href="https://doi.org/10.1002/smr.1958">doi:10.1002/smr.1958</a>)
      */
     private final boolean average;
 
