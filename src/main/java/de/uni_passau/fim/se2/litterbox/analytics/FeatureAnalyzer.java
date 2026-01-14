@@ -23,7 +23,6 @@ import de.uni_passau.fim.se2.litterbox.analytics.metrics.MetricExtractor;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -40,16 +39,16 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
     private static final Logger log = Logger.getLogger(FeatureAnalyzer.class.getName());
 
     private final String actor;
-    private final boolean combine;
+    private final boolean perActor;
 
     private final ProgramFeatureAnalyzer analyzer;
     private CSVPrinter printer;
 
-    public FeatureAnalyzer(Path output, boolean delete, String actor, boolean combine) {
-        super(new ProgramFeatureAnalyzer(), output, delete);
+    public FeatureAnalyzer(Path output, boolean delete, String actor, boolean perActor, boolean collectAverage) {
+        super(new ProgramFeatureAnalyzer(collectAverage), output, delete);
         this.analyzer = (ProgramFeatureAnalyzer) super.analyzer;
         this.actor = actor;
-        this.combine = combine;
+        this.perActor = perActor;
     }
 
     @Override
@@ -114,7 +113,7 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
             List<Script> scripts = actorDefinition.getScripts().getScriptList();
             List<ProcedureDefinition> procedures = actorDefinition.getProcedureDefinitionList().getList();
 
-            if (combine) {
+            if (perActor) {
                 if ((scripts.size() + procedures.size()) > 0) {
                     targets.add(actorDefinition);
                 }

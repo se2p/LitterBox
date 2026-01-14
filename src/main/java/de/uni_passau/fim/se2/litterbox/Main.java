@@ -360,6 +360,12 @@ public class Main implements Callable<Integer> {
         )
         boolean perActor;
 
+        @CommandLine.Option(
+                names = {"--collect-average-blocktype-count"},
+                description = "Compute metrics per actor instead of per script/procedure."
+        )
+        boolean collectAverageBlocktypeCount;
+
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
@@ -367,7 +373,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected FeatureAnalyzer getAnalyzer() {
-            return new FeatureAnalyzer(commonOptions.outputPath, commonOptions.deleteProject, actor, perActor);
+            return new FeatureAnalyzer(commonOptions.outputPath, commonOptions.deleteProject, actor, perActor, collectAverageBlocktypeCount);
         }
     }
 
