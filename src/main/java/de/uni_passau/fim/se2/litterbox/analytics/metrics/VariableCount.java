@@ -34,6 +34,12 @@ import java.util.List;
 public class VariableCount<T extends ASTNode> implements  ScratchVisitor, MetricExtractor<T> {
     public static final String NAME = "variable_count";
 
+    /**
+     * Option to calculate the proportion of variables in a program rather than their absolute count.
+     * The name "average" comes from readability research (e.g. [1]) and was retained to comply with existing literature.
+     * [1] Scalabrino et al.: A comprehensive model for code readability,
+     * <a href="https://doi.org/10.1002/smr.1958">DOI: 10.1002/smr.1958</a>)
+     */
     private final boolean average;
     private boolean insideScript = false;
     private boolean insideProcedure = false;

@@ -27,6 +27,13 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 public class MyBlocksBlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
     public static final String NAME = "my_blocks_block_count";
+
+    /**
+     * Option to calculate the proportion of my blocks in a program rather than their absolute count.
+     * The name "average" comes from readability research (e.g. [1]) and was retained to comply with existing literature.
+     * [1] Scalabrino et al.: A comprehensive model for code readability,
+     * <a href="https://doi.org/10.1002/smr.1958">DOI: 10.1002/smr.1958</a>)
+     */
     private final boolean average;
 
     private int count = 0;
