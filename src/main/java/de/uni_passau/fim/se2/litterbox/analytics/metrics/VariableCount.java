@@ -32,11 +32,20 @@ import java.util.HashSet;
 import java.util.List;
 
 public class VariableCount<T extends ASTNode> implements  ScratchVisitor, MetricExtractor<T> {
-
     public static final String NAME = "variable_count";
+
+    private final boolean average;
     private boolean insideScript = false;
     private boolean insideProcedure = false;
     private List<String> variables;
+
+    public VariableCount() {
+        this.average = false;
+    }
+
+    public VariableCount(boolean average) {
+        this.average = average;
+    }
 
     @Override
     public double calculateMetric(T node) {
@@ -45,7 +54,15 @@ public class VariableCount<T extends ASTNode> implements  ScratchVisitor, Metric
         insideProcedure = false;
         insideScript = false;
         node.accept(this);
-        return getVariableCount();
+        double numVariables = getVariableCount();
+        if (average) {
+            double totalCount = new BlockCount<T>().calculateMetric(node);
+            if (totalCount == 0) {
+                return 0.0;
+            }
+            return numVariables / totalCount;
+        }
+        return numVariables;
     }
 
     private double getVariableCount() {
@@ -97,6 +114,9 @@ public class VariableCount<T extends ASTNode> implements  ScratchVisitor, Metric
 
     @Override
     public String getName() {
+        if (average) {
+            return "average_" + NAME;
+        }
         return NAME;
     }
 }
