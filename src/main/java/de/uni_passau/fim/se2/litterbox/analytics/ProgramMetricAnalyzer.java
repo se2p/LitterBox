@@ -58,7 +58,7 @@ public class ProgramMetricAnalyzer implements ProgramAnalyzer<List<MetricResult>
         List<MetricExtractor<Program>> metricList = new ArrayList<>();
         if (LOAD_GENERAL) {
             metricList.add(new AvgBlockStatementCount<>());
-            metricList.add(new AvgScriptWidthCount<>());
+            metricList.add(new AvgLineWidthCount<>());
             metricList.add(new AvgVariableLengthCount<>());
             metricList.add(new BackdropCount<>());
             metricList.add(new BlockCount<>());

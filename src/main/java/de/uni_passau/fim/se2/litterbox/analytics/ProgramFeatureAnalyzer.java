@@ -31,7 +31,7 @@ import java.util.List;
 public class ProgramFeatureAnalyzer implements ProgramAnalyzer<List<FeatureResult>> {
     private final List<MetricExtractor<ASTNode>> metrics = Arrays.asList(
             new AvgBlockStatementCount<>(),
-            new AvgScriptWidthCount<>(),
+            new AvgLineWidthCount<>(),
             new AvgVariableLengthCount<>(),
             new BlockCount<>(),
             new ControlBlockCount<>(),
@@ -43,7 +43,7 @@ public class ProgramFeatureAnalyzer implements ProgramAnalyzer<List<FeatureResul
             new HalsteadEffort<>(),
             new LooksBlockCount<>(),
             new MaxBlockStatementCount<>(),
-            new MaxScriptWidthCount<>(),
+            new MaxLineWidthCount<>(),
             new MaxVariableLengthCount<>(),
             new MotionBlockCount<>(),
             new MyBlocksBlockCount<>(),

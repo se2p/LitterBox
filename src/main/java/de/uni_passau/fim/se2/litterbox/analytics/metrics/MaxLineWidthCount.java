@@ -29,8 +29,8 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class MaxScriptWidthCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
-    public static final String NAME = "max_script_width_count";
+public class MaxLineWidthCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
+    public static final String NAME = "max_line_width_count";
 
     @Override
     public double calculateMetric(T node) {

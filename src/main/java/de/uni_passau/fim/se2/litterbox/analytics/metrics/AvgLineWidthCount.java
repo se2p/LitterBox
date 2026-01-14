@@ -30,8 +30,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 
-public class AvgScriptWidthCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
-    public static final String NAME = "avg_script_width_count";
+public class AvgLineWidthCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
+    public static final String NAME = "avg_line_width_count";
 
     @Override
     public double calculateMetric(T node) {
