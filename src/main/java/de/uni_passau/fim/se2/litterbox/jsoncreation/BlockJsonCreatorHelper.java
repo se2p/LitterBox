@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
@@ -32,7 +34,7 @@ public abstract class BlockJsonCreatorHelper {
 
     public static final String DEFAULT_VALUE = "[10,\"\"]";
 
-    public static StringBuilder createBlockUpToParent(StringBuilder jsonString, NonDataBlockMetadata meta,
+    public static StringBuilder createBlockUpToParent(StringBuilder jsonString, BlockMetadata meta,
                                                       String nextId, String parentId, Opcode opcode) {
 
         createField(jsonString, meta.getBlockId()).append("{");
@@ -48,22 +50,41 @@ public abstract class BlockJsonCreatorHelper {
         return jsonString;
     }
 
-    public static StringBuilder createBlockAfterFields(StringBuilder jsonString, NonDataBlockMetadata meta) {
-        createFieldValue(jsonString, SHADOW_KEY, meta.isShadow()).append(",");
-        createFieldValue(jsonString, TOPLEVEL_KEY, meta instanceof TopNonDataBlockMetadata);
+    public static StringBuilder createBlockAfterFields(StringBuilder jsonString, BlockMetadata meta) {
+        boolean shadow = false;
+        if (meta instanceof NonDataBlockMetadata nonData) {
+            shadow = nonData.isShadow();
+        }
+        createFieldValue(jsonString, SHADOW_KEY, shadow).append(",");
+
+        boolean topLevel = false;
+        double x = 0;
+        double y = 0;
+
+        if (meta instanceof TopNonDataBlockMetadata topMeta) {
+            topLevel = true;
+            x = topMeta.getXPos();
+            y = topMeta.getYPos();
+        } else if (meta instanceof DataBlockMetadata dataMeta) {
+            topLevel = true; // Data blocks are often top-level but treated differently, but if we are generating blocks for them they likely have coords
+            x = dataMeta.getX();
+            y = dataMeta.getY();
+        }
+
+        createFieldValue(jsonString, TOPLEVEL_KEY, topLevel);
         if (meta.getCommentId() != null) {
             jsonString.append(",");
             createFieldValue(jsonString, COMMENT_KEY, meta.getCommentId());
         }
-        if (meta instanceof TopNonDataBlockMetadata topNonDataBlockMetadata) {
+        if (topLevel) {
             jsonString.append(",");
-            createFieldValue(jsonString, X_KEY, topNonDataBlockMetadata.getXPos()).append(",");
-            createFieldValue(jsonString, Y_KEY, topNonDataBlockMetadata.getYPos());
+            createFieldValue(jsonString, X_KEY, x).append(",");
+            createFieldValue(jsonString, Y_KEY, y);
         }
         return jsonString;
     }
 
-    public static String createFixedBlock(NonDataBlockMetadata meta,
+    public static String createFixedBlock(BlockMetadata meta,
                                           String nextId, String parentId, Opcode opcode) {
         StringBuilder jsonString = new StringBuilder();
         createBlockUpToParent(jsonString, meta, nextId, parentId, opcode).append(",");
@@ -72,7 +93,7 @@ public abstract class BlockJsonCreatorHelper {
         return jsonString.toString();
     }
 
-    private static StringBuilder createBlockString(NonDataBlockMetadata metadata, String nextId, String parentId,
+    private static StringBuilder createBlockString(BlockMetadata metadata, String nextId, String parentId,
                                                    String inputsString,
                                                    String fieldsString, Opcode opcode) {
         StringBuilder jsonString = new StringBuilder();
@@ -83,7 +104,7 @@ public abstract class BlockJsonCreatorHelper {
         return jsonString;
     }
 
-    public static String createBlockWithMutationString(NonDataBlockMetadata metadata, String nextId, String parentId,
+    public static String createBlockWithMutationString(BlockMetadata metadata, String nextId, String parentId,
                                                        String inputsString,
                                                        String fieldsString, String mutation, Opcode opcode) {
         StringBuilder jsonString = createBlockString(metadata, nextId, parentId, inputsString, fieldsString, opcode);
@@ -93,7 +114,7 @@ public abstract class BlockJsonCreatorHelper {
         return jsonString.toString();
     }
 
-    public static String createBlockWithoutMutationString(NonDataBlockMetadata metadata, String nextId, String parentId,
+    public static String createBlockWithoutMutationString(BlockMetadata metadata, String nextId, String parentId,
                                                           String inputsString,
                                                           String fieldsString, Opcode opcode) {
         StringBuilder jsonString = createBlockString(metadata, nextId, parentId, inputsString, fieldsString, opcode);

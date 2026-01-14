@@ -43,6 +43,16 @@ public class ProcedureMetadata extends AbstractNode implements BlockMetadata {
     }
 
     @Override
+    public String getBlockId() {
+        return definition.getBlockId();
+    }
+
+    @Override
+    public String getCommentId() {
+        return definition.getCommentId();
+    }
+
+    @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }

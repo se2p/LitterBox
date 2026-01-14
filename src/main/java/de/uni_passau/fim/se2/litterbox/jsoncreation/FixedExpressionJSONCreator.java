@@ -41,6 +41,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
@@ -119,24 +120,24 @@ public class FixedExpressionJSONCreator
 
     @Override
     public void visit(RandomPos node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), TO_KEY, RANDOM);
+        createFieldsExpression(node.getMetadata(), TO_KEY, RANDOM);
     }
 
     @Override
     public void visit(MousePos node) {
         if (node.getParentNode() instanceof GoToPos || node.getParentNode() instanceof GlideSecsTo) {
-            createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), TO_KEY, MOUSE);
+            createFieldsExpression(node.getMetadata(), TO_KEY, MOUSE);
         } else if (node.getParentNode() instanceof PointTowards) {
-            createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), TOWARDS_KEY, MOUSE);
+            createFieldsExpression(node.getMetadata(), TOWARDS_KEY, MOUSE);
         } else if (node.getParentNode() instanceof DistanceTo) {
-            createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), DISTANCETOMENU_KEY, MOUSE);
+            createFieldsExpression(node.getMetadata(), DISTANCETOMENU_KEY, MOUSE);
         }
     }
 
     @Override
     public void visit(FromExpression node) {
         if (node.getStringExpr() instanceof AsString asString && asString.getOperand1() instanceof StrId strId) {
-            NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+            BlockMetadata metadata = node.getMetadata();
 
             if (node.getParentNode() instanceof GoToPos || node.getParentNode() instanceof GlideSecsTo) {
                 createFieldsExpression(metadata, TO_KEY, strId.getName());
@@ -165,7 +166,7 @@ public class FixedExpressionJSONCreator
 
     @Override
     public void visit(WithExpr node) {
-        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        BlockMetadata metadata = node.getMetadata();
 
         if (node.getExpression() instanceof StrId strId) {
             if (node.getParentNode() instanceof AttributeOf) {
@@ -228,7 +229,7 @@ public class FixedExpressionJSONCreator
         }
     }
 
-    private void createFieldsExpression(NonDataBlockMetadata metadata, String fieldsName, String fieldsValue) {
+    private void createFieldsExpression(BlockMetadata metadata, String fieldsName, String fieldsValue) {
         if (topExpressionId == null) {
             topExpressionId = metadata.getBlockId();
         }
