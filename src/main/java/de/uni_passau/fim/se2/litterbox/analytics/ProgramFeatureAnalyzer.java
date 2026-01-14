@@ -51,6 +51,7 @@ public class ProgramFeatureAnalyzer implements ProgramAnalyzer<List<FeatureResul
             new MaxStackedStatementCount<>(),
             new VariableCount<>(),
             new VariablesBlockCount<>(),
+            new LiteralCount<>(),
 
             // Readability related standard metrics inspired by Posnett et al.:
             // Posnett et al.: A Simpler Model of Software Readability,
