@@ -83,6 +83,12 @@ class TokenVisitor implements ScratchVisitor {
     }
 
     @Override
+    public void visit(ActorDefinition actor) {
+        visit(actor.getScripts());
+        visit(actor.getProcedureDefinitionList());
+    }
+
+    @Override
     public void visit(ProcedureDefinition procedure) {
         tokens.add(procedure);
         visit(procedure.getParameterDefinitionList());

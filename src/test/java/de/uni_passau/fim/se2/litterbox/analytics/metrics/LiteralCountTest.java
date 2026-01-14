@@ -24,14 +24,25 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-public class StackedStatementCountTest implements JsonTest {
+public class LiteralCountTest implements JsonTest {
+
     @Test
-    public void testEmptyProgram() throws IOException, ParsingException {
-        assertThatMetricReports(0, new StackedStatementCount<>(), "./src/test/fixtures/emptyProject.json");
+    public void testAllMotion() throws IOException, ParsingException {
+        assertThatMetricReports(14, new LiteralCount<>(), "./src/test/fixtures/metrics/allMotionBlocks.json");
     }
 
     @Test
-    public void testStackedTTS() throws IOException, ParsingException {
-        assertThatMetricReports(1, new StackedStatementCount<>(), "./src/test/fixtures/metrics/stackedTTS.json");
+    public void testAllLooks() throws IOException, ParsingException {
+        assertThatMetricReports(11, new LiteralCount<>(), "./src/test/fixtures/metrics/allLooksBlocks.json");
+    }
+
+    @Test
+    public void testAllSound() throws IOException, ParsingException {
+        assertThatMetricReports(4, new LiteralCount<>(), "./src/test/fixtures/metrics/allSoundsBlocks.json");
+    }
+
+    @Test
+    public void testAverageMotion() throws IOException, ParsingException {
+        assertThatMetricReports(0.6666666666666666, new LiteralCount<>(true), "./src/test/fixtures/metrics/allMotionBlocks.json");
     }
 }

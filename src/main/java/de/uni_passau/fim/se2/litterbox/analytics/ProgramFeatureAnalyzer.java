@@ -29,38 +29,56 @@ import java.util.Collections;
 import java.util.List;
 
 public class ProgramFeatureAnalyzer implements ProgramAnalyzer<List<FeatureResult>> {
-    private final List<MetricExtractor<ASTNode>> metrics = Arrays.asList(
-            new AvgBlockStatementCount<>(),
-            new AvgScriptWidthCount<>(),
-            new AvgVariableLengthCount<>(),
-            new BlockCount<>(),
-            new ControlBlockCount<>(),
-            new EventsBlockCount<>(),
-            new HalsteadVolume<>(),
-            new HalsteadLength<>(),
-            new HalsteadVocabulary<>(),
-            new HalsteadDifficulty<>(),
-            new HalsteadEffort<>(),
-            new LooksBlockCount<>(),
-            new MaxBlockStatementCount<>(),
-            new MaxScriptWidthCount<>(),
-            new MaxVariableLengthCount<>(),
-            new MotionBlockCount<>(),
-            new MyBlocksBlockCount<>(),
-            new NestedBlockCount<>(),
-            new OperatorsBlockCount<>(),
-            new SensingBlockCount<>(),
-            new SliceCoverage<>(),
-            new SliceOverlap<>(),
-            new SliceTightness<>(),
-            new SoundBlockCount<>(),
-            new StackedStatementCount<>(),
-            new StatementCount<>(),
-            new TokenEntropy<>(),
-            new VariableCount<>(),
-            new VariablesBlockCount<>(),
-            new WeightedMethodCount<>()
-    );
+    private final List<MetricExtractor<ASTNode>> metrics;
+
+    public ProgramFeatureAnalyzer() {
+        this(false);
+    }
+
+    public ProgramFeatureAnalyzer(boolean collectAverageBlocktypeCount) {
+        this.metrics = createListOfFeatures(collectAverageBlocktypeCount);
+    }
+
+    private static List<MetricExtractor<ASTNode>> createListOfFeatures(boolean collectAverage) {
+        return Arrays.asList(
+                // Readability related avg/max counts inspired by Buse & Weimer:
+                // Buse & Weimer: Learning a Metric for Code Readability,
+                //  <a href="https://doi.org/10.1109/TSE.2009.70">DOI: 10.1109/TSE.2009.70</a>)
+                new AvgBlockStatementCount<>(),
+                new MaxBlockStatementCount<>(),
+                new AvgLineWidthCount<>(),
+                new MaxLineWidthCount<>(),
+                new AvgVariableLengthCount<>(),
+                new MaxVariableLengthCount<>(),
+                new ControlBlockCount<>(collectAverage),
+                new EventsBlockCount<>(collectAverage),
+                new LooksBlockCount<>(collectAverage),
+                new MotionBlockCount<>(collectAverage),
+                new MyBlocksBlockCount<>(collectAverage),
+                new MaxNestedBlockCount<>(),
+                new OperatorsBlockCount<>(collectAverage),
+                new SensingBlockCount<>(collectAverage),
+                new SoundBlockCount<>(collectAverage),
+                new MaxStackedStatementCount<>(),
+                new VariableCount<>(collectAverage),
+                new VariablesBlockCount<>(collectAverage),
+                new LiteralCount<>(collectAverage),
+
+                // Readability related standard metrics inspired by Posnett et al.:
+                // Posnett et al.: A Simpler Model of Software Readability,
+                //  <a href="https://doi.org/10.1145/1985441.1985454">DOI: 10.1145/1985441.1985454</a>)
+                new BlockCount<>(),
+                new StatementCount<>(),
+                new ScriptCount<>(),
+                new HatCount<>(),
+                new HalsteadVolume<>(),
+                new HalsteadLength<>(),
+                new HalsteadVocabulary<>(),
+                new HalsteadDifficulty<>(),
+                new HalsteadEffort<>(),
+                new TokenEntropy<>()
+        );
+    }
 
     @Override
     public List<FeatureResult> analyze(Program program) {
