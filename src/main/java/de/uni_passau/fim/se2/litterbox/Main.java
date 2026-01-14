@@ -362,7 +362,7 @@ public class Main implements Callable<Integer> {
 
         @CommandLine.Option(
                 names = {"--collect-average-blocktype-count"},
-                description = "Compute metrics per actor instead of per script/procedure."
+                description = "Compute block-type metrics as proportion to all blocks rather than in absolute numbers. This proportion is usually called 'average' in literature."
         )
         boolean collectAverageBlocktypeCount;
 
