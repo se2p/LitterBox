@@ -182,13 +182,19 @@ public class HTMLDiffReportGenerator {
         }
 
         if (beforeCode != null) {
-            beforeCode = beforeCode.replace("[scratchblocks]", "").replace("[/scratchblocks]", "").trim();
+            beforeCode = beforeCode.replace("[scratchblocks]", "")
+                .replace("[/scratchblocks]", "")
+                .trim()
+                .replace(System.lineSeparator(), "\n");
         }
 
         // Get after code (from current AST)
         String afterCode = getScratchBlocksFromCurrentAst(issue);
         if (afterCode != null) {
-            afterCode = afterCode.replace("[scratchblocks]", "").replace("[/scratchblocks]", "").trim();
+            afterCode = afterCode.replace("[scratchblocks]", "")
+                .replace("[/scratchblocks]", "")
+                .trim()
+                .replace(System.lineSeparator(), "\n");
         }
 
         // The Hint object is stored on the Issue, so getHintText() works for all cases

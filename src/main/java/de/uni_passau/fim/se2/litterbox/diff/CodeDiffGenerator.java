@@ -349,6 +349,6 @@ public class CodeDiffGenerator {
     }
 
     private String generateCode(Script script) {
-        return ScratchBlocksVisitor.ofIgnoringLooseBlocks(script);
+        return ScratchBlocksVisitor.ofIgnoringLooseBlocks(script).replace(System.lineSeparator(), "\n");
     }
 }
