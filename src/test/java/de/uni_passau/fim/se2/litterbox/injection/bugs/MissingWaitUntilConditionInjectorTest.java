@@ -86,7 +86,7 @@ public class MissingWaitUntilConditionInjectorTest implements JsonTest {
         // The finder detects wait until with unspecified condition - we should not inject there
         // We verify the injector produces no mutations for already buggy code
         Program program = getAST("src/test/fixtures/bugs/missingWaitUntilCondition.json");
-        
+
         // First verify original has issues (confirming fixture is correct)
         MissingWaitUntilCondition detector = new MissingWaitUntilCondition();
         Set<Issue> originalIssues = detector.check(program);

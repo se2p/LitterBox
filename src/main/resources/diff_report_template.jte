@@ -120,10 +120,21 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             letter-spacing: 0.5px;
         }
 
-        .stat-fixed .stat-value { color: #28a745; }
-        .stat-new .stat-value { color: #dc3545; }
-        .stat-persisting .stat-value { color: #6c757d; }
-        .stat-removed .stat-value { color: #ffc107; }
+        .stat-fixed .stat-value {
+            color: #28a745;
+        }
+
+        .stat-new .stat-value {
+            color: #dc3545;
+        }
+
+        .stat-persisting .stat-value {
+            color: #6c757d;
+        }
+
+        .stat-removed .stat-value {
+            color: #ffc107;
+        }
 
         /* Navigation bar */
         .report-nav {
@@ -158,9 +169,17 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             color: #000;
         }
 
-        .report-nav a.nav-fixed { border-left: 3px solid #28a745; }
-        .report-nav a.nav-new { border-left: 3px solid #dc3545; }
-        .report-nav a.nav-removed { border-left: 3px solid #ffc107; }
+        .report-nav a.nav-fixed {
+            border-left: 3px solid #28a745;
+        }
+
+        .report-nav a.nav-new {
+            border-left: 3px solid #dc3545;
+        }
+
+        .report-nav a.nav-removed {
+            border-left: 3px solid #ffc107;
+        }
 
         .report-nav a.nav-code-changes {
             border-left: 3px solid #17a2b8;
@@ -225,17 +244,41 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             font-weight: 600;
         }
 
-        .category-new .category-marker { color: #dc3545; }
-        .category-new .category-count { background: #f8d7da; color: #721c24; }
+        .category-new .category-marker {
+            color: #dc3545;
+        }
 
-        .category-fixed .category-marker { color: #28a745; }
-        .category-fixed .category-count { background: #d4edda; color: #155724; }
+        .category-new .category-count {
+            background: #f8d7da;
+            color: #721c24;
+        }
 
-        .category-persisting .category-marker { color: #6c757d; }
-        .category-persisting .category-count { background: #e9ecef; color: #495057; }
+        .category-fixed .category-marker {
+            color: #28a745;
+        }
 
-        .category-removed .category-marker { color: #ffc107; }
-        .category-removed .category-count { background: #fff3cd; color: #856404; }
+        .category-fixed .category-count {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .category-persisting .category-marker {
+            color: #6c757d;
+        }
+
+        .category-persisting .category-count {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .category-removed .category-marker {
+            color: #ffc107;
+        }
+
+        .category-removed .category-count {
+            background: #fff3cd;
+            color: #856404;
+        }
 
         .category-content {
             background: #fff;
@@ -385,7 +428,6 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
         }
 
 
-
         /* Severity badges */
         .severity {
             font-size: 0.65em;
@@ -396,12 +438,31 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             text-transform: uppercase;
         }
 
-        .severity-HIGH { background-color: #dc3545; }
-        .severity-MEDIUM { background-color: #ffc107; color: #000; }
-        .severity-LOW { background-color: #17a2b8; }
-        .severity-perfume-HIGH { background-color: #198754; }
-        .severity-perfume-MEDIUM { background-color: #28a745; }
-        .severity-perfume-LOW { background-color: #A3CFBB; color: #000; }
+        .severity-HIGH {
+            background-color: #dc3545;
+        }
+
+        .severity-MEDIUM {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .severity-LOW {
+            background-color: #17a2b8;
+        }
+
+        .severity-perfume-HIGH {
+            background-color: #198754;
+        }
+
+        .severity-perfume-MEDIUM {
+            background-color: #28a745;
+        }
+
+        .severity-perfume-LOW {
+            background-color: #A3CFBB;
+            color: #000;
+        }
 
         .severity-icon {
             font-size: 0.5em;
@@ -470,24 +531,24 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
 </div>
 
 @if (!model.categories().isEmpty())
-<nav class="report-nav boxed">
-    <ul>
-        @for (DiffCategory category : model.categories())
-            <li>
-                <a href="#section-${category.id()}" class="nav-${category.id().toLowerCase()}">
-                    ${model.translator().getInfo(category.labelKey())}
-                </a>
-            </li>
-        @endfor
-        @if (!model.projectCodeDiff().isEmpty())
-            <li>
-                <a href="#section-code-changes" class="nav-code-changes">
-                    ${model.translator().getInfo("diff_code_changes")}
-                </a>
-            </li>
-        @endif
-    </ul>
-</nav>
+    <nav class="report-nav boxed">
+        <ul>
+            @for (DiffCategory category : model.categories())
+                <li>
+                    <a href="#section-${category.id()}" class="nav-${category.id().toLowerCase()}">
+                        ${model.translator().getInfo(category.labelKey())}
+                    </a>
+                </li>
+            @endfor
+            @if (!model.projectCodeDiff().isEmpty())
+                <li>
+                    <a href="#section-code-changes" class="nav-code-changes">
+                        ${model.translator().getInfo("diff_code_changes")}
+                    </a>
+                </li>
+            @endif
+        </ul>
+    </nav>
 @endif
 
 @if (model.categories().isEmpty())
@@ -623,7 +684,6 @@ ${script.annotatedAfterCode()}</pre>
         </div>
     </div>
 @endif
-
 
 
 <a href="#top" id="back-to-top" title="${model.translator().getInfo("back_to_top")}">▲</a>

@@ -1231,7 +1231,7 @@ public class StmtListJSONCreator
     @Override
     public void visit(ChangeTempoBy node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createSingleNumExprBlock(metadata, TEMPO_INPUT, node.getTempo(), MATH_NUM_PRIMITIVE,node.getOpcode());
+        createSingleNumExprBlock(metadata, TEMPO_INPUT, node.getTempo(), MATH_NUM_PRIMITIVE, node.getOpcode());
     }
 
     @Override

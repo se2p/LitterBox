@@ -82,6 +82,7 @@ public class MissingResourceInjectorTest implements JsonTest {
             Assertions.assertFalse(issues.isEmpty(), "Detector should find MissingResource issue for sound");
         }
     }
+
     @Test
     public void testSideEffectFreeInjection() throws IOException, ParsingException {
         // Script with mixed blocks to check for innocent bystander loss
@@ -96,9 +97,9 @@ public class MissingResourceInjectorTest implements JsonTest {
 
         // Count statements in original program before injection
         Script targetScript = originalProgram.getActorDefinitionList().getDefinitions().stream()
-            .flatMap(a -> a.getScripts().getScriptList().stream())
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("No scripts found in parsed program"));
+                .flatMap(a -> a.getScripts().getScriptList().stream())
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No scripts found in parsed program"));
 
         int originalStmtCount = targetScript.getStmtList().getNumberOfStatements();
 
@@ -115,16 +116,16 @@ public class MissingResourceInjectorTest implements JsonTest {
 
         // Also verify size
         int afterInjectionStmtCount = ((de.uni_passau.fim.se2.litterbox.ast.model.StmtList)
-            targetScript.getStmtList()).getStmts().size();
+                targetScript.getStmtList()).getStmts().size();
 
         Assertions.assertEquals(originalStmtCount, afterInjectionStmtCount,
-            "Original AST statement count changed! Mutation detected.");
+                "Original AST statement count changed! Mutation detected.");
 
         // Also verify the second injection result didn't start with a mutated AST
         if (injected.size() > 1) {
-             System.out.println("Checking injection result 2...");
-             // You'd need more complex checks here to see if result 2 has the bug from result 1,
-             // but checking the original AST is the most direct proof.
+            System.out.println("Checking injection result 2...");
+            // You'd need more complex checks here to see if result 2 has the bug from result 1,
+            // but checking the original AST is the most direct proof.
         }
     }
 

@@ -670,7 +670,7 @@ public class ExpressionJSONCreator
                                 LIST_PRIMITIVE,
                                 BlockJsonCreatorHelper.escape(listName),
                                 BlockJsonCreatorHelper.escape(listId),
-                        true
+                                true
                         )
                 );
             }
@@ -700,7 +700,7 @@ public class ExpressionJSONCreator
                                 VAR_PRIMITIVE,
                                 BlockJsonCreatorHelper.escape(variableName),
                                 BlockJsonCreatorHelper.escape(variableId),
-                        true
+                                true
                         )
                 );
             }

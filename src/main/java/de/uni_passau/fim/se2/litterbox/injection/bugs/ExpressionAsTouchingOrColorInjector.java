@@ -126,7 +126,7 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
             case 7 -> new Join(new StringLiteral("a"), new StringLiteral("b"), metadata);
             case 8 -> new Username(metadata);
             default ->
-                    // Fallback to simple number literal if something goes wrong (shouldn't happen)
+                // Fallback to simple number literal if something goes wrong (shouldn't happen)
                     new NumberLiteral(1);
         };
     }

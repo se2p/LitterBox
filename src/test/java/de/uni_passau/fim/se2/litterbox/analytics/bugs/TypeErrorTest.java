@@ -24,10 +24,10 @@ import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Set;
@@ -112,10 +112,10 @@ public class TypeErrorTest implements FinderTest, JsonTest {
                 set size to (100) %
                 """;
         prog = parser.extendProject(prog, "Sprite1", script);
-        
+
         TypeError finder = new TypeError();
         Set<Issue> issues = finder.check(prog);
-        
+
         // Expecting 2 issues: SetXTo <touching> AND ChangeVariableBy "hello" (StringLiteral).
         Assertions.assertEquals(2, issues.size());
     }
@@ -132,10 +132,10 @@ public class TypeErrorTest implements FinderTest, JsonTest {
                 end
                 """;
         prog = parser.extendProject(prog, "Sprite1", script);
-        
+
         TypeError finder = new TypeError();
         Set<Issue> issues = finder.check(prog);
-        
+
         // Expecting 1 issue: 1 for If(50). If<touching> is valid.
         Assertions.assertEquals(1, issues.size());
     }
@@ -146,7 +146,7 @@ public class TypeErrorTest implements FinderTest, JsonTest {
         ScratchBlocksParser parser = new ScratchBlocksParser();
         String script = """
                 when green flag clicked
-                
+
                 // 1. Control Structures
                 repeat until (50)
                 end
@@ -168,15 +168,15 @@ public class TypeErrorTest implements FinderTest, JsonTest {
                 end
                 if <color [#00ff00] is touching [#0000ff]?> then
                 end
-                
+
                 // 4. Invalid Color
                 wait until <touching color (50)?>
                 """;
         prog = parser.extendProject(prog, "Sprite1", script);
-        
+
         TypeError finder = new TypeError();
         Set<Issue> issues = finder.check(prog);
-        
+
         // Expected Issues:
         // 1. Repeat Until (50) -> Number as Boolean (1 issue)
         // 2. If (10) -> Number as Boolean (1 issue)
@@ -199,7 +199,7 @@ public class TypeErrorTest implements FinderTest, JsonTest {
         // TODO check this
         TypeError finder = new TypeError();
         Set<Issue> issues = finder.check(prog);
-        
+
         // Expecting 0 issues for correct Hex/RGB usage.
         Assertions.assertEquals(0, issues.size());
     }
@@ -216,10 +216,10 @@ public class TypeErrorTest implements FinderTest, JsonTest {
                 set pen color to (50)
                 """;
         prog = parser.extendProject(prog, "Sprite1", script);
-        
+
         TypeError finder = new TypeError();
         Set<Issue> issues = finder.check(prog);
-        
+
         // Expect 1 issue: Boolean usage. Number usage is acceptable for pen color (sets hue).
         Assertions.assertEquals(1, issues.size(), "Should report error for Boolean used as Pen Color");
     }
@@ -241,12 +241,12 @@ public class TypeErrorTest implements FinderTest, JsonTest {
                 if <((5) / (5)) = [string]> then
                 end
                 """;
-        
+
         prog = parser.extendProject(prog, "Sprite1", script);
-        
+
         TypeError finder = new TypeError();
         Set<Issue> issues = finder.check(prog);
-        
+
         // Expect 4 issues: One for each comparison of Number (result of math op) vs String.
         StringBuilder issuesStr = new StringBuilder();
         for(Issue issue : issues) {
@@ -367,12 +367,12 @@ public class TypeErrorTest implements FinderTest, JsonTest {
         // Let's check isCompatible:
         // if (actual == Type.ANY || actual == Type.TOP || actual == Type.BOTTOM) return true;
         // So it should be valid.
-        
+
         prog = parser.extendProject(prog, "Sprite1", """
                 when key [space v] pressed
                 move (myVar) steps
                 """);
-                
+
         TypeError finder = new TypeError();
         Set<Issue> issues = finder.check(prog);
         Assertions.assertEquals(0, issues.size(), "Cross-script usage should be assumed valid (BOTTOM/ANY)");
@@ -386,26 +386,26 @@ public class TypeErrorTest implements FinderTest, JsonTest {
                 when green flag clicked
                 // 1. Move steps expects Number, gets Boolean (Touching)
                 move <touching (mouse-pointer v)?> steps
-                
+
                 // 2. Set variable expects Number/String, but usage context might assume Number.
                 // 'set x to' explicitly expects Number. gets Boolean (Key Pressed)
                 set x to <key (space v) pressed?>
-                
+
                 // 3. Wait seconds expects Number, gets Boolean (Equals)
                 wait <(1) = (1)> secs
-                
+
                 // 4. Change size by expects Number, gets String literal
                 change size by [some string]
-                
+
                 // 5. Change volume by expects Number, gets String literal
                 change volume by [loud]
                 """;
-        
+
         prog = parser.extendProject(prog, "Sprite1", script);
-        
+
         TypeError finder = new TypeError();
         Set<Issue> issues = finder.check(prog);
-        
+
         // Expected issues: 5
         StringBuilder issuesStr = new StringBuilder();
         for(Issue issue : issues) {
@@ -426,7 +426,7 @@ public class TypeErrorTest implements FinderTest, JsonTest {
                 // 1. Distance misuse (Number as Boolean)
                 if (distance to (mouse-pointer v)) then
                 end
-                
+
                 // 2. Loudness misuse
                 if (loudness) then
                 end
@@ -441,19 +441,19 @@ public class TypeErrorTest implements FinderTest, JsonTest {
                 end
                 if <(x position) = [string]> then
                 end
-                
+
                 // 4. Direction misuse
                 if (direction) then
                 end
                 if <(direction) = [string]> then
                 end
                 """;
-        
+
         prog = parser.extendProject(prog, "Sprite1", script);
-        
+
         TypeError finder = new TypeError();
         Set<Issue> issues = finder.check(prog);
-        
+
         // Total expected: 8
         StringBuilder issuesStr = new StringBuilder();
         for(Issue issue : issues) {
@@ -470,18 +470,18 @@ public class TypeErrorTest implements FinderTest, JsonTest {
                 // 1. Boolean context misuse
                 if (pick random (1) to (10)) then
                 end
-                
+
                 // 2. Comparison with String
                 if <(pick random (1) to (10)) = [string]> then
                 end
                 """;
-        
+
         prog = parser.extendProject(prog, "Sprite1", script);
-        
+
         TypeError finder = new TypeError();
         Set<Issue> issues = finder.check(prog);
-        
-        
+
+
         StringBuilder issuesStr = new StringBuilder();
         for(Issue issue : issues) {
              issuesStr.append(issue.getCodeLocation()).append(" ").append(issue.getHintText(FinderTest.translator)).append("\n");
@@ -500,12 +500,12 @@ public class TypeErrorTest implements FinderTest, JsonTest {
                 set [myVar v] to (pick random [string] to (10))
                 set [myVar v] to (pick random (1) to <touching (mouse-pointer v)?>)
                 """;
-        
+
         prog = parser.extendProject(prog, "Sprite1", script);
-        
+
         TypeError finder = new TypeError();
         Set<Issue> issues = finder.check(prog);
-        
+
         // Expect 2 issues: String as Number, Boolean as Number.
         StringBuilder issuesStr = new StringBuilder();
         for(Issue issue : issues) {
@@ -522,7 +522,7 @@ public class TypeErrorTest implements FinderTest, JsonTest {
         //   if <number param> then  <- Issue 1: Number used as Boolean
         //   end
         //   move <boolean param> steps <- Issue 2: Boolean used as Number
-        
+
         assertThatFinderReports(2, new TypeError(), "./src/test/fixtures/bugs/parameterTypeCheck.json");
     }
 
@@ -545,18 +545,18 @@ public class TypeErrorTest implements FinderTest, JsonTest {
                     end
                     """;
             prog = parser.extendProject(prog, "Sprite1", script);
-            
+
             TypeError finder = new TypeError();
             Set<Issue> issues = finder.check(prog);
-            
+
             Assertions.assertEquals(1, issues.size());
             Issue issue = issues.iterator().next();
             String hintText = issue.getHintText(translator);
-            
+
             // Check for specific parts of the hint
             Assertions.assertTrue(hintText.contains("Boolean (True/False)"), "Hint should contain expected type 'Boolean (True/False)'. Got: " + hintText);
             Assertions.assertTrue(hintText.contains("Number"), "Hint should contain actual type 'Number'. Got: " + hintText);
-                
+
             // Test comparison hint
             prog = JsonTest.parseProgram("./src/test/fixtures/emptyProject.json");
             script = """
@@ -566,11 +566,11 @@ public class TypeErrorTest implements FinderTest, JsonTest {
                     """;
             prog = parser.extendProject(prog, "Sprite1", script);
             issues = finder.check(prog);
-            
+
             Assertions.assertEquals(1, issues.size());
             issue = issues.iterator().next();
             hintText = issue.getHintText(translator);
-            
+
             Assertions.assertTrue(hintText.contains("Number"), "Hint should contain left type 'Number'. Got: " + hintText);
             Assertions.assertTrue(hintText.contains("Text"), "Hint should contain right type 'Text'. Got: " + hintText);
         } finally {
@@ -590,12 +590,12 @@ public class TypeErrorTest implements FinderTest, JsonTest {
                 if <() = ()> then
                 end
                 """;
-        
+
         prog = parser.extendProject(prog, "Sprite1", script);
-        
+
         TypeError finder = new TypeError();
         Set<Issue> issues = finder.check(prog);
-                
+
         Assertions.assertEquals(0, issues.size(), "Should suppress type errors for empty holes.");
     }
 }

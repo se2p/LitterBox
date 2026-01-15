@@ -328,19 +328,22 @@ public class HTMLDiffReportGenerator {
             DiffSummary summary,
             List<DiffCategory> categories,
             ProjectCodeDiff projectCodeDiff
-    ) {}
+    ) {
+    }
 
     public record Scripts(
             String scratchBlocks,
             String scratchBlocksTranslations
-    ) {}
+    ) {
+    }
 
     public record DiffSummary(
             int fixed,
             int newBugs,
             int persisting,
             int removed
-    ) {}
+    ) {
+    }
 
     public record DiffCategory(
             String id,
@@ -348,7 +351,8 @@ public class HTMLDiffReportGenerator {
             String marker,
             String cssClass,
             List<RenderedDiffIssue> issues
-    ) {}
+    ) {
+    }
 
     public record RenderedDiffIssue(
             int id,

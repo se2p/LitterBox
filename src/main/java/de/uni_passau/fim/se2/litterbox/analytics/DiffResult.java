@@ -33,13 +33,13 @@ import java.util.List;
  *   <li><b>REMOVED</b>: Issues from before that disappeared but weren't confirmed as fixed</li>
  * </ul>
  *
- * @param beforeSource  Description/Path of source before (e.g. filename)
- * @param afterSource   Description/Path of source after
- * @param fixed         List of fixed issues
- * @param newIssues     List of new issues
- * @param persisting    List of persisting issues
- * @param removed       List of removed issues (issues in "before" that are gone but not verified fixed)
- * @param projectDiff   The code-based diff of the project
+ * @param beforeSource Description/Path of source before (e.g. filename)
+ * @param afterSource  Description/Path of source after
+ * @param fixed        List of fixed issues
+ * @param newIssues    List of new issues
+ * @param persisting   List of persisting issues
+ * @param removed      List of removed issues (issues in "before" that are gone but not verified fixed)
+ * @param projectDiff  The code-based diff of the project
  */
 public record DiffResult(
         String beforeSource,

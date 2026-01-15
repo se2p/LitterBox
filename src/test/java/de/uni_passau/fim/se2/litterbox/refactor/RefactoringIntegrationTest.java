@@ -24,37 +24,26 @@ import de.uni_passau.fim.se2.litterbox.analytics.refactorings.*;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.util.StructuralEquality;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.CrowdingDistanceSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.FastNonDominatedSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.NSGAII;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.ChromosomeGenerator;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.FixedSizePopulationGenerator;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.OffspringGenerator;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequenceGenerator;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.*;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.CohesionFitness;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.CyclomaticComplexityFitness;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfScriptsFitness;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.BinaryRankTournament;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceCrossover;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeScripts;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import org.junit.jupiter.api.Test;
-
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RefactoringIntegrationTest implements JsonTest {
 
@@ -541,19 +530,19 @@ class RefactoringIntegrationTest implements JsonTest {
         List<RefactorSequence> solutions = runRefactoring(program, finders);
 
         String expectedCode = """
-            when green flag clicked
-            repeat (2)
-                move (10) steps
-                turn right (15) degrees
-            end
-            if <<key [space v] pressed?> and <mouse down?>> then
-                say [Hello!]
-            end
-            if <key [a v] pressed?> then
-                move (10) steps
-                turn right (15) degrees
-            end
-            """;
+                when green flag clicked
+                repeat (2)
+                    move (10) steps
+                    turn right (15) degrees
+                end
+                if <<key [space v] pressed?> and <mouse down?>> then
+                    say [Hello!]
+                end
+                if <key [a v] pressed?> then
+                    move (10) steps
+                    turn right (15) degrees
+                end
+                """;
         Program expectedProgram = parseProgram(expectedCode);
         assertTrue(solutions.stream().anyMatch(p -> StructuralEquality.areStructurallyEqual(expectedProgram, p.buildRefactoredProgram())));
     }
