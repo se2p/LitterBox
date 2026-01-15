@@ -24,7 +24,9 @@ import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 
 /**
@@ -34,47 +36,60 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForever
 public class ForeverInsideIf extends AbstractIssueFinder {
     public static final String NAME = "forever_inside_if";
     private int ifFollowingCounter;
-    private boolean insideIf = false;
+    private int ifNestingLevel;
 
     @Override
     public void visit(Script node) {
         ifFollowingCounter = 0;
+        ifNestingLevel = 0;
         super.visit(node);
     }
 
     @Override
     public void visit(ProcedureDefinition node) {
         ifFollowingCounter = 0;
+        ifNestingLevel = 0;
         super.visit(node);
     }
 
     @Override
     public void visit(StmtList node) {
-        boolean hasIf = false;
-        //size - 1 so that there are following blocks
-        for (int i = 0; i < node.getStmts().size() - 1; i++) {
-            if (node.getStmts().get(i) instanceof IfStmt) {
-                ifFollowingCounter++;
-                hasIf = true;
-                break;
+        boolean inLoop = node.getParentNode() instanceof LoopStmt;
+        int listSize = node.getStmts().size();
+
+        int incrementedBy = 0;
+        for (int i = 0; i < listSize; i++) {
+            Stmt s = node.getStmts().get(i);
+            if (s instanceof IfStmt) {
+                // If it's not the last one, it has a successor in this list
+                if (i < listSize - 1) {
+                    ifFollowingCounter++;
+                    incrementedBy++;
+                } else if (inLoop) {
+                    // If it IS the last one, check if we are in a loop (implicit successor)
+                    ifFollowingCounter++;
+                    incrementedBy++;
+                }
             }
         }
+
         visitChildren(node);
-        if (hasIf) {
-            ifFollowingCounter--;
+
+        if (incrementedBy > 0) {
+            ifFollowingCounter -= incrementedBy;
         }
     }
 
     @Override
     public void visit(IfStmt node) {
-        insideIf = true;
+        ifNestingLevel++;
         visitChildren(node);
-        insideIf = false;
+        ifNestingLevel--;
     }
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        if (insideIf && ifFollowingCounter > 0) {
+        if (ifNestingLevel > 0 && ifFollowingCounter > 0) {
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
         visitChildren(node);

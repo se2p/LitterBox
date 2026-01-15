@@ -43,6 +43,9 @@ public enum NumExprOpcode implements Opcode {
     motion_direction,
     looks_size,
 
+    // Video Sensing
+    videoSensing_videoOn,
+
     // mBlock Number Opcodes
     // codey
     detect_sound_volume,

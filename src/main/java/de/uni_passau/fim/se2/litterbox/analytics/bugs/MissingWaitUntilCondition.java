@@ -31,7 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
  */
 public class MissingWaitUntilCondition extends AbstractIssueFinder {
 
-    public static final String NAME = "missing_wait_condition";
+    public static final String NAME = "missing_wait_until_condition";
 
     @Override
     public void visit(WaitUntil node) {

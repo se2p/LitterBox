@@ -37,7 +37,7 @@ public class MissingInitialization extends AbstractIssueFinder {
 
     private static class UseIssue extends Issue {
 
-        private Use use;
+        private final Use use;
 
         public UseIssue(IssueFinder finder, Program program, Script script, Hint hint, Use use) {
             super(finder, IssueSeverity.HIGH, program,
@@ -59,7 +59,6 @@ public class MissingInitialization extends AbstractIssueFinder {
             return use;
         }
     }
-
 
     public static final String NAME = "missing_initialization";
     public static final String NAME_CLONE = "missing_initialization_clone";
@@ -88,6 +87,12 @@ public class MissingInitialization extends AbstractIssueFinder {
         Set<Use> initialUses = livenessAnalysis.getDataflowFacts(cfg.getEntryNode());
 
         for (Use use : initialUses) {
+            if (use.getDefinable() instanceof Variable var) {
+                if (var.getIdentifier().toString().contains("☁")) {
+                    continue;
+                }
+            }
+
             if (use.getDefinable() instanceof Attribute attribute) {
                 if (attribute.getAttributeType().equals(Attribute.AttributeType.VISIBILITY)) {
                     // TODO: Handle visibility properly in a way that does not produce too many false positives
@@ -97,8 +102,10 @@ public class MissingInitialization extends AbstractIssueFinder {
             }
 
             // If there are no initial definitions of the same defineable in other scripts it's an anomaly
+            // Only script-based initializations count as backups (not procedures, which don't run at startup)
             if (initialDefinitions.stream()
                     .filter(d -> d.getDefinable().equals(use.getDefinable()))
+                    .filter(d -> d.getDefinitionSource().getScriptOrProcedure() instanceof Script)
                     .noneMatch(d -> d.getDefinitionSource().getScriptOrProcedure()
                             != use.getUseTarget().getScriptOrProcedure())) {
 
@@ -143,9 +150,7 @@ public class MissingInitialization extends AbstractIssueFinder {
         if (first instanceof UseIssue firstUse && other instanceof UseIssue otherUse) {
             Use use1 = firstUse.getUse();
             Use use2 = otherUse.getUse();
-            if (use1.getDefinable().equals(use2.getDefinable())) {
-                return true;
-            }
+            return use1.getDefinable().equals(use2.getDefinable());
         }
 
         return false;

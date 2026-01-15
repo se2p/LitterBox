@@ -18,10 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
-import de.uni_passau.fim.se2.litterbox.analytics.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
-import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.BlockByIdFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.llm.ScratchLlm;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
@@ -107,29 +111,30 @@ abstract class LLMIssueExtender implements LLMIssueProcessor {
                 .replace(ScratchBlocksVisitor.SCRIPT_ID_MARKER, "")
                 .trim();
 
-        Optional<ASTNode> node = BlockByIdFinder.findBlock(program, location);
-        if (node.isEmpty()) {
+        Optional<BlockIdNodeFinder.NodeContext> context = BlockIdNodeFinder.find(program, location);
+        if (context.isEmpty()) {
             log.warning("Could not find block with ID: " + location);
             return Optional.empty();
         }
-        Script script = AstNodeUtil.findParent(node.get(), Script.class);
+        BlockIdNodeFinder.NodeContext ctx = context.get();
+        Script script = ctx.script();
         if (script == null) {
             log.warning("Could not find script for block with ID: " + location);
             return Optional.empty();
         }
-        Optional<ActorDefinition> actor = AstNodeUtil.findActor(node.get());
-        if (actor.isEmpty()) {
+        if (ctx.actor() == null) {
             log.warning("Could not find actor for block with ID: " + location);
             return Optional.empty();
         }
 
+        ASTNode node = ctx.node();
         Issue issue = new IssueBuilder()
                 .withFinder(issueFinder)
                 .withSeverity(IssueSeverity.LOW)
                 .withHint(Hint.fromText(description))
-                .withActor(actor.get())
+                .withActor(ctx.actor())
                 .withScriptOrProcedure(script)
-                .withCurrentNode(node.orElse(script.getEvent()))
+                .withCurrentNode(node != null ? node : script.getEvent())
                 .withProgram(program)
                 .build();
         return Optional.of(issue);
@@ -144,5 +149,4 @@ abstract class LLMIssueExtender implements LLMIssueProcessor {
         int endIndex = entry.indexOf(endMarker, startIndex);
         return entry.substring(startIndex, endIndex).trim();
     }
-
 }

@@ -18,7 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugs;
 
-import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -42,9 +45,12 @@ public class CallWithoutDefinition extends AbstractIssueFinder {
 
     private void checkCalls() {
         for (CallStmt calledProcedure : calledProcedures) {
-            if (!proceduresDef.contains(calledProcedure.getIdent().getName())
-                    && !program.getProcedureMapping().checkIfMalformed(
-                    currentActor.getIdent().getName() + calledProcedure.getIdent().getName())) {
+            String procName = calledProcedure.getIdent().getName();
+            boolean isDefined = proceduresDef.contains(procName);
+            boolean isMalformed = program.getProcedureMapping().checkIfMalformed(
+                    currentActor.getIdent().getName() + procName);
+
+            if (!isDefined && !isMalformed) {
                 String name = AstNodeUtil.replaceProcedureParams(
                         calledProcedure.getIdent().getName(), "()", "<>", "()");
                 Hint hint = Hint.fromKey(getName());

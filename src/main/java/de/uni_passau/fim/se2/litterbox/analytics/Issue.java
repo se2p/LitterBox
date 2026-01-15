@@ -47,6 +47,8 @@ public class Issue {
     private final Metadata metaData;
     private final Hint hint;
     private final int id;
+    private final String originalBlockId;
+    private final String originalCodeSnippet;
 
     private static final AtomicInteger globalIssueCount = new AtomicInteger(0);
 
@@ -62,7 +64,7 @@ public class Issue {
      * @param metaData    that contains references for comments
      */
     protected Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor,
-                 ScriptEntity script, ASTNode currentNode, Metadata metaData, Hint hint) {
+                    ScriptEntity script, ASTNode currentNode, Metadata metaData, Hint hint) {
         Preconditions.checkArgument((currentNode == null) == (script == null));
         this.finder = finder;
         this.severity = severity;
@@ -70,11 +72,13 @@ public class Issue {
         this.actor = actor;
         this.script = script;
         this.node = currentNode;
-        this.normalizedNode   = normalize(this.node);
+        this.normalizedNode = normalize(this.node);
         this.normalizedScript = normalize(script);
         this.metaData = metaData;
         this.hint = hint;
         this.id = globalIssueCount.getAndIncrement();
+        this.originalBlockId = null;
+        this.originalCodeSnippet = null;
     }
 
     public Issue(IssueBuilder builder) {
@@ -84,7 +88,7 @@ public class Issue {
         this.actor = builder.getActor();
         this.script = builder.getScript();
         this.node = builder.getCurrentNode();
-        this.normalizedNode   = normalize(this.node);
+        this.normalizedNode = normalize(this.node);
         this.normalizedScript = normalize(script);
         this.refactoredScript = builder.getRefactoring();
         this.metaData = builder.getMetaData();
@@ -95,6 +99,8 @@ public class Issue {
         } else {
             this.id = builder.getId();
         }
+        this.originalBlockId = builder.getOriginalBlockId();
+        this.originalCodeSnippet = builder.getOriginalCodeSnippet();
     }
 
     public IssueFinder getFinder() {
@@ -153,7 +159,6 @@ public class Issue {
         this.refactoredScript = script;
     }
 
-
     public String getFinderName() {
         return finder.getName();
     }
@@ -192,6 +197,31 @@ public class Issue {
 
     public int getId() {
         return id;
+    }
+
+    /**
+     * Returns the original block ID for this issue.
+     *
+     * <p>This is primarily used for fixed issues where the original block may
+     * no longer exist in the program. For regular issues, use
+     * {@link de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil#getBlockId(ASTNode)}
+     * on {@link #getCodeLocation()} instead.
+     *
+     * @return the original block ID, or null if not set
+     */
+    public String getOriginalBlockId() {
+        return originalBlockId;
+    }
+
+    /**
+     * Returns the original scratchblocks code snippet for this issue.
+     *
+     * <p>This is used for fixed issues where the original block was deleted.
+     *
+     * @return the original code snippet, or null if not set
+     */
+    public String getOriginalCodeSnippet() {
+        return originalCodeSnippet;
     }
 
     public boolean isSubsumedBy(Issue other) {

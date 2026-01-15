@@ -30,6 +30,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Backdrop;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -43,15 +45,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.VideoSensingExtensionVisitor;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class AttributeUseVisitor implements DefinableCollector<Attribute> {
+public class AttributeUseVisitor implements DefinableCollector<Attribute>, VideoSensingExtensionVisitor {
 
-    private Set<Attribute> uses = new LinkedHashSet<>();
+    private final Set<Attribute> uses = new LinkedHashSet<>();
 
-    private ActorDefinition currentActor;
+    private final ActorDefinition currentActor;
 
     public AttributeUseVisitor(ActorDefinition currentActor) {
         this.currentActor = currentActor;
@@ -111,7 +114,6 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         visitChildren(node);
     }
 
-
     @Override
     public void visit(ChangeXBy node) {
         uses.add(Attribute.positionXOf(currentActor.getIdent()));
@@ -126,6 +128,32 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     public void visit(MoveSteps node) {
         uses.add(Attribute.positionXOf(currentActor.getIdent()));
         uses.add(Attribute.positionYOf(currentActor.getIdent()));
+        uses.add(Attribute.rotationOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(GlideSecsToXY node) {
+        uses.add(Attribute.positionXOf(currentActor.getIdent()));
+        uses.add(Attribute.positionYOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(GlideSecsTo node) {
+        uses.add(Attribute.positionXOf(currentActor.getIdent()));
+        uses.add(Attribute.positionYOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(PointTowards node) {
+        uses.add(Attribute.positionXOf(currentActor.getIdent()));
+        uses.add(Attribute.positionYOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(IfOnEdgeBounce node) {
+        uses.add(Attribute.positionXOf(currentActor.getIdent()));
+        uses.add(Attribute.positionYOf(currentActor.getIdent()));
+        uses.add(Attribute.rotationOf(currentActor.getIdent()));
     }
 
     @Override
@@ -201,7 +229,6 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         uses.add(Attribute.volumeOf(currentActor.getIdent()));
     }
 
-
     //---------------------------------------------------------------
     // Costume
     @Override
@@ -226,7 +253,6 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
         uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
     }
 
-
     @Override
     public void visit(Backdrop node) {
         uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
@@ -238,7 +264,6 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     public void visit(ChangeLayerBy node) {
         uses.add(Attribute.layerOf(currentActor.getIdent()));
     }
-
 
     //---------------------------------------------------------------
     // Size
@@ -252,7 +277,6 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     public void visit(Size node) {
         uses.add(Attribute.sizeOf(currentActor.getIdent()));
     }
-
 
     @Override
     public void visit(AttributeOf node) {
@@ -281,7 +305,8 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
                 case COSTUME_NUMBER, COSTUME_NAME -> uses.add(Attribute.costumeOf(targetId));
                 case VOLUME -> uses.add(Attribute.volumeOf(targetId));
                 case BACKDROP_NAME, BACKDROP_NUMBER ->
-                            uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+                        uses.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
+                default -> throw new IllegalStateException("Unexpected value: " + at.getType());
             }
         }
     }
@@ -289,5 +314,19 @@ public class AttributeUseVisitor implements DefinableCollector<Attribute> {
     @Override
     public void visit(ProcedureDefinition node) {
         // Do not visit children
+    }
+
+    //---------------------------------------------------------------
+    // Video Sensing
+
+    @Override
+    public void visit(VideoOn node) {
+        uses.add(Attribute.videoStateOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    @Override
+    public void visit(WhenVideoMotionGreaterThan node) {
+        uses.add(Attribute.videoStateOf(getActorSprite(currentActor).getIdent()));
+        node.getReference().accept(this);
     }
 }

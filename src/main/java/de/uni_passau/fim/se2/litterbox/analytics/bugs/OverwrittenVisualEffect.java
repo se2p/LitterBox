@@ -24,15 +24,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ClearGraphicEffects;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SetGraphicEffectTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.PlaySoundUntilDone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GlideSecsToXY;
+import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +61,7 @@ public class OverwrittenVisualEffect extends AbstractIssueFinder {
         Map<String, Stmt> lastEffectStmt = new HashMap<>();
 
         for (Stmt stmt : node.getStmts()) {
-            boolean isHalting = containsHalting(stmt);
+            boolean isHalting = AstNodeUtil.containsTimedHaltingStatement(stmt);
 
             if (stmt instanceof SwitchCostumeTo || stmt instanceof NextCostume) {
                 checkAndPut(lastEffectStmt, "COSTUME", stmt);
@@ -88,7 +90,10 @@ public class OverwrittenVisualEffect extends AbstractIssueFinder {
                         addIssue(entry.getValue());
                     }
                 }
-                lastEffectStmt.clear();
+                // Only clear graphic effects and previous CLEAR, keep other states (visibility, costume, etc.)
+                lastEffectStmt.keySet().removeIf(k -> k.startsWith("EFFECT_"));
+                lastEffectStmt.remove("CLEAR");
+
                 lastEffectStmt.put("CLEAR", stmt);
             }
 
@@ -146,6 +151,11 @@ public class OverwrittenVisualEffect extends AbstractIssueFinder {
                 || stmt instanceof GlideSecsToXY
                 || stmt instanceof GlideSecsTo
                 || stmt instanceof PlaySoundUntilDone
-                || stmt instanceof Speak;
+                || stmt instanceof Speak
+                || stmt instanceof RepeatTimesStmt
+                || stmt instanceof RepeatForeverStmt
+                || stmt instanceof UntilStmt
+                || stmt instanceof WaitUntil
+                || stmt instanceof AskAndWait;
     }
 }

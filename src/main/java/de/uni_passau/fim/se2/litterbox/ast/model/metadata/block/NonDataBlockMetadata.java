@@ -76,4 +76,17 @@ public class NonDataBlockMetadata extends AbstractNode implements BlockMetadata 
         return new NonDataBlockMetadata("", CloneVisitor.generateUID(),
                 shadow, new NoMutationMetadata());
     }
+
+    /**
+     * Creates artificial metadata suitable for
+     * {@link de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt} nodes.
+     * CallStmt requires ProcedureMutationMetadata, not NoMutationMetadata.
+     *
+     * @param warp whether the procedure call should run without screen refresh
+     * @return NonDataBlockMetadata with ProcedureMutationMetadata
+     */
+    public static NonDataBlockMetadata createCallMetadata(boolean warp) {
+        return new NonDataBlockMetadata("", CloneVisitor.generateUID(),
+                false, new ProcedureMutationMetadata(warp));
+    }
 }

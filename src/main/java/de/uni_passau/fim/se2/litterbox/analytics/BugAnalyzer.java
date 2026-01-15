@@ -45,18 +45,18 @@ public class BugAnalyzer extends FileAnalyzer<Set<Issue>> {
             IssueTranslator translator, Path output, String detectors,
             boolean ignoreLooseBlocks, boolean delete, boolean outputPerScript
     ) {
-        super(new ProgramBugAnalyzer(detectors, ignoreLooseBlocks, null), output, delete);
+        super(new ProgramBugAnalyzer(detectors, ignoreLooseBlocks), output, delete);
         this.translator = translator;
-        this.resultHandler = AnalysisResultHandler.create(translator, output, detectors, outputPerScript, null);
+        this.resultHandler = AnalysisResultHandler.create(translator, output, detectors, outputPerScript);
     }
 
     public BugAnalyzer(
             IssueTranslator translator, Path output, String detectors,
             boolean ignoreLooseBlocks, boolean delete, boolean outputPerScript, Path priorResultPath
     ) {
-        super(new ProgramBugAnalyzer(detectors, ignoreLooseBlocks, priorResultPath), output, delete);
+        super(new ProgramBugAnalyzer(detectors, ignoreLooseBlocks), output, delete);
         this.translator = translator;
-        this.resultHandler = AnalysisResultHandler.create(translator, output, detectors, outputPerScript, priorResultPath);
+        this.resultHandler = AnalysisResultHandler.create(translator, output, detectors, outputPerScript);
     }
 
     public void setAnnotationOutput(Path annotationOutput) {

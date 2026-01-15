@@ -30,4 +30,14 @@ public class VariablesBlockCountTest implements JsonTest {
     public void testAll() throws IOException, ParsingException {
         assertThatMetricReports(17, new VariablesBlockCount<>(), "./src/test/fixtures/metrics/allVariablesBlocks.json");
     }
+
+    @Test
+    public void testAverageAll() throws IOException, ParsingException {
+        assertThatMetricReports(1, new VariablesBlockCount<>(true), "./src/test/fixtures/metrics/allVariablesBlocks.json");
+    }
+
+    @Test
+    public void testAverageTotal() throws IOException, ParsingException {
+        assertThatMetricReportsWithin(0.166666666, 1e-4, new VariablesBlockCount<>(true), "./src/test/fixtures/allBlocks.json");
+    }
 }

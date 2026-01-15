@@ -59,7 +59,7 @@ public class IssueParser {
         return extractIssuesPerFinder(report);
     }
 
-    private Map<String, List<IssueDTO>> extractIssuesPerFinder(final ReportDTO report)  {
+    private Map<String, List<IssueDTO>> extractIssuesPerFinder(final ReportDTO report) {
         return report.issues().stream().collect(Collectors.groupingBy(IssueDTO::finder));
     }
 }

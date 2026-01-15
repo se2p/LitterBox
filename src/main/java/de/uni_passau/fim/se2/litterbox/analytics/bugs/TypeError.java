@@ -18,24 +18,33 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.bugs;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.PickRandom;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Answer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.SetPenColorToColorStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.ExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TExprLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -60,24 +69,20 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeLayerBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ChangeSizeBy;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SayForSecs;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SetSizeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.ThinkForSecs;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.NumberType;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
+import de.uni_passau.fim.se2.litterbox.ast.util.NumberUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.TranslateExtensionVisitor;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.VideoSensingExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.*;
-import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysis;
-import de.uni_passau.fim.se2.litterbox.dataflow.DataflowAnalysisBuilder;
-import de.uni_passau.fim.se2.litterbox.dataflow.ForwardFlowDirection;
-import de.uni_passau.fim.se2.litterbox.dataflow.JoinFunction;
-import de.uni_passau.fim.se2.litterbox.dataflow.TransferFunction;
+import de.uni_passau.fim.se2.litterbox.dataflow.*;
 
 import java.util.*;
 import java.util.function.Function;
@@ -85,7 +90,7 @@ import java.util.function.Function;
 /**
  * Detects type errors using dataflow analysis and type inference.
  */
-public class TypeError extends AbstractIssueFinder {
+public class TypeError extends AbstractIssueFinder implements TextToSpeechExtensionVisitor, TranslateExtensionVisitor, VideoSensingExtensionVisitor {
     public static final String NAME = "type_error";
     public static final String WEIRD_DISTANCE = "type_error_weird_distance";
 
@@ -191,8 +196,14 @@ public class TypeError extends AbstractIssueFinder {
         if (node instanceof Expression expr) {
             Type actual = inferType(expr, createNodeResolver(node));
 
-            if (actual == Type.STRING && expr instanceof StringLiteral lit && lit.getText().isEmpty()) {
-                return;
+            if (actual == Type.STRING && expr instanceof StringLiteral lit) {
+                if (lit.getText().isEmpty()) {
+                    return;
+                }
+                // Allow valid number strings if Number is expected
+                if (expected == Type.NUMBER && NumberUtil.VALID_NUMBER.matcher(lit.getText().trim()).matches()) {
+                    return;
+                }
             }
 
             if (!isCompatible(expected, actual)) {
@@ -294,7 +305,7 @@ public class TypeError extends AbstractIssueFinder {
         // Literals (Number/String) produce output like (4) or [text] which should not be wrapped in [sbi].
         // Blocks produce output that needs [sbi] to be rendered correctly.
         if (node instanceof NumberLiteral || node instanceof StringLiteral) {
-            return "\"" + sb + "\"";
+            return sb;
         }
         return "[sbi]" + sb + "[/sbi]";
     }
@@ -433,7 +444,7 @@ public class TypeError extends AbstractIssueFinder {
         checkType(node.getY(), Type.NUMBER);
         visitChildren(node);
     }
-   
+
     @Override
     public void visit(MoveSteps node) {
         checkType(node.getSteps(), Type.NUMBER);
@@ -581,6 +592,37 @@ public class TypeError extends AbstractIssueFinder {
     public void visit(PickRandom node) {
         checkType(node.getOperand1(), Type.NUMBER);
         checkType(node.getOperand2(), Type.NUMBER);
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(Speak node) {
+        checkType(node.getText(), Type.STRING);
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(SetVoice node) {
+        if (node.getVoice() instanceof ExprVoice exprVoice) {
+            checkType(exprVoice.getExpr(), Type.STRING);
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(SetLanguage node) {
+        if (node.getLanguage() instanceof ExprLanguage exprLanguage) {
+            checkType(exprLanguage.getExpr(), Type.STRING);
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(TranslateTo node) {
+        checkType(node.getText(), Type.STRING);
+        if (node.getLanguage() instanceof TExprLanguage tExprLanguage) {
+            checkType(tExprLanguage.getExpr(), Type.STRING);
+        }
         visitChildren(node);
     }
 
@@ -737,6 +779,28 @@ public class TypeError extends AbstractIssueFinder {
             case ComparableExpr ignored -> Type.ANY;
             default -> Type.ANY; // Implicit cast or unknown
         };
+    }
+
+    @Override
+    public void visit(WhenVideoMotionGreaterThan node) {
+        checkType(node.getReference(), Type.NUMBER);
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(VideoOn node) {
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(TurnVideo node) {
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(SetVideoTransparency node) {
+        checkType(node.getTransparency(), Type.NUMBER);
+        visitChildren(node);
     }
 
     /*

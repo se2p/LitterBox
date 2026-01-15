@@ -23,14 +23,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawProject;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ParentVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.ZipReader;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.StreamReadFeature;
+import tools.jackson.core.json.JsonReadFeature;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
 public class Scratch3Parser {
@@ -39,6 +42,8 @@ public class Scratch3Parser {
             .disable(tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
             .enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
+            .enable(JsonReadFeature.ALLOW_TRAILING_COMMA)
+            .enable(JsonReadFeature.ALLOW_MISSING_VALUES)
             .build();
 
     public Program parseFile(final File projectFile) throws ParsingException {
@@ -65,15 +70,10 @@ public class Scratch3Parser {
 
     public Program parseJsonFile(final File projectJson) throws ParsingException {
         try {
-            final RawProject rawProject = mapper.readValue(projectJson, RawProject.class);
-            final Program program = RawProjectConverter.convert(rawProject, getProjectName(projectJson.toPath()));
-
-            final ParentVisitor v = new ParentVisitor();
-            program.accept(v);
-
-            return program;
-        } catch (JacksonException e) {
-            throw new ParsingException("Could not parse project JSON!", e);
+            String jsonContent = FileUtils.readFileToString(projectJson, StandardCharsets.UTF_8);
+            return parseString(getProjectName(projectJson.toPath()), jsonContent);
+        } catch (IOException e) {
+            throw new ParsingException("Could not read project JSON!", e);
         }
     }
 

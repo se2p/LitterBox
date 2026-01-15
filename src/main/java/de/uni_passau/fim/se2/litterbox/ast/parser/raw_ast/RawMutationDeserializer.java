@@ -42,7 +42,8 @@ final class RawMutationDeserializer {
                 return Collections.emptyList();
             } else {
                 try (final var parser = ctxt.createParser(root.asString())) {
-                    return parser.readValueAs(new TypeReference<>() {});
+                    return parser.readValueAs(new TypeReference<>() {
+                    });
                 }
             }
         }
@@ -58,7 +59,8 @@ final class RawMutationDeserializer {
                 return Collections.emptyList();
             } else {
                 try (final var parser = ctxt.createParser(root.asString())) {
-                    return parser.readValueAs(new TypeReference<>() {});
+                    return parser.readValueAs(new TypeReference<>() {
+                    });
                 }
             }
         }
@@ -77,7 +79,8 @@ final class RawMutationDeserializer {
                 return Collections.emptyList();
             } else {
                 try (final var parser = ctxt.createParser(root.asString())) {
-                    final List<Object> values = parser.readValueAs(new TypeReference<>() {});
+                    final List<Object> values = parser.readValueAs(new TypeReference<>() {
+                    });
                     return values.stream().map(ArgumentDefaultValuesParser::getDefaultValue).toList();
                 }
             }

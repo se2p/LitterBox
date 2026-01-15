@@ -28,14 +28,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.TimedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeLoopingScript;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -117,11 +114,7 @@ public class MergeLoopingScriptFinder extends AbstractDependencyRefactoringFinde
         if (!Collections.disjoint(v1.writes, v2.reads)) {
             return false; // Write-Read conflict
         }
-        if (!Collections.disjoint(v1.reads, v2.writes)) {
-            return false; // Read-Write conflict
-        }
-
-        return true;
+        return Collections.disjoint(v1.reads, v2.writes); // Read-Write conflict
     }
 
     private static class DependencyVisitor implements ScratchVisitor {

@@ -27,7 +27,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.Color;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
@@ -75,7 +78,7 @@ final class ConverterUtilities {
 
     static Qualified topLevelListInfoToIdentifier(final ExpressionListInfo listInfo, final RawBlock.RawList list) {
         final BlockMetadata metadata = RawBlockMetadataConverter.convertTopLevelBlockMetadata(list.id(), list);
-        final ScratchList l =  new ScratchList(new StrId(list.name()), metadata);
+        final ScratchList l = new ScratchList(new StrId(list.name()), metadata);
 
         return new Qualified(new StrId(listInfo.actor()), l);
     }
@@ -104,7 +107,7 @@ final class ConverterUtilities {
         if (BoolExprOpcode.sensing_touchingobject.name().equals(opcode)) {
             final RawInput touched = block.getInput(KnownInputs.TOUCHINGOBJECTMENU);
 
-            if (ShadowType.SHADOW == touched.shadowType()) {
+            if (ShadowType.SHADOW == touched.shadowType() && touched.input() instanceof BlockRef.IdRef) {
                 return convertTouchableMenuOption(state.getCurrentTarget(), touched);
             } else {
                 final Expression expr = ExprConverter.convertExpr(state, block, touched);

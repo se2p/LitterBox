@@ -56,6 +56,15 @@ public class StmtList extends AbstractNode implements ASTNode {
         return !stmts.isEmpty();
     }
 
+    public int indexOfIdentity(Stmt stmt) {
+        for (int i = 0; i < stmts.size(); i++) {
+            if (stmts.get(i) == stmt) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);

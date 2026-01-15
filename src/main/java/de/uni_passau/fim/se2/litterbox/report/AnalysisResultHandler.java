@@ -37,12 +37,11 @@ public interface AnalysisResultHandler {
             IssueTranslator translator,
             Path output,
             String detectors,
-            boolean outputPerScript,
-            Path priorResultPath
+            boolean outputPerScript
     ) {
         if (output != null && (output.getFileName().toString().endsWith(".html") || output.getFileName().toString().endsWith(".htm"))) {
             return new HtmlAggregatedResultHandler(translator, output);
         }
-        return new ImmediateResultHandler(translator, output, detectors, outputPerScript, priorResultPath);
+        return new ImmediateResultHandler(translator, output, detectors, outputPerScript);
     }
 }

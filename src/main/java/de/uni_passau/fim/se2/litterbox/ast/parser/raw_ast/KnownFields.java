@@ -71,6 +71,10 @@ public enum KnownFields {
     TO("TO"),
     TOUCHINGOBJECTMENU("TOUCHINGOBJECTMENU"),
     TOWARDS("TOWARDS"),
+    // video sensing
+    ATTRIBUTE("ATTRIBUTE"),
+    SUBJECT("SUBJECT"),
+    VIDEO_STATE("VIDEO_STATE"),
     VALUE("VALUE"),
     VARIABLE("VARIABLE"),
     VOICES("voices"),
