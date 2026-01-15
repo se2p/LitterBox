@@ -114,8 +114,10 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
         int choice = RANDOM.nextInt(9);
         return switch (choice) {
             case 0 -> new Add(new NumberLiteral(1), new NumberLiteral(1), metadata);
-            case 1 ->
-                    new DistanceTo(new MousePos(new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)), metadata);
+            case 1 -> new DistanceTo(
+                    new MousePos(new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)),
+                    metadata
+            );
             case 2 -> new MouseX(metadata);
             case 3 -> new MouseY(metadata);
             case 4 -> new Loudness(metadata);
@@ -124,7 +126,7 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
             case 7 -> new Join(new StringLiteral("a"), new StringLiteral("b"), metadata);
             case 8 -> new Username(metadata);
             default ->
-                // Fallback to simple number literal if something goes wrong (shouldn't happen)
+                    // Fallback to simple number literal if something goes wrong (shouldn't happen)
                     new NumberLiteral(1);
         };
     }
@@ -174,11 +176,14 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
                 Expression randomReporter = injector.getRandomReporter();
                 NumExpr numExpr;
 
-                if (randomReporter instanceof NumExpr) {
-                    numExpr = (NumExpr) randomReporter;
+                if (randomReporter instanceof NumExpr tmp) {
+                    numExpr = tmp;
                 } else {
                     // Wrap non-number reporters in AsNumber
-                    numExpr = new AsNumber(randomReporter, new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0));
+                    numExpr = new AsNumber(
+                            randomReporter,
+                            new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
+                    );
                 }
 
                 ColorTouchingColor replacement = new ColorTouchingColor(
@@ -200,10 +205,13 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
                 // SpriteTouchingColor expects Color. FromNumber implements Color.
                 Expression randomReporter = injector.getRandomReporter();
                 NumExpr numExpr;
-                if (randomReporter instanceof NumExpr) {
-                    numExpr = (NumExpr) randomReporter;
+                if (randomReporter instanceof NumExpr tmp) {
+                    numExpr = tmp;
                 } else {
-                    numExpr = new AsNumber(randomReporter, new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0));
+                    numExpr = new AsNumber(
+                            randomReporter,
+                            new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
+                    );
                 }
 
                 SpriteTouchingColor replacement = new SpriteTouchingColor(
@@ -224,10 +232,13 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
                 // SetPenColorToColorStmt expects Color.
                 Expression randomReporter = injector.getRandomReporter();
                 NumExpr numExpr;
-                if (randomReporter instanceof NumExpr) {
-                    numExpr = (NumExpr) randomReporter;
+                if (randomReporter instanceof NumExpr tmp) {
+                    numExpr = tmp;
                 } else {
-                    numExpr = new AsNumber(randomReporter, new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0));
+                    numExpr = new AsNumber(
+                            randomReporter,
+                            new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
+                    );
                 }
 
                 SetPenColorToColorStmt replacement = new SetPenColorToColorStmt(

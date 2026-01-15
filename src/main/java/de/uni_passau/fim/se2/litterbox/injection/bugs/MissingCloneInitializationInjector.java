@@ -121,10 +121,9 @@ public class MissingCloneInitializationInjector extends AbstractBugInjector {
             public void visit(CreateCloneOf node) {
                 if (node.getCloneChoice() instanceof Myself && currentActorName != null) {
                     cloned.add(currentActorName.toLowerCase());
-                } else if (node.getCloneChoice() instanceof WithCloneExpr expr) {
-                    if (expr.getExpression() instanceof StrId strId) {
-                        cloned.add(strId.getName().toLowerCase());
-                    }
+                } else if (node.getCloneChoice() instanceof WithCloneExpr expr
+                        && expr.getExpression() instanceof StrId strId) {
+                    cloned.add(strId.getName().toLowerCase());
                 }
             }
         });

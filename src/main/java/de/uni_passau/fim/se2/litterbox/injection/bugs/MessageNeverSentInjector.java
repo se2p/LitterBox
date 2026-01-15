@@ -95,10 +95,9 @@ public class MessageNeverSentInjector extends AbstractBugInjector {
             @Override
             public void visit(Script node) {
                 if (node.getEvent() instanceof ReceptionOfMessage event
-                        && node.getStmtList().hasStatements()) {
-                    if (event.getMsg().getMessage() instanceof StringLiteral lit) {
-                        messages.add(lit.getText().toLowerCase());
-                    }
+                        && node.getStmtList().hasStatements()
+                        && event.getMsg().getMessage() instanceof StringLiteral lit) {
+                    messages.add(lit.getText().toLowerCase());
                 }
                 visitChildren(node);
             }

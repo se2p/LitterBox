@@ -246,11 +246,13 @@ public class MessageAsLiteralInjector extends AbstractBugInjector {
 
         @Override
         public void visit(LocalIdentifier node) {
-        } // Avoid child literals
+            // Avoid child literals
+        }
 
         @Override
         public void visit(ReceptionOfMessage node) {
-        } // Avoid message literals
+            // Avoid message literals
+        }
     }
 
     /**

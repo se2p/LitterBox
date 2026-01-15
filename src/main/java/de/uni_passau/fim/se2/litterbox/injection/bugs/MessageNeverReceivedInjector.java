@@ -124,10 +124,9 @@ public class MessageNeverReceivedInjector extends AbstractBugInjector {
         clonedProgram.accept(new ScratchVisitor() {
             @Override
             public void visit(ReceptionOfMessage event) {
-                if (event.getMsg().getMessage() instanceof StringLiteral lit) {
-                    if (lit.getText().equalsIgnoreCase(originalMsg)) {
-                        allClonedReceptions.add(event);
-                    }
+                if (event.getMsg().getMessage() instanceof StringLiteral lit
+                        && lit.getText().equalsIgnoreCase(originalMsg)) {
+                    allClonedReceptions.add(event);
                 }
             }
         });

@@ -246,9 +246,17 @@ public class ActorJSONCreator {
         JSONStringCreator.createField(jsonString, id).append("[");
         Expression expr = node.getExpr();
         if (expr instanceof StringLiteral stringLiteral) {
-            jsonString.append("\"").append(BlockJsonCreatorHelper.escape(variableName)).append("\", \"").append(BlockJsonCreatorHelper.escape(stringLiteral.getText())).append("\"]");
+            jsonString.append("\"")
+                    .append(BlockJsonCreatorHelper.escape(variableName))
+                    .append("\", \"")
+                    .append(BlockJsonCreatorHelper.escape(stringLiteral.getText()))
+                    .append("\"]");
         } else if (expr instanceof NumberLiteral numberLiteral) {
-            jsonString.append("\"").append(BlockJsonCreatorHelper.escape(variableName)).append("\", ").append(numberLiteral.getValue()).append("]");
+            jsonString.append("\"")
+                    .append(BlockJsonCreatorHelper.escape(variableName))
+                    .append("\", ")
+                    .append(numberLiteral.getValue())
+                    .append("]");
         }
         return jsonString;
     }

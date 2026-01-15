@@ -66,7 +66,9 @@ public abstract class BlockJsonCreatorHelper {
             x = topMeta.getXPos();
             y = topMeta.getYPos();
         } else if (meta instanceof DataBlockMetadata dataMeta) {
-            topLevel = true; // Data blocks are often top-level but treated differently, but if we are generating blocks for them they likely have coords
+            // Data blocks are often top-level but treated differently,
+            // but if we are generating blocks for them they likely have coords
+            topLevel = true;
             x = dataMeta.getX();
             y = dataMeta.getY();
         }

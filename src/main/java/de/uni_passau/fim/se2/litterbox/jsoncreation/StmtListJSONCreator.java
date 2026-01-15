@@ -164,90 +164,80 @@ public class StmtListJSONCreator
 
     @Override
     public void visit(IfOnEdgeBounce node) {
-        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, node.getOpcode()));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        finishedJSONStrings.add(createFixedBlock(node.getMetadata(), getNextId(), previousBlockId, node.getOpcode()));
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
     public void visit(NextCostume node) {
-        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, node.getOpcode()));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        finishedJSONStrings.add(createFixedBlock(node.getMetadata(), getNextId(), previousBlockId, node.getOpcode()));
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
     public void visit(NextBackdrop node) {
-        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, node.getOpcode()));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        finishedJSONStrings.add(createFixedBlock(node.getMetadata(), getNextId(), previousBlockId, node.getOpcode()));
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
     public void visit(ClearGraphicEffects node) {
-        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, node.getOpcode()));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        finishedJSONStrings.add(createFixedBlock(node.getMetadata(), getNextId(), previousBlockId, node.getOpcode()));
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
     public void visit(Show node) {
-        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, node.getOpcode()));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        finishedJSONStrings.add(createFixedBlock(node.getMetadata(), getNextId(), previousBlockId, node.getOpcode()));
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
     public void visit(Hide node) {
-        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, node.getOpcode()));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        finishedJSONStrings.add(createFixedBlock(node.getMetadata(), getNextId(), previousBlockId, node.getOpcode()));
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
     public void visit(StopAllSounds node) {
-        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, node.getOpcode()));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        finishedJSONStrings.add(createFixedBlock(node.getMetadata(), getNextId(), previousBlockId, node.getOpcode()));
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
     public void visit(ClearSoundEffects node) {
-        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, node.getOpcode()));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        finishedJSONStrings.add(createFixedBlock(node.getMetadata(), getNextId(), previousBlockId, node.getOpcode()));
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
     public void visit(DeleteClone node) {
-        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, node.getOpcode()));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        finishedJSONStrings.add(createFixedBlock(node.getMetadata(), getNextId(), previousBlockId, node.getOpcode()));
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
     public void visit(ResetTimer node) {
-        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, node.getOpcode()));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        finishedJSONStrings.add(createFixedBlock(node.getMetadata(), getNextId(), previousBlockId, node.getOpcode()));
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
     public void visit(SetRotationStyle node) {
         String rotation = node.getRotation().toString();
         String fieldsString = createFields(STYLE_KEY, rotation, null);
-        finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+        finishedJSONStrings.add(createBlockWithoutMutationString(node.getMetadata(), getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString, node.getOpcode()));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
     public void visit(GoToLayer node) {
         String layer = node.getLayerChoice().getTypeName();
         String fieldsString = createFields(FRONT_BACK, layer, null);
-        finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+        finishedJSONStrings.add(createBlockWithoutMutationString(node.getMetadata(), getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString, node.getOpcode()));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
@@ -266,9 +256,9 @@ public class StmtListJSONCreator
     public void visit(SetDragMode node) {
         String drag = node.getDrag().getTypeName();
         String fieldsString = createFields(DRAGMODE_KEY, drag, null);
-        finishedJSONStrings.add(createBlockWithoutMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+        finishedJSONStrings.add(createBlockWithoutMutationString(node.getMetadata(), getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString, node.getOpcode()));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
@@ -309,19 +299,29 @@ public class StmtListJSONCreator
 
     @Override
     public void visit(ShowVariable node) {
-        getVariableFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier(), EMPTY_VALUE, node.getOpcode());
+        getVariableFields(
+                (NonDataBlockMetadata) node.getMetadata(), node.getIdentifier(), EMPTY_VALUE, node.getOpcode()
+        );
     }
 
     @Override
     public void visit(HideVariable node) {
-        getVariableFields((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier(), EMPTY_VALUE, node.getOpcode());
+        getVariableFields(
+                (NonDataBlockMetadata) node.getMetadata(), node.getIdentifier(), EMPTY_VALUE, node.getOpcode()
+        );
     }
 
-    private void getVariableFields(NonDataBlockMetadata metadata, Identifier identifier, String inputsString, Opcode opcode) {
+    private void getVariableFields(
+            NonDataBlockMetadata metadata, Identifier identifier, String inputsString, Opcode opcode
+    ) {
         String fieldsString;
-        Preconditions.checkArgument(identifier instanceof Qualified, "Identifier of variable has to be in Qualified");
+        Preconditions.checkArgument(
+                identifier instanceof Qualified, "Identifier of variable has to be in Qualified"
+        );
         Qualified qual = (Qualified) identifier;
-        Preconditions.checkArgument(qual.getSecond() instanceof Variable, "Qualified has to hold Variable");
+        Preconditions.checkArgument(
+                qual.getSecond() instanceof Variable, "Qualified has to hold Variable"
+        );
         Variable variable = (Variable) qual.getSecond();
         String id = symbolTable.getVariableIdentifierFromActorAndName(qual.getFirst().getName(),
                 variable.getName().getName());
@@ -342,11 +342,11 @@ public class StmtListJSONCreator
     public void visit(StopThisScript node) {
         String fieldsString = createFields(STOP_OPTION, "this script", null);
         String mutationString = createStopMetadata(false);
-        String json = createBlockWithMutationString((NonDataBlockMetadata) node.getMetadata(), getNextId(),
+        String json = createBlockWithMutationString(node.getMetadata(), getNextId(),
                 previousBlockId, EMPTY_VALUE, fieldsString, mutationString, node.getOpcode());
 
         finishedJSONStrings.add(json);
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
@@ -517,7 +517,9 @@ public class StmtListJSONCreator
     @Override
     public void visit(PointInDirection node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createSingleNumExprBlock(metadata, DIRECTION_KEY_CAP, node.getDirection(), MATH_NUM_PRIMITIVE, node.getOpcode());
+        createSingleNumExprBlock(
+                metadata, DIRECTION_KEY_CAP, node.getDirection(), MATH_NUM_PRIMITIVE, node.getOpcode()
+        );
     }
 
     @Override
@@ -697,7 +699,13 @@ public class StmtListJSONCreator
 
     @Override
     public void visit(GoToPos node) {
-        createStatementWithPosition((NonDataBlockMetadata) node.getMetadata(), node.getPosition(), TO_KEY, node.getOpcode(), node.getGoToMenuOpcode());
+        createStatementWithPosition(
+                (NonDataBlockMetadata) node.getMetadata(),
+                node.getPosition(),
+                TO_KEY,
+                node.getOpcode(),
+                node.getGoToMenuOpcode()
+        );
     }
 
     @Override
@@ -715,7 +723,13 @@ public class StmtListJSONCreator
 
     @Override
     public void visit(PointTowards node) {
-        createStatementWithPosition((NonDataBlockMetadata) node.getMetadata(), node.getPosition(), TOWARDS_KEY, node.getOpcode(), node.getPointTowardsMenuOpcode());
+        createStatementWithPosition(
+                (NonDataBlockMetadata) node.getMetadata(),
+                node.getPosition(),
+                TOWARDS_KEY,
+                node.getOpcode(),
+                node.getPointTowardsMenuOpcode()
+        );
     }
 
     @Override
@@ -782,30 +796,37 @@ public class StmtListJSONCreator
 
     @Override
     public void visit(Broadcast node) {
-        createBroadcastStmt((NonDataBlockMetadata) node.getMetadata(), node.getMessage().getMessage(), node.getOpcode());
+        createBroadcastStmt(
+                (NonDataBlockMetadata) node.getMetadata(), node.getMessage().getMessage(), node.getOpcode()
+        );
     }
 
     @Override
     public void visit(BroadcastAndWait node) {
-        createBroadcastStmt((NonDataBlockMetadata) node.getMetadata(), node.getMessage().getMessage(), node.getOpcode());
+        createBroadcastStmt(
+                (NonDataBlockMetadata) node.getMetadata(), node.getMessage().getMessage(), node.getOpcode()
+        );
     }
 
     @Override
     public void visit(ExpressionStmt node) {
-        IdJsonStringTuple tuple = exprCreator.createExpressionJSON(null,
-                node.getExpression(), symbolTable);
+        IdJsonStringTuple tuple = exprCreator.createExpressionJSON(null, node.getExpression(), symbolTable);
         finishedJSONStrings.add(tuple.jsonString());
         previousBlockId = tuple.id();
     }
 
     @Override
     public void visit(ChangeVariableBy node) {
-        createVariableWithInputBlock((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier(), node.getExpr(), node.getOpcode());
+        createVariableWithInputBlock(
+                (NonDataBlockMetadata) node.getMetadata(), node.getIdentifier(), node.getExpr(), node.getOpcode()
+        );
     }
 
     @Override
     public void visit(SetVariableTo node) {
-        createVariableWithInputBlock((NonDataBlockMetadata) node.getMetadata(), node.getIdentifier(), node.getExpr(), node.getOpcode());
+        createVariableWithInputBlock(
+                (NonDataBlockMetadata) node.getMetadata(), node.getIdentifier(), node.getExpr(), node.getOpcode()
+        );
     }
 
     @Override
@@ -894,7 +915,9 @@ public class StmtListJSONCreator
                 MATH_NUM_PRIMITIVE, node.getOpcode());
     }
 
-    private void createVariableWithInputBlock(NonDataBlockMetadata metadata, Identifier identifier, Expression expr, Opcode opcode) {
+    private void createVariableWithInputBlock(
+            NonDataBlockMetadata metadata, Identifier identifier, Expression expr, Opcode opcode
+    ) {
         List<String> inputs = new ArrayList<>();
         if (expr instanceof NumberLiteral numberLiteral) {
             NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
@@ -914,7 +937,7 @@ public class StmtListJSONCreator
             String message = stringLiteral.getText();
             String messageId;
             if (symbolTable != null && symbolTable.getMessage(message).isPresent()) {
-                messageId = symbolTable.getMessage(message).get().identifier();
+                messageId = symbolTable.getMessage(message).orElseThrow().identifier();
             } else {
                 messageId = "unspecified" + message;
             }
@@ -929,7 +952,9 @@ public class StmtListJSONCreator
         previousBlockId = metadata.getBlockId();
     }
 
-    private void createStatementWithElementChoice(NonDataBlockMetadata metadata, ElementChoice elem, String inputName, Opcode opcode, Opcode dependentOpcode) {
+    private void createStatementWithElementChoice(
+            NonDataBlockMetadata metadata, ElementChoice elem, String inputName, Opcode opcode, Opcode dependentOpcode
+    ) {
         List<String> inputs = new ArrayList<>();
         inputs.add(addElementChoiceReference(metadata, elem, inputName, dependentOpcode));
 
@@ -938,8 +963,9 @@ public class StmtListJSONCreator
         previousBlockId = metadata.getBlockId();
     }
 
-    private String addElementChoiceReference(NonDataBlockMetadata metadata, ElementChoice elem,
-                                             String inputName, Opcode dependentOpcode) {
+    private String addElementChoiceReference(
+            NonDataBlockMetadata metadata, ElementChoice elem, String inputName, Opcode dependentOpcode
+    ) {
         IdJsonStringTuple tuple;
         if (elem instanceof Prev || elem instanceof Next || elem instanceof Random) {
             tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), elem, dependentOpcode);
@@ -958,7 +984,9 @@ public class StmtListJSONCreator
         }
     }
 
-    private void createStatementWithPosition(NonDataBlockMetadata metadata, Position position, String inputName, Opcode opcode, Opcode dependentOpcode) {
+    private void createStatementWithPosition(
+            NonDataBlockMetadata metadata, Position position, String inputName, Opcode opcode, Opcode dependentOpcode
+    ) {
         List<String> inputs = new ArrayList<>();
         inputs.add(addPositionReference(metadata, position, inputName, dependentOpcode));
 
@@ -967,8 +995,9 @@ public class StmtListJSONCreator
         previousBlockId = metadata.getBlockId();
     }
 
-    private String addPositionReference(NonDataBlockMetadata metadata, Position pos,
-                                        String inputName, Opcode dependentOpcode) {
+    private String addPositionReference(
+            NonDataBlockMetadata metadata, Position pos, String inputName, Opcode dependentOpcode
+    ) {
         IdJsonStringTuple tuple;
 
         if (pos instanceof RandomPos || pos instanceof MousePos) {
@@ -990,8 +1019,10 @@ public class StmtListJSONCreator
         }
     }
 
-    private void createNumExprFieldsBlockJson(NonDataBlockMetadata metadata, NumExpr value, String fieldsName, String fieldsValue,
-                                              String inputName, Opcode opcode) {
+    private void createNumExprFieldsBlockJson(
+            NonDataBlockMetadata metadata, NumExpr value, String fieldsName, String fieldsValue,
+            String inputName, Opcode opcode
+    ) {
         List<String> inputs = new ArrayList<>();
         inputs.add(createNumExpr(metadata, inputName, value, MATH_NUM_PRIMITIVE));
         String fields = createFields(fieldsName, fieldsValue, null);
@@ -1039,7 +1070,9 @@ public class StmtListJSONCreator
         previousBlockId = metadata.getBlockId();
     }
 
-    private void createSingleStringExprBlock(NonDataBlockMetadata metadata, String inputKey, StringExpr stringExpr, Opcode opcode) {
+    private void createSingleStringExprBlock(
+            NonDataBlockMetadata metadata, String inputKey, StringExpr stringExpr, Opcode opcode
+    ) {
         List<String> inputs = new ArrayList<>();
 
         inputs.add(createExpr(metadata, inputKey, stringExpr));
@@ -1089,30 +1122,26 @@ public class StmtListJSONCreator
 
     @Override
     public void visit(PenDownStmt node) {
-        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, node.getOpcode()));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        finishedJSONStrings.add(createFixedBlock(node.getMetadata(), getNextId(), previousBlockId, node.getOpcode()));
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
     public void visit(PenUpStmt node) {
-        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, node.getOpcode()));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        finishedJSONStrings.add(createFixedBlock(node.getMetadata(), getNextId(), previousBlockId, node.getOpcode()));
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
     public void visit(PenClearStmt node) {
-        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, node.getOpcode()));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        finishedJSONStrings.add(createFixedBlock(node.getMetadata(), getNextId(), previousBlockId, node.getOpcode()));
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
     public void visit(PenStampStmt node) {
-        finishedJSONStrings.add(createFixedBlock((NonDataBlockMetadata) node.getMetadata(), getNextId(),
-                previousBlockId, node.getOpcode()));
-        previousBlockId = ((NonDataBlockMetadata) node.getMetadata()).getBlockId();
+        finishedJSONStrings.add(createFixedBlock(node.getMetadata(), getNextId(), previousBlockId, node.getOpcode()));
+        previousBlockId = node.getMetadata().getBlockId();
     }
 
     @Override
@@ -1141,13 +1170,17 @@ public class StmtListJSONCreator
     @Override
     public void visit(ChangePenColorParamBy node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node.getOpcode(), node.getMenuColorParamOpcode());
+        createPenWithParamStmt(
+                metadata, node.getParam(), node.getValue(), node.getOpcode(), node.getMenuColorParamOpcode()
+        );
     }
 
     @Override
     public void visit(SetPenColorParamTo node) {
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
-        createPenWithParamStmt(metadata, node.getParam(), node.getValue(), node.getOpcode(), node.getMenuColorParamOpcode());
+        createPenWithParamStmt(
+                metadata, node.getParam(), node.getValue(), node.getOpcode(), node.getMenuColorParamOpcode()
+        );
     }
 
     @Override
@@ -1155,7 +1188,9 @@ public class StmtListJSONCreator
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         List<String> inputs = new ArrayList<>();
         if (node.getLanguage() instanceof FixedLanguage) {
-            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node.getLanguage(), node.getMenuLanguageOpcode());
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
+                    metadata.getBlockId(), node.getLanguage(), node.getMenuLanguageOpcode()
+            );
             finishedJSONStrings.add(tuple.jsonString());
             inputs.add(createReferenceInput(LANGUAGE_INPUT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         } else {
@@ -1171,7 +1206,9 @@ public class StmtListJSONCreator
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         List<String> inputs = new ArrayList<>();
         if (node.getVoice() instanceof FixedVoice) {
-            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node.getVoice(), node.getMenuVoiceOpcode());
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
+                    metadata.getBlockId(), node.getVoice(), node.getMenuVoiceOpcode()
+            );
             finishedJSONStrings.add(tuple.jsonString());
             inputs.add(createReferenceInput(VOICE_INPUT_KEY, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         } else {
@@ -1184,28 +1221,33 @@ public class StmtListJSONCreator
 
     @Override
     public void visit(Speak node) {
-        createSingleStringExprBlock((NonDataBlockMetadata) node.getMetadata(), WORDS_KEY, node.getText(), node.getOpcode());
+        createSingleStringExprBlock(
+                (NonDataBlockMetadata) node.getMetadata(), WORDS_KEY, node.getText(), node.getOpcode()
+        );
     }
 
     // Music Extension
 
     @Override
     public void visit(ChangeTempoBy node) {
-        createSingleNumExprBlock((NonDataBlockMetadata) node.getMetadata(), TEMPO_INPUT, node.getTempo(), MATH_NUM_PRIMITIVE, node.getOpcode());
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        createSingleNumExprBlock(metadata, TEMPO_INPUT, node.getTempo(), MATH_NUM_PRIMITIVE,node.getOpcode());
     }
 
     @Override
     public void visit(SetTempoTo node) {
-        createSingleNumExprBlock((NonDataBlockMetadata) node.getMetadata(), TEMPO_INPUT, node.getTempo(), MATH_NUM_PRIMITIVE, node.getOpcode());
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        createSingleNumExprBlock(metadata, TEMPO_INPUT, node.getTempo(), MATH_NUM_PRIMITIVE, node.getOpcode());
     }
 
     @Override
     public void visit(SetInstrumentTo node) {
-
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         List<String> inputs = new ArrayList<>();
         if (node.getInstrument() instanceof FixedInstrument) {
-            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node.getInstrument(), node.getMenuInstrumentOpcode());
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
+                    metadata.getBlockId(), node.getInstrument(), node.getMenuInstrumentOpcode()
+            );
             finishedJSONStrings.add(tuple.jsonString());
             inputs.add(createReferenceInput(INSTRUMENT, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         } else {
@@ -1223,7 +1265,9 @@ public class StmtListJSONCreator
         inputs.add(createNumExpr(metadata, BEATS, node.getBeats(), MATH_NUM_PRIMITIVE));
 
         if (node.getDrum() instanceof FixedDrum) {
-            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), node.getDrum(), node.getMenuDrumOpcode());
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
+                    metadata.getBlockId(), node.getDrum(), node.getMenuDrumOpcode()
+            );
             finishedJSONStrings.add(tuple.jsonString());
             inputs.add(createReferenceInput(DRUM, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         } else {
@@ -1242,7 +1286,9 @@ public class StmtListJSONCreator
 
         Note note = node.getNote();
         if (note instanceof FixedNote) {
-            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(metadata.getBlockId(), note, DependentBlockOpcode.note);
+            IdJsonStringTuple tuple = fixedExprCreator.createFixedExpressionJSON(
+                    metadata.getBlockId(), note, DependentBlockOpcode.note
+            );
             finishedJSONStrings.add(tuple.jsonString());
             inputs.add(createReferenceInput(NOTE, INPUT_SAME_BLOCK_SHADOW, tuple.id(), false));
         } else {
@@ -1314,7 +1360,8 @@ public class StmtListJSONCreator
 
     @Override
     public void visit(RestForBeats node) {
-        createSingleNumExprBlock((NonDataBlockMetadata) node.getMetadata(), BEATS, node.getBeats(), MATH_NUM_PRIMITIVE, node.getOpcode());
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+        createSingleNumExprBlock(metadata, BEATS, node.getBeats(), MATH_NUM_PRIMITIVE, node.getOpcode());
     }
 }
 

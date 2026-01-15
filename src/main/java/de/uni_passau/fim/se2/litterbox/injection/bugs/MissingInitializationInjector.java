@@ -157,7 +157,7 @@ public class MissingInitializationInjector extends AbstractBugInjector {
         Set<Use> liveOut = globalLiveness.getDataflowFacts(nodeOpt.get());
         for (Definition def : definitions) {
             // Skip cloud variables as they are skipped by the finder
-            if (def.getDefinable() instanceof Variable var && var.getIdentifier().toString().contains("☁")) {
+            if (def.getDefinable() instanceof Variable variable && variable.getIdentifier().toString().contains("☁")) {
                 continue;
             }
 

@@ -664,8 +664,15 @@ public class ExpressionJSONCreator
                         .append(dataBlockMetadata.getY())
                         .append("]");
             } else {
-                jsonString.append(createReferenceType(INPUT_DIFF_BLOCK_SHADOW, LIST_PRIMITIVE, BlockJsonCreatorHelper.escape(listName), BlockJsonCreatorHelper.escape(listId),
-                        true));
+                jsonString.append(
+                        createReferenceType(
+                                INPUT_DIFF_BLOCK_SHADOW,
+                                LIST_PRIMITIVE,
+                                BlockJsonCreatorHelper.escape(listName),
+                                BlockJsonCreatorHelper.escape(listId),
+                        true
+                        )
+                );
             }
         } else if (node.getSecond() instanceof Variable variable) {
             String variableName = variable.getName().getName();
@@ -687,8 +694,15 @@ public class ExpressionJSONCreator
                         .append(dataBlockMetadata.getY())
                         .append("]");
             } else {
-                jsonString.append(createReferenceType(INPUT_DIFF_BLOCK_SHADOW, VAR_PRIMITIVE, BlockJsonCreatorHelper.escape(variableName), BlockJsonCreatorHelper.escape(variableId),
-                        true));
+                jsonString.append(
+                        createReferenceType(
+                                INPUT_DIFF_BLOCK_SHADOW,
+                                VAR_PRIMITIVE,
+                                BlockJsonCreatorHelper.escape(variableName),
+                                BlockJsonCreatorHelper.escape(variableId),
+                        true
+                        )
+                );
             }
         }
         finishedJSONStrings.add(jsonString.toString());
@@ -786,10 +800,10 @@ public class ExpressionJSONCreator
         }
 
         // Build a single fields object with both fields to avoid invalid JSON like {...},{...}
-        String fieldsString = "{" +
-                "\"" + ATTRIBUTE_KEY + "\":[\"" + escape(node.getAttribute()) + "\",null]," +
-                "\"" + SUBJECT_KEY + "\":[\"" + escape(node.getSubject()) + "\",null]" +
-                "}";
+        String fieldsString = "{"
+                + "\"" + ATTRIBUTE_KEY + "\":[\"" + escape(node.getAttribute()) + "\",null],"
+                + "\"" + SUBJECT_KEY + "\":[\"" + escape(node.getSubject()) + "\",null]"
+                + "}";
 
         finishedJSONStrings.add(createBlockWithoutMutationString(metadata, null,
                 previousBlockId, EMPTY_VALUE, fieldsString, node.getOpcode()));
@@ -801,19 +815,19 @@ public class ExpressionJSONCreator
     @Override
     public void visit(FixedNote node) {
         fixedExprCreator.visit(node);
-        addExpressionJSONString(fixedExprCreator.getFinishedJSONStrings().getFirst(), ((NonDataBlockMetadata) node.getMetadata()).getBlockId());
+        addExpressionJSONString(fixedExprCreator.getFinishedJSONStrings().getFirst(), node.getMetadata().getBlockId());
     }
 
     @Override
     public void visit(FixedDrum node) {
         fixedExprCreator.visit(node);
-        addExpressionJSONString(fixedExprCreator.getFinishedJSONStrings().getFirst(), ((NonDataBlockMetadata) node.getMetadata()).getBlockId());
+        addExpressionJSONString(fixedExprCreator.getFinishedJSONStrings().getFirst(), node.getMetadata().getBlockId());
     }
 
     @Override
     public void visit(FixedInstrument node) {
         fixedExprCreator.visit(node);
-        addExpressionJSONString(fixedExprCreator.getFinishedJSONStrings().getFirst(), ((NonDataBlockMetadata) node.getMetadata()).getBlockId());
+        addExpressionJSONString(fixedExprCreator.getFinishedJSONStrings().getFirst(), node.getMetadata().getBlockId());
     }
 
     @Override
@@ -859,13 +873,13 @@ public class ExpressionJSONCreator
 
     @Override
     public void visit(ViewerLanguage node) {
-        createSimpleExpression((NonDataBlockMetadata) node.getMetadata(), node.getOpcode());
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     @Override
     public void visit(TFixedLanguage node) {
         fixedExprCreator.visit(node);
-        addExpressionJSONString(fixedExprCreator.getFinishedJSONStrings().getFirst(), ((NonDataBlockMetadata) node.getMetadata()).getBlockId());
+        addExpressionJSONString(fixedExprCreator.getFinishedJSONStrings().getFirst(), node.getMetadata().getBlockId());
     }
 
     @Override

@@ -151,17 +151,17 @@ public class FixedExpressionJSONCreator
 
     @Override
     public void visit(Next node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), BACKDROP_INPUT, NEXT_BACKDROP);
+        createFieldsExpression(node.getMetadata(), BACKDROP_INPUT, NEXT_BACKDROP);
     }
 
     @Override
     public void visit(Prev node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), BACKDROP_INPUT, PREVIOUS_BACKDROP);
+        createFieldsExpression(node.getMetadata(), BACKDROP_INPUT, PREVIOUS_BACKDROP);
     }
 
     @Override
     public void visit(Random node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), BACKDROP_INPUT, RANDOM_BACKDROP);
+        createFieldsExpression(node.getMetadata(), BACKDROP_INPUT, RANDOM_BACKDROP);
     }
 
     @Override
@@ -185,7 +185,7 @@ public class FixedExpressionJSONCreator
 
     @Override
     public void visit(Myself node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), CLONE_OPTION, "_myself_");
+        createFieldsExpression(node.getMetadata(), CLONE_OPTION, "_myself_");
     }
 
     @Override
@@ -201,7 +201,7 @@ public class FixedExpressionJSONCreator
     public void visit(Key node) {
         NumExpr numExpr = node.getKey();
         if (numExpr instanceof NumberLiteral numberLiteral) {
-            createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), KEY_OPTION,
+            createFieldsExpression(node.getMetadata(), KEY_OPTION,
                     KeyValueTranslator.getKeyValue(translator, (int) numberLiteral.getValue()));
         }
     }
@@ -209,23 +209,27 @@ public class FixedExpressionJSONCreator
     @Override
     public void visit(MousePointer node) {
         if (node.getParentNode() instanceof DistanceTo) {
-            createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), DISTANCETOMENU_KEY, MOUSE);
+            createFieldsExpression(node.getMetadata(), DISTANCETOMENU_KEY, MOUSE);
         } else if (node.getParentNode() instanceof Touching) {
-            createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), TOUCHINGOBJECTMENU, MOUSE);
+            createFieldsExpression(node.getMetadata(), TOUCHINGOBJECTMENU, MOUSE);
         }
     }
 
     @Override
     public void visit(Edge node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), TOUCHINGOBJECTMENU, TOUCHING_EDGE);
+        createFieldsExpression(node.getMetadata(), TOUCHINGOBJECTMENU, TOUCHING_EDGE);
     }
 
     @Override
     public void visit(SpriteTouchable node) {
         if (node.getParentNode() instanceof DistanceTo) {
-            createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), DISTANCETOMENU_KEY, ((StringLiteral) node.getStringExpr()).getText());
+            createFieldsExpression(
+                    node.getMetadata(), DISTANCETOMENU_KEY, ((StringLiteral) node.getStringExpr()).getText()
+            );
         } else if (node.getParentNode() instanceof Touching) {
-            createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), TOUCHINGOBJECTMENU, ((StringLiteral) node.getStringExpr()).getText());
+            createFieldsExpression(
+                    node.getMetadata(), TOUCHINGOBJECTMENU, ((StringLiteral) node.getStringExpr()).getText()
+            );
         }
     }
 
@@ -243,19 +247,19 @@ public class FixedExpressionJSONCreator
 
     @Override
     public void visit(FixedColorParam node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), COLOR_PARAM_LITTLE_KEY, node.getType().getType());
+        createFieldsExpression(node.getMetadata(), COLOR_PARAM_LITTLE_KEY, node.getType().getType());
     }
 
     //Text to Speech
 
     @Override
     public void visit(FixedLanguage node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), LANGUAGE_FIELDS_KEY, node.getType().getType());
+        createFieldsExpression(node.getMetadata(), LANGUAGE_FIELDS_KEY, node.getType().getType());
     }
 
     @Override
     public void visit(FixedVoice node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), VOICE_FIELDS_KEY, node.getType().getType());
+        createFieldsExpression(node.getMetadata(), VOICE_FIELDS_KEY, node.getType().getType());
     }
 
     // Music Extension
@@ -272,18 +276,18 @@ public class FixedExpressionJSONCreator
 
     @Override
     public void visit(FixedDrum node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), DRUM, node.getType().getType());
+        createFieldsExpression(node.getMetadata(), DRUM, node.getType().getType());
     }
 
     @Override
     public void visit(FixedInstrument node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), INSTRUMENT, node.getType().getType());
+        createFieldsExpression(node.getMetadata(), INSTRUMENT, node.getType().getType());
     }
 
     // Translate Extension
 
     @Override
     public void visit(TFixedLanguage node) {
-        createFieldsExpression((NonDataBlockMetadata) node.getMetadata(), LANGUAGE_FIELDS_KEY, node.getType().getType());
+        createFieldsExpression(node.getMetadata(), LANGUAGE_FIELDS_KEY, node.getType().getType());
     }
 }

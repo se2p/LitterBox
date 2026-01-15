@@ -30,6 +30,10 @@ import java.util.Map;
  */
 public class InjectorTool {
 
+    private InjectorTool() {
+        // utility class
+    }
+
     /**
      * Generates a map of all available bug injectors.
      *
