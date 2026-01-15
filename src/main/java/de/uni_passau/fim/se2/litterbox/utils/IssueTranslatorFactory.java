@@ -24,7 +24,7 @@ public final class IssueTranslatorFactory {
 
     private static final Map<Locale, IssueTranslator> ISSUE_TRANSLATORS = new HashMap<>();
 
-    private static final Set<Locale> VALID_LOCALES = Set.of(Locale.ENGLISH, Locale.GERMAN, Locale.forLanguageTag("es"));
+    private static final Set<Locale> VALID_LOCALES = Set.of(Locale.ENGLISH, Locale.GERMAN, Locale.forLanguageTag("es"), Locale.forLanguageTag("nl"));
 
     private IssueTranslatorFactory() {
         throw new IllegalCallerException("utility class constructor");

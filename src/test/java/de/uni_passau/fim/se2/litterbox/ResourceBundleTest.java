@@ -43,10 +43,10 @@ public class ResourceBundleTest {
 
     private static final List<String> SINGLE_TAGS = Arrays.asList("[TRUE]", "[FALSE]", "[LEQ]", "[EQ]", "[GEQ]", "[IF]", "[ELSE]", "[sbVariables]", "[newLine]");
 
-    public static final String[] LANGUAGES = {"de", "en", "es"};
+    public static final String[] LANGUAGES = {"de", "en", "es", "nl"};
 
     @ParameterizedTest(name = "Testing existence of bug names for language {0}")
-    @ValueSource(strings = {"de", "en", "es"})
+    @ValueSource(strings = {"de", "en", "es", "nl"})
     public void checkBugResourceNames(String locale) {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         for (String bugFinder : IssueTool.getBugFinderNames()) {
@@ -56,7 +56,7 @@ public class ResourceBundleTest {
     }
 
     @ParameterizedTest(name = "Testing existence of smell names for language {0}")
-    @ValueSource(strings = {"de", "en", "es"})
+    @ValueSource(strings = {"de", "en", "es", "nl"})
     public void checkSmellResourceNames(String locale) {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         for (String smellFinder : IssueTool.getSmellFinderNames()) {
@@ -66,7 +66,7 @@ public class ResourceBundleTest {
     }
 
     @ParameterizedTest(name = "Testing existence of perfume names for language {0}")
-    @ValueSource(strings = {"de", "en", "es"})
+    @ValueSource(strings = {"de", "en", "es", "nl"})
     public void checkPerfumeResourceNames(String locale) {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         for (String perfumeFinder : IssueTool.getPerfumeFinderNames()) {
@@ -76,7 +76,7 @@ public class ResourceBundleTest {
     }
 
     @ParameterizedTest(name = "Testing existence of question names for language {0}")
-    @ValueSource(strings = {"de", "en", "es"})
+    @ValueSource(strings = {"de", "en", "es", "nl"})
     public void checkQuestionResourceNames(String locale) {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         for (String questionFinder : IssueTool.getQuestionFinderNames()) {
@@ -117,7 +117,7 @@ public class ResourceBundleTest {
     }
 
     @ParameterizedTest(name = "Testing encoding of general terms for language {0}")
-    @ValueSource(strings = {"de", "en", "es"})
+    @ValueSource(strings = {"de", "en", "es", "nl"})
     public void testEncodingInGeneralTerms(String locale) {
         ResourceBundle hints = ResourceBundle.getBundle("GeneralTerms", Locale.forLanguageTag(locale));
 
@@ -128,7 +128,7 @@ public class ResourceBundleTest {
     }
 
     @ParameterizedTest(name = "Testing existence of bug hints for language {0}")
-    @ValueSource(strings = {"de", "en", "es"})
+    @ValueSource(strings = {"de", "en", "es", "nl"})
     public void checkBugResourceHints(String locale) {
         ResourceBundle hints = ResourceBundle.getBundle("IssueHints", Locale.forLanguageTag(locale));
         List<IssueFinder> bugFinders = IssueTool.getFinders(FinderGroup.BUGS);
@@ -142,7 +142,7 @@ public class ResourceBundleTest {
     }
 
     @ParameterizedTest(name = "Testing existence of smell hints for language {0}")
-    @ValueSource(strings = {"de", "en", "es"})
+    @ValueSource(strings = {"de", "en", "es", "nl"})
     public void checkSmellResourceHints(String locale) {
         ResourceBundle hints = ResourceBundle.getBundle("IssueHints", Locale.forLanguageTag(locale));
         List<IssueFinder> smellFinders = IssueTool.getFinders(FinderGroup.SMELLS);
@@ -156,7 +156,7 @@ public class ResourceBundleTest {
     }
 
     @ParameterizedTest(name = "Testing existence of perfume hints for language {0}")
-    @ValueSource(strings = {"de", "en", "es"})
+    @ValueSource(strings = {"de", "en", "es", "nl"})
     public void checkPerfumeResourceHints(String locale) {
         ResourceBundle hints = ResourceBundle.getBundle("IssueHints", Locale.forLanguageTag(locale));
         List<IssueFinder> perfumeFinders = IssueTool.getFinders(FinderGroup.PERFUMES);
@@ -170,7 +170,7 @@ public class ResourceBundleTest {
     }
 
     @ParameterizedTest(name = "Testing existence of general terms for language {0}")
-    @ValueSource(strings = {"de", "en", "es"})
+    @ValueSource(strings = {"de", "en", "es", "nl"})
     public void checkGeneralTerms(String locale) {
         ResourceBundle hints = ResourceBundle.getBundle("GeneralTerms", Locale.forLanguageTag(locale));
 
@@ -181,7 +181,7 @@ public class ResourceBundleTest {
     }
 
     @ParameterizedTest(name = "Testing for spurious issue names for language {0}")
-    @ValueSource(strings = {"de", "en", "es"})
+    @ValueSource(strings = {"de", "en", "es", "nl"})
     public void checkSpuriousNames(String locale) {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         Collection<String> finders = new HashSet<>(IssueTool.getAllFinderNames());
@@ -196,7 +196,7 @@ public class ResourceBundleTest {
     }
 
     @ParameterizedTest(name = "Testing for spurious issue hint keys for language {0}")
-    @ValueSource(strings = {"de", "en", "es"})
+    @ValueSource(strings = {"de", "en", "es", "nl"})
     public void checkSpuriousHints(String locale) {
         ResourceBundle names = ResourceBundle.getBundle("IssueHints", Locale.forLanguageTag(locale));
         List<IssueFinder> allFinders = IssueTool.getFinders(FinderGroup.ALL);
