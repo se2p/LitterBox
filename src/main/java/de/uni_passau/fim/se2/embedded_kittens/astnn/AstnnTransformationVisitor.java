@@ -1083,10 +1083,14 @@ class AstnnTransformationVisitor implements
             return AbstractToken.CUSTOM_BLOCK.name();
         }
         else {
-            final ProcedureDefinition def = procedureMapping
-                .findCalledProcedure(node)
-                .orElseThrow(() -> new IllegalStateException("No procedure for calling custom block statement!"));
-            return getProcedureName(def);
+            final Optional<ProcedureDefinition> def = procedureMapping.findCalledProcedure(node);
+            if (def.isPresent()) {
+                return getProcedureName(def.get());
+            }
+            else {
+                log.warning("No procedure for calling custom block statement!");
+                return AbstractToken.CUSTOM_BLOCK.name();
+            }
         }
     }
 
