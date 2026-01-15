@@ -107,7 +107,7 @@ public class MissingLoopSensingInjectorTest implements JsonTest {
                 turn right (180) degrees
                 end
                 """;
-        Assertions.assertTrue(result.replace("\r", "").contains(expectedScript.trim()),
+        Assertions.assertTrue(result.replace(System.lineSeparator(), "\n").contains(expectedScript.trim()),
                 "Should have ALL body statements, with loop removed. Got:\n" + result);
 
         // Verification: Detector should find the bug

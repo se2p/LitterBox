@@ -93,7 +93,7 @@ public class MissingPenDownInjectorTest implements JsonTest {
                 move (20) steps
                 pen up
                 """;
-        Assertions.assertTrue(result.replace("\r", "").contains(expectedScript.trim()),
+        Assertions.assertTrue(result.replace(System.lineSeparator(), "\n").contains(expectedScript.trim()),
                 "ALL pen down should be removed, pen up should remain. Got:\n" + result);
         Assertions.assertFalse(result.contains("pen down"), "No pen down should remain");
 
