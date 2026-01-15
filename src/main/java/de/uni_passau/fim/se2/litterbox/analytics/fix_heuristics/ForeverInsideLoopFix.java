@@ -18,80 +18,100 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.ForeverInsideLoop;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
-public class ForeverInsideLoopFix extends AbstractIssueFinder {
-    public static final String NAME = "forever_inside_loop_fix";
-    private final String spriteLocation;
-    private boolean alreadyFound = false;
+/**
+ * Fix heuristic for the ForeverInsideLoop bug.
+ *
+ * <p>The bug is reported when a RepeatForever/Until/RepeatTimes loop is nested
+ * inside another loop, causing the outer loop to never iterate.
+ *
+ * <p>The bug is fixed if:
+ * <ul>
+ *   <li>The loop is no longer nested inside another loop, OR</li>
+ *   <li>The buggy loop was deleted (common fix)</li>
+ * </ul>
+ */
+public class ForeverInsideLoopFix extends AbstractFixHeuristic {
     private boolean insideScript = false;
+    private int loopDepth = 0;
 
-    public ForeverInsideLoopFix(String spriteLocation) {
-        this.spriteLocation = spriteLocation;
+    private final ForeverInsideLoop relatedBugFinder = new ForeverInsideLoop();
+
+    public ForeverInsideLoopFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
-    public void visit(ActorDefinition actor) {
-        if (actor.getIdent().getName().equals(spriteLocation)) {
-            super.visit(actor);
-        }
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
+
+    @Override
+    protected void resetState() {
+        insideScript = false;
+        loopDepth = 0;
     }
 
     @Override
     public void visit(ProcedureDefinition node) {
+        boolean oldInside = insideScript;
         insideScript = true;
-        super.visit(node);
-        insideScript = false;
+        visitChildren(node);
+        insideScript = oldInside;
     }
 
     @Override
     public void visit(Script node) {
+        boolean oldInside = insideScript;
         if (!(node.getEvent() instanceof Never)) {
             insideScript = true;
         }
-        super.visit(node);
-        insideScript = false;
+        visitChildren(node);
+        insideScript = oldInside;
     }
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        if (insideScript && !alreadyFound) {
-            alreadyFound = true;
-            addIssue(node, node.getMetadata());
-        }
+        checkLoopFix(node);
+        loopDepth++;
+        visitChildren(node);
+        loopDepth--;
     }
 
     @Override
     public void visit(UntilStmt node) {
-        if (insideScript && !alreadyFound) {
-            alreadyFound = true;
-            addIssue(node, node.getMetadata());
-        }
+        checkLoopFix(node);
+        loopDepth++;
+        visitChildren(node);
+        loopDepth--;
     }
 
     @Override
     public void visit(RepeatTimesStmt node) {
-        if (insideScript && !alreadyFound) {
-            alreadyFound = true;
-            addIssue(node, node.getMetadata());
+        checkLoopFix(node);
+        loopDepth++;
+        visitChildren(node);
+        loopDepth--;
+    }
+
+    /**
+     * Check if this loop is the target and is now fixed.
+     * Fixed means: still in a script but no longer nested inside another loop.
+     */
+    private void checkLoopFix(LoopStmt node) {
+        if (matchesBugLocation(node) && insideScript && loopDepth == 0) {
+            // The loop exists, is inside a working script, and is NOT nested
+            addFix(node, node.getMetadata());
         }
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    public IssueType getIssueType() {
-        return IssueType.FIX;
     }
 }

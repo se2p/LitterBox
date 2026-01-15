@@ -23,15 +23,16 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.io.File;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Isolated
 class JSONFileCreatorTest implements JsonTest {
 
     @TempDir
@@ -41,7 +42,7 @@ class JSONFileCreatorTest implements JsonTest {
     void testWriteJsonFromProgramWithDirectory() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         JSONFileCreator.writeJsonFromProgram(program, tempDir, "_test");
-        
+
         Path expectedFile = tempDir.resolve("emptyProject_test.json");
         assertTrue(Files.exists(expectedFile), "File should be created in the directory with default name");
     }
@@ -50,9 +51,9 @@ class JSONFileCreatorTest implements JsonTest {
     void testWriteJsonFromProgramWithFilePath() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         Path specificFile = tempDir.resolve("SpecificName.json");
-        
+
         JSONFileCreator.writeJsonFromProgram(program, specificFile, "_ignored");
-        
+
         assertTrue(Files.exists(specificFile), "File should be created at the specific path");
         // Ensure the default file was NOT created
         Path defaultFile = tempDir.resolve("emptyProject_ignored.json");
@@ -63,9 +64,9 @@ class JSONFileCreatorTest implements JsonTest {
     void testWriteJsonFromProgramWithNonExistentDirectory() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         Path nonExistentDir = tempDir.resolve("nonExistentDir");
-        
+
         JSONFileCreator.writeJsonFromProgram(program, nonExistentDir, "_test");
-        
+
         Path expectedFile = nonExistentDir.resolve("emptyProject_test.json");
         assertTrue(Files.exists(expectedFile), "File should be created in the new directory");
     }
@@ -74,9 +75,9 @@ class JSONFileCreatorTest implements JsonTest {
     void testWriteSb3FromProgramWithDirectory() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         File sourceSb3 = new File("src/test/fixtures/emptyProject.sb3");
-        
+
         JSONFileCreator.writeSb3FromProgram(program, tempDir, sourceSb3, "_test");
-        
+
         Path expectedFile = tempDir.resolve("emptyProject_test.sb3");
         assertTrue(Files.exists(expectedFile), "SB3 file should be created in the directory with default name");
     }
@@ -86,9 +87,9 @@ class JSONFileCreatorTest implements JsonTest {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         File sourceSb3 = new File("src/test/fixtures/emptyProject.sb3");
         Path specificFile = tempDir.resolve("SpecificName.sb3");
-        
+
         JSONFileCreator.writeSb3FromProgram(program, specificFile, sourceSb3, "_ignored");
-        
+
         assertTrue(Files.exists(specificFile), "SB3 file should be created at the specific path");
         // Ensure the default file was NOT created
         Path defaultFile = tempDir.resolve("emptyProject_ignored.sb3");
@@ -100,9 +101,9 @@ class JSONFileCreatorTest implements JsonTest {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         File sourceSb3 = new File("src/test/fixtures/emptyProject.sb3");
         Path nonExistentDir = tempDir.resolve("nonExistentDir");
-        
+
         JSONFileCreator.writeSb3FromProgram(program, nonExistentDir, sourceSb3, "_test");
-        
+
         Path expectedFile = nonExistentDir.resolve("emptyProject_test.sb3");
         assertTrue(Files.exists(expectedFile), "SB3 file should be created in the new directory");
     }
@@ -112,7 +113,7 @@ class JSONFileCreatorTest implements JsonTest {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         Path existingFile = tempDir.resolve("Existing.json");
         Files.createFile(existingFile);
-        
+
         assertThrows(IOException.class, () -> {
             JSONFileCreator.writeJsonFromProgram(program, existingFile, "_ignored");
         });
@@ -124,7 +125,7 @@ class JSONFileCreatorTest implements JsonTest {
         File sourceSb3 = new File("src/test/fixtures/emptyProject.sb3");
         Path existingFile = tempDir.resolve("Existing.sb3");
         Files.createFile(existingFile);
-        
+
         assertThrows(IOException.class, () -> {
             JSONFileCreator.writeSb3FromProgram(program, existingFile, sourceSb3, "_ignored");
         });

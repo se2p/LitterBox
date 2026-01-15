@@ -25,7 +25,7 @@ import java.util.Objects;
 
 public class Variable implements Defineable {
 
-    private Identifier identifier;
+    private final Identifier identifier;
 
     public Variable(Identifier identifier) {
         this.identifier = identifier;
@@ -55,6 +55,9 @@ public class Variable implements Defineable {
 
     @Override
     public int hashCode() {
+        if (identifier instanceof Qualified q) {
+            return Objects.hash(q.getFirst(), q.getSecond().getName());
+        }
         return Objects.hash(identifier);
     }
 

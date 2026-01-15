@@ -18,20 +18,5 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
-public class IdJsonStringTuple {
-    private String id;
-    private String jsonString;
-
-    public IdJsonStringTuple(String id, String jsonString) {
-        this.id = id;
-        this.jsonString = jsonString;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getJsonString() {
-        return jsonString;
-    }
+public record IdJsonStringTuple(String id, String jsonString) {
 }

@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.scratchblocks;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
@@ -37,9 +36,7 @@ import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -100,14 +97,11 @@ public class ScratchBlocksParser {
     }
 
     public ActorContent parseActorContent(final String scratchBlocksCode, String actorName) {
-        ParentVisitor visitor = new ParentVisitor();
         if (scratchBlocksCode.isBlank()) {
-            Script script = new Script(new Never(), new StmtList());
-            script.accept(visitor);
-            List<Script> scripts = new ArrayList<>();
-            scripts.add(script);
-            ScriptList scriptList = new ScriptList(scripts);
-            return new ActorContent(scriptList, new ProcedureDefinitionList(Collections.emptyList()));
+            return new ActorContent(
+                    new ScriptList(Collections.emptyList()),
+                    new ProcedureDefinitionList(Collections.emptyList())
+            );
         }
 
         final de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksParser parser = buildParser(
@@ -143,12 +137,11 @@ public class ScratchBlocksParser {
     public Script parseScript(
             final String actorName, final String scratchBlocksCode, final AtomicBoolean cancelMarker
     ) {
-        ParentVisitor visitor = new ParentVisitor();
         if (scratchBlocksCode.isBlank()) {
-            Script script = new Script(new Never(), new StmtList());
-            script.accept(visitor);
-            return script;
+            return null;
         }
+
+        ParentVisitor visitor = new ParentVisitor();
 
         final de.uni_passau.fim.se2.litterbox.generated.ScratchBlocksParser parser = buildParser(
                 cancelMarker, scratchBlocksCode

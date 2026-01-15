@@ -23,11 +23,10 @@ import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.cfg.DataflowFact;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DataflowAnalysis<T extends DataflowFact> {
 
-    private ControlFlowGraph cfg;
+    private final ControlFlowGraph cfg;
 
     private TransferFunction<T> transferFunction;
 
@@ -36,10 +35,10 @@ public class DataflowAnalysis<T extends DataflowFact> {
     private JoinFunction<T> joinFunction;
 
     // The facts that are known about this node
-    private Map<CFGNode, Set<T>> dataflowFacts = new LinkedHashMap<>();
+    private final Map<CFGNode, Set<T>> dataflowFacts = new LinkedHashMap<>();
 
     // Store the last known value calculated for the out set to ensure fixpoint iteration
-    private Map<CFGNode, Set<T>> outFacts = new LinkedHashMap<>();
+    private final Map<CFGNode, Set<T>> outFacts = new LinkedHashMap<>();
 
     public DataflowAnalysis(ControlFlowGraph cfg) {
         this.cfg = cfg;
@@ -59,7 +58,14 @@ public class DataflowAnalysis<T extends DataflowFact> {
     // Must backward: intersection of facts of predecessor
     private Set<T> in(CFGNode node) {
         Set<CFGNode> inNodes = flowDirection.getInNodes(cfg, node);
-        return joinFunction.apply(inNodes.stream().map(n -> outFacts.get(n)).collect(Collectors.toSet()));
+        List<CFGNode> sortedInNodes = new ArrayList<>(inNodes);
+        sortedInNodes.sort(Comparator.comparingInt(CFGNode::getId));
+
+        Set<Set<T>> inputFacts = new LinkedHashSet<>();
+        for (CFGNode n : sortedInNodes) {
+            inputFacts.add(outFacts.get(n));
+        }
+        return joinFunction.apply(inputFacts);
     }
 
     //For “all paths” problems, first guess is “everything” (set of all possible values)
@@ -87,7 +93,10 @@ public class DataflowAnalysis<T extends DataflowFact> {
     public void applyAnalysis() {
         outFacts.putAll(dataflowFacts); // TODO: Is this correct?
         final Deque<CFGNode> workList = new ArrayDeque<>();
-        flowDirection.getInitialNodes(cfg).forEach(workList::add);
+        List<CFGNode> initialNodes = new ArrayList<>();
+        flowDirection.getInitialNodes(cfg).forEach(initialNodes::add);
+        initialNodes.sort(Comparator.comparingInt(CFGNode::getId));
+        initialNodes.forEach(workList::add);
 
         while (!workList.isEmpty()) {
             final CFGNode node = workList.poll();
@@ -99,7 +108,10 @@ public class DataflowAnalysis<T extends DataflowFact> {
 
             if (!lastOut.equals(newOut)) {
                 outFacts.put(node, newOut);
-                workList.addAll(flowDirection.getOutNodes(cfg, node));
+                List<CFGNode> outNodes = new ArrayList<>();
+                flowDirection.getOutNodes(cfg, node).forEach(outNodes::add);
+                outNodes.sort(Comparator.comparingInt(CFGNode::getId));
+                workList.addAll(outNodes);
             }
         }
     }

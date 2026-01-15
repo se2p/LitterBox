@@ -58,7 +58,7 @@ public class NestedLoops extends AbstractIssueFinder {
                 (stmts.getFirst() instanceof UntilStmt)
                         || (stmts.getFirst() instanceof RepeatTimesStmt)
                         || (stmts.getFirst() instanceof RepeatForeverStmt)
-                );
+        );
     }
 
     @Override
@@ -85,9 +85,7 @@ public class NestedLoops extends AbstractIssueFinder {
 
         if (other.getFinder() instanceof UnnecessaryLoop) {
             // if the outer loop is unnecessary solving that problem solves the nested loop problem
-            if (theIssue.getCodeLocation().equals(other.getCodeLocation())) {
-                return true;
-            }
+            return theIssue.getCodeLocation().equals(other.getCodeLocation());
         }
 
         return false;

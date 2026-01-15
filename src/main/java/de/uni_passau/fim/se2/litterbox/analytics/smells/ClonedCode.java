@@ -27,13 +27,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 abstract class ClonedCode extends AbstractIssueFinder {
 
-    private CodeClone.CloneType targetType;
+    private final CodeClone.CloneType targetType;
 
-    private String hintName;
+    private final String hintName;
 
     protected ClonedCode(CodeClone.CloneType targetType, String hintName) {
         this.targetType = targetType;

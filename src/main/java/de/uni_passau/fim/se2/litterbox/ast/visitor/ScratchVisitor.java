@@ -41,6 +41,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoSensingBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -3477,6 +3478,10 @@ public interface ScratchVisitor {
     }
 
     default void visit(TranslateBlock node) {
+        visit((ExtensionBlock) node);
+    }
+
+    default void visit(VideoSensingBlock node) {
         visit((ExtensionBlock) node);
     }
 }

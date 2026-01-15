@@ -45,5 +45,4 @@ public class PenBlockCount<T extends ASTNode> implements MetricExtractor<T>, Scr
     public String getName() {
         return NAME;
     }
-
 }

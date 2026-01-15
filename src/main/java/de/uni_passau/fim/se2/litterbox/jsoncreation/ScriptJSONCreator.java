@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
@@ -82,13 +83,13 @@ public class ScriptJSONCreator {
                 } else {
                     IdJsonStringTuple tuple = exprCreator.createExpressionJSON(meta.getBlockId(),
                             numExpr, symbol);
-                    if (tuple.getId() == null) {
+                    if (tuple.id() == null) {
                         StringBuilder inputString = new StringBuilder();
-                        createField(inputString, VALUE_KEY).append(tuple.getJsonString());
+                        createField(inputString, VALUE_KEY).append(tuple.jsonString());
                         inputs.add(inputString.toString());
                     } else {
-                        inputs.add(createReferenceJSON(tuple.getId(), VALUE_KEY, true));
-                        jsonString.append(tuple.getJsonString()).append(",");
+                        inputs.add(createReferenceJSON(tuple.id(), VALUE_KEY, true));
+                        jsonString.append(tuple.jsonString()).append(",");
                     }
                 }
 
@@ -96,6 +97,35 @@ public class ScriptJSONCreator {
                 String fields = createFields(WHEN_GREATER_THAN_MENU, attribute, null);
                 jsonString.append(createBlockWithoutMutationString(meta, nextId, null, createInputs(inputs),
                         fields, attributeAboveValue.getOpcode()));
+            } else if (event instanceof WhenVideoMotionGreaterThan videoMotion) {
+                TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) videoMotion.getMetadata();
+                blockId = meta.getBlockId();
+
+                List<String> inputs = new ArrayList<>();
+                NumExpr numExpr = videoMotion.getReference();
+                if (numExpr instanceof UnspecifiedNumExpr) {
+                    inputs.add(createTypeInputWithName(REFERENCE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE, ""));
+                } else if (numExpr instanceof NumberLiteral numberLiteral) {
+                    NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
+                    format.setGroupingUsed(false);
+                    format.setMinimumFractionDigits(0);
+                    inputs.add(createTypeInputWithName(REFERENCE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
+                            format.format(numberLiteral.getValue())));
+                } else {
+                    IdJsonStringTuple tuple = exprCreator.createExpressionJSON(meta.getBlockId(),
+                            numExpr, symbol);
+                    if (tuple.id() == null) {
+                        StringBuilder inputString = new StringBuilder();
+                        createField(inputString, REFERENCE_KEY).append(tuple.jsonString());
+                        inputs.add(inputString.toString());
+                    } else {
+                        inputs.add(createReferenceJSON(tuple.id(), REFERENCE_KEY, true));
+                        jsonString.append(tuple.jsonString()).append(",");
+                    }
+                }
+
+                jsonString.append(createBlockWithoutMutationString(meta, nextId, null, createInputs(inputs),
+                        EMPTY_VALUE, videoMotion.getOpcode()));
             } else if (event instanceof BackdropSwitchTo backdropSwitchTo) {
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) backdropSwitchTo.getMetadata();
                 blockId = meta.getBlockId();
@@ -156,8 +186,11 @@ public class ScriptJSONCreator {
             if (!script.getStmtList().getStmts().isEmpty()) {
                 assert blockId != null;
                 stmtListJSONCreator = new StmtListJSONCreator(blockId, stmtList, symbol);
-                jsonString.append(",");
-                jsonString.append(stmtListJSONCreator.createStmtListJSONString());
+                String stmtListJson = stmtListJSONCreator.createStmtListJSONString();
+                if (!stmtListJson.isEmpty()) {
+                    jsonString.append(",");
+                    jsonString.append(stmtListJson);
+                }
             }
         }
         return jsonString.toString();

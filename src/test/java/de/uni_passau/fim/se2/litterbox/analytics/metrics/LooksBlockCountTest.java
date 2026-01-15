@@ -30,4 +30,14 @@ public class LooksBlockCountTest implements JsonTest {
     public void testAll() throws IOException, ParsingException {
         assertThatMetricReports(21, new LooksBlockCount<>(), "./src/test/fixtures/metrics/allLooksBlocks.json");
     }
+
+    @Test
+    public void testAverageAll() throws IOException, ParsingException {
+        assertThatMetricReports(1, new LooksBlockCount<>(true), "./src/test/fixtures/metrics/allLooksBlocks.json");
+    }
+
+    @Test
+    public void testAverageTotal() throws IOException, ParsingException {
+        assertThatMetricReportsWithin(0.166666666, 1e-4, new LooksBlockCount<>(true), "./src/test/fixtures/allBlocks.json");
+    }
 }

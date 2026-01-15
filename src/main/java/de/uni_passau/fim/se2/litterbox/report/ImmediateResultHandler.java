@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-
-
 public class ImmediateResultHandler implements AnalysisResultHandler {
 
     private static final Logger log = Logger.getLogger(ImmediateResultHandler.class.getName());
@@ -41,14 +39,12 @@ public class ImmediateResultHandler implements AnalysisResultHandler {
     private final Path output;
     private final boolean outputPerScript;
     private final List<String> detectorNames;
-    private final Path priorResultPath;
 
     public ImmediateResultHandler(IssueTranslator translator, Path output, String detectors,
-                                  boolean outputPerScript, Path priorResultPath) {
+                                  boolean outputPerScript) {
         this.translator = translator;
         this.output = output;
         this.outputPerScript = outputPerScript;
-        this.priorResultPath = priorResultPath;
         this.detectorNames = IssueTool.getFinders(detectors).stream().map(IssueFinder::getName).toList();
     }
 
@@ -60,9 +56,6 @@ public class ImmediateResultHandler implements AnalysisResultHandler {
     @Override
     public void handleResult(Path projectFile, Program program, Set<Issue> result) {
         List<String> detectorsToWrite = new ArrayList<>(detectorNames);
-        if (priorResultPath != null) {
-            detectorsToWrite.addAll(IssueTool.generateFixHeuristicsNames());
-        }
         try {
             if (output == null) {
                 ConsoleReportGenerator reportGenerator = new ConsoleReportGenerator(detectorsToWrite);

@@ -67,6 +67,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.languag
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.language.FixedLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.ExprVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.voice.FixedVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
@@ -103,6 +107,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.ProcedureOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.util.KeyValueTranslator;
+import de.uni_passau.fim.se2.litterbox.ast.util.NumberUtil;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 
@@ -129,7 +134,7 @@ import java.util.*;
  * [/scratchblocks]
  */
 public class ScratchBlocksVisitor extends PrintVisitor implements
-        PenExtensionVisitor, TextToSpeechExtensionVisitor, MBlockVisitor, MusicExtensionVisitor {
+        PenExtensionVisitor, TextToSpeechExtensionVisitor, MBlockVisitor, MusicExtensionVisitor, VideoSensingExtensionVisitor {
 
     private static final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
 
@@ -476,6 +481,45 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     @Override
     public void visit(StopThisScript node) {
         emitNoSpace("stop [this script v]");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    //---------------------------------------------------------------
+    // Video Sensing blocks
+
+    @Override
+    public void visit(WhenVideoMotionGreaterThan node) {
+        emitNoSpace("when video motion > ");
+        node.getReference().accept(this);
+        emitNoSpace(" :: video");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(VideoOn node) {
+        emitNoSpace("(video [");
+        emitNoSpace(node.getAttribute());
+        emitNoSpace(" v] on [");
+        emitNoSpace(node.getSubject());
+        emitNoSpace(" v] :: video)");
+    }
+
+    @Override
+    public void visit(TurnVideo node) {
+        emitNoSpace("turn video [");
+        emitNoSpace(node.getVideoState());
+        emitNoSpace(" v] :: video");
+        storeNotesForIssue(node);
+        newLine();
+    }
+
+    @Override
+    public void visit(SetVideoTransparency node) {
+        emitNoSpace("set video transparency to ");
+        node.getTransparency().accept(this);
+        emitNoSpace(" :: video");
         storeNotesForIssue(node);
         newLine();
     }
@@ -1028,7 +1072,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     @Override
     public void visit(ChangePenColorParamBy node) {
         emitNoSpace("change pen ");
-        node.getParam().accept((PenExtensionVisitor) this);
+        node.getParam().accept(this);
         emitNoSpace(" by ");
         node.getValue().accept(this);
         storeNotesForIssue(node);
@@ -1038,7 +1082,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     @Override
     public void visit(SetPenColorParamTo node) {
         emitNoSpace("set pen ");
-        node.getParam().accept((PenExtensionVisitor) this);
+        node.getParam().accept(this);
         emitNoSpace(" to ");
         node.getValue().accept(this);
         storeNotesForIssue(node);
@@ -1131,7 +1175,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     @Override
     public void visit(SetLanguage node) {
         emitNoSpace("set language to ");
-        node.getLanguage().accept((TextToSpeechExtensionVisitor) this);
+        node.getLanguage().accept(this);
         storeNotesForIssue(node);
         emitNoSpace(" :: tts");
         newLine();
@@ -1140,7 +1184,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     @Override
     public void visit(SetVoice node) {
         emitNoSpace("set voice to ");
-        node.getVoice().accept((TextToSpeechExtensionVisitor) this);
+        node.getVoice().accept(this);
         storeNotesForIssue(node);
         emitNoSpace(" :: tts");
         newLine();
@@ -1425,6 +1469,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
             return;
         }
         node.getName().accept(this);
+        if (NumberUtil.isNumberLike(node.getName().getName())) {
+            emitNoSpace(" :: list");
+        }
         storeNotesForIssue(node);
     }
 
@@ -1434,6 +1481,9 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
             return;
         }
         node.getName().accept(this);
+        if (NumberUtil.isNumberLike(node.getName().getName())) {
+            emitNoSpace(" :: variables");
+        }
         storeNotesForIssue(node);
     }
 
@@ -1973,12 +2023,27 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         String procedureName = node.getIdent().getName();
         procedureName = escapeBrackets(procedureName);
         List<Expression> parameters = node.getExpressions().getExpressions();
-        for (Expression param : parameters) {
+        for (int i = 0; i < parameters.size(); i++) {
+            Expression param = parameters.get(i);
             int nextIndex = procedureName.indexOf('%');
+            // Guard: if no more placeholders, append remaining params and break
+            if (nextIndex == -1) {
+                StringBuilder remaining = new StringBuilder(procedureName);
+                remaining.append(" ");
+                for (int j = i; j < parameters.size(); j++) {
+                    remaining.append(getParameterName(parameters.get(j)));
+                    if (j < parameters.size() - 1) {
+                        remaining.append(" ");
+                    }
+                }
+                procedureName = remaining.toString();
+                break;
+            }
             procedureName = procedureName.substring(0, nextIndex)
                     + getParameterName(param)
                     + procedureName.substring(nextIndex + 2);
         }
+
         if (procedureName.startsWith("+") || procedureName.startsWith("-")) {
             procedureName = "\\" + procedureName;
         }
@@ -2043,7 +2108,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         for (Issue issue : issues) {
             if (issue.isCodeLocation(node)) {
                 if (!hasIssue) {
-                    if (issue.getIssueType() == IssueType.PERFUME) {
+                    if (issue.getIssueType() == IssueType.PERFUME || issue.getIssueType() == IssueType.FIX) {
                         emitNoSpace(" :: #167700");
                     } else {
                         emitNoSpace(" :: #ff0000");
@@ -2051,7 +2116,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                 }
                 hasIssue = true;
                 if (!issue.hasMultipleBlocks()) {
-                    if (issue.getIssueType() == IssueType.PERFUME) {
+                    if (issue.getIssueType() == IssueType.PERFUME || issue.getIssueType() == IssueType.FIX) {
                         issueNote.add(PERFUME_NOTE);
                     } else if (issue.getIssueType() == IssueType.QUESTION) {
                         issueNote.add(QUESTION_NOTE);
@@ -2061,7 +2126,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                 } else {
                     List<ASTNode> nodes = ((MultiBlockIssue) issue).getNodes();
                     if (node == (nodes.getFirst())) {
-                        if (issue.getIssueType() == IssueType.PERFUME) {
+                        if (issue.getIssueType() == IssueType.PERFUME || issue.getIssueType() == IssueType.FIX) {
                             issueNote.add(PERFUME_NOTE);
                         } else if (issue.getIssueType() == IssueType.QUESTION) {
                             issueNote.add(QUESTION_NOTE);
@@ -3276,7 +3341,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     @Override
     public void visit(PlayNoteForBeats node) {
         emitNoSpace("play note ");
-        node.getNote().accept((MusicExtensionVisitor) this);
+        node.getNote().accept(this);
         emitNoSpace(" for ");
         node.getBeats().accept(this);
         emitNoSpace("beats");
@@ -3287,7 +3352,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     @Override
     public void visit(PlayDrumForBeats node) {
         emitNoSpace("play drum ");
-        node.getDrum().accept((MusicExtensionVisitor) this);
+        node.getDrum().accept(this);
         emitNoSpace(" for ");
         node.getBeats().accept(this);
         emitNoSpace("beats");
@@ -3298,7 +3363,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     @Override
     public void visit(SetInstrumentTo node) {
         emitNoSpace("set instrument to ");
-        node.getInstrument().accept((MusicExtensionVisitor) this);
+        node.getInstrument().accept(this);
         storeNotesForIssue(node);
         newLine();
     }

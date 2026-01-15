@@ -92,5 +92,4 @@ public class MissingPenDown extends AbstractIssueFinder implements PenExtensionV
             addIssue(node, node.getMetadata(), IssueSeverity.MEDIUM);
         }
     }
-
 }

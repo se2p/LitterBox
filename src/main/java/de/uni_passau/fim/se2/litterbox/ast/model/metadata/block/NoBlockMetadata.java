@@ -26,6 +26,16 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 public class NoBlockMetadata extends AbstractNode implements BlockMetadata {
 
     @Override
+    public String getBlockId() {
+        return null;
+    }
+
+    @Override
+    public String getCommentId() {
+        return null;
+    }
+
+    @Override
     public void accept(ScratchVisitor visitor) {
         visitor.visit(this);
     }

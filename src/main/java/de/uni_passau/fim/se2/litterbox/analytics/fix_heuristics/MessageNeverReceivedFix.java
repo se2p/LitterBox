@@ -18,55 +18,68 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.bugs.MessageNeverReceived;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
-import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 
 import java.util.*;
 
-public class MessageNeverReceivedFix extends AbstractIssueFinder {
-    public static final String NAME = "message_never_received_fix";
-    private final String bugLocationBlockId;
+/**
+ * Fix heuristic for the MessageNeverReceived bug.
+ *
+ * <p>The bug is reported when a broadcast is sent but never received.
+ * The bug is fixed if the message is now received.
+ */
+public class MessageNeverReceivedFix extends AbstractFixHeuristic {
     private String message = null;
     private Map<String, Map<ActorDefinition, List<Script>>> actorScriptsPerMessage;
+    private ASTNode buggyBroadcast;
 
-    public MessageNeverReceivedFix(String bugLocationBlockId) {
-        this.bugLocationBlockId = bugLocationBlockId;
+    private final MessageNeverReceived relatedBugFinder = new MessageNeverReceived();
+
+    public MessageNeverReceivedFix(IssueDTO originalIssue) {
+        super(originalIssue);
     }
 
     @Override
-    public Set<Issue> check(Program program) {
-        Preconditions.checkNotNull(program);
-        this.program = program;
-        issues = new LinkedHashSet<>();
-        actorScriptsPerMessage = new LinkedHashMap<>();
-        program.accept(this);
+    protected IssueFinder getRelatedBugFinder() {
+        return relatedBugFinder;
+    }
 
-        if (message != null) {
-            Map<ActorDefinition, List<Script>> actorEvents = actorScriptsPerMessage.get(message);
-            if (actorEvents != null) {
-                Map.Entry<ActorDefinition, List<Script>> entry = actorEvents.entrySet().iterator().next();
-                ActorDefinition actor = entry.getKey();
-                List<Script> scripts = entry.getValue();
-                currentActor = actor;
-                Script script = scripts.getFirst();
-                currentScript = script;
-                addIssue(script.getEvent(), script.getEvent().getMetadata());
+    @Override
+    protected void resetState() {
+        message = null;
+        actorScriptsPerMessage = new LinkedHashMap<>();
+        buggyBroadcast = null;
+    }
+
+    @Override
+    public Set<FixResult> check(Program program) {
+        Set<FixResult> results = super.check(program);
+        if (!results.isEmpty()) {
+            return results;
+        }
+
+        if (buggyBroadcast != null && message != null) {
+            if (actorScriptsPerMessage.containsKey(message)) {
+                addFix(buggyBroadcast, buggyBroadcast.getMetadata());
             }
         }
-        return Collections.unmodifiableSet(issues);
+        return Collections.unmodifiableSet(fixes);
     }
 
     @Override
     public void visit(Broadcast node) {
-        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
+        if (matchesBugLocation(node)) {
+            buggyBroadcast = node;
             if (node.getMessage().getMessage() instanceof StringLiteral text) {
                 message = text.getText();
             }
@@ -77,7 +90,8 @@ public class MessageNeverReceivedFix extends AbstractIssueFinder {
 
     @Override
     public void visit(BroadcastAndWait node) {
-        if (AstNodeUtil.hasBlockId(node, bugLocationBlockId)) {
+        if (matchesBugLocation(node)) {
+            buggyBroadcast = node;
             if (node.getMessage().getMessage() instanceof StringLiteral text) {
                 message = text.getText();
             }
@@ -88,43 +102,26 @@ public class MessageNeverReceivedFix extends AbstractIssueFinder {
 
     @Override
     public void visit(ReceptionOfMessage node) {
-
         if (node.getMsg().getMessage() instanceof StringLiteral text) {
-            if (scriptNotEmpty(node.getParentNode())) {
-                if (actorScriptsPerMessage.containsKey(text.getText())) {
-                    Map<ActorDefinition, List<Script>> actorScripts = actorScriptsPerMessage.get(text.getText());
-                    if (actorScripts.containsKey(currentActor)) {
-                        actorScripts.get(currentActor).add(currentScript);
-                    } else {
-                        List<Script> scripts = new ArrayList<>();
-                        scripts.add(currentScript);
-                        actorScripts.put(currentActor, scripts);
-                    }
+            String msg = text.getText();
+            if (actorScriptsPerMessage.containsKey(msg)) {
+                Map<ActorDefinition, List<Script>> actorScripts = actorScriptsPerMessage.get(msg);
+                if (actorScripts.containsKey(currentActor)) {
+                    actorScripts.get(currentActor).add(currentScript);
                 } else {
                     List<Script> scripts = new ArrayList<>();
                     scripts.add(currentScript);
-                    Map<ActorDefinition, List<Script>> actorScripts = new LinkedHashMap<>();
                     actorScripts.put(currentActor, scripts);
-                    actorScriptsPerMessage.put(text.getText(), actorScripts);
                 }
+            } else {
+                List<Script> scripts = new ArrayList<>();
+                scripts.add(currentScript);
+                Map<ActorDefinition, List<Script>> actorScripts = new LinkedHashMap<>();
+                actorScripts.put(currentActor, scripts);
+                actorScriptsPerMessage.put(msg, actorScripts);
             }
         }
 
         visitChildren(node);
-    }
-
-    private boolean scriptNotEmpty(ASTNode parentNode) {
-        assert (parentNode instanceof Script);
-        return ((Script) parentNode).getStmtList().hasStatements();
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
-    }
-
-    @Override
-    public IssueType getIssueType() {
-        return IssueType.FIX;
     }
 }

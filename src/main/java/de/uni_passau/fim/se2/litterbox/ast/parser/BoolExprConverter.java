@@ -20,11 +20,10 @@ package de.uni_passau.fim.se2.litterbox.ast.parser;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Key;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.*;
@@ -236,23 +235,19 @@ final class BoolExprConverter extends ExprConverter {
             final KnownInputs inputKey
     ) {
         final RawInput rawInput = containingBlock.getInput(inputKey);
-        final NumExpr input = NumExprConverter.convertNumExpr(state, containingBlock, rawInput);
 
-        // note: order of if/else-if chain important, since AsNumber is a subclass of the other ones
-        if (input instanceof AsNumber number) {
-            if (number.getOperand1() instanceof StringExpr op1) {
-                return op1;
-            } else if (number.getOperand1() instanceof ComparableExpr op1) {
-                return op1;
-            } else {
-                return new AsString(number.getOperand1());
-            }
-        } else if (input instanceof UnspecifiedNumExpr) {
+        if (NumExprConverter.parseableAsNumExpr(state.getCurrentTarget(), rawInput)) {
+            return NumExprConverter.convertNumExpr(state, containingBlock, rawInput);
+        } else if (StringExprConverter.parseableAsStringExpr(state.getCurrentTarget(), rawInput)) {
             return StringExprConverter.convertStringExpr(state, containingBlock, rawInput);
-        } else if (input != null) {
-            return input;
         }
 
-        throw new InternalParsingException("Could not convert to ComparableExpression.");
+        final Expression input = ExprConverter.convertExpr(state, containingBlock, rawInput);
+
+        if (input instanceof ComparableExpr comparableExpr) {
+            return comparableExpr;
+        }
+
+        return new AsNumber(input);
     }
 }

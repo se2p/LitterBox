@@ -75,7 +75,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(UntilStmt node) {
-        if (!checkingVariable && !visitOuter) {
+        if (!checkingVariable && !checkingStop && !visitOuter) {
             blockName = new HintPlaceholder.Translatable("until");
             inCondition = true;
             node.getBoolExpr().accept(this);
@@ -95,7 +95,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     @Override
     public void visit(IfElseStmt node) {
         if (!checkingVariable && !checkingStop && !visitOuter) {
-            if (insideForever) {
+            if (insideForever || insideControl) {
                 blockName = new HintPlaceholder.ValueWithTranslatableElements("{{if}} < > {{then}} {{else}}");
                 inCondition = true;
                 node.getBoolExpr().accept(this);
@@ -106,12 +106,16 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
                 inCondition = false;
                 checkForStop(node.getThenStmts());
                 checkForStop(node.getElseStmts());
+                boolean wasInsideControl = insideControl;
                 insideControl = true;
                 node.getThenStmts().accept(this);
                 node.getElseStmts().accept(this);
-                insideControl = false;
+                insideControl = wasInsideControl;
                 sensingCollision = false;
                 sensingOther = false;
+            } else {
+                // Still need to visit children to catch nested forever loops
+                visitChildren(node);
             }
         } else if (!hasStop && checkingStop && !visitOuter) {
             node.getThenStmts().accept(this);
@@ -128,7 +132,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IfThenStmt node) {
-        if (!checkingVariable && !checkingStop && insideForever && !visitOuter) {
+        if (!checkingVariable && !checkingStop && (insideForever || insideControl) && !visitOuter) {
             blockName = new HintPlaceholder.ValueWithTranslatableElements("{{if}} < > {{then}}");
             inCondition = true;
             node.getBoolExpr().accept(this);
@@ -137,11 +141,15 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
             }
             inCondition = false;
             checkForStop(node.getThenStmts());
+            boolean wasInsideControl = insideControl;
             insideControl = true;
             node.getThenStmts().accept(this);
-            insideControl = false;
+            insideControl = wasInsideControl;
             sensingCollision = false;
             sensingOther = false;
+        } else if (!checkingVariable && !checkingStop && !visitOuter) {
+            // Still need to visit children to catch nested forever loops
+            visitChildren(node);
         }
     }
 
@@ -178,6 +186,9 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
     public void visit(SetVariableTo node) {
         if (checkingVariable && node.getIdentifier().equals(variableName)) {
             sensingOther = false;
+        }
+        if (!checkingVariable && !checkingStop && !visitOuter) {
+            visitChildren(node);
         }
     }
 
@@ -231,7 +242,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("glide_secs_to"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
-        if (visitOuter) {
+        if (visitOuter && blockName != null) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("glide_secs_to"));
@@ -247,7 +258,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("glide_secs_to_xy"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
-        if (visitOuter) {
+        if (visitOuter && blockName != null) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("glide_secs_to_xy"));
@@ -257,13 +268,13 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(WaitSeconds node) {
-        if (!checkingVariable && !checkingStop && (insideControl && sensingOther)) {
+        if (!checkingVariable && !checkingStop && (insideControl && (sensingCollision || sensingOther))) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("wait_seconds"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
-        if (visitOuter) {
+        if (visitOuter && blockName != null) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("wait_seconds"));
@@ -273,13 +284,13 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(ThinkForSecs node) {
-        if (!checkingVariable && !checkingStop && (insideControl && sensingOther)) {
+        if (!checkingVariable && !checkingStop && (insideControl && (sensingCollision || sensingOther))) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("think_seconds"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
-        if (visitOuter) {
+        if (visitOuter && blockName != null) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("think_seconds"));
@@ -289,13 +300,13 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(PlaySoundUntilDone node) {
-        if (!checkingVariable && !checkingStop && (insideControl && sensingOther)) {
+        if (!checkingVariable && !checkingStop && (insideControl && (sensingCollision || sensingOther))) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("play_sound_until_done"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
-        if (visitOuter) {
+        if (visitOuter && blockName != null) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("play_sound_until_done"));
@@ -305,13 +316,13 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(SayForSecs node) {
-        if (!checkingVariable && !checkingStop && (insideControl && sensingOther)) {
+        if (!checkingVariable && !checkingStop && (insideControl && (sensingCollision || sensingOther))) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("say_seconds"));
             addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
-        if (visitOuter) {
+        if (visitOuter && blockName != null) {
             Hint hint = Hint.fromKey(getName());
             hint.setParameter(Hint.THEN_ELSE, blockName);
             hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("say_seconds"));
@@ -321,7 +332,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IsKeyPressed node) {
-        if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
+        if (!checkingVariable && !checkingStop && !visitOuter && (inCondition || insideControl || insideForever)) {
             sensingOther = true;
             visitOuterBlocks(node);
         }
@@ -339,7 +350,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(Touching node) {
-        if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
+        if (!checkingVariable && !checkingStop && !visitOuter && (inCondition || insideControl || insideForever)) {
             sensingCollision = true;
             visitOuterBlocks(node);
         }
@@ -347,7 +358,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(IsMouseDown node) {
-        if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
+        if (!checkingVariable && !checkingStop && !visitOuter && (inCondition || insideControl || insideForever)) {
             sensingOther = true;
             visitOuterBlocks(node);
         }
@@ -355,7 +366,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(ColorTouchingColor node) {
-        if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
+        if (!checkingVariable && !checkingStop && !visitOuter && (inCondition || insideControl || insideForever)) {
             sensingCollision = true;
             visitOuterBlocks(node);
         }
@@ -363,7 +374,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(SpriteTouchingColor node) {
-        if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
+        if (!checkingVariable && !checkingStop && !visitOuter && (inCondition || insideControl || insideForever)) {
             sensingCollision = true;
             visitOuterBlocks(node);
         }
@@ -371,7 +382,7 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(DistanceTo node) {
-        if (!checkingVariable && !checkingStop && inCondition && !visitOuter) {
+        if (!checkingVariable && !checkingStop && !visitOuter && (inCondition || insideControl || insideForever)) {
             sensingCollision = true;
         }
     }
