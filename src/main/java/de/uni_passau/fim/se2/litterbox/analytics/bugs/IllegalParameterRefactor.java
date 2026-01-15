@@ -19,34 +19,38 @@
 package de.uni_passau.fim.se2.litterbox.analytics.bugs;
 
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.AsBool;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.BooleanType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
-import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ArgumentInfo;
+
+import java.util.List;
+import java.util.Set;
 
 public class IllegalParameterRefactor extends AbstractIssueFinder {
     public static final String NAME = "illegal_parameter_refactor";
-    private ArgumentInfo[] currentArguments;
+    private List<ParameterDefinition> currentParameters;
     private boolean insideProcedure;
 
     @Override
-    public void visit(Script node) {
-        //NOP should not be detected in Scripts
+    public void visit(AsBool node) {
+        if (insideProcedure) {
+            checkBool(node);
+        }
+        visitChildren(node);
     }
 
-    private void checkBool(BoolExpr boolExpr) {
-        if (boolExpr instanceof AsBool asBool && asBool.getOperand1() instanceof Parameter ident) {
-            for (ArgumentInfo currentArgument : currentArguments) {
-                if (currentArgument.name().equals(ident.getName().getName())
-                        && !(currentArgument.type() instanceof BooleanType)) {
+    private void checkBool(AsBool asBool) {
+        if (asBool.getOperand1() instanceof Parameter ident) {
+            for (ParameterDefinition param : currentParameters) {
+                if (param.getIdent().getName().equals(ident.getName().getName())
+                        && !(param.getType() instanceof BooleanType)) {
                     addIssue(ident, ident.getMetadata(), IssueSeverity.MEDIUM);
                 }
             }
@@ -54,69 +58,21 @@ public class IllegalParameterRefactor extends AbstractIssueFinder {
     }
 
     @Override
+    public Set<Issue> check(Program program) {
+        return super.check(program);
+    }
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        super.visit(actor);
+    }
+
+    @Override
     public void visit(ProcedureDefinition node) {
         insideProcedure = true;
-        currentArguments = procMap.get(node.getIdent()).getArguments();
+        currentParameters = node.getParameterDefinitionList().getParameterDefinitions();
         super.visit(node);
         insideProcedure = false;
-    }
-
-    @Override
-    public void visit(IfElseStmt node) {
-        if (insideProcedure) {
-            checkBool(node.getBoolExpr());
-        }
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(IfThenStmt node) {
-        if (insideProcedure) {
-            checkBool(node.getBoolExpr());
-        }
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(WaitUntil node) {
-        if (insideProcedure) {
-            checkBool(node.getUntil());
-        }
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(UntilStmt node) {
-        if (insideProcedure) {
-            checkBool(node.getBoolExpr());
-        }
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(Not node) {
-        if (insideProcedure) {
-            checkBool(node.getOperand1());
-        }
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(And node) {
-        if (insideProcedure) {
-            checkBool(node.getOperand1());
-            checkBool(node.getOperand2());
-        }
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(Or node) {
-        if (insideProcedure) {
-            checkBool(node.getOperand1());
-            checkBool(node.getOperand2());
-        }
-        visitChildren(node);
     }
 
     @Override

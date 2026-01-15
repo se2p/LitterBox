@@ -58,8 +58,8 @@ public abstract class RepeatedSubsequenceFinder {
             int maxSequenceLength = (statements.size() - i) / minOccurrence;
 
             for (int sequenceLength = maxSequenceLength;
-                    sequenceLength > 0 && sequenceLength < statements.size() - i;
-                    sequenceLength--
+                 sequenceLength > 0 && sequenceLength < statements.size() - i;
+                 sequenceLength--
             ) {
                 List<Stmt> currentSequence = statements.subList(i, i + sequenceLength);
                 if (getSequenceLength(currentSequence) < minLength) {
@@ -111,5 +111,4 @@ public abstract class RepeatedSubsequenceFinder {
 
         return length;
     }
-
 }

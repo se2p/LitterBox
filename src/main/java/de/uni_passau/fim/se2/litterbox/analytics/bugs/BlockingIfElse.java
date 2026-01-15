@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 
@@ -73,8 +74,8 @@ public class BlockingIfElse extends AbstractIssueFinder {
         List<Stmt> stmts = node.getStmts();
         for (int i = 0; i < stmts.size(); i++) {
             if ((loopCounter > 0 || i < stmts.size() - 1) && stmts.get(i) instanceof IfElseStmt ifElse) {
-                if (searchSubStmtsForStop(ifElse.getThenStmts().getStmts())) {
-                    if (searchSubStmtsForStop(ifElse.getElseStmts().getStmts())) {
+                if (isBlocking(ifElse.getThenStmts().getStmts())) {
+                    if (isBlocking(ifElse.getElseStmts().getStmts())) {
                         Hint hint;
                         if (i < stmts.size() - 1) {
                             hint = Hint.fromKey(NAME);
@@ -89,22 +90,35 @@ public class BlockingIfElse extends AbstractIssueFinder {
         super.visit(node);
     }
 
-    private boolean searchSubStmtsForStop(List<Stmt> subStmts) {
+    /**
+     * Checks if a list of statements is "blocking", meaning execution cannot proceed past it.
+     * A list is blocking if it contains a terminal statement (stop, delete clone, forever loop)
+     * or an if-else statement where both branches block.
+     *
+     * @param subStmts The list of statements to check.
+     * @return true if the statements block execution.
+     */
+    public static boolean isBlocking(List<Stmt> subStmts) {
         if (subStmts.isEmpty()) {
             return false;
         }
-        if (subStmts.getLast() instanceof StopAll || subStmts.getLast() instanceof StopThisScript) {
-            return true;
-        }
+
         for (Stmt subStmt : subStmts) {
+            // Explicit terminal statements
+            if (subStmt instanceof StopAll || subStmt instanceof StopThisScript
+                    || subStmt instanceof DeleteClone || subStmt instanceof RepeatForeverStmt) {
+                return true;
+            }
+
+            // Recursive check for if-else: blocks if both branches block
             if (subStmt instanceof IfElseStmt ifElseStmt) {
-                if (searchSubStmtsForStop(ifElseStmt.getThenStmts().getStmts())) {
-                    if (searchSubStmtsForStop(ifElseStmt.getElseStmts().getStmts())) {
-                        return true;
-                    }
+                if (isBlocking(ifElseStmt.getThenStmts().getStmts())
+                        && isBlocking(ifElseStmt.getElseStmts().getStmts())) {
+                    return true;
                 }
             }
         }
+
         return false;
     }
 

@@ -21,7 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 public enum IssueSeverity {
     HIGH(3), MEDIUM(2), LOW(1);
 
-    private int numVal;
+    private final int numVal;
 
     IssueSeverity(int numVal) {
         this.numVal = numVal;

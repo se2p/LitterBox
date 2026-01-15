@@ -18,7 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.perfumes;
 
-import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.Issue;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.ReceptionOfMessage;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -113,10 +116,7 @@ public class CorrectBroadcast extends AbstractIssueFinder {
         if (first == other) {
             return false;
         }
-        if (first.getFinder() != other.getFinder()) {
-            return false;
-        }
-        return true;
+        return first.getFinder() == other.getFinder();
     }
 
     @Override

@@ -22,7 +22,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
-import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
@@ -37,26 +38,25 @@ import java.util.*;
 public class VariableInitializationRace extends AbstractIssueFinder {
 
     private static class InitializationInstance {
-        private Script script;
-        private CommonStmt statement;
+        private final Script script;
+        private final CommonStmt statement;
 
-        public InitializationInstance(Script script, CommonStmt commonStmt) {
+        InitializationInstance(Script script, CommonStmt statement) {
             this.script = script;
-            this.statement = commonStmt;
+            this.statement = statement;
         }
 
-        public Script getScript() {
+        Script script() {
             return script;
         }
 
-        public CommonStmt getStatement() {
+        CommonStmt statement() {
             return statement;
         }
     }
 
     private Map<Event, Map<Identifier, Set<InitializationInstance>>> variableMap = new LinkedHashMap<>();
     private Event currentEvent = null;
-
 
     @Override
     public Set<Issue> check(Program program) {
@@ -74,11 +74,11 @@ public class VariableInitializationRace extends AbstractIssueFinder {
         for (Event event : variableMap.keySet()) {
             for (Map.Entry<Identifier, Set<InitializationInstance>> entry : variableMap.get(event).entrySet()) {
                 Set<InitializationInstance> modifyingScripts = entry.getValue();
-                long numScripts = modifyingScripts.stream().map(InitializationInstance::getScript).map(System::identityHashCode).distinct().count();
+                long numScripts = modifyingScripts.stream().map(InitializationInstance::script).map(System::identityHashCode).distinct().count();
                 if (numScripts > 1) {
                     InitializationInstance instance = modifyingScripts.iterator().next();
-                    currentScript = instance.getScript();
-                    addIssue(instance.getStatement(), instance.getStatement().getMetadata(), IssueSeverity.HIGH);
+                    currentScript = instance.script();
+                    addIssue(instance.statement(), instance.statement().getMetadata(), IssueSeverity.HIGH);
                 }
             }
         }
@@ -118,7 +118,6 @@ public class VariableInitializationRace extends AbstractIssueFinder {
         Set<InitializationInstance> scriptSet = theMap.get(identifier);
         scriptSet.add(new InitializationInstance(currentScript, stmt));
     }
-
 
     @Override
     public void visit(SetVariableTo node) {

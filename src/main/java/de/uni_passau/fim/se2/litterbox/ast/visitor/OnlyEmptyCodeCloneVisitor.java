@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
-public class OnlyEmptyCodeCloneVisitor extends EmptyCloneVisitor{
+public class OnlyEmptyCodeCloneVisitor extends EmptyCloneVisitor {
 
     /**
      * Default implementation of visit method for ActorDefinition.

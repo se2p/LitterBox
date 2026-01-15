@@ -41,7 +41,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Think;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointTowards;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.BlockByIdFinder;
+import de.uni_passau.fim.se2.litterbox.ast.util.BlockIdNodeFinder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -49,9 +49,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LlmResponseParserTest implements JsonTest {
 
@@ -339,7 +337,7 @@ public class LlmResponseParserTest implements JsonTest {
         Program program = getAST("./src/test/fixtures/bugs/missingAsk.json");
 
         final LlmResponseParser parser = new LlmResponseParser();
-        final Script script = (Script) BlockByIdFinder.findBlock(program, "Z`w:F,*y_,WJPBw^$]b)")
+        final Script script = (Script) BlockIdNodeFinder.findNode(program, "Z`w:F,*y_,WJPBw^$]b)")
                 .orElseThrow()
                 .getParentNode();
 

@@ -62,8 +62,52 @@ public class KeySetPositionTest implements FinderTest, JsonTest {
         List<Issue> reports = new ArrayList<>(parameterName.check(illegalParameter));
         Assertions.assertEquals(8, reports.size());
         Hint hint = Hint.fromKey(parameterName.getName());
-        hint.setParameter("XY","x");
-        hint.setParameter(Hint.HINT_KEY,"right arrow");
-        Assertions.assertEquals(hint.getHintText(translator),reports.getFirst().getHintText(translator));
+        hint.setParameter("XY", "x");
+        hint.setParameter(Hint.HINT_KEY, "right arrow");
+        Assertions.assertEquals(hint.getHintText(translator), reports.getFirst().getHintText(translator));
+    }
+
+    // ==================== WASD Tests ====================
+
+    @Test
+    void testWASDPolling_CorrectUsage() throws IOException, ParsingException {
+        // ChangeYBy is correct usage - no bug
+        Program program = parseScratchBlocks("when green flag clicked\nforever\nif <key (w v) pressed?> then\nchange y by (10)\nend\nend\n");
+        Assertions.assertEquals(0, new KeySetPosition().check(program).size(), "ChangeYBy is correct, not a bug");
+    }
+
+    @Test
+    void testWEvent_CorrectUsage() throws IOException, ParsingException {
+        // ChangeYBy is correct usage - no bug
+        Program program = parseScratchBlocks("when [w v] key pressed\nchange y by (10)\n");
+        Assertions.assertEquals(0, new KeySetPosition().check(program).size(), "ChangeYBy is correct, not a bug");
+    }
+
+    @Test
+    void testAEvent_CorrectUsage() throws IOException, ParsingException {
+        // ChangeXBy is correct usage - no bug
+        Program program = parseScratchBlocks("when [a v] key pressed\nchange x by (-10)\n");
+        Assertions.assertEquals(0, new KeySetPosition().check(program).size(), "ChangeXBy is correct, not a bug");
+    }
+
+    @Test
+    void testSEvent_CorrectUsage() throws IOException, ParsingException {
+        // ChangeYBy is correct usage - no bug
+        Program program = parseScratchBlocks("when [s v] key pressed\nchange y by (-10)\n");
+        Assertions.assertEquals(0, new KeySetPosition().check(program).size(), "ChangeYBy is correct, not a bug");
+    }
+
+    @Test
+    void testDEvent_CorrectUsage() throws IOException, ParsingException {
+        // ChangeXBy is correct usage - no bug
+        Program program = parseScratchBlocks("when [d v] key pressed\nchange x by (10)\n");
+        Assertions.assertEquals(0, new KeySetPosition().check(program).size(), "ChangeXBy is correct, not a bug");
+    }
+
+    @Test
+    void testArrowEvent_CorrectUsage() throws IOException, ParsingException {
+        // ChangeYBy is correct usage - no bug
+        Program program = parseScratchBlocks("when [up arrow v] key pressed\nchange y by (10)\n");
+        Assertions.assertEquals(0, new KeySetPosition().check(program).size(), "ChangeYBy is correct, not a bug");
     }
 }

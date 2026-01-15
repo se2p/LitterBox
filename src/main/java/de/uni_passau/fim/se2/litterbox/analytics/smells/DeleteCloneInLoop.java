@@ -90,5 +90,4 @@ public class DeleteCloneInLoop extends AbstractIssueFinder {
     public void visit(ProcedureDefinition node) {
         // NOP as it shouldn't be detected in Procedures
     }
-
 }

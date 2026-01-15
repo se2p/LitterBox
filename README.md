@@ -230,6 +230,58 @@ To this end, Litterbox uses a multi-objective search-based approach to explore p
 refactorings that optimize code readability metrics such as size, complexity and entropy.
 The resulting set of refactored versions of the original project will be placed in `path/to/output-dir`.
 
+### Injecting bugs into projects
+
+LitterBox can automatically inject known bug patterns into Scratch projects. This is useful for explaining bugs, for
+creating test datasets or for studying bug fixes:
+
+```bash
+java -jar Litterbox-1.11.full.jar inject \
+    --path <path/to/project.sb3> \
+    --output <path/to/output-dir>
+```
+
+Options:
+
+- `--injectors <list>`: Comma-separated list of injectors to run (default: `all`)
+- `--csv <file.csv>`: Log injection metadata to a CSV file
+- `--skip-analyzed`: Skip projects that already have output files
+- `--language <lang>`: Language for hint text in CSV output (default: `en`)
+
+For each bug pattern that can be injected, LitterBox creates a separate output file with the bug injected.
+
+### Comparing project versions
+
+LitterBox can compare two versions of a project to identify which bugs were fixed, which are new, and which persist:
+
+```bash
+java -jar Litterbox-1.11.full.jar diff \
+    --before <old_version> \
+    --after <new_version>
+```
+
+The `--before` argument accepts:
+
+- `.sb3` files (Scratch project archives)
+- `project.json` files (raw Scratch project JSON)
+- LitterBox analysis report `.json` files (from a prior `check` run)
+
+The `--after` argument accepts `.sb3` or `project.json` files.
+
+Options:
+
+- `--output <file>`: Write results to a file (`.json` or `.csv` format)
+- `--detectors <list>`: Detectors to use (default: `bugs`)
+- `--ignore-loose`: Ignore loose blocks during analysis
+
+Example comparing with a prior analysis report:
+
+```bash
+java -jar Litterbox-1.11.full.jar diff \
+    --before prior_report.json \
+    --after fixed_project.sb3 \
+    --output diff_report.json
+```
 
 ### LLM Interaction
 

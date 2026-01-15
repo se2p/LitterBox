@@ -53,34 +53,37 @@ public class TerminatedLoop extends AbstractIssueFinder {
 
     @Override
     public void visit(RepeatForeverStmt node) {
-        StmtList children = node.getStmtList();
-        checkLoopChildren(children);
+        checkLoopChildren(node, node.getStmtList());
         visitChildren(node);
     }
 
-    private void checkLoopChildren(StmtList children) {
+    /**
+     * Checks if the loop ends with a termination statement (StopAll or StopThisScript).
+     * Reports the issue on the loop node (not the stop statement) to ensure proper block ID.
+     *
+     * @param loopNode the loop statement (has a block ID)
+     * @param children the statement list inside the loop
+     */
+    private void checkLoopChildren(Stmt loopNode, StmtList children) {
         if (children.hasStatements()) {
             List<Stmt> stmts = children.getStmts();
             Stmt last = stmts.getLast();
-            if (last instanceof StopAll stopAll) {
-                addIssue(last, stopAll.getMetadata(), IssueSeverity.LOW);
-            } else if (last instanceof StopThisScript stopThisScript) {
-                addIssue(last, stopThisScript.getMetadata(), IssueSeverity.LOW);
+            if (last instanceof StopAll || last instanceof StopThisScript) {
+                // Report on the loop node which has a block ID
+                addIssue(loopNode, loopNode.getMetadata(), IssueSeverity.LOW);
             }
         }
     }
 
     @Override
     public void visit(RepeatTimesStmt node) {
-        StmtList children = node.getStmtList();
-        checkLoopChildren(children);
+        checkLoopChildren(node, node.getStmtList());
         visitChildren(node);
     }
 
     @Override
     public void visit(UntilStmt node) {
-        StmtList children = node.getStmtList();
-        checkLoopChildren(children);
+        checkLoopChildren(node, node.getStmtList());
         visitChildren(node);
     }
 }

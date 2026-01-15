@@ -21,12 +21,11 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugs;
 import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,6 +36,15 @@ import java.util.List;
  */
 public class AmbiguousCustomBlockSignature extends AbstractIssueFinder {
     public static final String NAME = "ambiguous_custom_block_signature";
+
+    private List<ProcedureDefinition> currentActorProcedures;
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        currentActorProcedures = actor.getProcedureDefinitionList().getList();
+        super.visit(actor);
+        currentActorProcedures = null;
+    }
 
     @Override
     public void visit(Script node) {
@@ -55,15 +63,33 @@ public class AmbiguousCustomBlockSignature extends AbstractIssueFinder {
     }
 
     private void checkProc(ProcedureDefinition node) {
-        LocalIdentifier ident = node.getIdent();
-        List<ProcedureInfo> procedureInfos = new ArrayList<>(procMap.values());
-        ProcedureInfo current = procMap.get(ident);
-        for (ProcedureInfo procedureInfo : procedureInfos) {
-            if (procedureInfo != current && current.getName().equals(procedureInfo.getName())
-                    && current.getActorName().equals(procedureInfo.getActorName())) {
-                addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.MEDIUM);
+        if (currentActorProcedures == null) {
+            return;
+        }
+
+        String currentProcName = getProcName(node);
+        if (currentProcName == null) {
+            return;
+        }
+
+        for (ProcedureDefinition other : currentActorProcedures) {
+            if (other != node) {
+                String otherProcName = getProcName(other);
+                if (currentProcName.equals(otherProcName)) {
+                    addIssue(node, node.getMetadata().getDefinition(), IssueSeverity.MEDIUM);
+                    return; // Only report once per procedure
+                }
             }
         }
+    }
+
+    /**
+     * Gets the procedure name (proccode) for comparison.
+     * Uses procMap lookup from the symbol table.
+     */
+    private String getProcName(ProcedureDefinition proc) {
+        ProcedureInfo info = procMap.get(proc.getIdent());
+        return info != null ? info.getName() : null;
     }
 
     @Override
@@ -76,3 +102,4 @@ public class AmbiguousCustomBlockSignature extends AbstractIssueFinder {
         return IssueType.BUG;
     }
 }
+

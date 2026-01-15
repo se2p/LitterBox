@@ -94,14 +94,10 @@ public class MergeLoopsFinder extends AbstractDependencyRefactoringFinder {
                 )
         );
 
-        if (hasControlDependency(cfg, stmtScript1, stmtScript2)
+        return hasControlDependency(cfg, stmtScript1, stmtScript2)
                 || hasDataDependency(cfg, stmtScript1, stmtScript2)
                 || hasTimeDependency(cfg, stmtScript1, stmtScript2)
-                || wouldCreateDataDependency(merged, stmtScript2, stmtScript1)) {
-            return true;
-        }
-
-        return false;
+                || wouldCreateDataDependency(merged, stmtScript2, stmtScript1);
     }
 
     @Override

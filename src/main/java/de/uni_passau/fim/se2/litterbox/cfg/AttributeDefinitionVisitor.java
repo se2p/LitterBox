@@ -19,23 +19,26 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect.GraphicEffectType;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SoundEffect.SoundEffectType;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.SoundEffect.SoundEffectType;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.VideoSensingExtensionVisitor;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class AttributeDefinitionVisitor implements DefinableCollector<Attribute> {
+public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>, VideoSensingExtensionVisitor {
 
-    private Set<Attribute> definitions = new LinkedHashSet<>();
+    private final Set<Attribute> definitions = new LinkedHashSet<>();
 
-    private ActorDefinition currentActor;
+    private final ActorDefinition currentActor;
 
     public AttributeDefinitionVisitor(ActorDefinition currentActor) {
         this.currentActor = currentActor;
@@ -160,7 +163,6 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
         definitions.add(Attribute.layerOf(currentActor.getIdent()));
     }
 
-
     //---------------------------------------------------------------
     // Position
     @Override
@@ -211,6 +213,13 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
     public void visit(GlideSecsTo node) {
         definitions.add(Attribute.positionXOf(currentActor.getIdent()));
         definitions.add(Attribute.positionYOf(currentActor.getIdent()));
+    }
+
+    @Override
+    public void visit(IfOnEdgeBounce node) {
+        definitions.add(Attribute.positionXOf(currentActor.getIdent()));
+        definitions.add(Attribute.positionYOf(currentActor.getIdent()));
+        definitions.add(Attribute.rotationOf(currentActor.getIdent()));
     }
 
     //---------------------------------------------------------------
@@ -272,7 +281,6 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
         definitions.add(Attribute.sizeOf(currentActor.getIdent()));
     }
 
-
     //---------------------------------------------------------------
     // Backdrop
 
@@ -291,7 +299,6 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
         definitions.add(Attribute.backdropOf(getActorSprite(currentActor).getIdent()));
     }
 
-
     //---------------------------------------------------------------
     // Timer
 
@@ -308,5 +315,16 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
         definitions.add(Attribute.soundStateOf(currentActor.getIdent()));
     }
 
+    //---------------------------------------------------------------
+    // Video Sensing
 
+    @Override
+    public void visit(TurnVideo node) {
+        definitions.add(Attribute.videoStateOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    @Override
+    public void visit(SetVideoTransparency node) {
+        definitions.add(Attribute.videoTransparencyOf(getActorSprite(currentActor).getIdent()));
+    }
 }

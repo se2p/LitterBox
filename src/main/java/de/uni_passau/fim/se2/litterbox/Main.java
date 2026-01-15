@@ -19,6 +19,8 @@
 package de.uni_passau.fim.se2.litterbox;
 
 import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.injection.InjectorAnalyzer;
+import de.uni_passau.fim.se2.litterbox.injection.InjectorTool;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
@@ -40,7 +42,9 @@ import java.util.concurrent.Callable;
         subcommands = {
                 // general commands
                 Main.CheckProgramsSubcommand.class,
+                Main.InjectSubcommand.class,
                 LlmSubcommand.class,
+                DiffSubcommand.class,
                 Main.DetectorsSubcommand.class,
                 Main.FeatureSubcommand.class,
                 Main.LeilaSubcommand.class,
@@ -150,8 +154,6 @@ public class Main implements Callable<Integer> {
 
         protected abstract FileAnalyzer<?> getAnalyzer() throws Exception;
 
-
-
         /**
          * Override to implement custom parameter validation before the analyzer is run.
          *
@@ -163,7 +165,6 @@ public class Main implements Callable<Integer> {
 
         @Override
         public final Integer call() throws Exception {
-
 
             validateParams();
 
@@ -218,7 +219,7 @@ public class Main implements Callable<Integer> {
         @CommandLine.Option(
                 names = {"-d", "--detectors"},
                 description = "All detectors or detector groups you want to run, separated by commas. "
-                    + "Prefix group names or names of individual detectors with '-' to exclude them.",
+                        + "Prefix group names or names of individual detectors with '-' to exclude them.",
                 split = ",",
                 defaultValue = "default",
                 paramLabel = "<detector>"
@@ -243,12 +244,6 @@ public class Main implements Callable<Integer> {
         )
         boolean outputPerScript;
 
-        @CommandLine.Option(
-                names = {"-r", "--report_prior"},
-                description = "Path to prior analyser results, which should be compared to new analysis."
-        )
-        Path priorResultPath;
-
         @Override
         protected BugAnalyzer getAnalyzer() throws IOException {
             translator = IssueTranslatorFactory.getIssueTranslator(Locale.of(language));
@@ -258,33 +253,71 @@ public class Main implements Callable<Integer> {
             }
 
             final String detector = String.join(",", detectors);
-            final BugAnalyzer analyzer;
-
-            if (priorResultPath == null) {
-                analyzer = new BugAnalyzer(
-                        translator,
-                        commonOptions.outputPath,
-                        detector,
-                        ignoreLooseBlocks,
-                        commonOptions.deleteProject,
-                        outputPerScript
-                );
-            } else {
-                analyzer = new BugAnalyzer(
-                        translator,
-                        commonOptions.outputPath,
-                        detector,
-                        ignoreLooseBlocks,
-                        commonOptions.deleteProject,
-                        outputPerScript,
-                        priorResultPath
-                );
-            }
+            final BugAnalyzer analyzer = new BugAnalyzer(
+                    translator,
+                    commonOptions.outputPath,
+                    detector,
+                    ignoreLooseBlocks,
+                    commonOptions.deleteProject,
+                    outputPerScript
+            );
             if (annotationPath != null) {
                 analyzer.setAnnotationOutput(annotationPath);
             }
 
             return analyzer;
+        }
+    }
+
+    @CommandLine.Command(
+            name = "inject",
+            description = "Inject bugs into Scratch projects."
+    )
+    static class InjectSubcommand extends LitterBoxSubcommand {
+        @CommandLine.Option(
+                names = {"-i", "--injectors"},
+                description = "Comma-separated list of injectors to run (or 'all').",
+                defaultValue = "all"
+        )
+        String injectors;
+
+        @CommandLine.Option(
+                names = {"--csv"},
+                description = "Path to a CSV file for logging injection metadata. "
+                        + "If the file exists, rows are appended; otherwise, a new file is created with headers."
+        )
+        Path csvPath;
+
+        @CommandLine.Option(
+                names = {"--skip-analyzed"},
+                description = "Skip projects that already have output files in the output directory."
+        )
+        boolean skipAnalyzed;
+
+        @CommandLine.Option(
+                names = {"-l", "--language"},
+                description = "Language for hint text in CSV output (e.g., 'en', 'de').",
+                defaultValue = "en"
+        )
+        String language;
+
+        @Override
+        protected void validateParams() throws CommandLine.ParameterException {
+            requireProjectPath();
+            requireOutputPath();
+        }
+
+        @Override
+        protected InjectorAnalyzer getAnalyzer() {
+            IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.of(language));
+            return new InjectorAnalyzer(
+                    commonOptions.outputPath,
+                    commonOptions.deleteProject,
+                    InjectorTool.getInjectors(injectors),
+                    csvPath,
+                    skipAnalyzed,
+                    translator
+            );
         }
     }
 
@@ -409,8 +442,6 @@ public class Main implements Callable<Integer> {
             description = "Refactor specified Scratch projects."
     )
     static class RefactoringSubcommand extends LitterBoxSubcommand {
-
-
 
         @Override
         protected void validateParams() throws CommandLine.ParameterException {

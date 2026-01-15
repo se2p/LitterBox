@@ -18,12 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.smells;
 
-import de.uni_passau.fim.se2.litterbox.analytics.*;
+import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Equals;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Not;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -53,7 +57,6 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
                         .withSeverity(IssueSeverity.HIGH)
                         .withRefactoring(refactoring);
                 addIssue(builder);
-
             } else if (isBooleanFalseLiteral(equals.getOperand2())) {
                 NodeReplacementVisitor visitor = new NodeReplacementVisitor(equals, new Not(getBooleanExpression(equals.getOperand1()), equals.getMetadata()));
                 ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
@@ -63,7 +66,6 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
                         .withSeverity(IssueSeverity.HIGH)
                         .withRefactoring(refactoring);
                 addIssue(builder);
-
             }
         } else if (isBooleanExpression(equals.getOperand2())) {
             if (isBooleanTrueLiteral(equals.getOperand1())) {
@@ -88,54 +90,61 @@ public class UnnecessaryBoolean extends AbstractIssueFinder {
         }
     }
 
-    private boolean isBooleanTrueLiteral(ComparableExpr expr) {
+    private boolean isBooleanTrueLiteral(Expression expr) {
         if (expr instanceof StringLiteral literal) {
-            if (literal.getText().equalsIgnoreCase("true")) {
-                return true;
-            }
+            return literal.getText().equalsIgnoreCase("true");
         } else if (expr instanceof NumberLiteral literal) {
-            if (((int) literal.getValue()) == 1) {
-                return true;
-            }
+            return ((int) literal.getValue()) == 1;
+        } else if (expr instanceof AsNumber asNumber) {
+            return isBooleanTrueLiteral(asNumber.getOperand1()); // Recursive check
         }
 
         return false;
     }
 
-    private boolean isBooleanFalseLiteral(ComparableExpr expr) {
+    private boolean isBooleanFalseLiteral(Expression expr) {
         if (expr instanceof StringLiteral literal) {
-            if (literal.getText().equalsIgnoreCase("false")) {
-                return true;
-            }
+            return literal.getText().equalsIgnoreCase("false");
         } else if (expr instanceof NumberLiteral literal) {
-            if (((int) literal.getValue()) == 0) {
-                return true;
-            }
+            return ((int) literal.getValue()) == 0;
+        } else if (expr instanceof AsNumber asNumber) {
+            return isBooleanFalseLiteral(asNumber.getOperand1()); // Recursive check
         }
 
         return false;
     }
 
-    private String getBooleanLiteral(ComparableExpr expr) {
+    private String getBooleanLiteral(Expression expr) {
         if (expr instanceof StringLiteral literal) {
             return literal.getText();
         } else if (expr instanceof NumberLiteral literal) {
             return Integer.toString((int) literal.getValue());
+        } else if (expr instanceof AsNumber asNumber) {
+            return getBooleanLiteral(asNumber.getOperand1()); // Recursive extraction
         }
-        throw new RuntimeException("Unknown literal type");
+        throw new RuntimeException("Unknown literal type: " + expr.getClass().getName());
     }
 
-    private boolean isBooleanExpression(ComparableExpr expr) {
+    private boolean isBooleanExpression(Expression expr) {
         if (expr instanceof AsString asString) {
             if (asString.getOperand1() instanceof BoolExpr) {
                 return true;
             }
         }
+        if (expr instanceof AsNumber asNumber) {
+            return asNumber.getOperand1() instanceof BoolExpr;
+        }
         return false;
     }
 
-    private BoolExpr getBooleanExpression(ComparableExpr expr) {
-        return (BoolExpr) ((AsString) expr).getOperand1();
+    private BoolExpr getBooleanExpression(Expression expr) {
+        if (expr instanceof AsString asString) {
+            return (BoolExpr) asString.getOperand1();
+        }
+        if (expr instanceof AsNumber asNumber) {
+            return (BoolExpr) asNumber.getOperand1();
+        }
+        throw new IllegalArgumentException("Unknown boolean expression type: " + expr.getClass().getName());
     }
 
     @Override

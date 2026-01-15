@@ -31,7 +31,7 @@ public class LLMIssueFinder implements IssueFinder {
 
     public static final String NAME = "llm_issue_finder";
 
-    private IssueType issueType;
+    private final IssueType issueType;
 
     public LLMIssueFinder(IssueType issueType) {
         this.issueType = issueType;

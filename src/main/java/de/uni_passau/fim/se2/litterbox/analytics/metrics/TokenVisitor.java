@@ -60,7 +60,7 @@ import java.util.Set;
 
 class TokenVisitor implements ScratchVisitor {
 
-    private Multiset<ASTNode> tokens = LinkedHashMultiset.create();
+    private final Multiset<ASTNode> tokens = LinkedHashMultiset.create();
 
     public Set<ASTNode> getUniqueTokens() {
         return Collections.unmodifiableSet(tokens.elementSet());

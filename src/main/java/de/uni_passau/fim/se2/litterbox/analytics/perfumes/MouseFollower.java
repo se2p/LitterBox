@@ -27,7 +27,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.GoToPos;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveSteps;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.PointTowards;
 
 /**
  * The sprite follows the mouse in a RepeatForever block.
@@ -102,10 +104,7 @@ public class MouseFollower extends AbstractIssueFinder {
         if (first == other) {
             return false;
         }
-        if (first.getFinder() != other.getFinder()) {
-            return false;
-        }
-        return true;
+        return first.getFinder() == other.getFinder();
     }
 
     @Override
