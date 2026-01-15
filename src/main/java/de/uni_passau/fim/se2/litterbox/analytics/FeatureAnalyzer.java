@@ -20,13 +20,9 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.metrics.FeatureResult;
 import de.uni_passau.fim.se2.litterbox.analytics.metrics.MetricExtractor;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -42,12 +38,17 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
 
     private static final Logger log = Logger.getLogger(FeatureAnalyzer.class.getName());
 
+    private final String actor;
+    private final boolean perActor;
+
     private final ProgramFeatureAnalyzer analyzer;
     private CSVPrinter printer;
 
-    public FeatureAnalyzer(Path output, boolean delete) {
-        super(new ProgramFeatureAnalyzer(), output, delete);
+    public FeatureAnalyzer(Path output, boolean delete, String actor, boolean perActor, boolean collectAverage) {
+        super(new ProgramFeatureAnalyzer(collectAverage), output, delete);
         this.analyzer = (ProgramFeatureAnalyzer) super.analyzer;
+        this.actor = actor;
+        this.perActor = perActor;
     }
 
     @Override
@@ -77,7 +78,6 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
         headers.add("project");
         headers.add("id");
         analyzer.getMetrics().stream().map(MetricExtractor::getName).forEach(headers::add);
-        headers.add("scratch_block_code");
         if (output == null) {
             // Use default format but manually print headers to avoid double printing issues and control behavior
             printer = new CSVPrinter(System.out, CSVFormat.DEFAULT);
@@ -101,12 +101,26 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
         int actorCount = 0;
         List<ActorDefinition> actorDefinitions = AstNodeUtil.getActors(program, true).toList();
         for (ActorDefinition actorDefinition : actorDefinitions) {
+            String actorName = actorDefinition.getIdent().getName();
+            if (actor != null && !actor.isBlank() && !actor.equals(actorName)) {
+                continue;
+            }
+
             int scriptCount = 0;
             int procedureDefCount = 0;
             actorCount = actorCount + 1;
             List<ASTNode> targets = new ArrayList<>();
-            targets.addAll(actorDefinition.getScripts().getScriptList());
-            targets.addAll(actorDefinition.getProcedureDefinitionList().getList());
+            List<Script> scripts = actorDefinition.getScripts().getScriptList();
+            List<ProcedureDefinition> procedures = actorDefinition.getProcedureDefinitionList().getList();
+
+            if (perActor) {
+                if ((scripts.size() + procedures.size()) > 0) {
+                    targets.add(actorDefinition);
+                }
+            } else {
+                targets.addAll(scripts);
+                targets.addAll(procedures);
+            }
 
             for (ASTNode target : targets) {
                 List<String> row = new ArrayList<>();
@@ -118,6 +132,8 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
                 } else if (target instanceof ProcedureDefinition) {
                     procedureDefCount = procedureDefCount + 1;
                     uniqueId = "ACTOR" + actorCount + "_" + "PROCEDUREDEFINITION" + procedureDefCount;
+                } else if (target instanceof ActorDefinition) {
+                    uniqueId = actorName;
                 }
 
                 row.add(uniqueId);
@@ -125,8 +141,6 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
                 for (MetricExtractor<ASTNode> extractor : analyzer.getMetrics()) {
                     row.add(Double.toString(extractor.calculateMetric(target)));
                 }
-                String stringScratchCode = getScratchBlockCode(target, program, actorDefinition);
-                row.add(stringScratchCode);
                 if (fileName == null) {
                     printer.printRecord(row);
                 } else {
@@ -135,17 +149,5 @@ public class FeatureAnalyzer extends FileAnalyzer<List<FeatureResult>> {
             }
         }
         printer.flush();
-    }
-
-    private String getScratchBlockCode(ASTNode target, Program program, ActorDefinition actorDefinition) {
-        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
-        if (target instanceof ProcedureDefinition) {
-            visitor.setProgram(program);
-            visitor.setCurrentActor(actorDefinition);
-        }
-        visitor.begin();
-        target.accept(visitor);
-        visitor.end();
-        return visitor.getScratchBlocks();
     }
 }

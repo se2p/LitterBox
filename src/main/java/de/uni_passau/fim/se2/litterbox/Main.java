@@ -378,9 +378,29 @@ public class Main implements Callable<Integer> {
 
     @CommandLine.Command(
             name = "features",
-            description = "Extract scripts features from Scratch projects. See also 'stats' subcommand."
+            description = "Extract scripts features from Scratch projects. See also 'stats' subcommand.",
+            mixinStandardHelpOptions = true
     )
     static class FeatureSubcommand extends LitterBoxSubcommand {
+        @CommandLine.Option(
+                names = {"-a", "--actor"},
+                description = "Extract features from this actor name only."
+        )
+        String actor;
+
+        @CommandLine.Option(
+                names = {"--per-actor"},
+                description = "Compute metrics per actor instead of per script/procedure."
+        )
+        boolean perActor;
+
+        @CommandLine.Option(
+                names = {"--collect-average-blocktype-count"},
+                description = "Compute block-type metrics as proportion to all blocks rather than in absolute numbers. "
+                    + "This proportion is usually called 'average' in literature."
+        )
+        boolean collectAverageBlocktypeCount;
+
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
@@ -388,7 +408,9 @@ public class Main implements Callable<Integer> {
 
         @Override
         protected FeatureAnalyzer getAnalyzer() {
-            return new FeatureAnalyzer(commonOptions.outputPath, commonOptions.deleteProject);
+            return new FeatureAnalyzer(
+                    commonOptions.outputPath, commonOptions.deleteProject, actor, perActor, collectAverageBlocktypeCount
+            );
         }
     }
 

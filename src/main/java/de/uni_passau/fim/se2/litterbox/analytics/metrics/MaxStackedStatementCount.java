@@ -50,10 +50,10 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public class StackedStatementCount<T extends ASTNode>
+public class MaxStackedStatementCount<T extends ASTNode>
         implements ScratchVisitor, MetricExtractor<T>, PenExtensionVisitor, TextToSpeechExtensionVisitor {
 
-    public static final String NAME = "stacked_statement_count";
+    public static final String NAME = "max_stacked_statement_count";
     private int maxStackedDepth = 0;
     private int currentStackedDepth = 0;
     private boolean insideProcedure = false;

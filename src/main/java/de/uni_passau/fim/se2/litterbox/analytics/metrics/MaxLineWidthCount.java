@@ -26,35 +26,32 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 
-public class AvgScriptWidthCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
-    public static final String NAME = "avg_script_width_count";
+public class MaxLineWidthCount<T extends ASTNode> implements ScratchVisitor, MetricExtractor<T> {
+    public static final String NAME = "max_line_width_count";
 
     @Override
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
-        return countScriptWidthCount(node);
+        return countMaxScriptWidthCount(node);
     }
 
-    private double countScriptWidthCount(T node) {
+    private double countMaxScriptWidthCount(T node) {
+        String lineSep = System.lineSeparator();
         String scriptString = getScriptString(node);
-        scriptString = scriptString.replace("[scratchblocks]\r\n", "");
-        scriptString = scriptString.replace("[/scratchblocks]\r\n", "");
-        scriptString = scriptString.replace("end\r\n", "");
+        scriptString = scriptString.replace("[scratchblocks]" + lineSep, "");
+        scriptString = scriptString.replace("[/scratchblocks]" + lineSep, "");
+        scriptString = scriptString.replace("end" + lineSep, "");
 
         ArrayList<Integer> scriptWidths = new ArrayList<>();
-        String[] scriptBlocks = scriptString.split("\r\n");
-        if (scriptBlocks.length == 0) {
-            return 0.0;
-        }
+        String[] scriptBlocks = scriptString.split(lineSep);
         for (String scriptBlock : scriptBlocks) {
             scriptWidths.add(scriptBlock.length());
         }
-        double avgWidth = (double) scriptWidths.stream().mapToInt(Integer::intValue).sum() / scriptBlocks.length;
-        return BigDecimal.valueOf(avgWidth).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        return Collections.max(scriptWidths);
     }
 
     private String getScriptString(T node) {
@@ -64,6 +61,9 @@ public class AvgScriptWidthCount<T extends ASTNode> implements ScratchVisitor, M
             Program program = (Program) node.getParentNode().getParentNode().getParentNode().getParentNode();
             visitor.setProgram(program);
             visitor.setCurrentActor(actorDefinition);
+        } else if (node instanceof ActorDefinition) {
+            visitor.setProgram((Program) node.getParentNode().getParentNode());
+            visitor.setCurrentActor((ActorDefinition) node);
         }
         visitor.begin();
         node.accept(visitor);

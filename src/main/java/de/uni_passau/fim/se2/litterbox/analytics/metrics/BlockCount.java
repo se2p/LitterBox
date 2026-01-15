@@ -109,6 +109,12 @@ public class BlockCount<T extends ASTNode>
     }
 
     @Override
+    public void visit(ActorDefinition node) {
+        visit(node.getScripts());
+        visit(node.getProcedureDefinitionList());
+    }
+
+    @Override
     public void visit(Script node) {
         insideScript = true;
         visitChildren(node);

@@ -40,16 +40,36 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 public class VariablesBlockCount<T extends ASTNode> implements MetricExtractor<T>, ScratchVisitor {
     public static final String NAME = "variables_block_count";
 
+    /**
+     * Option to calculate the proportion of variable blocks in a program rather than their absolute count.
+     * The name "average" comes from readability research (e.g. [1]) and was retained to comply with literature.
+     *
+     * <p>[1] Scalabrino et al.: A comprehensive model for code readability,
+     * <a href="https://doi.org/10.1002/smr.1958">doi:10.1002/smr.1958</a>)
+     */
+    private final boolean average;
     private int count = 0;
     private boolean insideScript = false;
     private boolean insideProcedure = false;
 
+    public VariablesBlockCount() {
+        this.average = false;
+    }
+
+    public VariablesBlockCount(boolean average) {
+        this.average = average;
+    }
+
     @Override
     public double calculateMetric(T node) {
         Preconditions.checkNotNull(node);
+        double totalCount = new BlockCount<T>().calculateMetric(node);
+        if (totalCount == 0) {
+            return 0.0;
+        }
         count = 0;
         node.accept(this);
-        return count;
+        return average ? count / totalCount : count;
     }
 
     @Override
@@ -170,6 +190,9 @@ public class VariablesBlockCount<T extends ASTNode> implements MetricExtractor<T
 
     @Override
     public String getName() {
+        if (average) {
+            return "average_" + NAME;
+        }
         return NAME;
     }
 }
