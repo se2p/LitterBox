@@ -29,9 +29,9 @@ public class Attribute implements Defineable {
 
     // TODO: This should be replaced with a FixedAttribute?
 
-    private LocalIdentifier actorIdentifier;
-    private AttributeType attribute;
-    private String parameter; // e.g. for specific graphic/sound effects
+    private final LocalIdentifier actorIdentifier;
+    private final AttributeType attribute;
+    private final String parameter; // e.g. for specific graphic/sound effects
 
     public Attribute(LocalIdentifier actorIdentifier, AttributeType attribute) {
         this(actorIdentifier, attribute, null);
@@ -111,6 +111,14 @@ public class Attribute implements Defineable {
         return new Attribute(actorIdentifier, AttributeType.DRAG_MODE);
     }
 
+    public static Attribute videoStateOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.VIDEO_STATE);
+    }
+
+    public static Attribute videoTransparencyOf(LocalIdentifier actorIdentifier) {
+        return new Attribute(actorIdentifier, AttributeType.VIDEO_TRANSPARENCY);
+    }
+
     public LocalIdentifier getActorIdentifier() {
         return actorIdentifier;
     }
@@ -142,6 +150,6 @@ public class Attribute implements Defineable {
     }
 
     public enum AttributeType {
-        POSITION_X, POSITION_Y, ROTATION, ROTATION_STYLE, SIZE, VISIBILITY, GRAPHIC_EFFECT, SOUND_EFFECT, VOLUME, LAYER, COSTUME, BACKDROP, TIMER, SOUND_STATE, DRAG_MODE
+        POSITION_X, POSITION_Y, ROTATION, ROTATION_STYLE, SIZE, VISIBILITY, GRAPHIC_EFFECT, SOUND_EFFECT, VOLUME, LAYER, COSTUME, BACKDROP, TIMER, SOUND_STATE, DRAG_MODE, VIDEO_STATE, VIDEO_TRANSPARENCY
     }
 }

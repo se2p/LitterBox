@@ -27,17 +27,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 
 public class InappropriateHandlerDeleteClone extends AbstractIssueFinder {
     private static final String NAME = "inappropriate_handler_delete_clone";
-    private boolean hasDeleteClone;
+    private boolean insideGreenFlag;
 
     @Override
     public void visit(Script node) {
-        hasDeleteClone = false;
         if (node.getEvent() instanceof GreenFlag) {
+            insideGreenFlag = true;
             super.visit(node);
-            if (hasDeleteClone) {
-                addIssue(node.getEvent(),node.getEvent().getMetadata(), IssueSeverity.LOW);
-            }
-            hasDeleteClone = false;
+            insideGreenFlag = false;
         } else {
             super.visit(node);
         }
@@ -45,7 +42,9 @@ public class InappropriateHandlerDeleteClone extends AbstractIssueFinder {
 
     @Override
     public void visit(DeleteClone node) {
-        hasDeleteClone = true;
+        if (insideGreenFlag) {
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW);
+        }
     }
 
     @Override

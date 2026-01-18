@@ -58,7 +58,7 @@ public class ProgramMetricAnalyzer implements ProgramAnalyzer<List<MetricResult>
         List<MetricExtractor<Program>> metricList = new ArrayList<>();
         if (LOAD_GENERAL) {
             metricList.add(new AvgBlockStatementCount<>());
-            metricList.add(new AvgScriptWidthCount<>());
+            metricList.add(new AvgLineWidthCount<>());
             metricList.add(new AvgVariableLengthCount<>());
             metricList.add(new BackdropCount<>());
             metricList.add(new BlockCount<>());
@@ -92,16 +92,19 @@ public class ProgramMetricAnalyzer implements ProgramAnalyzer<List<MetricResult>
             metricList.add(new MotionBlockCount<>());
             metricList.add(new MusicBlockCount<>());
             metricList.add(new MyBlocksBlockCount<>());
-            metricList.add(new NestedBlockCount<>());
+            metricList.add(new MaxNestedBlockCount<>());
             metricList.add(new OperatorsBlockCount<>());
             metricList.add(new PenBlockCount<>());
             metricList.add(new ProcedureCount<>());
             metricList.add(new ProgramUsingPen<>());
             metricList.add(new ScriptCount<>());
             metricList.add(new SensingBlockCount<>());
+            metricList.add(new SliceCoverage<>());
+            metricList.add(new SliceOverlap<>());
+            metricList.add(new SliceTightness<>());
             metricList.add(new SoundBlockCount<>());
             metricList.add(new SpriteCount<>());
-            metricList.add(new StackedStatementCount<>());
+            metricList.add(new MaxStackedStatementCount<>());
             metricList.add(new StatementCount<>());
             metricList.add(new TokenEntropy<>());
             metricList.add(new TranslateBlockCount<>());

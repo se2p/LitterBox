@@ -109,14 +109,27 @@ final class MusicStmtConverter extends StmtConverter<MusicStmt> {
     }
 
     private Note getNoteFromMenu(final RawInput noteInput) {
-        if (noteInput.input() instanceof BlockRef.IdRef(RawBlockId menuId)
-                && state.getBlock(menuId) instanceof RawBlock.RawRegularBlock menuBlock
-                && DependentBlockOpcode.note.getName().equals(menuBlock.opcode())
-        ) {
-            final BlockMetadata menuMeta = RawBlockMetadataConverter.convertBlockMetadata(menuId, menuBlock);
-            final double noteValue = getLiteralNoteValue(menuBlock);
+        // Handle null input case - use default note (60 = middle C)
+        if (noteInput == null || noteInput.input() == null) {
+            return new FixedNote(60.0, new NoBlockMetadata());
+        }
 
-            return new FixedNote(noteValue, menuMeta);
+        if (noteInput.input() instanceof BlockRef.IdRef(RawBlockId menuId)) {
+            // Handle null or empty menu ID
+            if (menuId == null || menuId.id() == null || menuId.id().isEmpty()) {
+                return new FixedNote(60.0, new NoBlockMetadata());
+            }
+
+            final RawBlock menuBlock = state.getBlock(menuId);
+            if (menuBlock instanceof RawBlock.RawRegularBlock regularMenuBlock
+                    && DependentBlockOpcode.note.getName().equals(regularMenuBlock.opcode())
+            ) {
+                final BlockMetadata menuMeta = RawBlockMetadataConverter.convertBlockMetadata(menuId, regularMenuBlock);
+                final double noteValue = getLiteralNoteValue(regularMenuBlock);
+                return new FixedNote(noteValue, menuMeta);
+            }
+            // Menu block not found or wrong opcode - use default note
+            return new FixedNote(60.0, new NoBlockMetadata());
         } else if (noteInput.input() instanceof BlockRef.Block(RawBlock.ArrayBlock arrayBlock)) {
             if (arrayBlock instanceof RawBlock.RawIntBlockLiteral(long value)) {
                 return new FixedNote(value, new NoBlockMetadata());
@@ -127,12 +140,14 @@ final class MusicStmtConverter extends StmtConverter<MusicStmt> {
                     final double value = Double.parseDouble(s);
                     return new FixedNote(value, new NoBlockMetadata());
                 } catch (NumberFormatException e) {
-                    throw new InternalParsingException("Unknown format for musical note in PlayNoteForBeats.", e);
+                    // Invalid string - use default note
+                    return new FixedNote(60.0, new NoBlockMetadata());
                 }
             }
         }
 
-        throw new InternalParsingException("Unknown format for musical note in PlayNoteForBeats.");
+        // Fallback to default note value instead of throwing an exception
+        return new FixedNote(60.0, new NoBlockMetadata());
     }
 
     private static double getLiteralNoteValue(final RawBlock.RawRegularBlock menuBlock) {

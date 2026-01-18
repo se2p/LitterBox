@@ -94,11 +94,15 @@ public abstract class FloatingPointComparisonHintFactory {
 
         if (node.getOperand1() instanceof AttributeOf attributeOf) {
             String type = getAttributeTypeFromAttributeOf(attributeOf);
-            if (type != null) return type;
+            if (type != null) {
+                return type;
+            }
         }
         if (node.getOperand2() instanceof AttributeOf attributeOf) {
             String type = getAttributeTypeFromAttributeOf(attributeOf);
-            if (type != null) return type;
+            if (type != null) {
+                return type;
+            }
         }
         return "";
     }

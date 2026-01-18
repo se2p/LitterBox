@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.CloneAnalysis;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import java.util.List;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Isolated
 public class ClonedCodeType2Test implements JsonTest {
 
     @Test

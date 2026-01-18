@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.cfg.CloneEventNode;
 import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class AbstractDependencyGraph {
@@ -192,21 +193,41 @@ public abstract class AbstractDependencyGraph {
     }
 
     public String toDotString() {
+        return toDotString(node -> node.toString());
+    }
+
+    public String toDotString(Function<CFGNode, String> labelProvider) {
         StringBuilder builder = new StringBuilder();
 
         builder.append("digraph {");
         builder.append(System.lineSeparator());
+
+        for (CFGNode node : graph.nodes()) {
+            builder.append("  \"");
+            builder.append(node);
+            builder.append("\" [label=\"");
+            builder.append(escapeDotLabel(labelProvider.apply(node)));
+            builder.append("\"];");
+            builder.append(System.lineSeparator());
+        }
 
         for (EndpointPair<CFGNode> edge : graph.edges()) {
             builder.append("  \"");
             builder.append(edge.nodeU());
             builder.append("\" -> \"");
             builder.append(edge.nodeV());
-            builder.append("\";");
+            builder.append("\" [penwidth=2];");
             builder.append(System.lineSeparator());
         }
 
         builder.append('}');
         return builder.toString();
+    }
+
+    private String escapeDotLabel(String label) {
+        if (label == null) {
+            return "";
+        }
+        return label.replace("\"", "\\\"").replace("\n", "\\n");
     }
 }

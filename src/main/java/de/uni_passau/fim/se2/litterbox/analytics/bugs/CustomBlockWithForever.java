@@ -79,7 +79,7 @@ public class CustomBlockWithForever extends AbstractIssueFinder {
     @Override
     public void visit(StmtList node) {
         List<Stmt> stmts = node.getStmts();
-        // TODO: Add note to explain why size() - 1
+        // Only calls followed by more code are candidates
         for (int i = 0; i < stmts.size() - 1; i++) {
             if (stmts.get(i) instanceof CallStmt callStmt) {
                 calledProcedures.add(callStmt);

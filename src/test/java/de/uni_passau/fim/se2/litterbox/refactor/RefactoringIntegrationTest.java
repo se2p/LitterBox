@@ -22,25 +22,20 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.RefactoringFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.refactorings.*;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.util.StructuralEquality;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.CrowdingDistanceSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.FastNonDominatedSort;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms.NSGAII;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.ChromosomeGenerator;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.FixedSizePopulationGenerator;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.OffspringGenerator;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequenceGenerator;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.*;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.CohesionFitness;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.CyclomaticComplexityFitness;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.NumberOfScriptsFitness;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.BinaryRankTournament;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Crossover;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.Mutation;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceCrossover;
-import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.RefactorSequenceMutation;
+import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.search_operators.*;
+import de.uni_passau.fim.se2.litterbox.refactor.refactorings.MergeScripts;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import org.junit.jupiter.api.Test;
 
@@ -48,13 +43,72 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RefactoringIntegrationTest implements JsonTest {
 
     private static final int POPULATION_SIZE = 50;
+
+    @Test
+    void testSlicingBugRegression() throws IOException, ParsingException {
+        // We create two scripts with DIFFERENT lengths to expose the slicing bug.
+        // Script 1 (Length 2):
+        //   set [var v] to (1)
+        //   change [var v] by (1)  <-- Depends on var defined in line 1
+        // Script 2 (Length 1):
+        //   move (10) steps      <-- Independent
+
+        // Merged Script (Length 3):
+        //   set [var v] to (1)      (Index 0)
+        //   change [var v] by (1)   (Index 1)
+        //   move (10) steps       (Index 2)
+
+        // Correct Slicing for Script 2:
+        //   Start at s1.size (2).
+        //   Result: [move (10) steps].
+        //   Dependency Check (s1 vs s2): Independent. result = false.
+
+        // Buggy Slicing (using s2.size = 1):
+        //   Start at s2.size (1).
+        //   Result: [change [var v] by (1), move (10) steps].
+        //   Dependency Check (s1 vs s2_slice):
+        //     s1 defines var.
+        //     s2_slice uses var (in change block).
+        //     Result: Dependent! result = true.
+
+        String code = """
+                when green flag clicked
+                set [var v] to (1)
+                change [var v] by (1)
+
+                when green flag clicked
+                move (10) steps
+                """;
+
+        Program baseProject = getAST("src/test/fixtures/emptyProject.json");
+        ScratchBlocksParser parser = new ScratchBlocksParser();
+        Program program = parser.extendProject(baseProject, "Stage", code);
+
+        ActorDefinition actor = program.getActorDefinitionList().getActorDefinition("Stage").get();
+        List<Script> scripts = actor.getScripts().getScriptList();
+
+        assertEquals(2, scripts.size(), "Should parse two scripts");
+        Script s1 = scripts.get(0);
+        Script s2 = scripts.get(1);
+
+        // Verify assumption about lengths
+        assertEquals(2, s1.getStmtList().getNumberOfStatements(), "Script 1 should have 2 statements");
+        assertEquals(1, s2.getStmtList().getNumberOfStatements(), "Script 2 should have 1 statement");
+
+        MergeScripts merge = new MergeScripts(s1, s2);
+        Script merged = merge.getMergedScript();
+
+        TestDependencyFinder finder = new TestDependencyFinder();
+        finder.setCurrentActor(actor);
+        boolean hasDep = finder.publicHasDependencies(s1, s2, merged);
+
+        assertFalse(hasDep, "Should not find dependencies. If found, it indicates incorrect slicing (including S1 statements in S2 scope).");
+    }
 
     @Test
     void testSequenceToLoop() throws IOException, ParsingException {
@@ -201,7 +255,7 @@ class RefactoringIntegrationTest implements JsonTest {
         Program expectedProgram = parseProgram(expectedCode);
         Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
-     }
+    }
 
     @Test
     void testMergeDoubleIf() throws IOException, ParsingException {
@@ -270,7 +324,7 @@ class RefactoringIntegrationTest implements JsonTest {
         Program expectedProgram2 = parseProgram(expectedCode2);
         Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram1, refactoredProgram) ||
-                   StructuralEquality.areStructurallyEqual(expectedProgram2, refactoredProgram));
+                StructuralEquality.areStructurallyEqual(expectedProgram2, refactoredProgram));
     }
 
     @Test
@@ -303,8 +357,8 @@ class RefactoringIntegrationTest implements JsonTest {
         Program expectedProgram2 = parseProgram(expectedCode2);
         Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram1, refactoredProgram) ||
-    StructuralEquality.areStructurallyEqual(expectedProgram2, refactoredProgram));
-     }
+                StructuralEquality.areStructurallyEqual(expectedProgram2, refactoredProgram));
+    }
 
     @Test
     void testIfIfNotToIfElse() throws IOException, ParsingException {
@@ -322,7 +376,6 @@ class RefactoringIntegrationTest implements JsonTest {
         List<RefactoringFinder> finders = List.of(new IfIfNotToIfElseFinder());
         List<RefactorSequence> solutions = runRefactoring(program, finders);
 
-
         assertEquals(1, solutions.size());
         String expectedCode = """
                 when green flag clicked
@@ -336,7 +389,7 @@ class RefactoringIntegrationTest implements JsonTest {
         Program expectedProgram = parseProgram(expectedCode);
         Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
-     }
+    }
 
     @Test
     void testMergeScriptsAfterUntil() throws IOException, ParsingException {
@@ -367,7 +420,7 @@ class RefactoringIntegrationTest implements JsonTest {
         Program expectedProgram = parseProgram(expectedCode);
         Program refactoredProgram = solutions.getFirst().buildRefactoredProgram();
         assertTrue(StructuralEquality.areStructurallyEqual(expectedProgram, refactoredProgram));
-      }
+    }
 
     @Test
     void testMultipleRefactoringsInSingleScript() throws IOException, ParsingException {
@@ -444,7 +497,6 @@ class RefactoringIntegrationTest implements JsonTest {
 
         Program expectedProgram = parseProgram(expectedCode);
         assertTrue(solutions.stream().anyMatch(p -> StructuralEquality.areStructurallyEqual(expectedProgram, p.buildRefactoredProgram())));
-
     }
 
     @Test
@@ -470,9 +522,9 @@ class RefactoringIntegrationTest implements JsonTest {
 
         Program program = parseProgram(code);
         List<RefactoringFinder> finders = List.of(
-            new SequenceToLoopFinder(),
-            new IfsToConjunctionFinder(),
-            new MergeDoubleIfFinder()
+                new SequenceToLoopFinder(),
+                new IfsToConjunctionFinder(),
+                new MergeDoubleIfFinder()
         );
 
         List<RefactorSequence> solutions = runRefactoring(program, finders);
@@ -483,20 +535,16 @@ class RefactoringIntegrationTest implements JsonTest {
                     move (10) steps
                     turn right (15) degrees
                 end
-                if <key [space v] pressed?> then
-                    if <mouse down?> then
-                        say [Hello!]
-                    end
+                if <<key [space v] pressed?> and <mouse down?>> then
+                    say [Hello!]
                 end
                 if <key [a v] pressed?> then
                     move (10) steps
                     turn right (15) degrees
                 end
                 """;
-
         Program expectedProgram = parseProgram(expectedCode);
         assertTrue(solutions.stream().anyMatch(p -> StructuralEquality.areStructurallyEqual(expectedProgram, p.buildRefactoredProgram())));
-
     }
 
     @Test
@@ -564,16 +612,23 @@ class RefactoringIntegrationTest implements JsonTest {
             double val2 = p2.getFitness(ff);
 
             if (ff.isMinimizing()) {
-                if (val1 > val2) return false; // p1 is worse than p2
-                if (val1 < val2) atLeastOneBetter = true;
+                if (val1 > val2) {
+                    return false; // p1 is worse than p2
+                }
+                if (val1 < val2) {
+                    atLeastOneBetter = true;
+                }
             } else {
-                if (val1 < val2) return false; // p1 is worse than p2
-                if (val1 > val2) atLeastOneBetter = true;
+                if (val1 < val2) {
+                    return false; // p1 is worse than p2
+                }
+                if (val1 > val2) {
+                    atLeastOneBetter = true;
+                }
             }
         }
         return atLeastOneBetter;
     }
-
 
     private Program parseProgram(String code) throws IOException, ParsingException {
         Program baseProject = getAST("src/test/fixtures/emptyProject.json");
@@ -612,5 +667,20 @@ class RefactoringIntegrationTest implements JsonTest {
         CrowdingDistanceSort<RefactorSequence> crowdingDistanceSort = new CrowdingDistanceSort<>(fitnessFunctions);
 
         return new NSGAII<>(populationGenerator, offspringGenerator, fastNonDominatedSort, crowdingDistanceSort);
+    }
+
+    static class TestDependencyFinder extends AbstractDependencyRefactoringFinder {
+        @Override
+        public String getName() {
+            return "TestFinder";
+        }
+
+        public void setCurrentActor(ActorDefinition actor) {
+            this.currentActor = actor;
+        }
+
+        public boolean publicHasDependencies(Script s1, Script s2, Script merged) {
+            return hasDependencies(s1, merged);
+        }
     }
 }

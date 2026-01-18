@@ -18,8 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.ast.visitor;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
@@ -41,7 +41,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.type.StringType;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -345,10 +344,10 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "define block1" + System.lineSeparator() +
                 "say [Hello!]" + System.lineSeparator() +
-                "" + System.lineSeparator() +
+                System.lineSeparator() +
                 "define block2" + System.lineSeparator() +
                 "say [Bye!]" + System.lineSeparator() +
-                "" + System.lineSeparator() +
+                System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "block1" + System.lineSeparator() +
                 "block2" + System.lineSeparator() +
@@ -590,7 +589,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when [timer v] > (my variable)" + System.lineSeparator() +
                 "set [my variable v] to (0)" + System.lineSeparator() +
-                "" + System.lineSeparator() +
+                System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "set [my variable v] to (60)" + System.lineSeparator() +
                 "forever" + System.lineSeparator() +
@@ -614,7 +613,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "set [my variable v] to (0)" + System.lineSeparator() +
-                "" + System.lineSeparator() +
+                System.lineSeparator() +
                 "when [timer v] > ([abs v] of (my variable))" + System.lineSeparator() +
                 "say [Hello!]" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), result);
@@ -965,7 +964,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
                 "define fun_numarg <boolean_param> [num_param] label" + System.lineSeparator() +
                 "say <boolean_param>" + System.lineSeparator() +
                 "say (num_param)" + System.lineSeparator() +
-                "" + System.lineSeparator() +
+                System.lineSeparator() +
                 "when green flag clicked" + System.lineSeparator() +
                 "fun_numarg <mouse down?> (username) label" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), result);
@@ -1025,9 +1024,9 @@ public class ScratchBlocksVisitorTest implements JsonTest {
         String result = os.toString(StandardCharsets.UTF_8);
         assertEquals("[scratchblocks]" + System.lineSeparator() +
                 "show" + System.lineSeparator() +
-                "" + System.lineSeparator() +
+                System.lineSeparator() +
                 "say [Hallo!] for (2) seconds" + System.lineSeparator() +
-                "" + System.lineSeparator() +
+                System.lineSeparator() +
                 "hide" + System.lineSeparator() +
                 "[/scratchblocks]" + System.lineSeparator(), result);
     }
@@ -1990,7 +1989,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
 
     @Test
-    void testParameterWithColonEscaped() throws ParsingException, IOException {
+    void testParameterWithColonEscaped() {
         Parameter parameter = new Parameter(new StrId("abc::de"), new StringType(), new NoBlockMetadata());
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false, false);
         parameter.accept(visitor);
@@ -2000,7 +1999,7 @@ public class ScratchBlocksVisitorTest implements JsonTest {
     }
 
     @Test
-    void testParameterDefinitionWithColonEscaped() throws ParsingException, IOException {
+    void testParameterDefinitionWithColonEscaped() {
         ParameterDefinition definition = new ParameterDefinition(new StrId("abc::de"), new StringType(), new NoBlockMetadata());
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false, false);
         definition.accept(visitor);

@@ -68,6 +68,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateT
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.ViewerLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TExprLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.tlanguage.TFixedLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
@@ -802,6 +806,62 @@ public class CloneVisitor {
      */
     public ASTNode visit(ChangeYBy node) {
         return new ChangeYBy(apply(node.getNum()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link WhenVideoMotionGreaterThan}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node WhenVideoMotionGreaterThan Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(WhenVideoMotionGreaterThan node) {
+        return new WhenVideoMotionGreaterThan(apply(node.getReference()), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link VideoOn}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node VideoOn Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(VideoOn node) {
+        return new VideoOn(node.getAttribute(), node.getSubject(), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link TurnVideo}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node TurnVideo Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(TurnVideo node) {
+        return new TurnVideo(node.getVideoState(), apply(node.getMetadata()));
+    }
+
+    /**
+     * Default implementation of visit method for {@link SetVideoTransparency}.
+     *
+     * <p>
+     * Creates a deep copy of this node.
+     * </p>
+     *
+     * @param node SetVideoTransparency Node which will be copied
+     * @return the copy of the visited node
+     */
+    public ASTNode visit(SetVideoTransparency node) {
+        return new SetVideoTransparency(apply(node.getTransparency()), apply(node.getMetadata()));
     }
 
     /**
@@ -3060,7 +3120,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(CommentMetadata node) {
-        return new CommentMetadata(node.getCommentId(), generateUID(), node.getX(), node.getY(), node.getWidth(), node.getHeight(), node.isMinimized(), node.getText());
+        return new CommentMetadata(node.getCommentId(), node.getBlockId(), node.getX(), node.getY(), node.getWidth(), node.getHeight(), node.isMinimized(), node.getText());
     }
 
     /**
@@ -3167,11 +3227,31 @@ public class CloneVisitor {
      * </p>
      *
      * @param node DataBlockMetadata Node of which the children will
-     *             be iterated
+     * be iterated
      * @return the copy of the visited node
      */
+    private final boolean freshBlockIds;
+
+    public CloneVisitor() {
+        this(false);
+    }
+
+    public CloneVisitor(boolean freshBlockIds) {
+        this.freshBlockIds = freshBlockIds;
+    }
+
+    /**
+     * Helper to generate a new block ID or keep the old one based on configuration.
+     */
+    private String processBlockId(String oldId) {
+        if (freshBlockIds) {
+            return generateUID();
+        }
+        return oldId;
+    }
+
     public ASTNode visit(DataBlockMetadata node) {
-        return new DataBlockMetadata(generateUID(), node.getCommentId(), node.getX(), node.getY());
+        return new DataBlockMetadata(processBlockId(node.getBlockId()), node.getCommentId(), node.getX(), node.getY());
     }
 
     /**
@@ -3186,7 +3266,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(NonDataBlockMetadata node) {
-        return new NonDataBlockMetadata(node.getCommentId(), generateUID(),
+        return new NonDataBlockMetadata(node.getCommentId(), processBlockId(node.getBlockId()),
                 node.isShadow(), apply(node.getMutation()));
     }
 
@@ -3202,7 +3282,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(TopNonDataBlockMetadata node) {
-        return new TopNonDataBlockMetadata(node.getCommentId(), generateUID(),
+        return new TopNonDataBlockMetadata(node.getCommentId(), processBlockId(node.getBlockId()),
                 node.isShadow(), apply(node.getMutation()),
                 node.getXPos(), node.getYPos());
     }

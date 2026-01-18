@@ -33,12 +33,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -50,11 +46,13 @@ public class ControlFlowGraph {
 
     private SpecialNode exitNode = new SpecialNode("Exit");
 
+    private int nextNodeId = 0;
+
     public ControlFlowGraph() {
         graph = GraphBuilder.directed().allowsSelfLoops(true).build();
 
-        graph.addNode(entryNode);
-        graph.addNode(exitNode);
+        addNodeAndSetIndex(entryNode);
+        addNodeAndSetIndex(exitNode);
     }
 
     private ControlFlowGraph(MutableGraph<CFGNode> graph) {
@@ -107,25 +105,30 @@ public class ControlFlowGraph {
 
     public StatementNode addNode(Stmt stmt, ActorDefinition actor, ASTNode scriptOrProcedure) {
         StatementNode node = new StatementNode(stmt, actor, scriptOrProcedure);
-        graph.addNode(node);
+        addNodeAndSetIndex(node);
         return node;
     }
 
     public EventNode addNode(Event node, ActorDefinition actor, ASTNode scriptOrProcedure) {
         EventNode cfgNode = new EventNode(node, actor, scriptOrProcedure);
-        graph.addNode(cfgNode);
+        addNodeAndSetIndex(cfgNode);
         return cfgNode;
+    }
+
+    private void addNodeAndSetIndex(CFGNode cfgNode) {
+        cfgNode.setId(nextNodeId++);
+        graph.addNode(cfgNode);
     }
 
     public MessageNode addNode(Message message, ASTNode scriptOrProcedure) {
         MessageNode cfgNode = new MessageNode(message, scriptOrProcedure);
-        graph.addNode(cfgNode);
+        addNodeAndSetIndex(cfgNode);
         return cfgNode;
     }
 
     public AttributeEventNode addNode(AttributeAboveValue node, ActorDefinition actor, ASTNode scriptOrProcedure) {
         AttributeEventNode cfgNode = new AttributeEventNode(node, actor, scriptOrProcedure);
-        graph.addNode(cfgNode);
+        addNodeAndSetIndex(cfgNode);
         return cfgNode;
     }
 
@@ -148,22 +151,42 @@ public class ControlFlowGraph {
     }
 
     public String toDotString() {
+        return toDotString(node -> node.toString());
+    }
+
+    public String toDotString(Function<CFGNode, String> labelProvider) {
         StringBuilder builder = new StringBuilder();
 
         builder.append("digraph {");
         builder.append(System.lineSeparator());
+
+        for (CFGNode node : graph.nodes()) {
+            builder.append("  \"");
+            builder.append(node);
+            builder.append("\" [label=\"");
+            builder.append(escapeDotLabel(labelProvider.apply(node)));
+            builder.append("\"];");
+            builder.append(System.lineSeparator());
+        }
 
         for (EndpointPair<CFGNode> edge : graph.edges()) {
             builder.append("  \"");
             builder.append(edge.nodeU());
             builder.append("\" -> \"");
             builder.append(edge.nodeV());
-            builder.append("\";");
+            builder.append("\" [penwidth=2];");
             builder.append(System.lineSeparator());
         }
 
         builder.append('}');
         return builder.toString();
+    }
+
+    private String escapeDotLabel(String label) {
+        if (label == null) {
+            return "";
+        }
+        return label.replace("\"", "\\\"").replace("\n", "\\n");
     }
 
     public Set<Definition> getDefinitions() {
@@ -258,4 +281,38 @@ public class ControlFlowGraph {
         }
     }
 
+    public void ensureAllNodesReachableFromEntry() {
+        Set<CFGNode> reachable = new HashSet<>();
+        List<CFGNode> queue = new ArrayList<>();
+        queue.add(entryNode);
+        reachable.add(entryNode);
+
+        int head = 0;
+        while (head < queue.size()) {
+            CFGNode current = queue.get(head++);
+            for (CFGNode successor : graph.successors(current)) {
+                if (reachable.add(successor)) {
+                    queue.add(successor);
+                }
+            }
+        }
+
+        for (CFGNode node : graph.nodes()) {
+            if (!reachable.contains(node)) {
+                graph.putEdge(entryNode, node);
+                // Continue BFS from the newly connected node to find its reachable subgraph
+                // This avoids adding edges to every single node in a disconnected component, just the root we found
+                reachable.add(node);
+                queue.add(node);
+                while (head < queue.size()) {
+                    CFGNode current = queue.get(head++);
+                    for (CFGNode successor : graph.successors(current)) {
+                        if (reachable.add(successor)) {
+                            queue.add(successor);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

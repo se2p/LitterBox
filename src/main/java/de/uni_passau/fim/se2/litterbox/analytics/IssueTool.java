@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.*;
-import de.uni_passau.fim.se2.litterbox.analytics.fix_heuristics.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.bugs.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.perfumes.*;
 import de.uni_passau.fim.se2.litterbox.analytics.mblock.smells.MotorPowerMinus;
@@ -61,7 +60,7 @@ public class IssueTool {
             registerBugFinder(new HideWithoutShow(), bugFinders);
             registerBugFinder(new IllegalParameterRefactor(), bugFinders);
             registerBugFinder(new ImmediateDeleteCloneAfterBroadcast(), bugFinders);
-            registerBugFinder(new ImmediateStopAfterSay(), bugFinders);
+            registerBugFinder(new ImmediateStopAfterSayThink(), bugFinders);
             registerBugFinder(new InappropriateHandlerDeleteClone(), bugFinders);
             registerBugFinder(new InterruptedLoopSensing(), bugFinders);
             registerBugFinder(new InvalidNumberString(), bugFinders);
@@ -144,7 +143,7 @@ public class IssueTool {
         registerBugFinder(new ForeverInsideLoop(), bugFinders);
         registerBugFinder(new IllegalParameterRefactor(), bugFinders);
         registerBugFinder(new ImmediateDeleteCloneAfterBroadcast(), bugFinders);
-        registerBugFinder(new ImmediateStopAfterSay(), bugFinders);
+        registerBugFinder(new ImmediateStopAfterSayThink(), bugFinders);
         registerBugFinder(new InappropriateHandlerDeleteClone(), bugFinders);
         registerBugFinder(new InterruptedLoopSensing(), bugFinders);
         registerBugFinder(new InvalidNumberString(), bugFinders);
@@ -470,19 +469,6 @@ public class IssueTool {
                     + " as Solution IssueFinder");
         }
         perfumeFinders.put(finder.getName(), finder);
-    }
-
-    static List<String> generateFixHeuristicsNames() {
-        List<String> fixHeuristicsNames = new ArrayList<>();
-        fixHeuristicsNames.add(ComparingLiteralsFix.NAME);
-        fixHeuristicsNames.add(ForeverInsideLoopFix.NAME);
-        fixHeuristicsNames.add(MessageNeverReceivedFix.NAME);
-        fixHeuristicsNames.add(MessageNeverSentFix.NAME);
-        fixHeuristicsNames.add(MissingCloneInitializationFix.NAME);
-        fixHeuristicsNames.add(MissingLoopSensingLoopFix.NAME);
-        fixHeuristicsNames.add(MissingLoopSensingWaitFix.NAME);
-        fixHeuristicsNames.add(StutteringMovementFix.NAME);
-        return fixHeuristicsNames;
     }
 
     static void registerQuestionFinder(IssueFinder finder, Map<String, IssueFinder> questionFinders) {

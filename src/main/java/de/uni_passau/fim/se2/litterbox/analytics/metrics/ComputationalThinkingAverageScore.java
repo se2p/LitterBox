@@ -20,7 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.metrics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
-public class ComputationalThinkingAverageScore  implements MetricExtractor<Program> {
+public class ComputationalThinkingAverageScore implements MetricExtractor<Program> {
     public static final String NAME = "ct_score_average";
 
     @Override

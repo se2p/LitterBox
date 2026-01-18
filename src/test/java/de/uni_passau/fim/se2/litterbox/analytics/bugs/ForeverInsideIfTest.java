@@ -20,9 +20,12 @@ package de.uni_passau.fim.se2.litterbox.analytics.bugs;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ForeverInsideIfTest implements JsonTest {
 
@@ -39,5 +42,20 @@ public class ForeverInsideIfTest implements JsonTest {
     @Test
     public void testForeverAfterIfElse() throws IOException, ParsingException {
         assertThatFinderReports(0, new ForeverInsideIf(), "./src/test/fixtures/bugs/foreverAfterIfElse.json");
+    }
+
+    @Test
+    public void testForeverInsideIfInLoop() throws IOException, ParsingException {
+        String script = """
+                when green flag clicked
+                repeat (10)
+                    if <(1) = (1)> then
+                        forever
+                        end
+                    end
+                end""";
+        Program program = parseScratchBlocks(script);
+        ForeverInsideIf detector = new ForeverInsideIf();
+        assertEquals(1, detector.check(program).size());
     }
 }

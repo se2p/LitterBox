@@ -30,13 +30,7 @@ import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraph;
 import de.uni_passau.fim.se2.litterbox.dependency.ProgramDependenceGraph;
 import de.uni_passau.fim.se2.litterbox.refactor.refactorings.SplitSlice;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
+import java.util.*;
 
 public class SplitSliceFinder extends AbstractDependencyRefactoringFinder {
 
@@ -54,7 +48,6 @@ public class SplitSliceFinder extends AbstractDependencyRefactoringFinder {
         pdg.removeNode(cfg.getEntryNode());
         pdg.removeNode(cfg.getExitNode());
         pdg.removeNode(script.getEvent());
-
 
         Set<Stmt> visited = new HashSet<>();
         List<Stmt> reverseOrderedStmts = ControlFlowGraph.getStatementsInReverseOrder(script.getStmtList());
@@ -94,8 +87,6 @@ public class SplitSliceFinder extends AbstractDependencyRefactoringFinder {
             refactorings.add(new SplitSlice(script, new LinkedHashSet<>(reconstructedSlices)));
         }
     }
-
-
 
     private List<Stmt> reconstruct(List<Stmt> originalStmts, Set<Stmt> slice) {
         List<Stmt> result = new ArrayList<>();

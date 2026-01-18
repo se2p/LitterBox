@@ -65,9 +65,7 @@ public class UnnecessaryLoop extends AbstractIssueFinder {
 
         if (other.getFinder() instanceof ForeverInsideLoop) {
             //need parent of the parent (the parent of forever is the StmtList) of forever because UnnecessaryLoop flags the parent loop and not the nested forever loop
-            if (theIssue.getCodeLocation().equals(other.getCodeLocation().getParentNode().getParentNode())) {
-                return true;
-            }
+            return theIssue.getCodeLocation().equals(other.getCodeLocation().getParentNode().getParentNode());
         }
 
         return false;

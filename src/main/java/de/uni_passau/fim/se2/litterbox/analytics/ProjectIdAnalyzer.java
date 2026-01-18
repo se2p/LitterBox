@@ -49,8 +49,13 @@ public class ProjectIdAnalyzer<R> {
     public final void analyzeMultiple(final Path projectList) {
         try (Stream<String> lines = Files.lines(projectList)) {
             List<String> pids = lines.toList();
-            for (String pid : pids) {
-                analyzeSingle(pid);
+            analyzer.beginAnalysis();
+            try {
+                for (String pid : pids) {
+                    analyzeSingle(pid);
+                }
+            } finally {
+                analyzer.endAnalysis();
             }
         } catch (IOException e) {
             log.warning("Could not read project list at " + projectList);

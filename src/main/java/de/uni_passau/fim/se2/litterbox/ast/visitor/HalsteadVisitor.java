@@ -56,9 +56,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 
 public class HalsteadVisitor implements ScratchVisitor {
 
-    private Multiset<Class<?>> operators = LinkedHashMultiset.create();
+    private final Multiset<Class<?>> operators = LinkedHashMultiset.create();
 
-    private Multiset<ASTNode> operands = LinkedHashMultiset.create();
+    private final Multiset<ASTNode> operands = LinkedHashMultiset.create();
 
     public int getTotalOperands() {
         return operands.size();
@@ -82,6 +82,12 @@ public class HalsteadVisitor implements ScratchVisitor {
             visit(actor.getScripts());
             visit(actor.getProcedureDefinitionList());
         }
+    }
+
+    @Override
+    public void visit(ActorDefinition actor) {
+        visit(actor.getScripts());
+        visit(actor.getProcedureDefinitionList());
     }
 
     @Override

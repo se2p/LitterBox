@@ -30,4 +30,10 @@ public class MyBlocksBlockCountTest implements JsonTest {
     public void testAll() throws IOException, ParsingException {
         assertThatMetricReports(4, new MyBlocksBlockCount<>(), "./src/test/fixtures/metrics/allMyBlocksBlocks.json");
     }
+
+    @Test
+    public void testAverage() throws IOException, ParsingException {
+        // 4 of 7 blocks in fixture
+        assertThatMetricReportsWithin(0.571428571, 1e-4, new MyBlocksBlockCount<>(true), "./src/test/fixtures/metrics/allMyBlocksBlocks.json");
+    }
 }

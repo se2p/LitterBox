@@ -24,7 +24,7 @@ import java.util.Objects;
 
 public class ListVariable implements Defineable {
 
-    private Identifier identifier;
+    private final Identifier identifier;
 
     public ListVariable(Identifier identifier) {
         this.identifier = identifier;
@@ -43,11 +43,19 @@ public class ListVariable implements Defineable {
             return false;
         }
         ListVariable variable = (ListVariable) o;
+        if (identifier instanceof de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified q1
+                && variable.identifier instanceof de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified q2) {
+            return Objects.equals(q1.getFirst(), q2.getFirst())
+                    && Objects.equals(q1.getSecond().getName(), q2.getSecond().getName());
+        }
         return Objects.equals(identifier, variable.identifier);
     }
 
     @Override
     public int hashCode() {
+        if (identifier instanceof de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified q) {
+            return Objects.hash(q.getFirst(), q.getSecond().getName());
+        }
         return Objects.hash(identifier);
     }
 }

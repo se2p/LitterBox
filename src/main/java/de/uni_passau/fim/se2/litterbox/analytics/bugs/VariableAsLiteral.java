@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
@@ -37,7 +38,10 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -84,6 +88,38 @@ public class VariableAsLiteral extends AbstractIssueFinder {
                 builder = builder.withRefactoring(refactoring);
             }
             // TODO: Check for NumberExpr?
+
+            addIssue(builder.withHint(hint));
+        }
+    }
+
+    @Override
+    public void visit(NumberLiteral node) {
+        if (currentScript == null && currentProcedure == null) {
+            return;
+        }
+
+        NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
+        format.setGroupingUsed(false);
+        format.setMinimumFractionDigits(0);
+        String literal = format.format(node.getValue());
+
+        if (variablesInScope.contains(literal)) {
+            IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.HIGH).withMetadata(getMetadata(node));
+            Hint hint = Hint.fromKey(getName());
+            hint.setParameter(Hint.HINT_VARIABLE, literal);
+            builder = builder.withCurrentNode(getCurrentReferencableNode(node));
+
+            Qualified qualified = new Qualified(currentActor.getIdent(), new Variable(new StrId(literal)));
+            if (node.getParentNode() instanceof BoolExpr) {
+                NodeReplacementVisitor visitor = new NodeReplacementVisitor(node, qualified);
+                ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
+                builder = builder.withRefactoring(refactoring);
+            } else {
+                NodeReplacementVisitor visitor = new NodeReplacementVisitor(node, new AsString(qualified));
+                ScriptEntity refactoring = visitor.apply(getCurrentScriptEntity());
+                builder = builder.withRefactoring(refactoring);
+            }
 
             addIssue(builder.withHint(hint));
         }

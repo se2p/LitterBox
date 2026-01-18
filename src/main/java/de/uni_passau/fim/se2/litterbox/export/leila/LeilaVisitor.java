@@ -28,8 +28,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
@@ -102,7 +102,7 @@ public class LeilaVisitor extends AbstractExportVisitor {
     private final boolean noCast = false;
     private boolean showHideVar = false;
     private boolean methodCall = false;
-    private Stack<TYPE> expectedTypes = new Stack<>();
+    private final Stack<TYPE> expectedTypes = new Stack<>();
 
     enum TYPE {
         INTEGER, FLOAT, ORIGINAL

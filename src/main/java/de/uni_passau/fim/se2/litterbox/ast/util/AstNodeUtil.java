@@ -28,7 +28,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Join;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.LetterOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.PlayDrumForBeats;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.PlayNoteForBeats;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.RestForBeats;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.translate.TranslateTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetadataList;
@@ -38,6 +49,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadata
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
@@ -48,6 +60,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.InsertAt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.ReplaceItem;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 
 import java.util.*;
@@ -76,6 +91,7 @@ public class AstNodeUtil {
             return ((NonDataBlockMetadata) procedure.getDefinition()).getBlockId();
         } else if (node instanceof Script script) {
             if (script.getEvent() instanceof Never) {
+                // Scripts with Never events (disconnected blocks) use the first statement's block ID
                 return getBlockId(script.getStmtList().getStatement(0));
             } else {
                 return getBlockId(script.getEvent());
@@ -83,6 +99,27 @@ public class AstNodeUtil {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Finds the nearest ancestor of the node (including the node itself) that has a block ID.
+     *
+     * <p>This is useful for expression nodes (like {@code AsNumber}) which typically don't have
+     * their own block ID. In Scratch, block IDs are assigned to statement-level blocks, not to
+     * nested expressions.
+     *
+     * @param node Some node in the AST.
+     * @return The nearest node (including itself) that has a block ID, or {@code null} if none found.
+     */
+    public static ASTNode findNearestNodeWithBlockId(final ASTNode node) {
+        ASTNode current = node;
+        while (current != null) {
+            if (getBlockId(current) != null) {
+                return current;
+            }
+            current = current.getParentNode();
+        }
+        return null;
     }
 
     public static boolean isMetadata(final ASTNode node) {
@@ -173,8 +210,8 @@ public class AstNodeUtil {
      * @param node       Some node in the AST.
      * @param parentType The class the parent is represented by.
      * @return The parent in the AST of the requested type.
-     *         Might return {@code node} itself if it has matching type.
-     *         Returns {@code null} if no parent of the requested type could be found.
+     * Might return {@code node} itself if it has matching type.
+     * Returns {@code null} if no parent of the requested type could be found.
      */
     public static <T extends ASTNode> T findParent(final ASTNode node, final Class<T> parentType) {
         ASTNode currentNode = node;
@@ -250,7 +287,7 @@ public class AstNodeUtil {
     }
 
     private static class BlockMapVisitor implements ScratchVisitor, MusicExtensionVisitor, PenExtensionVisitor,
-            TextToSpeechExtensionVisitor, TranslateExtensionVisitor {
+            TextToSpeechExtensionVisitor, TranslateExtensionVisitor, VideoSensingExtensionVisitor {
         private final Map<String, ASTNode> blockMap = new LinkedHashMap<>();
 
         private BlockMapVisitor() {
@@ -314,7 +351,7 @@ public class AstNodeUtil {
         return visitor.inputs.containsKey(inputKind) && visitor.inputs.get(inputKind) == child;
     }
 
-    private static class IsInputOfVisitor implements ScratchVisitor, PenExtensionVisitor {
+    private static class IsInputOfVisitor implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor, TranslateExtensionVisitor, VideoSensingExtensionVisitor {
         private final Map<String, ASTNode> inputs = new LinkedHashMap<>();
 
         private IsInputOfVisitor() {
@@ -789,5 +826,159 @@ public class AstNodeUtil {
         public void visit(final SetPenColorToColorStmt node) {
             inputs.put(COLOR_KEY, node.getColorExpr());
         }
+
+        /*
+         * Text to Speech blocks
+         */
+
+        @Override
+        public void visit(final Speak node) {
+            inputs.put(WORDS_KEY, node.getText());
+        }
+
+        @Override
+        public void visit(final SetVoice node) {
+            inputs.put(VOICE_INPUT_KEY, node.getVoice());
+        }
+
+        @Override
+        public void visit(final SetLanguage node) {
+            inputs.put(LANGUAGE_INPUT_KEY, node.getLanguage());
+        }
+
+        /*
+         * Translate blocks
+         */
+
+        @Override
+        public void visit(final TranslateTo node) {
+            inputs.put(WORDS_KEY, node.getText());
+            inputs.put(LANGUAGE_INPUT_KEY, node.getLanguage());
+        }
+
+        /*
+         * Video Sensing blocks
+         */
+
+        @Override
+        public void visit(WhenVideoMotionGreaterThan node) {
+            inputs.put(REFERENCE_KEY, node.getReference());
+        }
+
+        @Override
+        public void visit(VideoOn node) {
+            // no inputs
+        }
+
+        @Override
+        public void visit(TurnVideo node) {
+            // no inputs
+        }
+
+        @Override
+        public void visit(SetVideoTransparency node) {
+            inputs.put(TRANSPARENCY_KEY, node.getTransparency());
+        }
+    }
+
+    /**
+     * Checks if the given statement is a halting statement that interrupts control flow.
+     *
+     * <p>Halting statements include:
+     * <ul>
+     *   <li>Time-based waits: {@link WaitSeconds}, {@link WaitUntil}</li>
+     *   <li>Timed speech/thought: {@link SayForSecs}, {@link ThinkForSecs}, {@link Speak}</li>
+     *   <li>Glide animations: {@link GlideSecsToXY}, {@link GlideSecsTo}</li>
+     *   <li>Sound playback: {@link PlaySoundUntilDone}</li>
+     *   <li>User interaction: {@link AskAndWait}, {@link BroadcastAndWait}, {@link SwitchBackdropAndWait}</li>
+     *   <li>Loop statements: {@link LoopStmt}</li>
+     *   <li>Termination statements: {@link StopAll}, {@link StopThisScript}, {@link DeleteClone}</li>
+     * </ul>
+     *
+     * @param stmt the statement to check
+     * @return {@code true} if the statement is a halting statement
+     */
+    public static boolean isHaltingStatement(Stmt stmt) {
+        return stmt instanceof AskAndWait
+                || stmt instanceof BroadcastAndWait
+                || stmt instanceof DeleteClone
+                || stmt instanceof GlideSecsToXY
+                || stmt instanceof GlideSecsTo
+                || stmt instanceof LoopStmt
+                || stmt instanceof PlaySoundUntilDone
+                || stmt instanceof PlayDrumForBeats
+                || stmt instanceof PlayNoteForBeats
+                || stmt instanceof RestForBeats
+                || stmt instanceof SayForSecs
+                || stmt instanceof Speak
+                || stmt instanceof StopThisScript
+                || stmt instanceof StopAll
+                || stmt instanceof SwitchBackdropAndWait
+                || stmt instanceof ThinkForSecs
+                || stmt instanceof WaitSeconds
+                || stmt instanceof WaitUntil;
+    }
+
+    /**
+     * Checks if the given statement is a timed halting statement.
+     *
+     * <p>Unlike {@link #isHaltingStatement(Stmt)}, this only checks for statements
+     * that take observable time (for visual effect analysis), excluding control flow
+     * terminators and loop statements.
+     *
+     * @param stmt the statement to check
+     * @return {@code true} if the statement is a timed halting statement
+     */
+    public static boolean isTimedHaltingStatement(Stmt stmt) {
+        return stmt instanceof WaitSeconds
+                || stmt instanceof ThinkForSecs
+                || stmt instanceof SayForSecs
+                || stmt instanceof GlideSecsToXY
+                || stmt instanceof GlideSecsTo
+                || stmt instanceof PlaySoundUntilDone
+                || stmt instanceof PlayDrumForBeats
+                || stmt instanceof PlayNoteForBeats
+                || stmt instanceof RestForBeats
+                || stmt instanceof Speak;
+    }
+
+    /**
+     * Recursively checks if the given AST node or any of its descendants contains a halting statement.
+     *
+     * @param node the AST node to check
+     * @return {@code true} if the node or any descendant is a halting statement
+     */
+    public static boolean containsHaltingStatement(ASTNode node) {
+        if (node instanceof Stmt stmt && isHaltingStatement(stmt)) {
+            return true;
+        }
+        if (node != null && node.getChildren() != null) {
+            for (ASTNode child : node.getChildren()) {
+                if (containsHaltingStatement(child)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Recursively checks if the given AST node or any of its descendants contains a timed halting statement.
+     *
+     * @param node the AST node to check
+     * @return {@code true} if the node or any descendant is a timed halting statement
+     */
+    public static boolean containsTimedHaltingStatement(ASTNode node) {
+        if (node instanceof Stmt stmt && isTimedHaltingStatement(stmt)) {
+            return true;
+        }
+        if (node != null && node.getChildren() != null) {
+            for (ASTNode child : node.getChildren()) {
+                if (containsTimedHaltingStatement(child)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

@@ -30,4 +30,15 @@ public class SensingBlockCountTest implements JsonTest {
     public void testAll() throws IOException, ParsingException {
         assertThatMetricReports(18, new SensingBlockCount<>(), "./src/test/fixtures/metrics/allSensingBlocks.json");
     }
+
+    @Test
+    public void testAverageAll() throws IOException, ParsingException {
+        // 18 blocks + 3 menus (not counted as full blocks) in sensing fixture -> assertion 18/21 = 0.85... instead of 1
+        assertThatMetricReportsWithin(0.857142857, 1e-4, new SensingBlockCount<>(true), "./src/test/fixtures/metrics/allSensingBlocks.json");
+    }
+
+    @Test
+    public void testAverageTotal() throws IOException, ParsingException {
+        assertThatMetricReportsWithin(0.136363636, 1e-4, new SensingBlockCount<>(true), "./src/test/fixtures/allBlocks.json");
+    }
 }

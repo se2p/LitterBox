@@ -23,10 +23,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.util.Objects.requireNonNull;
 
 public class Hint {
 
@@ -67,6 +70,19 @@ public class Hint {
 
     protected final Map<String, HintPlaceholder> parameters = new HashMap<>();
 
+    public String getKey() {
+        return hintKey;
+    }
+
+    /**
+     * Returns the parameters map for direct access.
+     *
+     * @return unmodifiable view of the parameters map
+     */
+    public Map<String, HintPlaceholder> getParameters() {
+        return Collections.unmodifiableMap(parameters);
+    }
+
     private Hint(String hintKey, String hintText) {
         this.hintKey = hintKey;
         this.hintText = hintText;
@@ -81,10 +97,14 @@ public class Hint {
     }
 
     public void setParameter(final String key, final String value) {
+        requireNonNull(key, "Parameter key must not be null");
+        requireNonNull(value, "Parameter value must not be null");
         parameters.put(key, new HintPlaceholder.Value(value));
     }
 
     public void setParameter(final String key, final HintPlaceholder value) {
+        requireNonNull(key, "Parameter key must not be null");
+        requireNonNull(value, "Parameter value must not be null");
         parameters.put(key, value);
     }
 
@@ -179,6 +199,8 @@ public class Hint {
             case ROTATION_STYLE -> IssueTranslator.GeneralTerm.ROTATION_STYLE;
             case SOUND_STATE -> IssueTranslator.GeneralTerm.SOUND_STATE;
             case DRAG_MODE -> IssueTranslator.GeneralTerm.DRAG_MODE;
+            case VIDEO_STATE -> IssueTranslator.GeneralTerm.VIDEO_STATE;
+            case VIDEO_TRANSPARENCY -> IssueTranslator.GeneralTerm.TRANSPARENCY;
         };
     }
 

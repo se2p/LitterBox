@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.DistanceTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.ItemOfVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
@@ -36,6 +37,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.VideoSensingExtensionVisitor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,7 +49,7 @@ import java.util.Stack;
  * inside a forever or until loop it is only checked once in a conditional construct, making it
  * unlikely that the timing is correct.
  */
-public class MissingLoopSensing extends AbstractIssueFinder {
+public class MissingLoopSensing extends AbstractIssueFinder implements VideoSensingExtensionVisitor {
     public static final String NAME = "missing_loop_sensing";
     public static final String VARIABLE_VERSION = "missing_loop_sensing_variable";
     private Stack<LoopStmt> loopStack = new Stack<>();
@@ -139,6 +141,13 @@ public class MissingLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(DistanceTo node) {
+        if (inCondition && !afterWaitUntil && !afterAskAndWait) {
+            addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
+        }
+    }
+
+    @Override
+    public void visit(VideoOn node) {
         if (inCondition && !afterWaitUntil && !afterAskAndWait) {
             addIssue(node, node.getMetadata(), IssueSeverity.HIGH);
         }
