@@ -39,10 +39,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.EventAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
@@ -57,14 +61,19 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionLi
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.ExpressionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
@@ -75,9 +84,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.export.AbstractExportVisitor;
+import de.uni_passau.fim.se2.litterbox.export.ScratchKeyCode;
+import de.uni_passau.fim.se2.litterbox.export.StringExprNameVisitor;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.PrintStream;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Exports LitterBox AST to Goboscript format.
@@ -102,7 +117,12 @@ import java.util.List;
 public class GoboscriptVisitor extends AbstractExportVisitor {
 
     private boolean inScript = false;
+    private boolean inProcedure = false;
+    private Set<String> currentProcedureParams = new HashSet<>();
     private String assetPrefix = "";
+    private Set<String> availableAssets = null;
+    private Set<String> validCostumes = new HashSet<>();
+    private int costumeCount = 0;
 
     /**
      * Creates a new Goboscript visitor with internal buffering.
@@ -122,6 +142,16 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     public void setAssetPrefix(String prefix) {
         this.assetPrefix = prefix;
+    }
+
+    /**
+     * Sets the set of available asset filenames.
+     * When set, only costumes and sounds whose md5ext matches an available asset will be emitted.
+     *
+     * @param assets Set of available asset filenames (e.g., "bcf454acf82e4504149f7ffe07081dbc.svg")
+     */
+    public void setAvailableAssets(Set<String> assets) {
+        this.availableAssets = assets;
     }
 
     /**
@@ -148,9 +178,20 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         program.getActorDefinitionList().accept(this);
     }
 
+    private Set<String> definedProcedures = new HashSet<>();
+
     @Override
     public void visit(ActorDefinition node) {
         currentActor = node;
+        validCostumes.clear();
+        costumeCount = 0;
+        definedProcedures.clear();
+        
+        // Collect defined procedures for validation
+        for (ProcedureDefinition proc : node.getProcedureDefinitionList().getList()) {
+            definedProcedures.add(getGoboscriptProcedureName(proc));
+        }
+
         String actorType = node.isStage() ? "stage" : "sprite";
         emitNoSpace("# " + actorType + " " + escapeIdentifier(node.getIdent().getName()));
         newLine();
@@ -160,6 +201,12 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
         if (node.getActorMetadata() != null) {
             for (ImageMetadata costume : node.getActorMetadata().getCostumes().getList()) {
+                // Skip costumes that don't exist in the available assets
+                if (availableAssets != null && !availableAssets.contains(costume.getMd5ext())) {
+                    continue;
+                }
+                validCostumes.add(costume.getName());
+                costumeCount++;
                 emitNoSpace("costumes \"");
                 emitNoSpace(assetPrefix + escapeString(costume.getMd5ext()));
                 emitNoSpace("\" as \"");
@@ -167,7 +214,25 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
                 emitNoSpace("\";");
                 newLine();
             }
+            
+            // If all costumes were filtered out, we must emit at least one placeholder costume
+            // to satisfy Goboscript's requirement (it errors on "no costumes").
+            if (validCostumes.isEmpty() && availableAssets != null && !availableAssets.isEmpty()) {
+                String placeholderAsset = availableAssets.iterator().next();
+                emitNoSpace("# Warning: All original costumes/backdrops were missing. Using placeholder.");
+                newLine();
+                emitNoSpace("costumes \"");
+                emitNoSpace(assetPrefix + escapeString(placeholderAsset));
+                emitNoSpace("\" as \"placeholder\";");
+                newLine();
+                validCostumes.add("placeholder");
+                costumeCount++;
+            }
             for (SoundMetadata sound : node.getActorMetadata().getSounds().getList()) {
+                // Skip sounds that don't exist in the available assets
+                if (availableAssets != null && !availableAssets.contains(sound.getMd5ext())) {
+                    continue;
+                }
                 emitNoSpace("sounds \"");
                 emitNoSpace(assetPrefix + escapeString(sound.getMd5ext()));
                 emitNoSpace("\" as \"");
@@ -182,7 +247,6 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
         currentActor = null;
     }
-
     @Override
     public void visit(DeclarationStmtList node) {
         for (DeclarationStmt stmt : node.getDeclarationStmts()) {
@@ -194,11 +258,14 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     public void visit(DeclarationIdentAsTypeStmt node) {
         Type type = node.getType();
         if (type instanceof ListType) {
+            // List declarations use "_list" suffix to avoid name collisions with variables
             emitNoSpace("list ");
+            emitNoSpace(escapeListIdentifier(node.getIdent().getName().getName()));
         } else {
+            // Variable declarations
             emitNoSpace("var ");
+            emitNoSpace(escapeIdentifier(node.getIdent().getName().getName()));
         }
-        emitNoSpace(escapeIdentifier(node.getIdent().getName().getName()));
         emitNoSpace(";");
         newLine();
     }
@@ -206,6 +273,11 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(DeclarationAttributeAsTypeStmt node) {
         // Built-in attributes are implicitly declared in Goboscript
+    }
+
+    @Override
+    public void visit(DeclarationBroadcastStmt node) {
+        // Broadcasts are implicit in Goboscript
     }
 
     @Override
@@ -240,6 +312,36 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
             appendIndentation();
             stmt.accept(this);
         }
+    }
+
+    /**
+     * Handles orphan reporter blocks (expressions not connected to any statement).
+     * In Scratch, these disconnected blocks don't execute, so we skip them entirely.
+     * This prevents invalid Goboscript output like standalone numbers (e.g., "0.25").
+     */
+    @Override
+    public void visit(ExpressionStmt node) {
+        // Orphan blocks don't execute in Scratch - skip them entirely
+    }
+
+    /**
+     * Handles music extension blocks (play note, set tempo, etc.).
+     * Goboscript does not support the music extension, so we skip these blocks entirely.
+     * This prevents invalid output from the block's children being visited.
+     */
+    @Override
+    public void visit(MusicBlock node) {
+        // Music extension blocks are not supported in goboscript - skip them
+    }
+
+    /**
+     * Handles text-to-speech extension blocks (speak, set voice, set language).
+     * Goboscript does not support the text-to-speech extension, so we skip these blocks entirely.
+     * This prevents invalid output from the block's children being visited.
+     */
+    @Override
+    public void visit(TextToSpeechBlock node) {
+        // Text-to-speech extension blocks are not supported in goboscript - skip them
     }
 
     // ---------------------------------------------------------------
@@ -404,9 +506,9 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(WaitUntil node) {
-        emitNoSpace("wait_until ");
+        emitNoSpace("until ");
         node.getUntil().accept(this);
-        emitNoSpace(";");
+        emitNoSpace(" {}"); // Empty loop
         newLine();
     }
 
@@ -440,9 +542,16 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(GoToPos node) {
-        emitNoSpace("goto ");
-        visitPosition(node.getPosition());
-        emitNoSpace(";");
+        Position pos = node.getPosition();
+        if (pos instanceof RandomPos) {
+            emitNoSpace("goto_random_position;");
+        } else if (pos instanceof MousePos) {
+            emitNoSpace("goto_mouse_pointer;");
+        } else {
+            emitNoSpace("goto ");
+            pos.accept(this);
+            emitNoSpace(";");
+        }
         newLine();
     }
 
@@ -458,11 +567,24 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(GlideSecsTo node) {
-        emitNoSpace("glide ");
-        node.getSecs().accept(this);
-        emitNoSpace(", ");
-        visitPosition(node.getPosition());
-        emitNoSpace(";");
+        Position pos = node.getPosition();
+        if (pos instanceof RandomPos) {
+            emitNoSpace("glide_to_random_position ");
+            node.getSecs().accept(this);
+            emitNoSpace(";");
+        } else if (pos instanceof MousePos) {
+            emitNoSpace("glide_to_mouse_pointer ");
+            node.getSecs().accept(this);
+            emitNoSpace(";");
+        } else {
+            // glide_to with sprite name is not supported in Goboscript compiler
+            // Use goto instead (instant teleport, no gliding animation)
+            emitNoSpace("goto ");
+            pos.accept(this);
+            emitNoSpace("; # was: glide_to ");
+            node.getSecs().accept(this);
+            emitNoSpace("s");
+        }
         newLine();
     }
 
@@ -488,9 +610,16 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(PointTowards node) {
-        emitNoSpace("point_towards ");
-        visitPosition(node.getPosition());
-        emitNoSpace(";");
+        Position pos = node.getPosition();
+        if (pos instanceof RandomPos) {
+            emitNoSpace("point_towards_random_direction;");
+        } else if (pos instanceof MousePos) {
+            emitNoSpace("point_towards_mouse_pointer;");
+        } else {
+            emitNoSpace("point_towards ");
+            pos.accept(this);
+            emitNoSpace(";");
+        }
         newLine();
     }
 
@@ -532,6 +661,16 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         newLine();
     }
 
+    @Override
+    public void visit(SetRotationStyle node) {
+        switch (node.getRotation().getType()) {
+            case left_right -> emitNoSpace("set_rotation_style_left_right;");
+            case dont_rotate -> emitNoSpace("set_rotation_style_do_not_rotate;");
+            case all_around -> emitNoSpace("set_rotation_style_all_around;");
+        }
+        newLine();
+    }
+
     // ---------------------------------------------------------------
     // Looks Blocks
     // ---------------------------------------------------------------
@@ -548,7 +687,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     public void visit(SayForSecs node) {
         emitNoSpace("say ");
         node.getString().accept(this);
-        emitNoSpace(" for ");
+        emitNoSpace(", ");
         node.getSecs().accept(this);
         emitNoSpace(";");
         newLine();
@@ -566,7 +705,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     public void visit(ThinkForSecs node) {
         emitNoSpace("think ");
         node.getThought().accept(this);
-        emitNoSpace(" for ");
+        emitNoSpace(", ");
         node.getSecs().accept(this);
         emitNoSpace(";");
         newLine();
@@ -574,6 +713,30 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(SwitchCostumeTo node) {
+        String costumeName = resolveStringElement(node.getCostumeChoice());
+        if (costumeName != null) {
+            if (!validCostumes.contains(costumeName)) {
+                emitNoSpace("# switch_costume \"" + escapeString(costumeName) + "\";");
+                newLine();
+                return;
+            }
+        }
+
+        if (node.getCostumeChoice() instanceof WithExpr) {
+            WithExpr withExpr = (WithExpr) node.getCostumeChoice();
+            if (withExpr.getExpression() instanceof NumExpr) {
+                int count = costumeCount;
+                
+                if (count > 0) {
+                    emitNoSpace("switch_costume ((");
+                    withExpr.accept(this);
+                    emitNoSpace(" - 1) % " + count + " + 1);");
+                    newLine();
+                    return;
+                }
+            }
+        }
+        
         emitNoSpace("switch_costume ");
         node.getCostumeChoice().accept(this);
         emitNoSpace(";");
@@ -588,15 +751,100 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(SwitchBackdrop node) {
-        emitNoSpace("switch_backdrop ");
-        switch (node.getElementChoice()) {
-            case Next ignored -> emitNoSpace("\"next backdrop\"");
-            case Prev ignored -> emitNoSpace("\"previous backdrop\"");
-            case Random ignored -> emitNoSpace("\"random backdrop\"");
-            default -> node.getElementChoice().accept(this);
+        String backdropName = resolveStringElement(node.getElementChoice());
+        if (backdropName != null) {
+            if (!isBackdropAvailable(backdropName)) {
+                emitNoSpace("# switch_backdrop \"" + escapeString(backdropName) + "\";");
+                newLine();
+                return;
+            }
         }
-        emitNoSpace(";");
+
+        switch (node.getElementChoice()) {
+            case Next ignored -> {
+                emitNoSpace("next_backdrop;");
+                newLine();
+            }
+            case Prev ignored -> {
+                emitNoSpace("previous_backdrop;");
+                newLine();
+            }
+            case Random ignored -> {
+                emitNoSpace("random_backdrop;");
+                newLine();
+            }
+            default -> {
+                if (node.getElementChoice() instanceof WithExpr) {
+                    WithExpr withExpr = (WithExpr) node.getElementChoice();
+                    if (withExpr.getExpression() instanceof NumExpr) {
+                        int count = costumeCount;
+                        if (count > 0) {
+                            emitNoSpace("switch_backdrop ((");
+                            withExpr.accept(this);
+                            emitNoSpace(" - 1) % " + count + " + 1);");
+                            newLine();
+                            return;
+                        }
+                    }
+                }
+                emitNoSpace("switch_backdrop ");
+                node.getElementChoice().accept(this);
+                emitNoSpace(";");
+                newLine();
+            }
+        }
+    }
+
+    @Override
+    public void visit(NextBackdrop node) {
+        emitNoSpace("next_backdrop;");
         newLine();
+    }
+
+    @Override
+    public void visit(SwitchBackdropAndWait node) {
+        String backdropName = resolveStringElement(node.getElementChoice());
+        if (backdropName != null) {
+            if (!isBackdropAvailable(backdropName)) {
+                emitNoSpace("# switch_backdrop_and_wait \"" + escapeString(backdropName) + "\";");
+                newLine();
+                return;
+            }
+        }
+
+        switch (node.getElementChoice()) {
+            case Next ignored -> {
+                emitNoSpace("next_backdrop;");
+                newLine();
+            }
+            case Prev ignored -> {
+                emitNoSpace("previous_backdrop;");
+                newLine();
+            }
+            case Random ignored -> {
+                emitNoSpace("random_backdrop;");
+                newLine();
+            }
+            default -> {
+                if (node.getElementChoice() instanceof WithExpr) {
+                    WithExpr withExpr = (WithExpr) node.getElementChoice();
+                    if (withExpr.getExpression() instanceof NumExpr) {
+                        int count = costumeCount;
+                        if (count > 0) {
+                            emitNoSpace("switch_backdrop ((");
+                            withExpr.accept(this);
+                            emitNoSpace(" - 1) % " + count + " + 1);");
+                            newLine();
+                            return;
+                        }
+                    }
+                }
+                emitNoSpace("switch_backdrop ");
+                node.getElementChoice().accept(this);
+                emitNoSpace(";");
+                newLine();
+            }
+        }
     }
 
     @Override
@@ -624,6 +872,78 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(Hide node) {
         emitNoSpace("hide;");
+        newLine();
+    }
+
+    @Override
+    public void visit(ChangeGraphicEffectBy node) {
+        emitNoSpace("change_" + node.getEffect().getTypeName() + "_effect ");
+        node.getValue().accept(this);
+        emitNoSpace(";");
+        newLine();
+    }
+
+    @Override
+    public void visit(SetGraphicEffectTo node) {
+        emitNoSpace("set_" + node.getEffect().getTypeName() + "_effect ");
+        node.getValue().accept(this);
+        emitNoSpace(";");
+        newLine();
+    }
+
+    @Override
+    public void visit(ClearGraphicEffects node) {
+        emitNoSpace("clear_graphic_effects;");
+        newLine();
+    }
+
+    @Override
+    public void visit(GoToLayer node) {
+         String layer = node.getLayerChoice().getTypeName().toLowerCase();
+         // "front" or "back"
+         emitNoSpace("goto_" + layer + ";");
+         newLine();
+    }
+
+    @Override
+    public void visit(ChangeLayerBy node) {
+        String direction = node.getForwardBackwardChoice().getTypeName().toLowerCase();
+        // "forward" or "backward"
+        emitNoSpace("go_" + direction + " ");
+        node.getNum().accept(this);
+        emitNoSpace(";");
+        newLine();
+    }
+
+    @Override
+    public void visit(ShowVariable node) {
+        emitNoSpace("show ");
+        node.getIdentifier().accept(this);
+        emitNoSpace(";");
+        newLine();
+    }
+
+    @Override
+    public void visit(HideVariable node) {
+        emitNoSpace("hide ");
+        node.getIdentifier().accept(this);
+        emitNoSpace(";");
+        newLine();
+    }
+
+    @Override
+    public void visit(ShowList node) {
+        emitNoSpace("show ");
+        node.getIdentifier().accept(this);
+        emitNoSpace(";");
+        newLine();
+    }
+
+    @Override
+    public void visit(HideList node) {
+        emitNoSpace("hide ");
+        node.getIdentifier().accept(this);
+        emitNoSpace(";");
         newLine();
     }
 
@@ -669,6 +989,30 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         newLine();
     }
 
+    @Override
+    public void visit(ChangeSoundEffectBy node) {
+        String effect = node.getEffect().getType() == SoundEffect.SoundEffectType.PITCH ? "pitch" : "pan";
+        emitNoSpace("change_" + effect + "_effect ");
+        node.getValue().accept(this);
+        emitNoSpace(";");
+        newLine();
+    }
+
+    @Override
+    public void visit(SetSoundEffectTo node) {
+        String effect = node.getEffect().getType() == SoundEffect.SoundEffectType.PITCH ? "pitch" : "pan";
+        emitNoSpace("set_" + effect + "_effect ");
+        node.getValue().accept(this);
+        emitNoSpace(";");
+        newLine();
+    }
+
+    @Override
+    public void visit(ClearSoundEffects node) {
+        emitNoSpace("clear_sound_effects;");
+        newLine();
+    }
+
     // ---------------------------------------------------------------
     // Sensing Blocks
     // ---------------------------------------------------------------
@@ -689,10 +1033,71 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(SetDragMode node) {
-        emitNoSpace("set_drag_mode \"");
-        emitNoSpace(node.getDrag().getTypeName());
-        emitNoSpace("\";");
+        if ("draggable".equals(node.getDrag().getTypeName())) {
+            emitNoSpace("set_drag_mode_draggable;");
+        } else {
+            emitNoSpace("set_drag_mode_not_draggable;");
+        }
         newLine();
+    }
+
+    // ---------------------------------------------------------------
+    // Pen Extension
+    // ---------------------------------------------------------------
+
+    @Override
+    public void visit(PenBlock node) {
+        if (node instanceof PenClearStmt) {
+            emitNoSpace("erase_all;");
+            newLine();
+        } else if (node instanceof PenStampStmt) {
+            emitNoSpace("stamp;");
+            newLine();
+        } else if (node instanceof PenDownStmt) {
+            emitNoSpace("pen_down;");
+            newLine();
+        } else if (node instanceof PenUpStmt) {
+            emitNoSpace("pen_up;");
+            newLine();
+        } else if (node instanceof SetPenColorToColorStmt stmt) {
+            emitNoSpace("set_pen_color(");
+            stmt.getColorExpr().accept(this);
+            emitNoSpace(");");
+            newLine();
+        } else if (node instanceof ChangePenSizeBy stmt) {
+            emitNoSpace("change_pen_size(");
+            stmt.getValue().accept(this);
+            emitNoSpace(");");
+            newLine();
+        } else if (node instanceof SetPenSizeTo stmt) {
+            emitNoSpace("set_pen_size(");
+            stmt.getValue().accept(this);
+            emitNoSpace(");");
+            newLine();
+        } else if (node instanceof ChangePenColorParamBy stmt) {
+            String param = "hue"; // Default
+            if (stmt.getParam() instanceof FixedColorParam fixed) {
+                param = fixed.getTypeName();
+                if ("color".equals(param)) param = "hue";
+            }
+            emitNoSpace("change_pen_" + param + "(");
+            stmt.getValue().accept(this);
+            emitNoSpace(");");
+            newLine();
+        } else if (node instanceof SetPenColorParamTo stmt) {
+            String param = "hue"; // Default
+            if (stmt.getParam() instanceof FixedColorParam fixed) {
+                param = fixed.getTypeName();
+                if ("color".equals(param)) param = "hue";
+            }
+            emitNoSpace("set_pen_" + param + "(");
+            stmt.getValue().accept(this);
+            emitNoSpace(");");
+            newLine();
+        } else {
+             // Fallback
+             visitChildren(node);
+        }
     }
 
     // ---------------------------------------------------------------
@@ -701,12 +1106,18 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(SetVariableTo node) {
+        // Skip list initializations - lists are declared with "list name;" and don't need
+        // assignment statements. List operations within scripts are handled separately.
         Identifier id = node.getIdentifier();
         if (id instanceof Qualified q) {
-            q.getSecond().accept(this);
-        } else {
-            id.accept(this);
+            if (q.getSecond() instanceof ScratchList) {
+                return;
+            }
+        } else if (id instanceof ScratchList) {
+            return;
         }
+
+        handleVariableAssignment(id);
         emitNoSpace(" = ");
         node.getExpr().accept(this);
         emitNoSpace(";");
@@ -715,16 +1126,35 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(ChangeVariableBy node) {
-        Identifier id = node.getIdentifier();
-        if (id instanceof Qualified q) {
-            q.getSecond().accept(this);
-        } else {
-            id.accept(this);
-        }
+        handleVariableAssignment(node.getIdentifier());
         emitNoSpace(" += ");
         node.getExpr().accept(this);
         emitNoSpace(";");
         newLine();
+    }
+
+    @Override
+    public void visit(SetAttributeTo node) {
+        // Attribute initializations (volume, tempo, layer order, etc.) are not needed in Goboscript
+        // These are handled automatically by the Scratch runtime
+    }
+
+    private void handleVariableAssignment(Identifier id) {
+        if (id instanceof Qualified q) {
+            String qualifier = q.getFirst().getName();
+            // If the qualifier is the current actor or explicitly "Stage",
+            // we strip it and let visit(Variable) handle the correct qualification/scoping.
+            boolean isSelf = currentActor != null && qualifier.equals(currentActor.getIdent().getName());
+            boolean isStage = qualifier.equals("Stage");
+
+            if (isSelf || isStage) {
+                q.getSecond().accept(this);
+            } else {
+                id.accept(this);
+            }
+        } else {
+            id.accept(this);
+        }
     }
 
     // ---------------------------------------------------------------
@@ -753,7 +1183,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(DeleteAllOf node) {
-        emitNoSpace("delete_all ");
+        emitNoSpace("delete ");
         node.getIdentifier().accept(this);
         emitNoSpace(";");
         newLine();
@@ -796,9 +1226,9 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(BroadcastAndWait node) {
-        emitNoSpace("broadcast ");
+        emitNoSpace("broadcast_and_wait ");
         node.getMessage().accept(this);
-        emitNoSpace(" and_wait;");
+        emitNoSpace(";");
         newLine();
     }
 
@@ -808,8 +1238,11 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(CreateCloneOf node) {
-        emitNoSpace("create_clone ");
-        node.getCloneChoice().accept(this);
+        emitNoSpace("clone");
+        if (!(node.getCloneChoice() instanceof Myself)) {
+             emitNoSpace(" ");
+             node.getCloneChoice().accept(this);
+        }
         emitNoSpace(";");
         newLine();
     }
@@ -858,10 +1291,17 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(ProcedureDefinition node) {
-        String procName = getProcedureName(node);
+        String procName = getGoboscriptProcedureName(node);
         emitNoSpace("proc " + escapeIdentifier(procName));
 
         List<ParameterDefinition> params = node.getParameterDefinitionList().getParameterDefinitions();
+
+        // Track parameter names for validation during body traversal
+        currentProcedureParams.clear();
+        for (ParameterDefinition param : params) {
+            currentProcedureParams.add(param.getIdent().getName());
+        }
+
         if (!params.isEmpty()) {
             emitNoSpace(" ");
             for (int i = 0; i < params.size(); i++) {
@@ -876,8 +1316,11 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         newLine();
         beginIndentation();
         inScript = true;
+        inProcedure = true;
         node.getStmtList().accept(this);
+        inProcedure = false;
         inScript = false;
+        currentProcedureParams.clear();
         endIndentation();
         emitNoSpace("}");
         newLine();
@@ -885,7 +1328,15 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(CallStmt node) {
-        String procName = getProcedureCallName(node);
+        String procName = getGoboscriptProcedureCallName(node);
+        
+        // Check if procedure is defined in this actor
+        if (!definedProcedures.contains(procName)) {
+            emitNoSpace("# Unsupported procedure call (cross-sprite or undefined): " + escapeIdentifier(procName) + ";");
+            newLine();
+            return;
+        }
+
         emitNoSpace(escapeIdentifier(procName));
         if (!node.getExpressions().getExpressions().isEmpty()) {
             emitNoSpace(" ");
@@ -967,6 +1418,19 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     }
 
     @Override
+    public void visit(NumFunctOf node) {
+        String func = node.getOperand1().getType().getFunction();
+        if ("10 ^".equals(func)) {
+            func = "pow10";
+        } else if ("e ^".equals(func)) {
+            func = "exp";
+        }
+        emitNoSpace(func + "(");
+        node.getOperand2().accept(this);
+        emitNoSpace(")");
+    }
+
+    @Override
     public void visit(PickRandom node) {
         emitNoSpace("random(");
         node.getOperand1().accept(this);
@@ -977,17 +1441,17 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(Timer node) {
-        emitNoSpace("timer");
+        emitNoSpace("timer()");
     }
 
     @Override
     public void visit(MouseX node) {
-        emitNoSpace("mouse_x");
+        emitNoSpace("mouse_x()");
     }
 
     @Override
     public void visit(MouseY node) {
-        emitNoSpace("mouse_y");
+        emitNoSpace("mouse_y()");
     }
 
     @Override
@@ -1017,22 +1481,81 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(Loudness node) {
-        emitNoSpace("loudness");
+        emitNoSpace("loudness()");
     }
 
     @Override
     public void visit(DistanceTo node) {
-        emitNoSpace("distance_to(");
-        visitPosition(node.getPosition());
-        emitNoSpace(")");
+        Position pos = node.getPosition();
+        if (pos instanceof MousePos) {
+            emitNoSpace("distance_to_mouse_pointer()");
+        } else {
+            emitNoSpace("distance_to(");
+            pos.accept(this);
+            emitNoSpace(")");
+        }
     }
 
     @Override
     public void visit(AttributeOf node) {
-        emitNoSpace("[");
-        node.getAttribute().accept(this);
-        emitNoSpace(" v] of ");
-        node.getElementChoice().accept(this);
+        // Goboscript syntax: Object.Attribute
+        // Note: Cross-sprite attribute access (non-Stage) is not fully supported
+        
+        // Check if this is accessing another sprite's attribute (not Stage)
+        String spriteName = null;
+        if (node.getElementChoice() instanceof WithExpr we && we.getExpression() instanceof StringLiteral sl) {
+             spriteName = sl.getText();
+        }
+        
+        // If accessing non-Stage sprite attributes, emit 0 (safe fallback) because 
+        // Goboscript doesn't support "SpriteName".x
+        if (spriteName != null && !spriteName.equals("Stage")) {
+            // We cannot safely emit a comment here because we are inside an expression,
+            // and an inline comment # would ignore the rest of the line (potentially closing parens/braces).
+            // So we just emit 0.
+            emitNoSpace("0");
+            return;
+        }
+
+        // 1. Object (ElementChoice)
+        // Ensure we print the identifier, not a string literal if possible
+        if (node.getElementChoice() instanceof WithExpr we && we.getExpression() instanceof StringLiteral sl) {
+             emitNoSpace("\"" + escapeString(sl.getText()) + "\"");
+        } else {
+             node.getElementChoice().accept(this);
+        }
+
+        emitNoSpace(".");
+
+        // 2. Attribute
+        Attribute attr = node.getAttribute();
+        if (attr instanceof AttributeFromFixed af) {
+            emitNoSpace(mapFixedAttribute(af.getAttribute().getTypeName()));
+        } else if (attr instanceof AttributeFromVariable av) {
+            String name = av.getVariable().getName().getName();
+            // Clean up potential scratchblocks syntax artifacts if present
+            if (name.startsWith("[\"") && name.endsWith("\" v]")) {
+                name = name.substring(2, name.length() - 4);
+            }
+            emitNoSpace(escapeIdentifier(name));
+        } else {
+            attr.accept(this);
+        }
+    }
+
+    private String mapFixedAttribute(String attr) {
+        return switch (attr) {
+            case "x position" -> "x";
+            case "y position" -> "y";
+            case "direction" -> "direction";
+            case "costume #" -> "costume_number";
+            case "costume name" -> "costume_name";
+            case "size" -> "size";
+            case "volume" -> "volume";
+            case "backdrop #" -> "backdrop_number";
+            case "backdrop name" -> "backdrop_name";
+            default -> attr.replace(" ", "_");
+        };
     }
 
     @Override
@@ -1043,7 +1566,8 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(Current node) {
         emitNoSpace("current_");
-        emitNoSpace(node.getTimeComp().getType().name().toLowerCase());
+        emitNoSpace(node.getTimeComp().getTypeName());
+        emitNoSpace("()");
     }
 
     @Override
@@ -1058,35 +1582,61 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     // ---------------------------------------------------------------
 
     @Override
+    public void visit(Backdrop node) {
+        if (node.getType().getType() == NameNum.NameNumType.NUMBER) {
+            emitNoSpace("backdrop_number()");
+        } else {
+            emitNoSpace("backdrop_name()");
+        }
+    }
+
+    @Override
+    public void visit(Costume node) {
+        if (node.getType().getType() == NameNum.NameNumType.NUMBER) {
+            emitNoSpace("costume_number()");
+        } else {
+            emitNoSpace("costume_name()");
+        }
+    }
+
+    @Override
     public void visit(StringLiteral node) {
         emitNoSpace("\"" + escapeString(node.getText()) + "\"");
     }
 
     @Override
+    public void visit(ItemOfVariable node) {
+        node.getIdentifier().accept(this);
+        emitNoSpace("[");
+        node.getNum().accept(this);
+        emitNoSpace("]");
+    }
+
+    @Override
     public void visit(Join node) {
-        emitNoSpace("join ");
+        emitNoSpace("(");
         node.getOperand1().accept(this);
-        emitNoSpace(", ");
+        emitNoSpace(" & ");
         node.getOperand2().accept(this);
+        emitNoSpace(")");
     }
 
     @Override
     public void visit(Answer node) {
-        emitNoSpace("answer");
+        emitNoSpace("answer()");
     }
 
     @Override
     public void visit(Username node) {
-        emitNoSpace("username");
+        emitNoSpace("username()");
     }
 
     @Override
     public void visit(LetterOf node) {
-        emitNoSpace("letter(");
-        node.getNum().accept(this);
-        emitNoSpace(", ");
         node.getStringExpr().accept(this);
-        emitNoSpace(")");
+        emitNoSpace("[");
+        node.getNum().accept(this);
+        emitNoSpace("]");
     }
 
     // ---------------------------------------------------------------
@@ -1146,8 +1696,31 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(Touching node) {
-        emitNoSpace("touching(");
-        node.getTouchable().accept(this);
+        var touchable = node.getTouchable();
+        if (touchable instanceof MousePointer) {
+            emitNoSpace("touching_mouse_pointer()");
+        } else if (touchable instanceof Edge) {
+            emitNoSpace("touching_edge()");
+        } else {
+            emitNoSpace("touching(");
+            touchable.accept(this);
+            emitNoSpace(")");
+        }
+    }
+
+    @Override
+    public void visit(SpriteTouchingColor node) {
+        emitNoSpace("touching_color(");
+        node.getColor().accept(this);
+        emitNoSpace(")");
+    }
+
+    @Override
+    public void visit(ColorTouchingColor node) {
+        emitNoSpace("color_is_touching_color(");
+        node.getOperand1().accept(this);
+        emitNoSpace(", ");
+        node.getOperand2().accept(this);
         emitNoSpace(")");
     }
 
@@ -1161,8 +1734,15 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     }
 
     @Override
+    public void visit(ListContains node) {
+        node.getElement().accept(this);
+        emitNoSpace(" in ");
+        node.getIdentifier().accept(this);
+    }
+
+    @Override
     public void visit(IsMouseDown node) {
-        emitNoSpace("mouse_down");
+        emitNoSpace("mouse_down()");
     }
 
     @Override
@@ -1182,17 +1762,36 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(Variable node) {
+        // In Goboscript, variables are accessed by name directly.
+        // Global variables (defined in stage.gs) don't need a Stage. prefix.
         emitNoSpace(escapeIdentifier(node.getName().getName()));
     }
 
     @Override
     public void visit(ScratchList node) {
-        emitNoSpace(escapeIdentifier(node.getName().getName()));
+        // In Goboscript, lists are accessed by name directly with "_list" suffix to avoid
+        // name collisions with variables. Global lists (defined in stage.gs) don't need a Stage. prefix.
+        emitNoSpace(escapeListIdentifier(node.getName().getName()));
     }
 
     @Override
     public void visit(Parameter node) {
-        emitNoSpace("$" + escapeIdentifier(node.getName().getName()));
+        String paramName = node.getName().getName();
+
+        // Parameters are only valid inside procedure bodies and must match a declared parameter.
+        // When an argument_reporter_boolean/string_number block is used outside a procedure,
+        // Scratch always returns the default value (false for boolean, "" for string).
+        if (!inProcedure || !currentProcedureParams.contains(paramName)) {
+            // Emit default value based on parameter type
+            if (node.getType() instanceof BooleanType) {
+                emitNoSpace("false");
+            } else {
+                emitNoSpace("\"\""); // Empty string as default
+            }
+            return;
+        }
+
+        emitNoSpace("$" + escapeIdentifier(paramName));
     }
 
     @Override
@@ -1202,10 +1801,32 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(Qualified node) {
-        emitNoSpace("[");
-        node.getFirst().accept(this);
-        emitNoSpace(" v] of ");
-        node.getSecond().accept(this);
+        String qualifier = node.getFirst().getName();
+        boolean isList = node.getSecond() instanceof ScratchList;
+
+        // Check if this is self-qualified access (sprite referring to its own variable)
+        boolean isSelf = currentActor != null && qualifier.equals(currentActor.getIdent().getName());
+        // Check if this is Stage-qualified access (global variables)
+        boolean isStage = "Stage".equals(qualifier);
+
+        // For self-qualified or Stage-qualified data expressions, emit just the name without prefix.
+        // In Goboscript:
+        // - A sprite's own variables are accessed directly by name
+        // - Stage variables are global and accessed directly by name
+        // The "Sprite.varName" and "Stage.varName" syntax doesn't exist in goboscript.
+        if (isSelf || isStage) {
+            // Simply emit the second part without qualification
+            // Use escapeListIdentifier for lists to add "_list" suffix and avoid name collisions
+            String name = node.getSecond().getName().getName();
+            emitNoSpace(isList ? escapeListIdentifier(name) : escapeIdentifier(name));
+            return;
+        }
+
+        // For cross-sprite qualified access (accessing another sprite's variable), use the dot notation
+        String name = node.getSecond().getName().getName();
+        emitNoSpace(escapeIdentifier(qualifier));
+        emitNoSpace(".");
+        emitNoSpace(isList ? escapeListIdentifier(name) : escapeIdentifier(name));
     }
 
     // ---------------------------------------------------------------
@@ -1244,8 +1865,48 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(ColorLiteral node) {
-        emitNoSpace(String.format("#%02x%02x%02x",
+        emitNoSpace(String.format("0x%02x%02x%02x",
                 (int) node.getRed(), (int) node.getGreen(), (int) node.getBlue()));
+    }
+
+    // ---------------------------------------------------------------
+    // Unspecified/Fallback Handlers
+    // ---------------------------------------------------------------
+
+    /**
+     * Handles unspecified statements (e.g., unsupported or placeholder blocks).
+     * These are silently skipped to avoid generating invalid code.
+     */
+    @Override
+    public void visit(UnspecifiedStmt node) {
+        // Skip - unspecified statements produce no output
+    }
+
+    /**
+     * Handles unspecified boolean expressions.
+     * Emits 'false' as a safe default value.
+     */
+    @Override
+    public void visit(UnspecifiedBoolExpr node) {
+        emitNoSpace("false");
+    }
+
+    /**
+     * Handles unspecified numeric expressions.
+     * Emits '0' as a safe default value.
+     */
+    @Override
+    public void visit(UnspecifiedNumExpr node) {
+        emitNoSpace("0");
+    }
+
+    /**
+     * Handles unspecified string expressions.
+     * Emits an empty string as a safe default value.
+     */
+    @Override
+    public void visit(UnspecifiedStringExpr node) {
+        emitNoSpace("\"\"");
     }
 
     // ---------------------------------------------------------------
@@ -1276,28 +1937,63 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     }
 
     private String escapeIdentifier(String name) {
-        // Replace spaces with underscores for Goboscript identifiers
-        return name.replace(" ", "_").replace("-", "_");
+        // Replace German umlauts (these expand to two characters, so handle before stripAccents)
+        name = name.replace("ä", "ae")
+                   .replace("ö", "oe")
+                   .replace("ü", "ue")
+                   .replace("Ä", "Ae")
+                   .replace("Ö", "Oe")
+                   .replace("Ü", "Ue")
+                   .replace("ß", "ss");
+
+        // Strip accents from remaining characters (á→a, é→e, ñ→n, etc.)
+        name = StringUtils.stripAccents(name);
+
+        // Use a StringBuilder to construct the sanitized name
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            // Only allow ASCII letters, digits, and underscores (Goboscript doesn't support Unicode identifiers)
+            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_') {
+                sb.append(c);
+            } else {
+                sb.append('_');
+            }
+        }
+
+        String result = sb.toString();
+
+        // Ensure it doesn't start with a digit (Goboscript identifiers must start with letter or underscore)
+        if (!result.isEmpty() && Character.isDigit(result.charAt(0))) {
+            result = "_" + result;
+        }
+
+        // Fallback for empty or underscore-only strings (Goboscript requires at least one letter)
+        if (result.isEmpty() || result.chars().allMatch(c -> c == '_')) {
+            return "var_" + Math.abs(name.hashCode());
+        }
+
+        return result;
     }
 
-    private String escapeString(String text) {
-        return text.replace("\\", "\\\\").replace("\"", "\\\"");
+    /**
+     * Escapes a list identifier name with a "_list" suffix to avoid name collisions
+     * with variables of the same name in Scratch.
+     */
+    private String escapeListIdentifier(String name) {
+        return escapeIdentifier(name) + "_list";
     }
 
     private String getKeyName(int keyCode) {
         return switch (keyCode) {
-            case 32 -> "space";
-            case 37 -> "left arrow";
-            case 38 -> "up arrow";
-            case 39 -> "right arrow";
-            case 40 -> "down arrow";
+            case ScratchKeyCode.SPACE -> "space";
+            case ScratchKeyCode.LEFT_ARROW -> "left arrow";
+            case ScratchKeyCode.UP_ARROW -> "up arrow";
+            case ScratchKeyCode.RIGHT_ARROW -> "right arrow";
+            case ScratchKeyCode.DOWN_ARROW -> "down arrow";
             default -> {
-                if (keyCode >= 48 && keyCode <= 57) {
-                    yield String.valueOf((char) keyCode);
-                } else if (keyCode >= 65 && keyCode <= 90) {
-                    yield String.valueOf((char) (keyCode + 32));
-                }
-                yield "any";
+                Character c = ScratchKeyCode.toChar(keyCode);
+                yield c != null ? String.valueOf(c) : "any";
             }
         };
     }
@@ -1306,53 +2002,47 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         return attribute.getTypeName();
     }
 
-    private String getProcedureName(ProcedureDefinition node) {
-        if (program != null && currentActor != null) {
-            String actorName = currentActor.getIdent().getName();
-            var procMap = program.getProcedureMapping().getProcedures().get(actorName);
-            if (procMap != null) {
-                var procInfo = procMap.get(node.getIdent());
-                if (procInfo != null) {
-                    // Strip parameter placeholders from name
-                    return procInfo.getName().replaceAll("%[sbn]", "").trim();
-                }
-            }
-        }
-        return node.getIdent().getName();
+    private String getGoboscriptProcedureName(ProcedureDefinition node) {
+        return getProcedureName(node, AbstractExportVisitor::normalizeProcedureName);
     }
 
-    private String getProcedureCallName(CallStmt node) {
-        if (program != null && currentActor != null) {
-            String actorName = currentActor.getIdent().getName();
-            var procMap = program.getProcedureMapping().getProcedures().get(actorName);
-            if (procMap != null) {
-                var procInfo = procMap.get(node.getIdent());
-                if (procInfo != null) {
-                    return procInfo.getName().replaceAll("%[sbn]", "").trim();
-                }
-            }
-        }
-        return node.getIdent().getName();
+    private String getGoboscriptProcedureCallName(CallStmt node) {
+        return getProcedureCallName(node, AbstractExportVisitor::normalizeProcedureName);
     }
 
-    /**
-     * Simple visitor to extract sprite/touchable names.
-     */
-    private static class StringExprNameVisitor implements de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor {
-        private String result = "";
-
-        public String getResult() {
-            return result;
+    private String resolveStringElement(ASTNode node) {
+        GoboscriptVisitor tempVisitor = new GoboscriptVisitor();
+        // Propagate context
+        tempVisitor.setProgram(this.program);
+        tempVisitor.setCurrentActor(this.currentActor);
+        // We generally want to resolve static values, so we don't need asset info for this check
+        
+        node.accept(tempVisitor);
+        String output = tempVisitor.getOutput().trim();
+        
+        // Check if output is a quoted string literal: "something"
+        if (output.startsWith("\"") && output.endsWith("\"") && output.length() >= 2) {
+            // Unescape quotes for internal checking
+            // Note: This is an approximation since we don't have a full unescaper here,
+            // but for checking simple asset names it suffices.
+            return output.substring(1, output.length() - 1);
         }
+        return null;
+    }
 
-        @Override
-        public void visit(StringLiteral node) {
-            result = node.getText();
+    private boolean isBackdropAvailable(String name) {
+        ActorDefinition stage = getStageActor();
+        if (stage == null || stage.getActorMetadata() == null) {
+            return false;
         }
-
-        @Override
-        public void visit(Variable node) {
-            result = node.getName().getName();
+        
+        for (ImageMetadata costume : stage.getActorMetadata().getCostumes().getList()) {
+            if (costume.getName().equals(name)) {
+                // Found the backdrop name, check if its asset is available
+                return availableAssets == null || availableAssets.contains(costume.getMd5ext());
+            }
         }
+        // Backdrop name not found in Stage costumes
+        return false;
     }
 }

@@ -40,7 +40,14 @@ public enum ExportFormat {
     /**
      * Leila intermediate language for program analysis.
      */
-    LEILA(".sc");
+    LEILA(".sc"),
+
+    /**
+     * PyStage format - Python code using the PyStage library for Scratch-like programming.
+     *
+     * @see <a href="https://github.com/pystage/pystage">PyStage Documentation</a>
+     */
+    PYSTAGE(".py");
 
     private final String extension;
 

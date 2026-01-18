@@ -3090,7 +3090,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(ImageMetadata node) {
-        return new ImageMetadata(node.getAssetId(), node.getUniqueName(), node.getMd5ext(), node.getDataFormat(),
+        return new ImageMetadata(node.getAssetId(), node.getName(), node.getMd5ext(), node.getDataFormat(),
                 node.getBitmapResolution(), node.getRotationCenterX(), node.getRotationCenterY());
     }
 
@@ -3106,7 +3106,7 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(SoundMetadata node) {
-        return new SoundMetadata(node.getAssetId(), node.getUniqueName(), node.getMd5ext(), node.getDataFormat(),
+        return new SoundMetadata(node.getAssetId(), node.getName(), node.getMd5ext(), node.getDataFormat(),
                 node.getRate(), node.getSampleCount());
     }
 

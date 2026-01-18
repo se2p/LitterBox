@@ -24,6 +24,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.export.leila.LeilaVisitor;
 import de.uni_passau.fim.se2.litterbox.export.scratchblocks.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.export.goboscript.GoboscriptVisitor;
+import de.uni_passau.fim.se2.litterbox.export.goboscript.GoboscriptProjectExporter;
+import de.uni_passau.fim.se2.litterbox.export.pystage.PyStageVisitor;
+import de.uni_passau.fim.se2.litterbox.export.pystage.PyStageProjectExporter;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -33,6 +36,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
+import java.util.stream.Stream;
+
 /**
  * Analyzer for exporting Scratch projects to various text-based formats.
  *
@@ -41,6 +46,7 @@ import java.util.logging.Logger;
  *   <li>ScratchBlocks - visual block notation</li>
  *   <li>Goboscript - C/Rust-style text language</li>
  *   <li>Leila - intermediate language for analysis</li>
+ *   <li>PyStage - Python code using PyStage library</li>
  * </ul>
  */
 public class ExportAnalyzer extends FileAnalyzer<String> {
@@ -49,7 +55,9 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
 
     private final ExportFormat format;
     private final boolean nonDet;
+    private final boolean fullProject;
     private BufferedWriter writer;
+    private int exportedCount = 0;
 
     /**
      * Creates an export analyzer with the specified format.
@@ -59,7 +67,7 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
      * @param delete Whether to delete project files after analysis
      */
     public ExportAnalyzer(ExportFormat format, Path output, boolean delete) {
-        this(format, output, delete, false);
+        this(format, output, delete, false, false);
     }
 
     /**
@@ -69,11 +77,32 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
      * @param output Path to output file or directory
      * @param delete Whether to delete project files after analysis
      * @param nonDet For Leila: allow non-deterministic attributes
+     * @param fullProject For Goboscript: create full project structure with separate files and assets
      */
-    public ExportAnalyzer(ExportFormat format, Path output, boolean delete, boolean nonDet) {
+    public ExportAnalyzer(ExportFormat format, Path output, boolean delete, boolean nonDet, boolean fullProject) {
         super(new ExportProgramAnalyzer(format), output, delete);
         this.format = format;
         this.nonDet = nonDet;
+        this.fullProject = fullProject;
+    }
+
+    @Override
+    public void analyzeFile(final Path input) throws IOException {
+        // If input is a directory, check if it contains multiple Scratch projects.
+        // If so, and we are exporting to a single file (and format is not ScratchBlocks which supports merging),
+        // we should error immediately.
+        if (Files.isDirectory(input) && output != null && !Files.isDirectory(output) && format != ExportFormat.SCRATCHBLOCKS) {
+            try (Stream<Path> stream = Files.list(input)) {
+                long count = stream.filter(p -> {
+                    String name = p.getFileName().toString().toLowerCase();
+                    return name.endsWith(".sb3") || name.endsWith(".json");
+                }).limit(2).count();
+                if (count > 1) {
+                    throw new IOException("Cannot export multiple projects (from directory) to a single file with format " + format + ". Output must be a directory.");
+                }
+            }
+        }
+        super.analyzeFile(input);
     }
 
     @Override
@@ -96,14 +125,80 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
         if (output == null) {
             // No output path: print to stdout for all formats
             writeToStdout(program, result);
-        } else if (format == ExportFormat.SCRATCHBLOCKS && !Files.isDirectory(output)) {
-            // ScratchBlocks to single file
-            writeScratchBlocksResult(result);
-        } else if (Files.isDirectory(output)) {
+            return;
+        }
+
+        // Handle --full-project: requires directory structure
+        if (fullProject && (format == ExportFormat.GOBOSCRIPT || format == ExportFormat.PYSTAGE)) {
+            writeFullProject(projectFile, program);
+            return;
+        }
+
+        // Handle standard export
+        if (Files.isDirectory(output)) {
             // Directory output: write each project to separate file
             writeToSeparateFile(projectFile, program, result);
         } else {
-            log.warning("Output path must be a directory for multiple projects with " + format + " format");
+            // File output
+            if (format == ExportFormat.SCRATCHBLOCKS) {
+                // ScratchBlocks appends to the single file (writer opened in beginAnalysis)
+                writeScratchBlocksResult(result);
+            } else {
+                if (exportedCount > 0) {
+                     throw new IOException("Cannot export multiple projects to a single file with format " + format + ". Output must be a directory.");
+                }
+                // Other formats overwrite the file if single input, but error if multiple inputs (checked via exportedCount)
+                writeSingleFile(output, program, result);
+            }
+        }
+        exportedCount++;
+    }
+
+    private void writeSingleFile(Path target, Program program, String result) throws IOException {
+        if (format == ExportFormat.LEILA) {
+            try (PrintStream stream = new PrintStream(target.toFile(), StandardCharsets.UTF_8)) {
+                LeilaVisitor visitor = new LeilaVisitor(stream, nonDet, false);
+                visitor.visit(program);
+            }
+        } else {
+            Files.writeString(target, result, StandardCharsets.UTF_8);
+        }
+    }
+
+    private void writeFullProject(Path projectFile, Program program) throws IOException {
+        String fileName = projectFile.getFileName().toString();
+        if (!fileName.toLowerCase().endsWith(".sb3")) {
+            log.severe("Full project export (--full-project) requires .sb3 input file. "
+                    + "JSON files do not contain the required assets (costumes, sounds). "
+                    + "Input file: " + fileName);
+            return;
+        }
+
+        // Output must be a directory for full project export
+        if (Files.exists(output) && !Files.isDirectory(output)) {
+            log.severe("Output path must be a directory (or non-existent path to be created as directory) "
+                    + "for --full-project export.");
+            return;
+        }
+
+        // Determine project directory:
+        // - If output doesn't exist: use it directly as the project directory
+        // - If output exists as a directory: create a subdirectory with the project name
+        Path projectDir;
+        if (Files.exists(output)) {
+            String baseName = fileName.substring(0, fileName.lastIndexOf("."));
+            projectDir = output.resolve(baseName);
+        } else {
+            projectDir = output;
+        }
+
+        // Ensure the directory exists
+        Files.createDirectories(projectDir);
+
+        if (format == ExportFormat.GOBOSCRIPT) {
+            new GoboscriptProjectExporter().export(projectFile, program, projectDir);
+        } else if (format == ExportFormat.PYSTAGE) {
+            new PyStageProjectExporter().export(projectFile, program, projectDir);
         }
     }
 
@@ -168,6 +263,7 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
                     yield vis.getScratchBlocks();
                 }
                 case GOBOSCRIPT -> GoboscriptVisitor.of(program);
+                case PYSTAGE -> PyStageVisitor.of(program);
                 case LEILA -> {
                     // Leila output is handled differently in writeResultToFile
                     // Return empty string here as a placeholder

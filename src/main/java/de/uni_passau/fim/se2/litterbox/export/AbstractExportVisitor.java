@@ -20,11 +20,14 @@ package de.uni_passau.fim.se2.litterbox.export;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Function;
 
 /**
  * Base class for exporting LitterBox AST to text-based formats.
@@ -169,11 +172,129 @@ public abstract class AbstractExportVisitor implements ScratchVisitor {
 
     /**
      * Called at the end of an export process.
+     * Subclasses may override to add format-specific termination.
      */
     protected void end() {
-        newLine();
-        appendIndentation();
-        emitToken("end");
+        // Default implementation does nothing
+    }
+
+    // ---------------------------------------------------------------
+    // String Utilities
+    // ---------------------------------------------------------------
+
+    /**
+     * Performs basic string escaping for backslashes and double quotes.
+     * This is the core escape logic used by other escape methods.
+     *
+     * @param text The text to escape
+     * @return The escaped text
+     */
+    private static String escapeBasic(String text) {
+        if (text == null) {
+            return "";
+        }
+        return text.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+
+    /**
+     * Escapes a string for use in the target format.
+     * Handles backslashes and double quotes.
+     * Subclasses may override to add additional escaping.
+     *
+     * @param text The text to escape
+     * @return The escaped text
+     */
+    protected String escapeString(String text) {
+        return escapeBasic(text);
+    }
+
+    /**
+     * Escapes a string for use in the target format, including newlines.
+     * Handles backslashes, double quotes, and newlines.
+     *
+     * @param text The text to escape
+     * @return The escaped text with newlines converted to \n
+     */
+    protected final String escapeStringWithNewlines(String text) {
+        return escapeBasic(text).replace("\n", "\\n");
+    }
+
+    // ---------------------------------------------------------------
+    // Actor Utilities
+    // ---------------------------------------------------------------
+
+    /**
+     * Finds the stage actor in the current program.
+     *
+     * @return The stage actor definition, or null if not found or no program set
+     */
+    protected ActorDefinition getStageActor() {
+        if (program == null) {
+            return null;
+        }
+        for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
+            if (actor.isStage()) {
+                return actor;
+            }
+        }
+        return null;
+    }
+
+    // ---------------------------------------------------------------
+    // Procedure Utilities
+    // ---------------------------------------------------------------
+
+    /**
+     * Gets the name of a procedure definition from the program's procedure mapping.
+     *
+     * @param node       The procedure definition
+     * @param normalizer A function to normalize the procedure name (e.g., strip placeholders)
+     * @return The procedure name
+     */
+    protected String getProcedureName(ProcedureDefinition node, Function<String, String> normalizer) {
+        if (program != null && currentActor != null) {
+            String actorName = currentActor.getIdent().getName();
+            var procMap = program.getProcedureMapping().getProcedures().get(actorName);
+            if (procMap != null) {
+                var procInfo = procMap.get(node.getIdent());
+                if (procInfo != null) {
+                    return normalizer.apply(procInfo.getName());
+                }
+            }
+        }
+        return normalizer.apply(node.getIdent().getName());
+    }
+
+    /**
+     * Gets the name of a procedure call from the program's procedure mapping.
+     *
+     * @param node       The call statement
+     * @param normalizer A function to normalize the procedure name (e.g., strip placeholders)
+     * @return The procedure call name
+     */
+    protected String getProcedureCallName(CallStmt node, Function<String, String> normalizer) {
+        if (program != null && currentActor != null) {
+            String actorName = currentActor.getIdent().getName();
+            var procMap = program.getProcedureMapping().getProcedures().get(actorName);
+            if (procMap != null) {
+                var procInfo = procMap.get(node.getIdent());
+                if (procInfo != null) {
+                    return normalizer.apply(procInfo.getName());
+                }
+            }
+        }
+        return normalizer.apply(node.getIdent().getName());
+    }
+
+    /**
+     * Default procedure name normalizer that strips Scratch parameter placeholders.
+     * Removes %s, %n, and %b placeholders from procedure names.
+     *
+     * @param name The raw procedure name
+     * @return The normalized name
+     */
+    protected static String normalizeProcedureName(String name) {
+        return name.replaceAll("%[sbn]", "").trim();
     }
 
     // ---------------------------------------------------------------
