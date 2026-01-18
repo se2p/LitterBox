@@ -25,7 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.export.scratchblocks.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.cfg.CFGNode;
 import de.uni_passau.fim.se2.litterbox.cfg.SpecialNode;
 
@@ -93,8 +93,8 @@ public class ScratchBlocksLabeler implements Function<CFGNode, String> {
             public void visit(ProcedureDefinition node) {
                 emitNoSpace("define ");
                 String procedureName = node.getIdent().getName();
-                if (currentActor.isPresent()) {
-                    String actorName = currentActor.get().getIdent().getName();
+                if (currentActor != null) {
+                    String actorName = currentActor.getIdent().getName();
                     try {
                         procedureName = program.getProcedureMapping().getProcedures()
                                 .get(actorName).get(node.getIdent()).getName();

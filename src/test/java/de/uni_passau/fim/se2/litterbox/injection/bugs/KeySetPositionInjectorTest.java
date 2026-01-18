@@ -21,7 +21,7 @@ package de.uni_passau.fim.se2.litterbox.injection.bugs;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.export.scratchblocks.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.InjectionResult;
 import org.junit.jupiter.api.Test;
 

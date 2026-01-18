@@ -23,7 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.DiffResult;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.export.scratchblocks.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.report.CSVPrinterFactory;
 import de.uni_passau.fim.se2.litterbox.report.HTMLDiffReportGenerator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;

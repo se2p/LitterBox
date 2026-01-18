@@ -2131,7 +2131,7 @@ public class ScratchBlocksVisitor extends AbstractExportVisitor implements
         }
     }
 
-    private String getParameterName(ParameterDefinition node) {
+    protected String getParameterName(ParameterDefinition node) {
         ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false, false);
         visitor.setProgram(program);
         visitor.setCurrentActor(currentActor);
