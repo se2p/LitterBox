@@ -72,7 +72,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.Tempo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoSensingBlock;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.VideoOn;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
@@ -125,6 +131,67 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     private int costumeCount = 0;
 
     /**
+     * Set of escaped variable names declared in the Stage (global scope).
+     * These are accessible from all sprites.
+     */
+    private Set<String> globalVariables = new HashSet<>();
+
+    /**
+     * Set of escaped variable names declared in the current sprite (local scope).
+     * Cleared at the start of each actor visit.
+     */
+    private Set<String> localVariables = new HashSet<>();
+
+    /**
+     * Set of escaped list names declared in the Stage (global scope).
+     */
+    private Set<String> globalLists = new HashSet<>();
+
+    /**
+     * Set of escaped list names declared in the current sprite (local scope).
+     */
+    private Set<String> localLists = new HashSet<>();
+
+    /**
+     * Set of Goboscript built-in command names that could conflict with user-defined procedure names.
+     * When a procedure has one of these names, it must be suffixed to avoid ambiguity.
+     */
+    private static final Set<String> GOBOSCRIPT_RESERVED_COMMANDS = Set.of(
+        // Motion blocks
+        "move", "turn_left", "turn_right", "goto", "glide", "glide_to", "glide_to_mouse_pointer",
+        "glide_to_random_position", "goto_mouse_pointer", "goto_random_position",
+        "point_in_direction", "point_towards", "point_towards_mouse_pointer", "point_towards_random_direction",
+        "change_x", "change_y", "set_x", "set_y", "if_on_edge_bounce",
+        "set_rotation_style_left_right", "set_rotation_style_do_not_rotate", "set_rotation_style_all_around",
+        // Looks blocks
+        "say", "think", "show", "hide", "switch_costume", "next_costume", "switch_backdrop",
+        "next_backdrop", "previous_backdrop", "random_backdrop", "change_size", "set_size",
+        "change_color_effect", "set_color_effect", "change_brightness_effect", "set_brightness_effect",
+        "change_ghost_effect", "set_ghost_effect", "change_fisheye_effect", "set_fisheye_effect",
+        "change_whirl_effect", "set_whirl_effect", "change_pixelate_effect", "set_pixelate_effect",
+        "change_mosaic_effect", "set_mosaic_effect", "clear_graphic_effects",
+        "go_forward", "go_backward", "goto_front", "goto_back",
+        // Sound blocks
+        "start_sound", "play_sound_until_done", "stop_all_sounds",
+        "change_volume", "set_volume", "change_pitch_effect", "set_pitch_effect",
+        "change_pan_effect", "set_pan_effect", "clear_sound_effects",
+        // Control blocks
+        "wait", "clone", "delete_this_clone", "stop_all", "stop_this_script", "stop_other_scripts",
+        // Sensing blocks
+        "ask", "reset_timer", "set_drag_mode_draggable", "set_drag_mode_not_draggable",
+        // Pen blocks
+        "erase_all", "stamp", "pen_down", "pen_up", "set_pen_color", "change_pen_size", "set_pen_size",
+        "change_pen_hue", "set_pen_hue", "change_pen_saturation", "set_pen_saturation",
+        "change_pen_brightness", "set_pen_brightness", "change_pen_transparency", "set_pen_transparency",
+        // Events
+        "broadcast", "broadcast_and_wait",
+        // Variables/Lists
+        "add", "delete", "insert", "replace",
+        // Music
+        "rest", "play", "set_tempo", "change_tempo"
+    );
+
+    /**
      * Creates a new Goboscript visitor with internal buffering.
      */
     public GoboscriptVisitor() {
@@ -175,6 +242,9 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(Program program) {
         this.program = program;
+        // Clear global variables/lists before processing any actors
+        globalVariables.clear();
+        globalLists.clear();
         program.getActorDefinitionList().accept(this);
     }
 
@@ -186,7 +256,9 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         validCostumes.clear();
         costumeCount = 0;
         definedProcedures.clear();
-        
+        localVariables.clear();
+        localLists.clear();
+
         // Collect defined procedures for validation
         for (ProcedureDefinition proc : node.getProcedureDefinitionList().getList()) {
             definedProcedures.add(getGoboscriptProcedureName(proc));
@@ -257,14 +329,29 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(DeclarationIdentAsTypeStmt node) {
         Type type = node.getType();
+        String rawName = node.getIdent().getName().getName();
         if (type instanceof ListType) {
             // List declarations use "_list" suffix to avoid name collisions with variables
+            String escapedName = escapeListIdentifier(rawName);
             emitNoSpace("list ");
-            emitNoSpace(escapeListIdentifier(node.getIdent().getName().getName()));
+            emitNoSpace(escapedName);
+            // Track declared lists for later validation
+            if (currentActor != null && currentActor.isStage()) {
+                globalLists.add(escapedName);
+            } else {
+                localLists.add(escapedName);
+            }
         } else {
             // Variable declarations
+            String escapedName = escapeIdentifier(rawName);
             emitNoSpace("var ");
-            emitNoSpace(escapeIdentifier(node.getIdent().getName().getName()));
+            emitNoSpace(escapedName);
+            // Track declared variables for later validation
+            if (currentActor != null && currentActor.isStage()) {
+                globalVariables.add(escapedName);
+            } else {
+                localVariables.add(escapedName);
+            }
         }
         emitNoSpace(";");
         newLine();
@@ -329,9 +416,14 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
      * Goboscript does not support the music extension, so we skip these blocks entirely.
      * This prevents invalid output from the block's children being visited.
      */
+
+
     @Override
     public void visit(MusicBlock node) {
-        // Music extension blocks are not supported in goboscript - skip them
+        if (node instanceof Tempo) {
+            emitNoSpace("tempo()");
+        }
+        // Other Music blocks are not supported in goboscript - skip them
     }
 
     /**
@@ -519,7 +611,11 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(MoveSteps node) {
         emitNoSpace("move ");
-        node.getSteps().accept(this);
+        if (node.getSteps() instanceof de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr) {
+            emitNoSpace("10"); // Default Scratch value
+        } else {
+            node.getSteps().accept(this);
+        }
         emitNoSpace(";");
         newLine();
     }
@@ -917,34 +1013,112 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(ShowVariable node) {
-        emitNoSpace("show ");
-        node.getIdentifier().accept(this);
-        emitNoSpace(";");
-        newLine();
+        String escapedName = getEscapedVariableName(node.getIdentifier());
+        if (isVariableDeclared(escapedName)) {
+            emitNoSpace("show ");
+            node.getIdentifier().accept(this);
+            emitNoSpace(";");
+            newLine();
+        } else {
+            // Variable not declared - emit a comment to avoid compilation error
+            emitNoSpace("# Skipped: show undeclared variable");
+            newLine();
+        }
     }
 
     @Override
     public void visit(HideVariable node) {
-        emitNoSpace("hide ");
-        node.getIdentifier().accept(this);
-        emitNoSpace(";");
-        newLine();
+        String escapedName = getEscapedVariableName(node.getIdentifier());
+        if (isVariableDeclared(escapedName)) {
+            emitNoSpace("hide ");
+            node.getIdentifier().accept(this);
+            emitNoSpace(";");
+            newLine();
+        } else {
+            // Variable not declared - emit a comment to avoid compilation error
+            emitNoSpace("# Skipped: hide undeclared variable");
+            newLine();
+        }
     }
 
     @Override
     public void visit(ShowList node) {
-        emitNoSpace("show ");
-        node.getIdentifier().accept(this);
-        emitNoSpace(";");
-        newLine();
+        String escapedName = getEscapedListName(node.getIdentifier());
+        if (isListDeclared(escapedName)) {
+            emitNoSpace("show ");
+            node.getIdentifier().accept(this);
+            emitNoSpace(";");
+            newLine();
+        } else {
+            // List not declared - emit a comment to avoid compilation error
+            emitNoSpace("# Skipped: show undeclared list");
+            newLine();
+        }
     }
 
     @Override
     public void visit(HideList node) {
-        emitNoSpace("hide ");
-        node.getIdentifier().accept(this);
-        emitNoSpace(";");
-        newLine();
+        String escapedName = getEscapedListName(node.getIdentifier());
+        if (isListDeclared(escapedName)) {
+            emitNoSpace("hide ");
+            node.getIdentifier().accept(this);
+            emitNoSpace(";");
+            newLine();
+        } else {
+            // List not declared - emit a comment to avoid compilation error
+            emitNoSpace("# Skipped: hide undeclared list");
+            newLine();
+        }
+    }
+
+    /**
+     * Extracts and escapes the variable name from an identifier.
+     */
+    private String getEscapedVariableName(Identifier identifier) {
+        if (identifier instanceof Variable var) {
+            return escapeIdentifier(var.getName().getName());
+        } else if (identifier instanceof Qualified qual) {
+            // For qualified identifiers, get the variable part
+            if (qual.getSecond() instanceof Variable var) {
+                return escapeIdentifier(var.getName().getName());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Extracts and escapes the list name from an identifier.
+     */
+    private String getEscapedListName(Identifier identifier) {
+        if (identifier instanceof ScratchList list) {
+            return escapeListIdentifier(list.getName().getName());
+        } else if (identifier instanceof Qualified qual) {
+            // For qualified identifiers, get the list part
+            if (qual.getSecond() instanceof ScratchList list) {
+                return escapeListIdentifier(list.getName().getName());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Checks if a variable is declared (in global or local scope).
+     */
+    private boolean isVariableDeclared(String escapedName) {
+        if (escapedName == null) {
+            return true; // Unknown identifier type - assume declared
+        }
+        return globalVariables.contains(escapedName) || localVariables.contains(escapedName);
+    }
+
+    /**
+     * Checks if a list is declared (in global or local scope).
+     */
+    private boolean isListDeclared(String escapedName) {
+        if (escapedName == null) {
+            return true; // Unknown identifier type - assume declared
+        }
+        return globalLists.contains(escapedName) || localLists.contains(escapedName);
     }
 
     // ---------------------------------------------------------------
@@ -1292,7 +1466,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
         String procName = getGoboscriptProcedureName(node);
-        emitNoSpace("proc " + escapeIdentifier(procName));
+        emitNoSpace("proc " + escapeProcedureName(procName));
 
         List<ParameterDefinition> params = node.getParameterDefinitionList().getParameterDefinitions();
 
@@ -1332,12 +1506,12 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         
         // Check if procedure is defined in this actor
         if (!definedProcedures.contains(procName)) {
-            emitNoSpace("# Unsupported procedure call (cross-sprite or undefined): " + escapeIdentifier(procName) + ";");
+            emitNoSpace("# Unsupported procedure call (cross-sprite or undefined): " + escapeProcedureName(procName) + ";");
             newLine();
             return;
         }
 
-        emitNoSpace(escapeIdentifier(procName));
+        emitNoSpace(escapeProcedureName(procName));
         if (!node.getExpressions().getExpressions().isEmpty()) {
             emitNoSpace(" ");
             List<Expression> args = node.getExpressions().getExpressions();
@@ -1359,7 +1533,15 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(NumberLiteral node) {
         double value = node.getValue();
-        if (value == Math.floor(value) && !Double.isInfinite(value)) {
+        if (Double.isInfinite(value)) {
+            if (value > 0) {
+                emitNoSpace("(1.0 / 0.0)");
+            } else {
+                emitNoSpace("(-1.0 / 0.0)");
+            }
+        } else if (Double.isNaN(value)) {
+            emitNoSpace("(0.0 / 0.0)");
+        } else if (value == Math.floor(value)) {
             emitNoSpace(String.valueOf((long) value));
         } else {
             emitNoSpace(String.valueOf(value));
@@ -1418,12 +1600,24 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     }
 
     @Override
+    public void visit(AsNumber node) {
+        node.getOperand1().accept(this);
+    }
+
+    @Override
+    public void visit(AsString node) {
+        node.getOperand1().accept(this);
+    }
+
+    @Override
     public void visit(NumFunctOf node) {
         String func = node.getOperand1().getType().getFunction();
         if ("10 ^".equals(func)) {
             func = "pow10";
         } else if ("e ^".equals(func)) {
             func = "exp";
+        } else if ("ceiling".equals(func)) {
+            func = "ceil";
         }
         emitNoSpace(func + "(");
         node.getOperand2().accept(this);
@@ -1502,14 +1696,12 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         // Note: Cross-sprite attribute access (non-Stage) is not fully supported
         
         // Check if this is accessing another sprite's attribute (not Stage)
-        String spriteName = null;
-        if (node.getElementChoice() instanceof WithExpr we && we.getExpression() instanceof StringLiteral sl) {
-             spriteName = sl.getText();
-        }
-        
-        // If accessing non-Stage sprite attributes, emit 0 (safe fallback) because 
+        String spriteName = resolveStringElement(node.getElementChoice());
+
+        // If accessing non-Stage sprite attributes, emit 0 (safe fallback) because
         // Goboscript doesn't support "SpriteName".x
-        if (spriteName != null && !spriteName.equals("Stage")) {
+        // Note: Scratch uses "_stage_" internally to refer to the Stage
+        if (spriteName != null && !spriteName.equals("Stage") && !spriteName.equals("_stage_")) {
             // We cannot safely emit a comment here because we are inside an expression,
             // and an inline comment # would ignore the rest of the line (potentially closing parens/braces).
             // So we just emit 0.
@@ -1519,8 +1711,9 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
         // 1. Object (ElementChoice)
         // Ensure we print the identifier, not a string literal if possible
-        if (node.getElementChoice() instanceof WithExpr we && we.getExpression() instanceof StringLiteral sl) {
-             emitNoSpace("\"" + escapeString(sl.getText()) + "\"");
+        String resolvedName = resolveStringElement(node.getElementChoice());
+        if (resolvedName != null) {
+             emitNoSpace("\"" + escapeString(resolvedName) + "\"");
         } else {
              node.getElementChoice().accept(this);
         }
@@ -1560,7 +1753,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(DaysSince2000 node) {
-        emitNoSpace("days_since_2000");
+        emitNoSpace("days_since_2000()");
     }
 
     @Override
@@ -1736,6 +1929,14 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(ListContains node) {
         node.getElement().accept(this);
+        emitNoSpace(" in ");
+        node.getIdentifier().accept(this);
+    }
+
+    @Override
+    public void visit(IndexOf node) {
+        // Goboscript syntax for "item # of X in LIST": "X in list_name"
+        node.getExpr().accept(this);
         emitNoSpace(" in ");
         node.getIdentifier().accept(this);
     }
@@ -1984,6 +2185,18 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         return escapeIdentifier(name) + "_list";
     }
 
+    /**
+     * Escapes a procedure name, adding a "_proc" suffix if it conflicts with a
+     * Goboscript built-in command name.
+     */
+    private String escapeProcedureName(String name) {
+        String escaped = escapeIdentifier(name);
+        if (GOBOSCRIPT_RESERVED_COMMANDS.contains(escaped.toLowerCase())) {
+            return escaped + "_proc";
+        }
+        return escaped;
+    }
+
     private String getKeyName(int keyCode) {
         return switch (keyCode) {
             case ScratchKeyCode.SPACE -> "space";
@@ -2044,5 +2257,38 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         }
         // Backdrop name not found in Stage costumes
         return false;
+    }
+    // ---------------------------------------------------------------
+    // Video Sensing Extension
+    // ---------------------------------------------------------------
+
+    @Override
+    public void visit(VideoSensingBlock node) {
+        if (node instanceof VideoOn stmt) {
+            // Goboscript does not support video sensing reporters.
+            // Emit 0 as a safe default numeric value to ensure compilation.
+            emitNoSpace("0");
+        } else if (node instanceof WhenVideoMotionGreaterThan) {
+            // Goboscript does not currently support video motion events.
+            // Emit a comment to indicate it was skipped, preventing invalid output.
+            emitNoSpace("# Unsupported event: when video motion > ...");
+            newLine();
+            // Do NOT visit children, to avoid emitting the threshold number.
+        } else if (node instanceof SetVideoTransparency) {
+            // Goboscript does not support video transparency.
+            // Emit a comment to indicate it was skipped.
+            emitNoSpace("# Unsupported: set video transparency");
+            newLine();
+        } else if (node instanceof TurnVideo) {
+            // Goboscript does not support video toggle (turn video on/off).
+            // Emit a comment to indicate it was skipped.
+            emitNoSpace("# Unsupported: turn video on/off");
+            newLine();
+        } else {
+            // For any other unknown VideoSensingBlock types, emit a generic comment
+            // rather than visitChildren() which could produce invalid output.
+            emitNoSpace("# Unsupported video sensing block");
+            newLine();
+        }
     }
 }
