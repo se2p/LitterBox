@@ -2068,15 +2068,6 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         }
     }
 
-    private void visitPosition(Position position) {
-        if (position instanceof MousePos) {
-            emitNoSpace("\"mouse-pointer\"");
-        } else if (position instanceof RandomPos) {
-            emitNoSpace("\"random position\"");
-        } else {
-            position.accept(this);
-        }
-    }
 
     private String escapeIdentifier(String name) {
         // Replace German umlauts (these expand to two characters, so handle before stripAccents)
@@ -2196,7 +2187,6 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
                 return isAssetAvailable(costume.getMd5ext());
             }
         }
-        // Backdrop name not found in Stage costumes
         // Backdrop name not found in Stage costumes
         return false;
     }
