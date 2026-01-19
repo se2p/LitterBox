@@ -330,7 +330,8 @@ public class GoboscriptAllBlocksUnitTests implements JsonTest {
     
     @Test
     public void testThink() {
-        assertBlock(Think.class, "think ;");
+        // The first Think block in allBlocks.json has costume_number() as its message
+        assertBlock(Think.class, "think costume_number();");
     }
     
     @Test
@@ -504,12 +505,18 @@ public class GoboscriptAllBlocksUnitTests implements JsonTest {
     
     @Test
     public void testShowVariable() {
-        assertBlock(ShowVariable.class, "show Test;");
+        // When visiting in isolation, the visitor doesn't know about declared variables,
+        // so it emits a skip comment to avoid goboscript compilation errors.
+        // Full-program export tests verify the correct behavior with declarations.
+        assertBlock(ShowVariable.class, "# Skipped: show undeclared variable");
     }
-    
+
     @Test
     public void testHideVariable() {
-        assertBlock(HideVariable.class, "hide Test;");
+        // When visiting in isolation, the visitor doesn't know about declared variables,
+        // so it emits a skip comment to avoid goboscript compilation errors.
+        // Full-program export tests verify the correct behavior with declarations.
+        assertBlock(HideVariable.class, "# Skipped: hide undeclared variable");
     }
     
     @Test
@@ -543,14 +550,18 @@ public class GoboscriptAllBlocksUnitTests implements JsonTest {
 
     @Test
     public void testShowList() {
-        // Lists use "_list" suffix to avoid name collisions with variables
-        assertBlock(ShowList.class, "show Test_list;");
+        // When visiting in isolation, the visitor doesn't know about declared lists,
+        // so it emits a skip comment to avoid goboscript compilation errors.
+        // Full-program export tests verify the correct behavior with declarations.
+        assertBlock(ShowList.class, "# Skipped: show undeclared list");
     }
 
     @Test
     public void testHideList() {
-        // Lists use "_list" suffix to avoid name collisions with variables
-        assertBlock(HideList.class, "hide Test_list;");
+        // When visiting in isolation, the visitor doesn't know about declared lists,
+        // so it emits a skip comment to avoid goboscript compilation errors.
+        // Full-program export tests verify the correct behavior with declarations.
+        assertBlock(HideList.class, "# Skipped: hide undeclared list");
     }
     
     @Test

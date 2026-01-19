@@ -27,8 +27,12 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -182,5 +186,71 @@ public class GoboscriptProjectExporterTest implements JsonTest {
         // Should still work and create files
         assertThat(Files.exists(outputDir.resolve("Stage.gs"))).isTrue();
         assertThat(Files.exists(outputDir.resolve("Sprite1.gs"))).isTrue();
+    }
+
+    // ==================== Nested Asset Extraction ====================
+
+    @Test
+    public void testNestedAssetExtraction(@TempDir Path tempDir) throws IOException, ParsingException {
+        // Create a fake sb3 zip with a nested asset
+        Path sb3File = tempDir.resolve("nested.sb3");
+        try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(sb3File))) {
+            // Add project.json (minimal)
+            ZipEntry jsonEntry = new ZipEntry("project.json");
+            zos.putNextEntry(jsonEntry);
+            zos.write("{}".getBytes());
+            zos.closeEntry();
+
+            // Add a nested asset
+            ZipEntry nestedEntry = new ZipEntry("nested/folder/custom.svg");
+            zos.putNextEntry(nestedEntry);
+            zos.write("<svg></svg>".getBytes());
+            zos.closeEntry();
+        }
+
+        // Use emptyProject.sb3's AST as we only care about extraction here
+        Program program = getAST("src/test/fixtures/emptyProject.sb3");
+
+        Path outputDir = tempDir.resolve("project");
+
+        GoboscriptProjectExporter exporter = new GoboscriptProjectExporter();
+        exporter.export(sb3File, program, outputDir);
+
+        Path assetsDir = outputDir.resolve("assets");
+
+        // Nested asset should be flattened to assets/custom.svg
+        assertThat(Files.exists(assetsDir.resolve("custom.svg"))).isTrue();
+
+        // Ensure no nested directories were created in assets
+        assertThat(Files.isDirectory(assetsDir.resolve("nested"))).isFalse();
+    }
+
+    // ==================== Missing Assets Handling ====================
+
+    // Subclass to override asset extraction and simulate missing assets
+    private static class TestExporter extends GoboscriptProjectExporter {
+        @Override
+        protected Set<String> extractAssets(Path sb3File, Path outputDir) throws IOException {
+            // Simulate that NO assets were extracted
+            return Collections.emptySet();
+        }
+    }
+
+    @Test
+    public void testStageIsExportedEvenWithMissingAssets(@TempDir Path tempDir) throws IOException, ParsingException {
+        Path sb3File = Path.of(SB3_FIXTURE);
+        Program program = getAST(SB3_FIXTURE);
+        Path outputDir = tempDir.resolve("project");
+
+        GoboscriptProjectExporter exporter = new TestExporter();
+        exporter.export(sb3File, program, outputDir);
+
+        // Even with no assets, Stage.gs MUST be created
+        Path stageFile = outputDir.resolve("stage.gs");
+
+        assertThat(Files.exists(stageFile)).isTrue();
+
+        String stageContent = Files.readString(stageFile);
+        assertThat(stageContent).contains("stage Stage");
     }
 }
