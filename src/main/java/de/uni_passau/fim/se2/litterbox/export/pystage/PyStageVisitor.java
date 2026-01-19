@@ -27,12 +27,16 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.MBlockNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenBlock;
@@ -56,14 +60,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationAttributeAsTypeStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationBroadcastStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationIdentAsTypeStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
@@ -82,11 +84,9 @@ import de.uni_passau.fim.se2.litterbox.export.AbstractExportVisitor;
 import de.uni_passau.fim.se2.litterbox.export.ScratchKeyCode;
 import de.uni_passau.fim.se2.litterbox.export.StringExprNameVisitor;
 
+import java.io.File;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Exports LitterBox AST to PyStage Python format.
@@ -121,7 +121,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
     private static final String STAGE_VAR_NAME = "stage";
     private static final String SELF = "self";
     private static final String CORE_ACCESSOR = "._core";
-    private static final String IMAGES_DIR = "images" + java.io.File.separator;
+    private static final String IMAGES_DIR = "images" + File.separator;
 
     // ---------------------------------------------------------------
     // State Fields
@@ -132,9 +132,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
     private final List<String> eventRegistrations = new ArrayList<>();
     private final Set<String> inferredGlobals = new HashSet<>();
     private boolean inHandler = false;
-    private boolean inCloneHandler = false;
-    private final java.util.Map<String, String> currentActorMessageHandlers = new java.util.HashMap<>();
-    private final java.util.Map<String, String> parameterNameMapping = new java.util.HashMap<>();
+    private final Map<String, String> parameterNameMapping = new HashMap<>();
 
     // ---------------------------------------------------------------
     // Constructors
@@ -174,6 +172,12 @@ public class PyStageVisitor extends AbstractExportVisitor {
             } else {
                 visitor.currentSpritePyName = visitor.toPythonIdentifier(actor.getIdent().getName());
             }
+        }
+
+        // Set inHandler = true for statements and events since they are always inside handlers.
+        // This ensures emitSimpleCall and similar methods use 'self' instead of the sprite name.
+        if (node instanceof Stmt || node instanceof Event) {
+            visitor.inHandler = true;
         }
 
         node.accept(visitor);
@@ -248,20 +252,6 @@ public class PyStageVisitor extends AbstractExportVisitor {
     }
 
     /**
-     * Emits a variable operation (get or set).
-     */
-    private void emitVariableOp(String operation, String varName, Runnable valueEmitter) {
-        String obj = getSelfOrSprite();
-        emitNoSpace(obj + "." + operation + "(\"" + escapeString(varName) + "\"");
-        if (valueEmitter != null) {
-            emitNoSpace(", ");
-            valueEmitter.run();
-        }
-        emitNoSpace(")");
-        newLine();
-    }
-
-    /**
      * Builds the Python image path for a costume/backdrop.
      */
     private String buildImagePath(String name, String md5ext) {
@@ -275,15 +265,26 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(ASTNode node) {
-        // Emit a comment for unhandled nodes to prevent indentation errors
-        // and allow for easier debugging.
-        emitNoSpace("# Unhandled node: " + node.getClass().getSimpleName());
-        if (node instanceof de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt) {
+        // Handle unhandled expression nodes by emitting neutral values.
+        // Comments cannot appear in the middle of Python expressions.
+        if (node instanceof NumExpr || node instanceof ComparableExpr) {
+            emitNoSpace("0");  // Neutral numeric value
+        } else if (node instanceof BoolExpr) {
+            emitNoSpace("False");  // Neutral boolean value
+        } else if (node instanceof StringExpr) {
+            emitNoSpace("\"\"");  // Neutral string value
+        } else if (node instanceof Stmt) {
+            // For statements, emit a comment and pass to prevent indentation errors
+            emitNoSpace("# Unhandled node: " + node.getClass().getSimpleName());
             newLine();
             appendIndentation();
             emitNoSpace("pass");
+            newLine();
+        } else {
+            // For other nodes (events, metadata, etc.), emit a comment
+            emitNoSpace("# Unhandled node: " + node.getClass().getSimpleName());
+            newLine();
         }
-        newLine();
     }
 
     // ---------------------------------------------------------------
@@ -328,80 +329,41 @@ public class PyStageVisitor extends AbstractExportVisitor {
     }
 
     private void emitToNumHelper() {
-        emitNoSpace("def _to_num(v):");
-        newLine();
-        beginIndentation();
-        appendIndentation();
-        emitNoSpace("try:");
-        newLine();
-        beginIndentation();
-        appendIndentation();
-        emitNoSpace("return float(v)");
-        newLine();
-        endIndentation();
-        appendIndentation();
-        emitNoSpace("except (ValueError, TypeError):");
-        newLine();
-        beginIndentation();
-        appendIndentation();
-        emitNoSpace("return 0");
-        newLine();
-        endIndentation();
-        endIndentation();
+        emitNoSpace("""
+                def _to_num(v):
+                    try:
+                        return float(v)
+                    except (ValueError, TypeError):
+                        return 0
+                """);
         newLine();
     }
 
     private void emitEqualsHelper() {
-        emitNoSpace("def _equals(v1, v2):");
-        newLine();
-        beginIndentation();
-        appendIndentation();
-        emitNoSpace("try:");
-        newLine();
-        beginIndentation();
-        appendIndentation();
-        emitNoSpace("return float(v1) == float(v2)");
-        newLine();
-        endIndentation();
-        appendIndentation();
-        emitNoSpace("except (ValueError, TypeError):");
-        newLine();
-        beginIndentation();
-        appendIndentation();
-        emitNoSpace("return str(v1).lower() == str(v2).lower()");
-        newLine();
-        endIndentation();
-        endIndentation();
+        emitNoSpace("""
+                def _equals(v1, v2):
+                    try:
+                        return float(v1) == float(v2)
+                    except (ValueError, TypeError):
+                        return str(v1).lower() == str(v2).lower()
+                """);
         newLine();
     }
 
     private void emitIndexHelper() {
-        emitNoSpace("def _index_of(l, item):");
-        newLine();
-        beginIndentation();
-        appendIndentation();
-        emitNoSpace("for i, x in enumerate(l):");
-        newLine();
-        beginIndentation();
-        appendIndentation();
-        emitNoSpace("if _equals(x, item):");
-        newLine();
-        beginIndentation();
-        appendIndentation();
-        emitNoSpace("return i + 1");
-        newLine();
-        endIndentation();
-        endIndentation();
-        appendIndentation();
-        emitNoSpace("return 0");
-        newLine();
-        endIndentation();
+        emitNoSpace("""
+                def _index_of(l, item):
+                    for i, x in enumerate(l):
+                        if _equals(x, item):
+                            return i + 1
+                    return 0
+                """);
         newLine();
     }
 
     private void analyzeAndEmitInferredGlobals(Program program) {
         inferredGlobals.clear();
-        java.util.Map<String, Set<ActorDefinition>> missingVarUsage = new java.util.HashMap<>();
+        Map<String, Set<ActorDefinition>> missingVarUsage = new HashMap<>();
         ActorDefinition stageActor = null;
 
         // Collect used variables per actor
@@ -452,7 +414,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
         }
     }
 
-    private void removeDeclaredVariablesFromMap(java.util.Map<String, Set<ActorDefinition>> map, ActorDefinition actor) {
+    private void removeDeclaredVariablesFromMap(Map<String, Set<ActorDefinition>> map, ActorDefinition actor) {
         for (var decl : actor.getDecls().getDeclarationStmts()) {
             String name = getDeclarationName(decl);
             if (name != null) {
@@ -461,7 +423,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
         }
     }
 
-    private String getDeclarationName(de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmt decl) {
+    private String getDeclarationName(DeclarationStmt decl) {
         if (decl instanceof DeclarationIdentAsTypeStmt did) {
             if (did.getIdent() instanceof Variable v) {
                 return v.getName().getName();
@@ -485,9 +447,10 @@ public class PyStageVisitor extends AbstractExportVisitor {
             if (actor.isStage() && actor.getActorMetadata() != null && actor.getActorMetadata().getCostumes() != null) {
                 var costumes = actor.getActorMetadata().getCostumes().getList();
                 if (costumes != null && !costumes.isEmpty()) {
-                    String backdropName = costumes.get(0).getName();
+                    String backdropName = costumes.getFirst().getName();
                     newLine();
-                    emitNoSpace(STAGE_VAR_NAME + ".switch_backdrop_to(\"" + escapeString(resolveBackdropPath(backdropName)) + "\")");
+                    emitNoSpace(STAGE_VAR_NAME + ".switch_backdrop_to(\""
+                            + escapeString(resolveBackdropPath(backdropName)) + "\")");
                     newLine();
                 }
                 break;
@@ -505,7 +468,6 @@ public class PyStageVisitor extends AbstractExportVisitor {
     public void visit(ActorDefinition node) {
         currentActor = node;
         handlerCounter = 0;
-        currentActorMessageHandlers.clear();
 
         setupActorContext(node);
         emitCostumes(node);
@@ -550,19 +512,23 @@ public class PyStageVisitor extends AbstractExportVisitor {
         }
     }
 
-    private void emitCostumeAddCall(boolean isStage, String filePath, double centerX, double centerY, double bitmapResolution) {
-        String baseArgs = "\"" + escapeString(filePath) + "\", center_x=" + centerX + ", center_y=" + centerY;
+    private void emitCostumeAddCall(boolean isStage, String filePath, double centerX,
+                                    double centerY, double bitmapResolution) {
+        String baseArgs = "\"" + escapeString(filePath) + "\", center_x=" + centerX
+                + ", center_y=" + centerY;
         boolean hasScaling = bitmapResolution != 1.0;
 
         if (isStage) {
             if (hasScaling) {
-                emitNoSpace(currentSpritePyName + CORE_ACCESSOR + ".costume_manager.add_costume(" + baseArgs + ", factor=" + (int) bitmapResolution + ")");
+                emitNoSpace(currentSpritePyName + CORE_ACCESSOR + ".costume_manager.add_costume("
+                        + baseArgs + ", factor=" + (int) bitmapResolution + ")");
             } else {
                 emitNoSpace(currentSpritePyName + ".add_backdrop(" + baseArgs + ")");
             }
         } else {
             if (hasScaling) {
-                emitNoSpace(currentSpritePyName + ".add_costume(" + baseArgs + ", factor=" + (int) bitmapResolution + ")");
+                emitNoSpace(currentSpritePyName + ".add_costume("
+                        + baseArgs + ", factor=" + (int) bitmapResolution + ")");
             } else {
                 emitNoSpace(currentSpritePyName + ".add_costume(" + baseArgs + ")");
             }
@@ -576,7 +542,8 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
         String addSoundMethod = node.isStage() ? CORE_ACCESSOR + ".sound_manager.add_sound" : ".add_sound";
         for (SoundMetadata sound : node.getActorMetadata().getSounds().getList()) {
-            emitNoSpace(currentSpritePyName + addSoundMethod + "(\"" + escapeString(sound.getName()) + "\")");
+            emitNoSpace(currentSpritePyName + addSoundMethod
+                    + "(\"" + escapeString(sound.getName()) + "\")");
             newLine();
         }
     }
@@ -597,9 +564,11 @@ public class PyStageVisitor extends AbstractExportVisitor {
         emitNoSpace("# Initial costume: " + costumeName);
         newLine();
         if (node.isStage()) {
-            emitNoSpace(currentSpritePyName + ".switch_backdrop_to(\"" + escapeString(resolveBackdropPath(costumeName)) + "\")");
+            emitNoSpace(currentSpritePyName + ".switch_backdrop_to(\""
+                    + escapeString(resolveBackdropPath(costumeName)) + "\")");
         } else {
-            emitNoSpace(currentSpritePyName + ".switch_costume_to(\"" + escapeString(resolveCostumePath(costumeName)) + "\")");
+            emitNoSpace(currentSpritePyName + ".switch_costume_to(\""
+                    + escapeString(resolveCostumePath(costumeName)) + "\")");
         }
         newLine();
     }
@@ -643,7 +612,8 @@ public class PyStageVisitor extends AbstractExportVisitor {
         if (isStage) {
             emitNoSpace(currentSpritePyName + ".create_variable(\"" + escapeString(varName) + "\")");
         } else {
-            emitNoSpace(currentSpritePyName + CORE_ACCESSOR + ".pystage_makevariable(\"" + escapeString(varName) + "\", all_sprites=False)");
+            emitNoSpace(currentSpritePyName + CORE_ACCESSOR + ".pystage_makevariable(\""
+                    + escapeString(varName) + "\", all_sprites=False)");
         }
         newLine();
     }
@@ -670,7 +640,8 @@ public class PyStageVisitor extends AbstractExportVisitor {
             if (currentActor != null && currentActor.isStage()) {
                 emitNoSpace(currentSpritePyName + ".create_variable(\"" + escapeString(name) + "\")");
             } else {
-                emitNoSpace(currentSpritePyName + "._core.pystage_makevariable(\"" + escapeString(name) + "\", all_sprites=False)");
+                emitNoSpace(currentSpritePyName + "._core.pystage_makevariable(\""
+                        + escapeString(name) + "\", all_sprites=False)");
             }
             newLine();
         }
@@ -685,7 +656,8 @@ public class PyStageVisitor extends AbstractExportVisitor {
     public void visit(DeclarationBroadcastStmt node) {
         // Broadcast declarations are implicit in PyStage.
         // We emit a comment for clarity, but no functional code.
-        emitNoSpace("# Implicit declaration: " + escapeString(getIdentifierName(node.getIdent())));
+        emitNoSpace("# Implicit declaration: "
+                + escapeString(getIdentifierName(node.getIdent())));
         newLine();
     }
 
@@ -773,11 +745,14 @@ public class PyStageVisitor extends AbstractExportVisitor {
                         case "all around" -> emitNoSpace(currentSpritePyName + ".set_rotation_style_around()");
                         case "left-right" -> emitNoSpace(currentSpritePyName + ".set_rotation_style_left_right()");
                         case "don't rotate" -> emitNoSpace(currentSpritePyName + ".set_rotation_style_none()");
+                        default -> {
+                        }
                     }
                     newLine();
                 }
             }
-            // Other attributes are silently ignored
+            default -> {
+            }
         }
     }
 
@@ -914,7 +889,8 @@ public class PyStageVisitor extends AbstractExportVisitor {
         emitEventHandler(handlerName, backdrop);
 
         String backdropName = backdrop.getBackdrop().getName();
-        eventRegistrations.add(currentSpritePyName + ".when_backdrop_switches_to(\"" + escapeString(resolveBackdropPath(backdropName)) + "\", " + handlerName + ")");
+        eventRegistrations.add(currentSpritePyName + ".when_backdrop_switches_to(\""
+                + escapeString(resolveBackdropPath(backdropName)) + "\", " + handlerName + ")");
     }
 
     @Override
@@ -925,14 +901,15 @@ public class PyStageVisitor extends AbstractExportVisitor {
         String messageName = getExpressionString(receptionOfMessage.getMsg().getMessage());
         if (currentActor.isStage()) {
             // Workaround for PyStage: Stage does not support when_i_receive_message
-            eventRegistrations.add(currentSpritePyName + "._core.code_manager.code_blocks[\"" + handlerName + "\"] = " + handlerName);
-            eventRegistrations.add(currentSpritePyName + "._core.code_manager.broadcast_blocks.setdefault(\"" + escapeString(messageName) + "\", []).append(\"" + handlerName + "\")");
+            eventRegistrations.add(currentSpritePyName + "._core.code_manager.code_blocks[\""
+                    + handlerName + "\"] = " + handlerName);
+            eventRegistrations.add(currentSpritePyName
+                    + "._core.code_manager.broadcast_blocks.setdefault(\""
+                    + escapeString(messageName) + "\", []).append(\"" + handlerName + "\")");
         } else {
-            eventRegistrations.add(currentSpritePyName + ".when_i_receive_message(\"" + escapeString(messageName) + "\", " + handlerName + ")");
+            eventRegistrations.add(currentSpritePyName + ".when_i_receive_message(\""
+                    + escapeString(messageName) + "\", " + handlerName + ")");
         }
-
-        // Track message handlers for this actor (used for clone broadcast workaround)
-        currentActorMessageHandlers.put(messageName, handlerName);
     }
 
     @Override
@@ -951,40 +928,9 @@ public class PyStageVisitor extends AbstractExportVisitor {
         newLine();
         beginIndentation();
         inHandler = true;
-        inCloneHandler = true;
 
-        // Workaround for PyStage: clones don't have their image updated from costume_manager
-        // after creation. Force an image update so the clone renders with the correct costume.
-        appendIndentation();
-        emitNoSpace("self._core.costume_manager.update_sprite_image()");
-        newLine();
-
-        // Workaround for PyStage: CodeManager.clone() doesn't copy broadcast_blocks,
-        // so clones don't respond to broadcasts. The clone inherits the code blocks from the
-        // parent (with "-clone-N" suffix), but broadcast_blocks is not copied.
-        // We bind the existing cloned code blocks directly to broadcast_blocks without calling
-        // when_i_receive_message (which would modify code_blocks during iteration and crash).
-        java.util.Map<String, String> messageHandlers = findMessageHandlers(currentActor);
-        for (var entry : messageHandlers.entrySet()) {
-            String messageName = entry.getKey();
-            String originalHandlerName = entry.getValue();
-            appendIndentation();
-            emitNoSpace("for _block_name in list(self._core.code_manager.code_blocks.keys()):");
-            newLine();
-            beginIndentation();
-            appendIndentation();
-            emitNoSpace("if _block_name.startswith(\"" + escapeString(originalHandlerName) + "\"):");
-            newLine();
-            beginIndentation();
-            appendIndentation();
-            emitNoSpace("self._core.code_manager.broadcast_blocks.setdefault(\"" + escapeString(messageName) + "\", []).append(_block_name)");
-            newLine();
-            appendIndentation();
-            emitNoSpace("break");
-            newLine();
-            endIndentation();
-            endIndentation();
-        }
+        emitCloneImageUpdateWorkaround();
+        emitCloneBroadcastBindingWorkaround(currentActor);
 
         Script parentScript = AstNodeUtil.findParent(event, Script.class);
         if (parentScript != null) {
@@ -1002,8 +948,45 @@ public class PyStageVisitor extends AbstractExportVisitor {
         }
 
         inHandler = false;
-        inCloneHandler = false;
         endIndentation();
+    }
+
+    private void emitCloneImageUpdateWorkaround() {
+        // Workaround for PyStage: clones don't have their image updated from costume_manager
+        // after creation. Force an image update so the clone renders with the correct costume.
+        appendIndentation();
+        emitNoSpace("self._core.costume_manager.update_sprite_image()");
+        newLine();
+    }
+
+    private void emitCloneBroadcastBindingWorkaround(ActorDefinition actor) {
+        // Workaround for PyStage: CodeManager.clone() doesn't copy broadcast_blocks,
+        // so clones don't respond to broadcasts. The clone inherits the code blocks from the
+        // parent (with "-clone-N" suffix), but broadcast_blocks is not copied.
+        // We bind the existing cloned code blocks directly to broadcast_blocks without calling
+        // when_i_receive_message (which would modify code_blocks during iteration and crash).
+        java.util.Map<String, String> messageHandlers = findMessageHandlers(actor);
+        for (var entry : messageHandlers.entrySet()) {
+            String messageName = entry.getKey();
+            String originalHandlerName = entry.getValue();
+            appendIndentation();
+            emitNoSpace("for _block_name in list(self._core.code_manager.code_blocks.keys()):");
+            newLine();
+            beginIndentation();
+            appendIndentation();
+            emitNoSpace("if _block_name.startswith(\"" + escapeString(originalHandlerName) + "\"):");
+            newLine();
+            beginIndentation();
+            appendIndentation();
+            emitNoSpace("self._core.code_manager.broadcast_blocks.setdefault(\""
+                    + escapeString(messageName) + "\", []).append(_block_name)");
+            newLine();
+            appendIndentation();
+            emitNoSpace("break");
+            newLine();
+            endIndentation();
+            endIndentation();
+        }
     }
 
     @Override
@@ -1144,120 +1127,109 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(MoveSteps node) {
-        emitNoSpace("self.move(");
-        node.getSteps().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("move", () -> node.getSteps().accept(this));
     }
 
     @Override
     public void visit(TurnLeft node) {
-        emitNoSpace("self.turn_left(");
-        node.getDegrees().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("turn_left", () -> node.getDegrees().accept(this));
     }
 
     @Override
     public void visit(TurnRight node) {
-        emitNoSpace("self.turn_right(");
-        node.getDegrees().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("turn_right", () -> node.getDegrees().accept(this));
     }
 
     @Override
     public void visit(GoToPos node) {
         Position pos = node.getPosition();
-        if (pos instanceof MousePos) {
-            emitNoSpace("self.go_to_mouse_pointer()");
-        } else if (pos instanceof RandomPos) {
-            emitNoSpace("self.go_to_random_position()");
-        } else if (pos instanceof FromExpression fromExpr) {
-            emitNoSpace("self.go_to_sprite(");
-            emitSpriteReference(fromExpr);
-            emitNoSpace(")");
-        } else {
-            emitNoSpace("self.go_to_sprite(");
-            pos.accept(this);
-            emitNoSpace(")");
+        switch (pos) {
+            case MousePos mousePos -> emitNoSpace("self.go_to_mouse_pointer()");
+            case RandomPos randomPos -> emitNoSpace("self.go_to_random_position()");
+            case FromExpression fromExpr -> {
+                emitNoSpace("self.go_to_sprite(");
+                emitSpriteReference(fromExpr);
+                emitNoSpace(")");
+            }
+            default -> {
+                emitNoSpace("self.go_to_sprite(");
+                pos.accept(this);
+                emitNoSpace(")");
+            }
         }
         newLine();
     }
 
     @Override
     public void visit(GoToPosXY node) {
-        emitNoSpace("self.go_to_x_y(");
-        node.getX().accept(this);
-        emitNoSpace(", ");
-        node.getY().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("go_to_x_y", () -> {
+            node.getX().accept(this);
+            emitNoSpace(", ");
+            node.getY().accept(this);
+        });
     }
 
     @Override
     public void visit(GlideSecsTo node) {
         Position pos = node.getPosition();
-        if (pos instanceof MousePos) {
-            emitNoSpace("self.glide_to_mouse_pointer(");
-            node.getSecs().accept(this);
-            emitNoSpace(")");
-        } else if (pos instanceof RandomPos) {
-            emitNoSpace("self.glide_to_random_position(");
-            node.getSecs().accept(this);
-            emitNoSpace(")");
-        } else if (pos instanceof FromExpression fromExpr) {
-            emitNoSpace("self.glide_to_sprite(");
-            node.getSecs().accept(this);
-            emitNoSpace(", ");
-            emitSpriteReference(fromExpr);
-            emitNoSpace(")");
-        } else {
-            emitNoSpace("self.glide_to_sprite(");
-            node.getSecs().accept(this);
-            emitNoSpace(", ");
-            pos.accept(this);
-            emitNoSpace(")");
+        switch (pos) {
+            case MousePos mousePos -> {
+                emitNoSpace("self.glide_to_mouse_pointer(");
+                node.getSecs().accept(this);
+                emitNoSpace(")");
+            }
+            case RandomPos randomPos -> {
+                emitNoSpace("self.glide_to_random_position(");
+                node.getSecs().accept(this);
+                emitNoSpace(")");
+            }
+            case FromExpression fromExpr -> {
+                emitNoSpace("self.glide_to_sprite(");
+                node.getSecs().accept(this);
+                emitNoSpace(", ");
+                emitSpriteReference(fromExpr);
+                emitNoSpace(")");
+            }
+            default -> {
+                emitNoSpace("self.glide_to_sprite(");
+                node.getSecs().accept(this);
+                emitNoSpace(", ");
+                pos.accept(this);
+                emitNoSpace(")");
+            }
         }
         newLine();
     }
 
     @Override
     public void visit(GlideSecsToXY node) {
-        emitNoSpace("self.glide_to_x_y(");
-        node.getSecs().accept(this);
-        emitNoSpace(", ");
-        node.getX().accept(this);
-        emitNoSpace(", ");
-        node.getY().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("glide_to_x_y", () -> {
+            node.getSecs().accept(this);
+            emitNoSpace(", ");
+            node.getX().accept(this);
+            emitNoSpace(", ");
+            node.getY().accept(this);
+        });
     }
 
     @Override
     public void visit(PointInDirection node) {
-        emitNoSpace("self.point_in_direction(");
-        node.getDirection().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("point_in_direction", () -> node.getDirection().accept(this));
     }
 
     @Override
     public void visit(PointTowards node) {
         Position pos = node.getPosition();
         if (pos instanceof MousePos) {
-            emitNoSpace("self.point_towards_mouse_pointer()");
+            emitSimpleCall("point_towards_mouse_pointer");
         } else if (pos instanceof FromExpression fromExpr) {
-            emitNoSpace("self.point_towards_sprite(");
-            emitSpriteReference(fromExpr);
-            emitNoSpace("._core");
-            emitNoSpace(")");
+            emitSelfMethodCall("point_towards_sprite", () -> {
+                emitSpriteReference(fromExpr);
+                emitNoSpace("._core");
+            });
         } else {
-            emitNoSpace("self.point_towards_sprite(");
-            pos.accept(this);
-            emitNoSpace(")");
+            emitSelfMethodCall("point_towards_sprite", () -> pos.accept(this));
         }
-        newLine();
     }
 
     private void emitSpriteReference(FromExpression fromExpr) {
@@ -1283,57 +1255,39 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(ChangeXBy node) {
-        emitNoSpace("self._core.motion_changexby(");
-        node.getNum().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitCoreMethodCall("motion_changexby", () -> node.getNum().accept(this));
     }
 
     @Override
     public void visit(ChangeYBy node) {
-        emitNoSpace("self._core.motion_changeyby(");
-        node.getNum().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitCoreMethodCall("motion_changeyby", () -> node.getNum().accept(this));
     }
 
     @Override
     public void visit(SetXTo node) {
-        emitNoSpace("self._core.motion_setx(");
-        node.getNum().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitCoreMethodCall("motion_setx", () -> node.getNum().accept(this));
     }
 
     @Override
     public void visit(SetYTo node) {
-        emitNoSpace("self._core.motion_sety(");
-        node.getNum().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitCoreMethodCall("motion_sety", () -> node.getNum().accept(this));
     }
 
     @Override
     public void visit(IfOnEdgeBounce node) {
-        emitNoSpace("self.if_on_edge_bounce()");
-        newLine();
+        emitSimpleCall("if_on_edge_bounce");
     }
 
     @Override
     public void visit(SetRotationStyle node) {
         RotationStyle.RotationStyleType type = node.getRotation().getType();
         switch (type) {
-            case dont_rotate:
-                emitNoSpace("self.set_rotation_style_none()");
-                break;
-            case left_right:
-                emitNoSpace("self.set_rotation_style_left_right()");
-                break;
-            case all_around:
-                emitNoSpace("self.set_rotation_style_around()");
-                break;
+            case dont_rotate -> emitSimpleCall("set_rotation_style_none");
+            case left_right -> emitSimpleCall("set_rotation_style_left_right");
+            case all_around -> emitSimpleCall("set_rotation_style_around");
+            default -> {
+            }
         }
-        newLine();
     }
 
     @Override
@@ -1356,131 +1310,110 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(Say node) {
-        emitNoSpace("self.say(");
-        node.getString().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("say", () -> node.getString().accept(this));
     }
 
     @Override
     public void visit(SayForSecs node) {
-        emitNoSpace("self.say_for_seconds(");
-        node.getString().accept(this);
-        emitNoSpace(", ");
-        node.getSecs().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("say_for_seconds", () -> {
+            node.getString().accept(this);
+            emitNoSpace(", ");
+            node.getSecs().accept(this);
+        });
     }
 
     @Override
     public void visit(Think node) {
-        emitNoSpace("self.think(");
-        node.getThought().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("think", () -> node.getThought().accept(this));
     }
 
     @Override
     public void visit(ThinkForSecs node) {
-        emitNoSpace("self.think_for_seconds(");
-        node.getThought().accept(this);
-        emitNoSpace(", ");
-        node.getSecs().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("think_for_seconds", () -> {
+            node.getThought().accept(this);
+            emitNoSpace(", ");
+            node.getSecs().accept(this);
+        });
     }
 
     @Override
     public void visit(SwitchCostumeTo node) {
-        emitNoSpace("self.switch_costume_to(");
-        if (node.getCostumeChoice() instanceof WithExpr withExpr && withExpr.getExpression() instanceof StringLiteral str) {
-            emitNoSpace("\"" + escapeString(resolveCostumePath(str.getText())) + "\"");
-        } else {
-            node.getCostumeChoice().accept(this);
-        }
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("switch_costume_to", () -> {
+            if (node.getCostumeChoice() instanceof WithExpr withExpr
+                    && withExpr.getExpression() instanceof StringLiteral str) {
+                emitNoSpace("\"" + escapeString(resolveCostumePath(str.getText())) + "\"");
+            } else {
+                node.getCostumeChoice().accept(this);
+            }
+        });
     }
 
     @Override
     public void visit(NextCostume node) {
-        emitNoSpace("self.next_costume()");
-        newLine();
+        emitSimpleCall("next_costume");
     }
 
     @Override
     public void visit(SwitchBackdrop node) {
-        emitNoSpace("self.switch_backdrop_to(");
-        switch (node.getElementChoice()) {
-            case Next ignored -> emitNoSpace("\"next backdrop\"");
-            case Prev ignored -> emitNoSpace("\"previous backdrop\"");
-            case Random ignored -> emitNoSpace("\"random backdrop\"");
-            case WithExpr withExpr when withExpr.getExpression() instanceof StringLiteral str ->
-                    emitNoSpace("\"" + escapeString(resolveBackdropPath(str.getText())) + "\"");
-            default -> node.getElementChoice().accept(this);
-        }
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("switch_backdrop_to", () -> {
+            switch (node.getElementChoice()) {
+                case Next ignored -> emitNoSpace("\"next backdrop\"");
+                case Prev ignored -> emitNoSpace("\"previous backdrop\"");
+                case Random ignored -> emitNoSpace("\"random backdrop\"");
+                case WithExpr withExpr when withExpr.getExpression() instanceof StringLiteral str ->
+                        emitNoSpace("\"" + escapeString(resolveBackdropPath(str.getText())) + "\"");
+                default -> node.getElementChoice().accept(this);
+            }
+        });
     }
 
     @Override
     public void visit(SwitchBackdropAndWait node) {
-        emitNoSpace("self.switch_backdrop_to_and_wait(");
-        switch (node.getElementChoice()) {
-            case Next ignored -> emitNoSpace("\"next backdrop\"");
-            case Prev ignored -> emitNoSpace("\"previous backdrop\"");
-            case Random ignored -> emitNoSpace("\"random backdrop\"");
-            case WithExpr withExpr when withExpr.getExpression() instanceof StringLiteral str ->
-                    emitNoSpace("\"" + escapeString(resolveBackdropPath(str.getText())) + "\"");
-            default -> node.getElementChoice().accept(this);
-        }
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("switch_backdrop_to_and_wait", () -> {
+            switch (node.getElementChoice()) {
+                case Next ignored -> emitNoSpace("\"next backdrop\"");
+                case Prev ignored -> emitNoSpace("\"previous backdrop\"");
+                case Random ignored -> emitNoSpace("\"random backdrop\"");
+                case WithExpr withExpr when withExpr.getExpression() instanceof StringLiteral str ->
+                        emitNoSpace("\"" + escapeString(resolveBackdropPath(str.getText())) + "\"");
+                default -> node.getElementChoice().accept(this);
+            }
+        });
     }
 
     @Override
     public void visit(NextBackdrop node) {
-        emitNoSpace("self.next_backdrop()");
-        newLine();
+        emitSimpleCall("next_backdrop");
     }
 
     @Override
     public void visit(ChangeSizeBy node) {
-        emitNoSpace("self.change_size_by(");
-        node.getNum().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("change_size_by", () -> node.getNum().accept(this));
     }
 
     @Override
     public void visit(SetSizeTo node) {
-        emitNoSpace("self.set_size_to(");
-        node.getPercent().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("set_size_to", () -> node.getPercent().accept(this));
     }
 
     @Override
     public void visit(Show node) {
-        emitNoSpace("self.show()");
-        newLine();
+        emitSimpleCall("show");
     }
 
     @Override
     public void visit(Hide node) {
-        emitNoSpace("self.hide()");
-        newLine();
+        emitSimpleCall("hide");
     }
 
     @Override
     public void visit(GoToLayer node) {
         String layerType = node.getLayerChoice().getTypeName();
         if ("back".equals(layerType)) {
-            emitNoSpace("self.go_to_back_layer()");
+            emitSimpleCall("go_to_back_layer");
         } else {
-            emitNoSpace("self.go_to_front_layer()");
+            emitSimpleCall("go_to_front_layer");
         }
-        newLine();
     }
 
     @Override
@@ -1500,32 +1433,24 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(ClearGraphicEffects node) {
-        emitNoSpace("self.clear_graphic_effects()");
-        newLine();
+        emitSimpleCall("clear_graphic_effects");
     }
 
     @Override
     public void visit(ClearSoundEffects node) {
-        emitNoSpace("self.clear_sound_effects()");
-        newLine();
+        emitSimpleCall("clear_sound_effects");
     }
 
     @Override
     public void visit(ChangeGraphicEffectBy node) {
         String effectName = node.getEffect().getTypeName();
-        emitNoSpace("self.change_" + effectName + "_effect_by(");
-        node.getValue().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("change_" + effectName + "_effect_by", () -> node.getValue().accept(this));
     }
 
     @Override
     public void visit(SetGraphicEffectTo node) {
         String effectName = node.getEffect().getTypeName();
-        emitNoSpace("self.set_" + effectName + "_effect_to(");
-        node.getValue().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("set_" + effectName + "_effect_to", () -> node.getValue().accept(this));
     }
 
     // ---------------------------------------------------------------
@@ -1534,40 +1459,27 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(PlaySoundUntilDone node) {
-        emitNoSpace("self.play_sound_until_done(");
-        node.getElementChoice().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("play_sound_until_done", () -> node.getElementChoice().accept(this));
     }
 
     @Override
     public void visit(StartSound node) {
-        emitNoSpace("self.start_sound(");
-        node.getElementChoice().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("start_sound", () -> node.getElementChoice().accept(this));
     }
 
     @Override
     public void visit(StopAllSounds node) {
-        emitNoSpace("self.stop_all_sounds()");
-        newLine();
+        emitSimpleCall("stop_all_sounds");
     }
 
     @Override
     public void visit(ChangeVolumeBy node) {
-        emitNoSpace("self.change_volume_by(");
-        node.getVolumeValue().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("change_volume_by", () -> node.getVolumeValue().accept(this));
     }
 
     @Override
     public void visit(SetVolumeTo node) {
-        emitNoSpace("self.set_volume_to(");
-        node.getVolumeValue().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("set_volume_to", () -> node.getVolumeValue().accept(this));
     }
 
     // ---------------------------------------------------------------
@@ -1576,16 +1488,12 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(AskAndWait node) {
-        emitNoSpace("self.ask_and_wait(");
-        node.getQuestion().accept(this);
-        emitNoSpace(")");
-        newLine();
+        emitSelfMethodCall("ask_and_wait", () -> node.getQuestion().accept(this));
     }
 
     @Override
     public void visit(ResetTimer node) {
-        emitNoSpace("self.reset_timer()");
-        newLine();
+        emitSimpleCall("reset_timer");
     }
 
     @Override
@@ -1674,20 +1582,20 @@ public class PyStageVisitor extends AbstractExportVisitor {
     }
 
     /**
-     * Emits a list accessor expression: self.get_variable("listName")
+     * Emits a list accessor expression: self.get_variable("listName").
      */
     private void emitListAccessor(String listName) {
         emitNoSpace(SELF + ".get_variable(\"" + listName + "\")");
     }
 
     /**
-     * Emits a list index expression for read access (e.g., [index], [-1], [random])
+     * Emits a list index expression for read access (e.g., [index], [-1], [random]).
      */
     private void emitListReadIndex(String listName, Expression indexExpr, ListIndexType indexType) {
         switch (indexType) {
             case LAST -> emitNoSpace("[-1]");
-            case RANDOM ->
-                    emitNoSpace("[" + SELF + ".pick_random(1, len(" + SELF + ".get_variable(\"" + listName + "\"))) - 1]");
+            case RANDOM -> emitNoSpace("[" + SELF + ".pick_random(1, len(" + SELF
+                    + ".get_variable(\"" + listName + "\"))) - 1]");
             default -> {
                 emitNoSpace("[int(");
                 indexExpr.accept(this);
@@ -1747,7 +1655,8 @@ public class PyStageVisitor extends AbstractExportVisitor {
             }
             case RANDOM -> {
                 emitListAccessor(listName);
-                emitNoSpace(".insert(" + SELF + ".pick_random(1, len(" + SELF + ".get_variable(\"" + listName + "\")) + 1) - 1, ");
+                emitNoSpace(".insert(" + SELF + ".pick_random(1, len(" + SELF
+                        + ".get_variable(\"" + listName + "\")) + 1) - 1, ");
                 node.getString().accept(this);
                 emitNoSpace(")");
             }
@@ -1832,8 +1741,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(StopAll node) {
-        emitNoSpace("self.stop_all()");
-        newLine();
+        emitSimpleCall("stop_all");
     }
 
     @Override
@@ -1844,8 +1752,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(StopOtherScriptsInSprite node) {
-        emitNoSpace("self.stop_other_scripts_in_sprite()");
-        newLine();
+        emitSimpleCall("stop_other_scripts_in_sprite");
     }
 
     // ---------------------------------------------------------------
@@ -1869,7 +1776,8 @@ public class PyStageVisitor extends AbstractExportVisitor {
             // Ensure uniqueness
             String uniqueName = safeName;
             int counter = 1;
-            while (usedParamNames.contains(uniqueName) || uniqueName.isEmpty()) { // Handle empty if toPythonIdentifier returns ""
+            // Handle empty if toPythonIdentifier returns ""
+            while (usedParamNames.contains(uniqueName) || uniqueName.isEmpty()) {
                 if (uniqueName.isEmpty()) {
                     uniqueName = "_" + counter;
                 } else {
@@ -2052,30 +1960,27 @@ public class PyStageVisitor extends AbstractExportVisitor {
     public void visit(DistanceTo node) {
         Position pos = node.getPosition();
         if (pos instanceof MousePos) {
-            emitNoSpace("self._core.sensing_distanceto_mousepointer()");
+            emitCoreMethodCall("sensing_distanceto_mousepointer", () -> {
+            });
         } else if (pos instanceof FromExpression fromExpr) {
-            emitNoSpace("self._core.sensing_distanceto_sprite(");
-            emitSpriteReference(fromExpr);
-            emitNoSpace("._core");
-            emitNoSpace(")");
+            emitCoreMethodCall("sensing_distanceto_sprite", () -> {
+                emitSpriteReference(fromExpr);
+                emitNoSpace("._core");
+            });
         } else {
             // Fallback for unknown position types
-            emitNoSpace("self._core.sensing_distanceto(");
-            pos.accept(this);
-            emitNoSpace(")");
+            emitCoreMethodCall("sensing_distanceto", () -> pos.accept(this));
         }
     }
 
     @Override
     public void visit(AttributeOf node) {
-        String attr = getAttributeString(node.getAttribute());
-
         // Resolve target sprite variable name
         String targetVar = "stage"; // Default fallback
         ASTNode choice = node.getElementChoice();
 
         // Unwrap WithExpr if present
-        if (choice instanceof de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr withExpr) {
+        if (choice instanceof WithExpr withExpr) {
             choice = withExpr.getExpression();
         }
 
@@ -2091,45 +1996,41 @@ public class PyStageVisitor extends AbstractExportVisitor {
             }
         }
 
-        // If target is expression (not literal), we can't easily resolve the variable name at runtime
-        // because sprites don't store their names in PyStage.
-        // For now, we only support literals.
-
         String objCode = targetVar + "._core";
+        Attribute attr = node.getAttribute();
 
-        switch (attr) {
-            case "x position" -> emitNoSpace(objCode + ".motion_xposition()");
-            case "y position" -> emitNoSpace(objCode + ".motion_yposition()");
-            case "direction" -> emitNoSpace(objCode + ".motion_direction()");
-            case "costume #" -> emitNoSpace(objCode + ".looks_costumenumbername_number()");
-            case "costume name" -> emitNoSpace(objCode + ".looks_costumenumbername_name()");
-            case "size" -> emitNoSpace(objCode + ".looks_size()");
-            case "volume" -> emitNoSpace(objCode + ".sound_volume()");
-            case "backdrop #" -> emitNoSpace("stage._core.looks_backdropnumbername_number()");
-            case "backdrop name" -> emitNoSpace("stage._core.looks_backdropnumbername_name()");
-            default -> {
-                // Assume it is a variable name
-                // Use get_variable on the wrapper object (targetVar), not _core,
-                // because get_variable is exposed on wrapper and handles global/local lookup logic well enough?
-                // Actually wrapper get_variable calls _core.data_variable.
-                // Let's use wrapper for get_variable as it is cleaner if available, but _core is consistent.
-                // _core.data_variable(name)
-                emitNoSpace(objCode + ".data_variable(\"" + escapeString(attr) + "\")");
+        if (attr instanceof AttributeFromFixed fixed) {
+            switch (fixed.getAttribute().getType()) {
+                case X_POSITION -> emitNoSpace(objCode + ".motion_xposition()");
+                case Y_POSITION -> emitNoSpace(objCode + ".motion_yposition()");
+                case DIRECTION -> emitNoSpace(objCode + ".motion_direction()");
+                case COSTUME_NUMBER -> emitNoSpace(objCode + ".looks_costumenumbername_number()");
+                case COSTUME_NAME -> emitNoSpace(objCode + ".looks_costumenumbername_name()");
+                case SIZE -> emitNoSpace(objCode + ".looks_size()");
+                case VOLUME -> emitNoSpace(objCode + ".sound_volume()");
+                case BACKDROP_NUMBER -> emitNoSpace("stage._core.looks_backdropnumbername_number()");
+                case BACKDROP_NAME -> emitNoSpace("stage._core.looks_backdropnumbername_name()");
+                default -> {
+                }
             }
+        } else {
+            // Assume it is a variable name
+            String attrName = getAttributeString(attr);
+            emitNoSpace(objCode + ".data_variable(\"" + escapeString(attrName) + "\")");
         }
     }
 
-    private String getAttributeString(de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute attr) {
+    private String getAttributeString(Attribute attr) {
         if (attr instanceof AttributeFromFixed fixed) {
             return fixed.getAttribute().getTypeName();
-        } else if (attr instanceof de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable varAttr) {
+        } else if (attr instanceof AttributeFromVariable varAttr) {
             return varAttr.getVariable().getName().getName();
         }
         return "unknown";
     }
 
     @Override
-    public void visit(de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable node) {
+    public void visit(AttributeFromVariable node) {
         // This should generally be handled by getAttributeString inside AttributeOf,
         // but if visited standalone, we return the variable name as string.
         emitNoSpace("\"" + escapeString(node.getVariable().getName().getName()) + "\"");
@@ -2193,7 +2094,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
         } else {
             // In Scratch context, an expression list in a value slot (like set variable)
             // usually implies the first value.
-            node.getExpressions().get(0).accept(this);
+            node.getExpressions().getFirst().accept(this);
         }
     }
 
@@ -2311,20 +2212,21 @@ public class PyStageVisitor extends AbstractExportVisitor {
     @Override
     public void visit(Touching node) {
         var touchable = node.getTouchable();
-        if (touchable instanceof Edge) {
-            emitNoSpace("self.touching_edge()");
-        } else if (touchable instanceof MousePointer) {
-            emitNoSpace("self.touching_mouse_pointer()");
-        } else if (touchable instanceof SpriteTouchable st) {
-            // For sprites, we need to reference the sprite variable, not a string
-            StringExprNameVisitor nameVisitor = new StringExprNameVisitor();
-            st.getStringExpr().accept(nameVisitor);
-            String spriteName = toPythonIdentifier(nameVisitor.getResult());
-            emitNoSpace("self.touching(" + spriteName + ")");
-        } else {
-            emitNoSpace("self.touching(");
-            touchable.accept(this);
-            emitNoSpace(")");
+        switch (touchable) {
+            case Edge edge -> emitNoSpace("self.touching_edge()");
+            case MousePointer mousePointer -> emitNoSpace("self.touching_mouse_pointer()");
+            case SpriteTouchable st -> {
+                // For sprites, we need to reference the sprite variable, not a string
+                StringExprNameVisitor nameVisitor = new StringExprNameVisitor();
+                st.getStringExpr().accept(nameVisitor);
+                String spriteName = toPythonIdentifier(nameVisitor.getResult());
+                emitNoSpace("self.touching(" + spriteName + ")");
+            }
+            default -> {
+                emitNoSpace("self.touching(");
+                touchable.accept(this);
+                emitNoSpace(")");
+            }
         }
     }
 
@@ -2384,7 +2286,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(MusicBlock node) {
-        if (node instanceof de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt) {
+        if (node instanceof Stmt) {
             emitNoSpace("# Unhandled node: " + node.getClass().getSimpleName());
             newLine();
             appendIndentation();
@@ -2507,20 +2409,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
      * Strings that can be parsed as numbers are converted; others become 0.
      */
     private void emitAsNumber(Expression expr) {
-        if (expr instanceof NumberLiteral ||
-                expr instanceof Timer ||
-                expr instanceof MouseX ||
-                expr instanceof MouseY ||
-                expr instanceof PositionX ||
-                expr instanceof PositionY ||
-                expr instanceof Direction ||
-                expr instanceof Size ||
-                expr instanceof Volume ||
-                expr instanceof Loudness ||
-                expr instanceof DaysSince2000 ||
-                expr instanceof LengthOfString ||
-                expr instanceof LengthOfVar ||
-                expr instanceof IndexOf) {
+        if (expr instanceof NumExpr) {
             // These are already safe numbers
             expr.accept(this);
         } else {
@@ -2642,8 +2531,8 @@ public class PyStageVisitor extends AbstractExportVisitor {
      * <p>The handler counter is shared across all event types, so we need to
      * iterate through all scripts in order to match the actual naming scheme.
      */
-    private java.util.Map<String, String> findMessageHandlers(ActorDefinition actor) {
-        java.util.Map<String, String> handlers = new java.util.HashMap<>();
+    private Map<String, String> findMessageHandlers(ActorDefinition actor) {
+        Map<String, String> handlers = new HashMap<>();
         if (actor == null || actor.getScripts() == null) {
             return handlers;
         }

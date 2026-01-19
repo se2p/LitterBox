@@ -138,14 +138,6 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
      */
     private final Set<String> localLists = new HashSet<>();
 
-    private static final Set<String> SUPPORTED_GRAPHIC_EFFECTS = new HashSet<>();
-
-    static {
-        for (GraphicEffect.GraphicEffectType type : GraphicEffect.GraphicEffectType.values()) {
-            SUPPORTED_GRAPHIC_EFFECTS.add(type.getToken().toLowerCase());
-        }
-    }
-
     /**
      * Set of Goboscript built-in command names that could conflict with user-defined procedure names.
      * When a procedure has one of these names, it must be suffixed to avoid ambiguity.
@@ -743,6 +735,8 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
             case left_right -> emitNoSpace("set_rotation_style_left_right;");
             case dont_rotate -> emitNoSpace("set_rotation_style_do_not_rotate;");
             case all_around -> emitNoSpace("set_rotation_style_all_around;");
+            default -> {
+            }
         }
         newLine();
     }
@@ -789,7 +783,11 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(SwitchCostumeTo node) {
-        if (handleSpecialSwitchCases("switch_costume", "switch_costume", node.getCostumeChoice(), validCostumes::contains)) {
+        if (handleSpecialSwitchCases(
+                "switch_costume",
+                "switch_costume",
+                node.getCostumeChoice(),
+                validCostumes::contains)) {
             return;
         }
 
@@ -821,7 +819,8 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         visitSwitchBackdropCommon(node.getElementChoice(), "switch_backdrop_and_wait");
     }
 
-    private void visitSwitchBackdropCommon(de.uni_passau.fim.se2.litterbox.ast.model.ASTNode choice, String commentName) {
+    private void visitSwitchBackdropCommon(de.uni_passau.fim.se2.litterbox.ast.model.ASTNode choice,
+                                           String commentName) {
         if (handleSpecialSwitchCases("switch_backdrop", commentName, choice, this::isBackdropAvailable)) {
             return;
         }
@@ -848,7 +847,9 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         }
     }
 
-    private boolean handleSpecialSwitchCases(String command, String commentName, de.uni_passau.fim.se2.litterbox.ast.model.ASTNode choice, java.util.function.Predicate<String> validityCheck) {
+    private boolean handleSpecialSwitchCases(String command, String commentName,
+                                             de.uni_passau.fim.se2.litterbox.ast.model.ASTNode choice,
+                                             java.util.function.Predicate<String> validityCheck) {
         String name = resolveStringElement(choice);
         if (name != null) {
             if (!validityCheck.test(name)) {
@@ -1089,15 +1090,10 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     private void visitGraphicEffectsCommon(GraphicEffect graphicEffect, ASTNode value, String operation) {
         String effect = graphicEffect.getTypeName().toLowerCase();
-        if (SUPPORTED_GRAPHIC_EFFECTS.contains(effect)) {
-            emitNoSpace(operation + "_" + effect + "_effect ");
-            value.accept(this);
-            emitNoSpace(";");
-            newLine();
-        } else {
-            emitNoSpace("# Unsupported graphic effect: " + effect);
-            newLine();
-        }
+        emitNoSpace(operation + "_" + effect + "_effect ");
+        value.accept(this);
+        emitNoSpace(";");
+        newLine();
     }
 
     @Override
@@ -1447,7 +1443,8 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
         // Check if procedure is defined in this actor
         if (!definedProcedures.contains(procName)) {
-            emitNoSpace("# Unsupported procedure call (cross-sprite or undefined): " + escapeProcedureName(procName) + ";");
+            emitNoSpace("# Unsupported procedure call (cross-sprite or undefined): "
+                    + escapeProcedureName(procName) + ";");
             newLine();
             return;
         }
@@ -2068,7 +2065,6 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         }
     }
 
-
     private String escapeIdentifier(String name) {
         // Replace German umlauts (these expand to two characters, so handle before stripAccents)
         name = name.replace("ä", "ae")
@@ -2209,31 +2205,37 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(VideoSensingBlock node) {
-        if (node instanceof VideoOn stmt) {
-            // Goboscript does not support video sensing reporters.
-            // Emit 0 as a safe default numeric value to ensure compilation.
-            emitNoSpace("0");
-        } else if (node instanceof WhenVideoMotionGreaterThan) {
-            // Goboscript does not currently support video motion events.
-            // Emit a comment to indicate it was skipped, preventing invalid output.
-            emitNoSpace("# Unsupported event: when video motion > ...");
-            newLine();
-            // Do NOT visit children, to avoid emitting the threshold number.
-        } else if (node instanceof SetVideoTransparency) {
-            // Goboscript does not support video transparency.
-            // Emit a comment to indicate it was skipped.
-            emitNoSpace("# Unsupported: set video transparency");
-            newLine();
-        } else if (node instanceof TurnVideo) {
-            // Goboscript does not support video toggle (turn video on/off).
-            // Emit a comment to indicate it was skipped.
-            emitNoSpace("# Unsupported: turn video on/off");
-            newLine();
-        } else {
-            // For any other unknown VideoSensingBlock types, emit a generic comment
-            // rather than visitChildren() which could produce invalid output.
-            emitNoSpace("# Unsupported video sensing block");
-            newLine();
+        switch (node) {
+            case VideoOn stmt -> {
+                // Goboscript does not support video sensing reporters.
+                // Emit 0 as a safe default numeric value to ensure compilation.
+                emitNoSpace("0");
+            }
+            case WhenVideoMotionGreaterThan whenVideoMotionGreaterThan -> {
+                // Goboscript does not currently support video motion events.
+                // Emit a comment to indicate it was skipped, preventing invalid output.
+                emitNoSpace("# Unsupported event: when video motion > ...");
+                newLine();
+                // Do NOT visit children, to avoid emitting the threshold number.
+            }
+            case SetVideoTransparency setVideoTransparency -> {
+                // Goboscript does not support video transparency.
+                // Emit a comment to indicate it was skipped.
+                emitNoSpace("# Unsupported: set video transparency");
+                newLine();
+            }
+            case TurnVideo turnVideo -> {
+                // Goboscript does not support video toggle (turn video on/off).
+                // Emit a comment to indicate it was skipped.
+                emitNoSpace("# Unsupported: turn video on/off");
+                newLine();
+            }
+            case null, default -> {
+                // For any other unknown VideoSensingBlock types, emit a generic comment
+                // rather than visitChildren() which could produce invalid output.
+                emitNoSpace("# Unsupported video sensing block");
+                newLine();
+            }
         }
     }
 }
