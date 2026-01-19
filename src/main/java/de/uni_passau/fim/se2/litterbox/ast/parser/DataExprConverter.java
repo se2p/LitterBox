@@ -107,7 +107,7 @@ final class DataExprConverter extends ExprConverter {
                 variable.id().id(), variable.name(), state.getCurrentActor().getName(),
                 StringType::new, true, "Stage"
         );
-        return ConverterUtilities.variableInfoToIdentifier(variableInfo, variable.name());
+        return ConverterUtilities.variableInfoToIdentifier(variableInfo);
     }
 
     private static Qualified convertList(final ProgramParserState state, final RawBlock.RawList list) {
@@ -115,7 +115,7 @@ final class DataExprConverter extends ExprConverter {
                 list.id().id(), list.name(), state.getCurrentActor().getName(),
                 () -> new ExpressionList(Collections.emptyList()), true, "Stage"
         );
-        return ConverterUtilities.listInfoToIdentifier(listInfo, list.name());
+        return ConverterUtilities.listInfoToIdentifier(listInfo);
     }
 
     private static boolean isParameter(final String opcode) {
