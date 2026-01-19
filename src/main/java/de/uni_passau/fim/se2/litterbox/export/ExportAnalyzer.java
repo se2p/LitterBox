@@ -91,7 +91,7 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
         // If input is a directory, check if it contains multiple Scratch projects.
         // If so, and we are exporting to a single file (and format is not ScratchBlocks which supports merging),
         // we should error immediately.
-        if (Files.isDirectory(input) && output != null && !Files.isDirectory(output) && format != ExportFormat.SCRATCHBLOCKS) {
+        if (Files.isDirectory(input) && output != null && !Files.isDirectory(output)) {
             try (Stream<Path> stream = Files.list(input)) {
                 long count = stream.filter(p -> {
                     String name = p.getFileName().toString().toLowerCase();
@@ -140,8 +140,11 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
             writeToSeparateFile(projectFile, program, result);
         } else {
             // File output
-            if (format == ExportFormat.SCRATCHBLOCKS) {
+                if (format == ExportFormat.SCRATCHBLOCKS) {
                 // ScratchBlocks appends to the single file (writer opened in beginAnalysis)
+                if (exportedCount > 0) {
+                     throw new IOException("Cannot export multiple projects to a single file with format " + format + ". Output must be a directory.");
+                }
                 writeScratchBlocksResult(result);
             } else {
                 if (exportedCount > 0) {
