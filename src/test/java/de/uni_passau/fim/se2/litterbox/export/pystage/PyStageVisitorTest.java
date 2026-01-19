@@ -144,7 +144,9 @@ public class PyStageVisitorTest implements JsonTest {
         // Verify Python boolean operators
         assertThat(result).contains(">");
         assertThat(result).contains("<");
-        assertThat(result).contains("==");
+        // Equal is now handled by _equals helper
+        assertThat(result).contains("_equals(");
+        // assertThat(result).contains("=="); // == is still used in helper, so strictly true, but _equals is the important part
         assertThat(result).contains("not ");
         assertThat(result).contains(" and ");
         assertThat(result).contains(" or ");
@@ -288,9 +290,8 @@ public class PyStageVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testUnhandledNodeGeneratesPass() throws IOException, ParsingException {
-        // ChangeGraphicEffectBy is unhandled in PyStageVisitor (as checked by code analysis)
-        // so it should generate a comment and a 'pass' statement.
+    public void testChangeGraphicEffectBy() throws IOException, ParsingException {
+        // ChangeGraphicEffectBy is now handled in PyStageVisitor
         String code = """
                 when green flag clicked
                 change [color v] effect by (25)
@@ -299,9 +300,9 @@ public class PyStageVisitorTest implements JsonTest {
         Program program = parseProgram(code);
         String result = PyStageVisitor.of(program);
         
-        assertThat(result).contains("# Unhandled node: ChangeGraphicEffectBy");
-        // Verify indentation + pass
-        assertThat(result).contains("pass");
+        // Verify ChangeGraphicEffectBy now generates correct PyStage code
+        assertThat(result).contains("self.change_color_effect_by(25)");
+        assertThat(result).doesNotContain("# Unhandled node: ChangeGraphicEffectBy");
     }
     @Test
     public void testUnhandledExpressionListAndBroadcast() throws IOException, ParsingException {
@@ -631,7 +632,7 @@ public class PyStageVisitorTest implements JsonTest {
         Program program = parseProgram(code);
         String result = PyStageVisitor.of(program);
 
-        assertThat(result).contains("if (1 == 1):");
+        assertThat(result).contains("if _equals(1, 1):");
         assertThat(result).contains("# pen block (not supported in PyStage)");
         // The fix will ensure 'pass' is also present
         assertThat(result).contains("pass");

@@ -21,12 +21,12 @@ package de.uni_passau.fim.se2.litterbox.export;
 import de.uni_passau.fim.se2.litterbox.analytics.FileAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.export.leila.LeilaVisitor;
-import de.uni_passau.fim.se2.litterbox.export.scratchblocks.ScratchBlocksVisitor;
-import de.uni_passau.fim.se2.litterbox.export.goboscript.GoboscriptVisitor;
 import de.uni_passau.fim.se2.litterbox.export.goboscript.GoboscriptProjectExporter;
-import de.uni_passau.fim.se2.litterbox.export.pystage.PyStageVisitor;
+import de.uni_passau.fim.se2.litterbox.export.goboscript.GoboscriptVisitor;
+import de.uni_passau.fim.se2.litterbox.export.leila.LeilaVisitor;
 import de.uni_passau.fim.se2.litterbox.export.pystage.PyStageProjectExporter;
+import de.uni_passau.fim.se2.litterbox.export.pystage.PyStageVisitor;
+import de.uni_passau.fim.se2.litterbox.export.scratchblocks.ScratchBlocksVisitor;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -35,7 +35,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Logger;
-
 import java.util.stream.Stream;
 
 /**
@@ -73,10 +72,10 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
     /**
      * Creates an export analyzer with full configuration.
      *
-     * @param format The export format to use
-     * @param output Path to output file or directory
-     * @param delete Whether to delete project files after analysis
-     * @param nonDet For Leila: allow non-deterministic attributes
+     * @param format      The export format to use
+     * @param output      Path to output file or directory
+     * @param delete      Whether to delete project files after analysis
+     * @param nonDet      For Leila: allow non-deterministic attributes
      * @param fullProject For Goboscript: create full project structure with separate files and assets
      */
     public ExportAnalyzer(ExportFormat format, Path output, boolean delete, boolean nonDet, boolean fullProject) {
@@ -140,15 +139,15 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
             writeToSeparateFile(projectFile, program, result);
         } else {
             // File output
-                if (format == ExportFormat.SCRATCHBLOCKS) {
+            if (format == ExportFormat.SCRATCHBLOCKS) {
                 // ScratchBlocks appends to the single file (writer opened in beginAnalysis)
                 if (exportedCount > 0) {
-                     throw new IOException("Cannot export multiple projects to a single file with format " + format + ". Output must be a directory.");
+                    throw new IOException("Cannot export multiple projects to a single file with format " + format + ". Output must be a directory.");
                 }
                 writeScratchBlocksResult(result);
             } else {
                 if (exportedCount > 0) {
-                     throw new IOException("Cannot export multiple projects to a single file with format " + format + ". Output must be a directory.");
+                    throw new IOException("Cannot export multiple projects to a single file with format " + format + ". Output must be a directory.");
                 }
                 // Other formats overwrite the file if single input, but error if multiple inputs (checked via exportedCount)
                 writeSingleFile(output, program, result);
@@ -246,33 +245,27 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
     }
 
     /**
-     * Internal program analyzer that delegates to the appropriate visitor.
-     */
-    private static class ExportProgramAnalyzer implements ProgramAnalyzer<String> {
-
-        private final ExportFormat format;
-
-        ExportProgramAnalyzer(ExportFormat format) {
-            this.format = format;
-        }
+         * Internal program analyzer that delegates to the appropriate visitor.
+         */
+        private record ExportProgramAnalyzer(ExportFormat format) implements ProgramAnalyzer<String> {
 
         @Override
-        public String analyze(Program program) {
-            return switch (format) {
-                case SCRATCHBLOCKS -> {
-                    ScratchBlocksVisitor vis = new ScratchBlocksVisitor();
-                    vis.setAddActorNames(true);
-                    program.accept(vis);
-                    yield vis.getScratchBlocks();
-                }
-                case GOBOSCRIPT -> GoboscriptVisitor.of(program);
-                case PYSTAGE -> PyStageVisitor.of(program);
-                case LEILA -> {
-                    // Leila output is handled differently in writeResultToFile
-                    // Return empty string here as a placeholder
-                    yield "";
-                }
-            };
+            public String analyze(Program program) {
+                return switch (format) {
+                    case SCRATCHBLOCKS -> {
+                        ScratchBlocksVisitor vis = new ScratchBlocksVisitor();
+                        vis.setAddActorNames(true);
+                        program.accept(vis);
+                        yield vis.getScratchBlocks();
+                    }
+                    case GOBOSCRIPT -> GoboscriptVisitor.of(program);
+                    case PYSTAGE -> PyStageVisitor.of(program);
+                    case LEILA -> {
+                        // Leila output is handled differently in writeResultToFile
+                        // Return empty string here as a placeholder
+                        yield "";
+                    }
+                };
+            }
         }
-    }
 }

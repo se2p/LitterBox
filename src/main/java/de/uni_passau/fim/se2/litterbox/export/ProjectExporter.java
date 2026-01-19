@@ -47,7 +47,9 @@ public abstract class ProjectExporter {
 
     private static final Logger log = Logger.getLogger(ProjectExporter.class.getName());
 
-    /** Collects non-fatal errors that occurred during export. */
+    /**
+     * Collects non-fatal errors that occurred during export.
+     */
     protected final List<String> exportErrors = new ArrayList<>();
 
     /**

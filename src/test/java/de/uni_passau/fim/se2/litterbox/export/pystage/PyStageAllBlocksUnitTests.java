@@ -245,20 +245,20 @@ public class PyStageAllBlocksUnitTests implements JsonTest {
 
     @Test
     public void testChangeGraphicEffectBy() {
-        // Unhandled in PyStage
-        assertBlock(ChangeGraphicEffectBy.class, "# Unhandled node: ChangeGraphicEffectBy");
+        // Now handled - emits change_{effect}_effect_by
+        assertBlock(ChangeGraphicEffectBy.class, "self.change_color_effect_by(25)");
     }
 
     @Test
     public void testSetGraphicEffectTo() {
-        // Unhandled in PyStage
-        assertBlock(SetGraphicEffectTo.class, "# Unhandled node: SetGraphicEffectTo");
+        // Now handled - emits set_{effect}_effect_to
+        assertBlock(SetGraphicEffectTo.class, "self.set_color_effect_to(0)");
     }
 
     @Test
     public void testClearGraphicEffects() {
-        // Unhandled in PyStage
-        assertBlock(ClearGraphicEffects.class, "# Unhandled node: ClearGraphicEffects");
+        // Now handled
+        assertBlock(ClearGraphicEffects.class, "self.clear_graphic_effects()");
     }
 
     @Test
@@ -273,7 +273,8 @@ public class PyStageAllBlocksUnitTests implements JsonTest {
     
     @Test
     public void testClearSoundEffects() {
-        assertBlock(ClearSoundEffects.class, "# Unhandled node: ClearSoundEffects");
+        // Now handled
+        assertBlock(ClearSoundEffects.class, "self.clear_sound_effects()");
     }
 
     @Test

@@ -651,7 +651,7 @@ public class GoboscriptReproductionTest implements JsonTest {
 
         String output = visitor.getOutput();
 
-        assertThat(output).contains("if (tempo() > 50)");
+        assertThat(output).contains("if (60 > 50)");
     }
 
     // ==================== Qualified Access ====================

@@ -29,8 +29,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.MBlockNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.PenBlock;
@@ -45,7 +47,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.SoundMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
@@ -55,21 +56,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.AskAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideList;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.HideVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.NextBackdrop;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowList;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdrop;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationAttributeAsTypeStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationBroadcastStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationIdentAsTypeStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationBroadcastStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.list.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
@@ -84,16 +78,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.export.AbstractExportVisitor;
 import de.uni_passau.fim.se2.litterbox.export.ScratchKeyCode;
 import de.uni_passau.fim.se2.litterbox.export.StringExprNameVisitor;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
 
 /**
  * Exports LitterBox AST to PyStage Python format.
@@ -128,7 +121,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
     private static final String STAGE_VAR_NAME = "stage";
     private static final String SELF = "self";
     private static final String CORE_ACCESSOR = "._core";
-    private static final String IMAGES_DIR = "images/";
+    private static final String IMAGES_DIR = "images" + java.io.File.separator;
 
     // ---------------------------------------------------------------
     // State Fields
@@ -174,7 +167,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
         visitor.setProgram(AstNodeUtil.findParent(node, Program.class));
         ActorDefinition actor = AstNodeUtil.findParent(node, ActorDefinition.class);
         visitor.setCurrentActor(actor);
-        
+
         if (actor != null) {
             if (actor.isStage()) {
                 visitor.currentSpritePyName = STAGE_VAR_NAME;
@@ -182,7 +175,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
                 visitor.currentSpritePyName = visitor.toPythonIdentifier(actor.getIdent().getName());
             }
         }
-        
+
         node.accept(visitor);
         return visitor.getOutput();
     }
@@ -326,6 +319,8 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
         // Helper function for safe number conversion (Scratch-like behavior)
         emitToNumHelper();
+        emitEqualsHelper();
+        emitIndexHelper();
 
         // Create stage
         emitNoSpace(STAGE_VAR_NAME + " = Stage()");
@@ -352,6 +347,54 @@ public class PyStageVisitor extends AbstractExportVisitor {
         emitNoSpace("return 0");
         newLine();
         endIndentation();
+        endIndentation();
+        newLine();
+    }
+
+    private void emitEqualsHelper() {
+        emitNoSpace("def _equals(v1, v2):");
+        newLine();
+        beginIndentation();
+        appendIndentation();
+        emitNoSpace("try:");
+        newLine();
+        beginIndentation();
+        appendIndentation();
+        emitNoSpace("return float(v1) == float(v2)");
+        newLine();
+        endIndentation();
+        appendIndentation();
+        emitNoSpace("except (ValueError, TypeError):");
+        newLine();
+        beginIndentation();
+        appendIndentation();
+        emitNoSpace("return str(v1).lower() == str(v2).lower()");
+        newLine();
+        endIndentation();
+        endIndentation();
+        newLine();
+    }
+
+    private void emitIndexHelper() {
+        emitNoSpace("def _index_of(l, item):");
+        newLine();
+        beginIndentation();
+        appendIndentation();
+        emitNoSpace("for i, x in enumerate(l):");
+        newLine();
+        beginIndentation();
+        appendIndentation();
+        emitNoSpace("if _equals(x, item):");
+        newLine();
+        beginIndentation();
+        appendIndentation();
+        emitNoSpace("return i + 1");
+        newLine();
+        endIndentation();
+        endIndentation();
+        appendIndentation();
+        emitNoSpace("return 0");
+        newLine();
         endIndentation();
         newLine();
     }
@@ -817,7 +860,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
         for (var stmt : node.getStmts()) {
             // Workaround for nested StmtList structures which can cause double indentation.
             // StmtList visitor adds indentation for its children, so we skip it here for the list itself.
-            if ((Object) stmt instanceof StmtList) {
+            if (stmt instanceof StmtList) {
                 stmt.accept(this);
             } else {
                 appendIndentation();
@@ -834,7 +877,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
     public void visit(GreenFlag greenFlag) {
         String handlerName = currentSpritePyName + "_on_start_" + (handlerCounter++);
         emitEventHandler(handlerName, greenFlag);
-        
+
         if (currentActor != null && currentActor.isStage()) {
             eventRegistrations.add(currentSpritePyName + ".when_GREENFLAG_clicked(" + handlerName + ")");
         } else {
@@ -1381,6 +1424,21 @@ public class PyStageVisitor extends AbstractExportVisitor {
     }
 
     @Override
+    public void visit(SwitchBackdropAndWait node) {
+        emitNoSpace("self.switch_backdrop_to_and_wait(");
+        switch (node.getElementChoice()) {
+            case Next ignored -> emitNoSpace("\"next backdrop\"");
+            case Prev ignored -> emitNoSpace("\"previous backdrop\"");
+            case Random ignored -> emitNoSpace("\"random backdrop\"");
+            case WithExpr withExpr when withExpr.getExpression() instanceof StringLiteral str ->
+                    emitNoSpace("\"" + escapeString(resolveBackdropPath(str.getText())) + "\"");
+            default -> node.getElementChoice().accept(this);
+        }
+        emitNoSpace(")");
+        newLine();
+    }
+
+    @Override
     public void visit(NextBackdrop node) {
         emitNoSpace("self.next_backdrop()");
         newLine();
@@ -1416,14 +1474,56 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(GoToLayer node) {
-        emitNoSpace("self.go_to_front_layer()");
+        String layerType = node.getLayerChoice().getTypeName();
+        if ("back".equals(layerType)) {
+            emitNoSpace("self.go_to_back_layer()");
+        } else {
+            emitNoSpace("self.go_to_front_layer()");
+        }
         newLine();
     }
 
     @Override
     public void visit(ChangeLayerBy node) {
+        String direction = node.getForwardBackwardChoice().getTypeName();
         emitNoSpace("self.change_layer_by(");
-        node.getNum().accept(this);
+        if ("backward".equals(direction)) {
+            emitNoSpace("-(");
+            node.getNum().accept(this);
+            emitNoSpace(")");
+        } else {
+            node.getNum().accept(this);
+        }
+        emitNoSpace(")");
+        newLine();
+    }
+
+    @Override
+    public void visit(ClearGraphicEffects node) {
+        emitNoSpace("self.clear_graphic_effects()");
+        newLine();
+    }
+
+    @Override
+    public void visit(ClearSoundEffects node) {
+        emitNoSpace("self.clear_sound_effects()");
+        newLine();
+    }
+
+    @Override
+    public void visit(ChangeGraphicEffectBy node) {
+        String effectName = node.getEffect().getTypeName();
+        emitNoSpace("self.change_" + effectName + "_effect_by(");
+        node.getValue().accept(this);
+        emitNoSpace(")");
+        newLine();
+    }
+
+    @Override
+    public void visit(SetGraphicEffectTo node) {
+        String effectName = node.getEffect().getTypeName();
+        emitNoSpace("self.set_" + effectName + "_effect_to(");
+        node.getValue().accept(this);
         emitNoSpace(")");
         newLine();
     }
@@ -1586,7 +1686,8 @@ public class PyStageVisitor extends AbstractExportVisitor {
     private void emitListReadIndex(String listName, Expression indexExpr, ListIndexType indexType) {
         switch (indexType) {
             case LAST -> emitNoSpace("[-1]");
-            case RANDOM -> emitNoSpace("[" + SELF + ".pick_random(1, len(" + SELF + ".get_variable(\"" + listName + "\"))) - 1]");
+            case RANDOM ->
+                    emitNoSpace("[" + SELF + ".pick_random(1, len(" + SELF + ".get_variable(\"" + listName + "\"))) - 1]");
             default -> {
                 emitNoSpace("[int(");
                 indexExpr.accept(this);
@@ -1760,23 +1861,23 @@ public class PyStageVisitor extends AbstractExportVisitor {
         parameterNameMapping.clear();
         List<ParameterDefinition> params = node.getParameterDefinitionList().getParameterDefinitions();
         Set<String> usedParamNames = new HashSet<>();
-        
+
         for (ParameterDefinition param : params) {
             String originalName = param.getIdent().getName();
             String safeName = toPythonIdentifier(originalName);
-            
+
             // Ensure uniqueness
             String uniqueName = safeName;
             int counter = 1;
             while (usedParamNames.contains(uniqueName) || uniqueName.isEmpty()) { // Handle empty if toPythonIdentifier returns ""
-                 if (uniqueName.isEmpty()) {
-                     uniqueName = "_" + counter;
-                 } else {
-                     uniqueName = safeName + "_" + counter;
-                 }
-                 counter++;
+                if (uniqueName.isEmpty()) {
+                    uniqueName = "_" + counter;
+                } else {
+                    uniqueName = safeName + "_" + counter;
+                }
+                counter++;
             }
-            
+
             usedParamNames.add(uniqueName);
             parameterNameMapping.put(originalName, uniqueName);
 
@@ -1968,11 +2069,11 @@ public class PyStageVisitor extends AbstractExportVisitor {
     @Override
     public void visit(AttributeOf node) {
         String attr = getAttributeString(node.getAttribute());
-        
+
         // Resolve target sprite variable name
         String targetVar = "stage"; // Default fallback
         ASTNode choice = node.getElementChoice();
-        
+
         // Unwrap WithExpr if present
         if (choice instanceof de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr withExpr) {
             choice = withExpr.getExpression();
@@ -1983,23 +2084,17 @@ public class PyStageVisitor extends AbstractExportVisitor {
             if (!targetName.equals("_stage_") && !targetName.equals("Stage")) {
                 targetVar = toPythonIdentifier(targetName);
             }
-        } else if (choice instanceof de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed fixed) {
-             String targetName = fixed.getAttribute().getTypeName();
-             if (!targetName.equals("_stage_") && !targetName.equals("Stage")) {
-                targetVar = toPythonIdentifier(targetName);
-            }
         } else if (choice instanceof StrId strId) {
-             String targetName = strId.getName();
-             if (!targetName.equals("_stage_") && !targetName.equals("Stage")) {
+            String targetName = strId.getName();
+            if (!targetName.equals("_stage_") && !targetName.equals("Stage")) {
                 targetVar = toPythonIdentifier(targetName);
             }
         }
 
-        
         // If target is expression (not literal), we can't easily resolve the variable name at runtime
         // because sprites don't store their names in PyStage.
         // For now, we only support literals.
-        
+
         String objCode = targetVar + "._core";
 
         switch (attr) {
@@ -2014,7 +2109,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
             case "backdrop name" -> emitNoSpace("stage._core.looks_backdropnumbername_name()");
             default -> {
                 // Assume it is a variable name
-                // Use get_variable on the wrapper object (targetVar), not _core, 
+                // Use get_variable on the wrapper object (targetVar), not _core,
                 // because get_variable is exposed on wrapper and handles global/local lookup logic well enough?
                 // Actually wrapper get_variable calls _core.data_variable.
                 // Let's use wrapper for get_variable as it is cleaner if available, but _core is consistent.
@@ -2073,26 +2168,12 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(IndexOf node) {
-        // item # of "thing" in list
-        // Python: list.index(item) + 1 (because Scratch is 1-based)
-        // But we need to handle if item is not in list? Scratch returns 0 if not found.
-        // In Python `index` raises ValueError.
-        // We can't easily wrap in try-except in an expression. 
-        // We might need a helper or use a list comprehension/next default?
-        // (i + 1 for i, x in enumerate(list) if x == item) else 0?
-        // That's verbose. 
-        // Since we are generating Python code, maybe valid to just emit index() and let it crash? 
-        // No, user expects 0.
-        // Let's implement a small inline check if possible, or accept 0-behavior is hard.
-        // Actually, let's use a helper lambda or expression if we can.
-        // "next((i + 1 for i, x in enumerate(self.get_variable("list")) if x == item), 0)"
-        
         String listName = escapeString(getIdentifierName(node.getIdentifier()));
-        emitNoSpace("next((i + 1 for i, x in enumerate(self.get_variable(\"");
+        emitNoSpace("_index_of(self.get_variable(\"");
         emitNoSpace(listName);
-        emitNoSpace("\")) if str(x) == str("); // Compare as strings to be safe? Scratch is loose types.
+        emitNoSpace("\"), ");
         node.getExpr().accept(this);
-        emitNoSpace(")), 0)");
+        emitNoSpace(")");
     }
 
     @Override
@@ -2157,19 +2238,19 @@ public class PyStageVisitor extends AbstractExportVisitor {
     public void visit(Costume node) {
         String obj = inHandler ? "self" : currentSpritePyName;
         if (node.getType().getType() == NameNum.NameNumType.NUMBER) {
-             emitNoSpace(obj + "._core.looks_costumenumbername_number()");
+            emitNoSpace(obj + "._core.looks_costumenumbername_number()");
         } else {
-             emitNoSpace(obj + "._core.looks_costumenumbername_name()");
+            emitNoSpace(obj + "._core.looks_costumenumbername_name()");
         }
     }
 
     @Override
     public void visit(Backdrop node) {
-         if (node.getType().getType() == NameNum.NameNumType.NUMBER) {
-             emitNoSpace("stage._core.looks_backdropnumbername_number()");
-         } else {
-             emitNoSpace("stage._core.looks_backdropnumbername_name()");
-         }
+        if (node.getType().getType() == NameNum.NameNumType.NUMBER) {
+            emitNoSpace("stage._core.looks_backdropnumbername_number()");
+        } else {
+            emitNoSpace("stage._core.looks_backdropnumbername_name()");
+        }
     }
 
     // ---------------------------------------------------------------
@@ -2220,9 +2301,9 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(Equals node) {
-        emitNoSpace("(");
+        emitNoSpace("_equals(");
         node.getOperand1().accept(this);
-        emitNoSpace(" == ");
+        emitNoSpace(", ");
         node.getOperand2().accept(this);
         emitNoSpace(")");
     }
@@ -2427,19 +2508,19 @@ public class PyStageVisitor extends AbstractExportVisitor {
      */
     private void emitAsNumber(Expression expr) {
         if (expr instanceof NumberLiteral ||
-            expr instanceof Timer ||
-            expr instanceof MouseX ||
-            expr instanceof MouseY ||
-            expr instanceof PositionX ||
-            expr instanceof PositionY ||
-            expr instanceof Direction ||
-            expr instanceof Size ||
-            expr instanceof Volume ||
-            expr instanceof Loudness ||
-            expr instanceof DaysSince2000 ||
-            expr instanceof LengthOfString ||
-            expr instanceof LengthOfVar ||
-            expr instanceof IndexOf) {
+                expr instanceof Timer ||
+                expr instanceof MouseX ||
+                expr instanceof MouseY ||
+                expr instanceof PositionX ||
+                expr instanceof PositionY ||
+                expr instanceof Direction ||
+                expr instanceof Size ||
+                expr instanceof Volume ||
+                expr instanceof Loudness ||
+                expr instanceof DaysSince2000 ||
+                expr instanceof LengthOfString ||
+                expr instanceof LengthOfVar ||
+                expr instanceof IndexOf) {
             // These are already safe numbers
             expr.accept(this);
         } else {
@@ -2553,7 +2634,6 @@ public class PyStageVisitor extends AbstractExportVisitor {
         }
         return extension;
     }
-
 
     /**
      * Finds all message handler names for the given actor.
