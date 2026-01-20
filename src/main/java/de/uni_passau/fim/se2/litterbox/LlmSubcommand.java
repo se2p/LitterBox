@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.FileAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.llm.*;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.CommonQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
@@ -89,13 +89,13 @@ class LlmSubcommand implements Callable<Integer> {
 
         protected abstract FileAnalyzer<?> createAnalyzer() throws Exception;
 
-        protected QueryTarget buildQueryTarget() {
+        protected CodeTarget buildCodeTarget() {
             if (spriteName != null) {
-                return new QueryTarget.SpriteTarget(spriteName);
+                return new CodeTarget.SpriteTarget(spriteName);
             } else if (scriptId != null) {
-                return new QueryTarget.ScriptTarget(scriptId);
+                return new CodeTarget.ScriptTarget(scriptId);
             } else {
-                return new QueryTarget.ProgramTarget();
+                return new CodeTarget.ProgramTarget();
             }
         }
     }
@@ -176,13 +176,13 @@ class LlmSubcommand implements Callable<Integer> {
 
         @Override
         protected FileAnalyzer<?> createAnalyzer() {
-            return buildEnhancer(buildQueryTarget());
+            return buildEnhancer(buildCodeTarget());
         }
 
-        private LLMAnalysisEnhancer buildEnhancer(QueryTarget target) {
+        private LLMAnalysisEnhancer buildEnhancer(CodeTarget target) {
             final LLMAnalysisEnhancer enhancer = new LLMAnalysisEnhancer(
                     translator,
-                    buildQueryTarget(),
+                    buildCodeTarget(),
                     commonOptions.outputPath,
                     String.join(",", detectors),
                     ignoreLooseBlocks
@@ -225,7 +225,7 @@ class LlmSubcommand implements Callable<Integer> {
         @Override
         protected FileAnalyzer<?> createAnalyzer() {
             final LLMProgramCompletionAnalyzer analyzer = new LLMProgramCompletionAnalyzer(
-                    translator, buildQueryTarget(), ignoreLooseBlocks
+                    translator, buildCodeTarget(), ignoreLooseBlocks
             );
             return new LLMCodeAnalyzer(analyzer, commonOptions.outputPath, commonOptions.deleteProject);
         }
@@ -256,7 +256,7 @@ class LlmSubcommand implements Callable<Integer> {
         @Override
         protected FileAnalyzer<?> createAnalyzer() {
             final LLMProgramFixAnalyzer analyzer = new LLMProgramFixAnalyzer(
-                    translator, buildQueryTarget(), String.join(",", detectors), ignoreLooseBlocks
+                    translator, buildCodeTarget(), String.join(",", detectors), ignoreLooseBlocks
             );
             return new LLMCodeAnalyzer(analyzer, commonOptions.outputPath, commonOptions.deleteProject);
         }
@@ -278,7 +278,7 @@ class LlmSubcommand implements Callable<Integer> {
         @Override
         protected FileAnalyzer<?> createAnalyzer() {
             final LLMProgramReadabilityImprovementAnalyzer analyzer = new LLMProgramReadabilityImprovementAnalyzer(
-                    translator, buildQueryTarget()
+                    translator, buildCodeTarget()
             );
             return new LLMCodeAnalyzer(analyzer, commonOptions.outputPath, commonOptions.deleteProject);
         }
@@ -302,7 +302,7 @@ class LlmSubcommand implements Callable<Integer> {
                     commonOptions.outputPath,
                     commonOptions.deleteProject,
                     q,
-                    buildQueryTarget(),
+                    buildCodeTarget(),
                     ignoreLooseBlocks
             );
         }
@@ -328,7 +328,7 @@ class LlmSubcommand implements Callable<Integer> {
                     commonOptions.outputPath,
                     commonOptions.deleteProject,
                     q,
-                    buildQueryTarget(),
+                    buildCodeTarget(),
                     ignoreLooseBlocks
             );
         }

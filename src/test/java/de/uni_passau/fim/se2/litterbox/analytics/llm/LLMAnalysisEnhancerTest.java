@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.DummyLlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import de.uni_passau.fim.se2.litterbox.report.IssueDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -53,7 +53,7 @@ class LLMAnalysisEnhancerTest implements FinderTest, JsonTest {
 
         final DummyLlmApi api = new DummyLlmApi();
         final LLMAnalysisEnhancer enhancer = new LLMAnalysisEnhancer(
-                translator, api, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget(), resultPath, "all", false
+                translator, api, LlmPromptProvider.get(translator), new CodeTarget.ProgramTarget(), resultPath, "all", false
         );
 
         enhancer.writeResultToFile(fixture, program, issues);
@@ -80,13 +80,13 @@ class LLMAnalysisEnhancerTest implements FinderTest, JsonTest {
                     """
         );
         final LLMAnalysisEnhancer enhancer = new LLMAnalysisEnhancer(
-                translator, api, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget(), resultPath, "all", false
+                translator, api, LlmPromptProvider.get(translator), new CodeTarget.ProgramTarget(), resultPath, "all", false
         );
         enhancer.addIssueProcessor(
-                new LLMIssueEffectExplainer(translator, api, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget())
+                new LLMIssueEffectExplainer(translator, api, LlmPromptProvider.get(translator), new CodeTarget.ProgramTarget())
         );
         enhancer.addIssueProcessor(
-                new LLMIssueBugExtender(translator, api, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget())
+                new LLMIssueBugExtender(translator, api, LlmPromptProvider.get(translator), new CodeTarget.ProgramTarget())
         );
 
         enhancer.writeResultToFile(fixture, program, issues);

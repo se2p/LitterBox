@@ -21,14 +21,14 @@ package de.uni_passau.fim.se2.litterbox.analytics.llm;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 public class LLMProgramCompletionAnalyzer extends LLMProgramModificationAnalyzer {
 
     public LLMProgramCompletionAnalyzer(
             IssueTranslator translator,
-            QueryTarget target,
+            CodeTarget target,
             boolean ignoreLooseBlocks
     ) {
         super(translator, target, ignoreLooseBlocks);
@@ -37,7 +37,7 @@ public class LLMProgramCompletionAnalyzer extends LLMProgramModificationAnalyzer
     public LLMProgramCompletionAnalyzer(
             LlmApi llmApi,
             PromptBuilder promptBuilder,
-            QueryTarget target,
+            CodeTarget target,
             boolean ignoreLooseBlocks
     ) {
         super(llmApi, promptBuilder, target, ignoreLooseBlocks);

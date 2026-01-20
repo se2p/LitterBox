@@ -28,7 +28,7 @@ import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.LinkedHashSet;
@@ -47,10 +47,10 @@ public class LLMIssueEffectExplainer implements LLMIssueProcessor {
 
     protected final PromptBuilder promptBuilder;
 
-    protected final QueryTarget target;
+    protected final CodeTarget target;
 
     public LLMIssueEffectExplainer(
-            IssueTranslator translator, LlmApi llmApi, PromptBuilder promptBuilder, QueryTarget target
+            IssueTranslator translator, LlmApi llmApi, PromptBuilder promptBuilder, CodeTarget target
     ) {
         this.translator = translator;
         this.llmApi = llmApi;
@@ -59,7 +59,7 @@ public class LLMIssueEffectExplainer implements LLMIssueProcessor {
         this.target = target;
     }
 
-    public LLMIssueEffectExplainer(IssueTranslator translator, QueryTarget target) {
+    public LLMIssueEffectExplainer(IssueTranslator translator, CodeTarget target) {
         this(translator, LlmApiProvider.get(), LlmPromptProvider.get(translator), target);
     }
 

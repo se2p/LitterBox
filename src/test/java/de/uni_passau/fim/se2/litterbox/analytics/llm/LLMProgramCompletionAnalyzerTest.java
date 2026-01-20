@@ -29,7 +29,7 @@ import de.uni_passau.fim.se2.litterbox.llm.DummyLlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -64,7 +64,7 @@ class LLMProgramCompletionAnalyzerTest implements FinderTest, JsonTest {
         Script script = program.getActorDefinitionList().getActorDefinition("Sprite1").get().getScripts().getScript(0);
         String scriptID = AstNodeUtil.getBlockId(script);
 
-        QueryTarget target = new QueryTarget.ScriptTarget(scriptID);
+        CodeTarget target = new CodeTarget.ScriptTarget(scriptID);
 
         LlmApi llm = new DummyLlmApi(response);
 
@@ -96,7 +96,7 @@ class LLMProgramCompletionAnalyzerTest implements FinderTest, JsonTest {
                 set rotation to (0)
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
-        QueryTarget target = new QueryTarget.SpriteTarget("Sprite1");
+        CodeTarget target = new CodeTarget.SpriteTarget("Sprite1");
 
         LlmApi llm = new DummyLlmApi(response);
 
@@ -132,7 +132,7 @@ class LLMProgramCompletionAnalyzerTest implements FinderTest, JsonTest {
                 end
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
-        QueryTarget target = new QueryTarget.SpriteTarget("Sprite1");
+        CodeTarget target = new CodeTarget.SpriteTarget("Sprite1");
 
         LlmApi llm = new DummyLlmApi(response);
 
@@ -169,7 +169,7 @@ class LLMProgramCompletionAnalyzerTest implements FinderTest, JsonTest {
                 end
                 """;
         Program program = getAST("./src/test/fixtures/playerSpriteMissingLoop.json");
-        QueryTarget target = new QueryTarget.ProgramTarget();
+        CodeTarget target = new CodeTarget.ProgramTarget();
 
         LlmApi llm = new DummyLlmApi(response);
 

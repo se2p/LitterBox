@@ -28,7 +28,7 @@ import de.uni_passau.fim.se2.litterbox.ast.util.StructuralEquality;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeFilteringVisitor;
 import de.uni_passau.fim.se2.litterbox.llm.DummyLlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -48,7 +48,7 @@ class LLMCodeAnalyzerTest implements FinderTest {
         DummyLlmApi llmApi = new DummyLlmApi("dummy response");
 
         LLMProgramFixAnalyzer improvementAnalyzer = new LLMProgramFixAnalyzer(
-                llmApi, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget(), "bugs", false
+                llmApi, LlmPromptProvider.get(translator), new CodeTarget.ProgramTarget(), "bugs", false
         );
         LLMCodeAnalyzer analyzer = new LLMCodeAnalyzer(improvementAnalyzer, outputDir, false);
 
@@ -74,7 +74,7 @@ class LLMCodeAnalyzerTest implements FinderTest {
                 """);
 
         LLMProgramCompletionAnalyzer improvementAnalyzer = new LLMProgramCompletionAnalyzer(
-                llmApi, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget(), false
+                llmApi, LlmPromptProvider.get(translator), new CodeTarget.ProgramTarget(), false
         );
         LLMCodeAnalyzer analyzer = new LLMCodeAnalyzer(improvementAnalyzer, outputDir, false);
 

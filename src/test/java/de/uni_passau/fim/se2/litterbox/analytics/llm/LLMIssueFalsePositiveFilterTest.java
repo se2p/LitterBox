@@ -31,7 +31,7 @@ import de.uni_passau.fim.se2.litterbox.llm.Conversation;
 import de.uni_passau.fim.se2.litterbox.llm.DummyLlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -71,7 +71,7 @@ class LLMIssueFalsePositiveFilterTest implements FinderTest, JsonTest {
         final LlmApi api = spy(new DummyLlmApi());
 
         final LLMIssueFalsePositiveFilter filter = new LLMIssueFalsePositiveFilter(
-                api, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget()
+                api, LlmPromptProvider.get(translator), new CodeTarget.ProgramTarget()
         );
 
         final Set<Issue> issuesAfterFilter = filter.apply(program, issues);
@@ -91,7 +91,7 @@ class LLMIssueFalsePositiveFilterTest implements FinderTest, JsonTest {
         final LlmApi api = new DummyLlmApi("yes", "no", "yes");
 
         final LLMIssueFalsePositiveFilter filter = new LLMIssueFalsePositiveFilter(
-                api, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget()
+                api, LlmPromptProvider.get(translator), new CodeTarget.ProgramTarget()
         );
 
         final Set<Issue> issuesAfterFilter = filter.apply(program, issues);

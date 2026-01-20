@@ -20,7 +20,9 @@ package de.uni_passau.fim.se2.litterbox.export;
 
 import de.uni_passau.fim.se2.litterbox.analytics.FileAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.ProgramAnalyzer;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import de.uni_passau.fim.se2.litterbox.export.goboscript.GoboscriptProjectExporter;
 import de.uni_passau.fim.se2.litterbox.export.goboscript.GoboscriptVisitor;
 import de.uni_passau.fim.se2.litterbox.export.leila.LeilaVisitor;
@@ -55,6 +57,7 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
     private final ExportFormat format;
     private final boolean nonDet;
     private final boolean fullProject;
+    private final CodeTarget codeTarget;
     private BufferedWriter writer;
     private int exportedCount = 0;
 
@@ -66,7 +69,7 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
      * @param delete Whether to delete project files after analysis
      */
     public ExportAnalyzer(ExportFormat format, Path output, boolean delete) {
-        this(format, output, delete, false, false);
+        this(format, output, delete, false, false, null, null);
     }
 
     /**
@@ -76,13 +79,42 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
      * @param output      Path to output file or directory
      * @param delete      Whether to delete project files after analysis
      * @param nonDet      For Leila: allow non-deterministic attributes
-     * @param fullProject For Goboscript: create full project structure with separate files and assets
+     * @param fullProject For Goboscript/PyStage: create full project structure with assets
      */
     public ExportAnalyzer(ExportFormat format, Path output, boolean delete, boolean nonDet, boolean fullProject) {
-        super(new ExportProgramAnalyzer(format), output, delete);
+        this(format, output, delete, nonDet, fullProject, null, null);
+    }
+
+    /**
+     * Creates an export analyzer with full configuration including target options.
+     *
+     * @param format      The export format to use
+     * @param output      Path to output file or directory
+     * @param delete      Whether to delete project files after analysis
+     * @param nonDet      For Leila: allow non-deterministic attributes
+     * @param fullProject For Goboscript/PyStage: create full project structure with assets
+     * @param spriteName  Target sprite name (when set, only this sprite is exported)
+     * @param scriptId    Target script ID (when set, only this script is exported)
+     */
+    public ExportAnalyzer(
+            ExportFormat format, Path output, boolean delete, boolean nonDet, boolean fullProject,
+            String spriteName, String scriptId
+    ) {
+        super(new ExportProgramAnalyzer(format, buildTarget(spriteName, scriptId)), output, delete);
         this.format = format;
         this.nonDet = nonDet;
         this.fullProject = fullProject;
+        this.codeTarget = buildTarget(spriteName, scriptId);
+    }
+
+    private static CodeTarget buildTarget(String spriteName, String scriptId) {
+        if (spriteName != null) {
+            return new CodeTarget.SpriteTarget(spriteName);
+        } else if (scriptId != null) {
+            return new CodeTarget.ScriptTarget(scriptId);
+        } else {
+            return new CodeTarget.ProgramTarget();
+        }
     }
 
     @Override
@@ -160,7 +192,8 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
         if (format == ExportFormat.LEILA) {
             try (PrintStream stream = new PrintStream(target.toFile(), StandardCharsets.UTF_8)) {
                 LeilaVisitor visitor = new LeilaVisitor(stream, nonDet, false);
-                visitor.visit(program);
+                ASTNode targetNode = codeTarget.getTargetNode(program);
+                targetNode.accept(visitor);
             }
         } else {
             Files.writeString(target, result, StandardCharsets.UTF_8);
@@ -208,7 +241,8 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
         if (format == ExportFormat.LEILA) {
             // Leila needs its visitor with PrintStream
             LeilaVisitor visitor = new LeilaVisitor(System.out, nonDet, false);
-            visitor.visit(program);
+            ASTNode targetNode = codeTarget.getTargetNode(program);
+            targetNode.accept(visitor);
             System.out.println();
         } else {
             // ScratchBlocks and Goboscript use pre-computed result
@@ -230,7 +264,8 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
             try (PrintStream stream = new PrintStream(outPath.toString(), StandardCharsets.UTF_8)) {
                 log.info("Starting to print " + projectFile.getFileName() + " to file " + outPath);
                 LeilaVisitor visitor = new LeilaVisitor(stream, nonDet, false);
-                visitor.visit(program);
+                ASTNode targetNode = codeTarget.getTargetNode(program);
+                targetNode.accept(visitor);
                 log.info("Finished printing.");
             }
         } else {
@@ -245,27 +280,28 @@ public class ExportAnalyzer extends FileAnalyzer<String> {
     }
 
     /**
-         * Internal program analyzer that delegates to the appropriate visitor.
-         */
-        private record ExportProgramAnalyzer(ExportFormat format) implements ProgramAnalyzer<String> {
+     * Internal program analyzer that delegates to the appropriate visitor.
+     */
+    private record ExportProgramAnalyzer(ExportFormat format, CodeTarget target) implements ProgramAnalyzer<String> {
 
         @Override
-            public String analyze(Program program) {
-                return switch (format) {
-                    case SCRATCHBLOCKS -> {
-                        ScratchBlocksVisitor vis = new ScratchBlocksVisitor();
-                        vis.setAddActorNames(true);
-                        program.accept(vis);
-                        yield vis.getScratchBlocks();
-                    }
-                    case GOBOSCRIPT -> GoboscriptVisitor.of(program);
-                    case PYSTAGE -> PyStageVisitor.of(program);
-                    case LEILA -> {
-                        // Leila output is handled differently in writeResultToFile
-                        // Return empty string here as a placeholder
-                        yield "";
-                    }
-                };
-            }
+        public String analyze(Program program) {
+            final ASTNode targetNode = target.getTargetNode(program);
+            return switch (format) {
+                case SCRATCHBLOCKS -> {
+                    ScratchBlocksVisitor vis = new ScratchBlocksVisitor();
+                    vis.setAddActorNames(true);
+                    targetNode.accept(vis);
+                    yield vis.getScratchBlocks();
+                }
+                case GOBOSCRIPT -> GoboscriptVisitor.of(targetNode);
+                case PYSTAGE -> PyStageVisitor.of(targetNode);
+                case LEILA -> {
+                    // Leila output is handled differently in writeResultToFile
+                    // Return empty string here as a placeholder
+                    yield "";
+                }
+            };
         }
+    }
 }

@@ -27,7 +27,7 @@ import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.LinkedHashSet;
@@ -44,16 +44,16 @@ public class LLMIssueFalsePositiveFilter implements LLMIssueProcessor {
 
     protected PromptBuilder promptBuilder;
 
-    protected QueryTarget target;
+    protected CodeTarget target;
 
-    public LLMIssueFalsePositiveFilter(LlmApi llmApi, PromptBuilder promptBuilder, QueryTarget target) {
+    public LLMIssueFalsePositiveFilter(LlmApi llmApi, PromptBuilder promptBuilder, CodeTarget target) {
         this.llmApi = llmApi;
         this.promptBuilder = promptBuilder;
         this.scratchLlm = new ScratchLlm(llmApi, promptBuilder);
         this.target = target;
     }
 
-    public LLMIssueFalsePositiveFilter(IssueTranslator translator, QueryTarget target) {
+    public LLMIssueFalsePositiveFilter(IssueTranslator translator, CodeTarget target) {
         this(LlmApiProvider.get(), LlmPromptProvider.get(translator), target);
     }
 

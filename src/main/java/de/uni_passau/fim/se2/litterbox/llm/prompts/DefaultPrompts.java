@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import de.uni_passau.fim.se2.litterbox.export.scratchblocks.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
@@ -53,7 +54,7 @@ public class DefaultPrompts extends PromptBuilder {
 
     @Override
     public String askQuestion(
-            final Program program, final QueryTarget target, final LlmQuery question, final boolean ignoreLooseBlocks
+            final Program program, final CodeTarget target, final LlmQuery question, final boolean ignoreLooseBlocks
     ) {
         final String questionText = switch (question) {
             case LlmQuery.PredefinedQuery(CommonQuery query) -> createPromptForCommonQuery(query);
@@ -66,7 +67,7 @@ public class DefaultPrompts extends PromptBuilder {
     }
 
     @Override
-    public String improveCode(final Program program, final QueryTarget target, final Collection<Issue> issues) {
+    public String improveCode(final Program program, final CodeTarget target, final Collection<Issue> issues) {
         final String issueDescription = issues.stream()
                 .map(issue -> issue.getHintText(translator))
                 .collect(Collectors.joining("\n\n"));
@@ -84,7 +85,7 @@ public class DefaultPrompts extends PromptBuilder {
     }
 
     @Override
-    public String improveReadability(final Program program, final QueryTarget target) {
+    public String improveReadability(final Program program, final CodeTarget target) {
         String result = describeTarget(program, target)
                 + """
                 Make the given code more readable and comprehensible.
@@ -124,7 +125,7 @@ public class DefaultPrompts extends PromptBuilder {
     }
 
     @Override
-    public String completeCode(final Program program, final QueryTarget target) {
+    public String completeCode(final Program program, final CodeTarget target) {
         String result = describeTarget(program, target)
                 + """
                 Auto-complete the code.
@@ -282,7 +283,7 @@ public class DefaultPrompts extends PromptBuilder {
     }
 
     @Override
-    protected String describeTarget(final Program program, final QueryTarget target, final boolean ignoreLooseBlocks) {
+    protected String describeTarget(final Program program, final CodeTarget target, final boolean ignoreLooseBlocks) {
         final ASTNode targetNode = target.getTargetNode(program);
 
         final String scratchBlocks;

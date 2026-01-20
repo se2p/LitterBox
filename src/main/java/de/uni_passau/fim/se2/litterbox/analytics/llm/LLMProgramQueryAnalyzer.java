@@ -26,7 +26,7 @@ import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
@@ -37,7 +37,7 @@ public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
 
     private final LlmQuery query;
 
-    private final QueryTarget target;
+    private final CodeTarget target;
 
     private final boolean ignoreLooseBlocks;
 
@@ -45,7 +45,7 @@ public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
             LlmApi llmApi,
             PromptBuilder promptBuilder,
             LlmQuery query,
-            QueryTarget target,
+            CodeTarget target,
             boolean ignoreLooseBlocks
     ) {
         this.promptBuilder = promptBuilder;
@@ -58,7 +58,7 @@ public class LLMProgramQueryAnalyzer implements ProgramAnalyzer<String> {
     public LLMProgramQueryAnalyzer(
             IssueTranslator translator,
             LlmQuery query,
-            QueryTarget target,
+            CodeTarget target,
             boolean ignoreLooseBlocks
     ) {
         this(LlmApiProvider.get(), LlmPromptProvider.get(translator), query, target, ignoreLooseBlocks);

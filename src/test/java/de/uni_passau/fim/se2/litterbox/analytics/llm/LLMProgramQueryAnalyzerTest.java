@@ -25,7 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.llm.DummyLlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -43,7 +43,7 @@ class LLMProgramQueryAnalyzerTest implements FinderTest, JsonTest {
                 llmApi,
                 LlmPromptProvider.get(translator),
                 new LlmQuery.CustomQuery("custom user question"),
-                new QueryTarget.ProgramTarget(),
+                new CodeTarget.ProgramTarget(),
                 false
         );
 

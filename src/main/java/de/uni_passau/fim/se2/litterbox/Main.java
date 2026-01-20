@@ -436,13 +436,37 @@ public class Main implements Callable<Integer> {
 
         @CommandLine.Option(
                 names = {"--full-project"},
-                description = "For Goboscript: create a full project structure with separate files and assets."
+                description = "For Goboscript/PyStage: create a full project structure with separate files and assets."
         )
         boolean fullProject;
+
+        @CommandLine.Option(
+                names = {"-t", "--target"},
+                description = "Target sprite name. When set, only this sprite is exported."
+        )
+        String spriteName;
+
+        @CommandLine.Option(
+                names = {"-s", "--script"},
+                description = "Target script ID (head block ID). When set, only this script is exported."
+        )
+        String scriptId;
 
         @Override
         protected void validateParams() throws CommandLine.ParameterException {
             requireProjectPath();
+            if (fullProject && (spriteName != null || scriptId != null)) {
+                throw new CommandLine.ParameterException(
+                        spec.commandLine(),
+                        "Cannot use --full-project with --target or --script options."
+                );
+            }
+            if (spriteName != null && scriptId != null) {
+                throw new CommandLine.ParameterException(
+                        spec.commandLine(),
+                        "Cannot use both --target and --script options together."
+                );
+            }
         }
 
         @Override
@@ -452,7 +476,9 @@ public class Main implements Callable<Integer> {
                     commonOptions.outputPath,
                     commonOptions.deleteProject,
                     nonDeterministic,
-                    fullProject
+                    fullProject,
+                    spriteName,
+                    scriptId
             );
         }
     }

@@ -21,7 +21,7 @@ package de.uni_passau.fim.se2.litterbox.llm;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 
 import java.util.Collections;
 
@@ -44,7 +44,7 @@ class ScratchLlmConversation {
 
     // TODO: methods to continue a conversation
 
-    public Conversation askAbout(Conversation conversation, QueryTarget target, LlmQuery question) {
+    public Conversation askAbout(Conversation conversation, CodeTarget target, LlmQuery question) {
         // we already have the program as part of the conversation and continue
         // the conversation with a follow-up question
         //
@@ -55,7 +55,7 @@ class ScratchLlmConversation {
     }
 
     public Conversation improve(
-            Conversation conversation, QueryTarget target, String detectors, boolean ignoreLooseBlocks
+            Conversation conversation, CodeTarget target, String detectors, boolean ignoreLooseBlocks
     ) {
         // ...
         throw new UnsupportedOperationException("not implemented");

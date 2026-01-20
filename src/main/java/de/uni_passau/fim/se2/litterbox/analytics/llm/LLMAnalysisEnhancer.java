@@ -25,7 +25,7 @@ import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.nio.file.Path;
@@ -43,7 +43,7 @@ public class LLMAnalysisEnhancer extends BugAnalyzer {
 
     protected PromptBuilder promptBuilder;
 
-    protected QueryTarget target;
+    protected CodeTarget target;
 
     private final List<LLMIssueProcessor> issueProcessors = new LinkedList<>();
 
@@ -51,7 +51,7 @@ public class LLMAnalysisEnhancer extends BugAnalyzer {
             IssueTranslator translator,
             LlmApi llmApi,
             PromptBuilder promptBuilder,
-            QueryTarget target,
+            CodeTarget target,
             Path output,
             String detectors,
             boolean ignoreLooseBlocks
@@ -63,7 +63,7 @@ public class LLMAnalysisEnhancer extends BugAnalyzer {
     }
 
     public LLMAnalysisEnhancer(
-            IssueTranslator translator, QueryTarget target, Path output, String detectors, boolean ignoreLooseBlocks
+            IssueTranslator translator, CodeTarget target, Path output, String detectors, boolean ignoreLooseBlocks
     ) {
         super(translator, output, detectors, ignoreLooseBlocks, false, false);
         this.llmApi = LlmApiProvider.get();
