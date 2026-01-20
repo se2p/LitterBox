@@ -178,6 +178,15 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     );
 
     /**
+     * Set of Goboscript keywords that cannot be used as variable or list names.
+     */
+    private static final Set<String> GOBOSCRIPT_KEYWORDS = Set.of(
+            "if", "else", "forever", "repeat", "until", "wait",
+            "onflag", "onkey", "onclick", "onbackdrop", "on", "onclone",
+            "proc", "var", "list", "costumes", "sounds", "local", "global"
+    );
+
+    /**
      * Creates a new Goboscript visitor with internal buffering.
      */
     public GoboscriptVisitor() {
@@ -2102,6 +2111,11 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
             return "var_" + Math.abs(name.hashCode());
         }
 
+        // Handle keywords
+        if (GOBOSCRIPT_KEYWORDS.contains(result.toLowerCase())) {
+            return "_" + result;
+        }
+
         return result;
     }
 
@@ -2123,6 +2137,11 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
             return escaped + "_proc";
         }
         return escaped;
+    }
+
+    @Override
+    protected String escapeString(String text) {
+        return escapeStringWithNewlines(text);
     }
 
     private String getKeyName(int keyCode) {

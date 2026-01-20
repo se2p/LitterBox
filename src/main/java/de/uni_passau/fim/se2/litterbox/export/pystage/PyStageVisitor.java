@@ -80,6 +80,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.VariableReferenceCollector;
 import de.uni_passau.fim.se2.litterbox.export.AbstractExportVisitor;
 import de.uni_passau.fim.se2.litterbox.export.ScratchKeyCode;
 import de.uni_passau.fim.se2.litterbox.export.StringExprNameVisitor;
@@ -122,6 +123,13 @@ public class PyStageVisitor extends AbstractExportVisitor {
     private static final String SELF = "self";
     private static final String CORE_ACCESSOR = "._core";
     private static final String IMAGES_DIR = "images" + File.separator;
+
+    private static final Set<String> PYTHON_KEYWORDS = Set.of(
+            "False", "None", "True", "and", "as", "assert", "async", "await", "break",
+            "class", "continue", "def", "del", "elif", "else", "except", "finally",
+            "for", "from", "global", "if", "import", "in", "is", "lambda", "nonlocal",
+            "not", "or", "pass", "raise", "return", "try", "while", "with", "yield"
+    );
 
     // ---------------------------------------------------------------
     // State Fields
@@ -400,9 +408,9 @@ public class PyStageVisitor extends AbstractExportVisitor {
     }
 
     private Set<String> collectUsedVariables(ActorDefinition actor) {
-        UsedVariableCollector collector = new UsedVariableCollector();
+        VariableReferenceCollector collector = new VariableReferenceCollector();
         actor.getScripts().accept(collector);
-        return collector.getUsedVariables();
+        return collector.getReferencedVariables();
     }
 
     private void removeDeclaredVariables(Set<String> usedVars, ActorDefinition actor) {
@@ -2429,6 +2437,10 @@ public class PyStageVisitor extends AbstractExportVisitor {
         String result = name.replaceAll("[^a-zA-Z0-9_]", "_");
         // Ensure it doesn't start with a digit
         if (!result.isEmpty() && Character.isDigit(result.charAt(0))) {
+            result = "_" + result;
+        }
+        // Handle Python keywords
+        if (PYTHON_KEYWORDS.contains(result)) {
             result = "_" + result;
         }
         return result;
