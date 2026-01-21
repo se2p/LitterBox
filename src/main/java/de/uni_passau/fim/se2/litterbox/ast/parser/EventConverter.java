@@ -63,7 +63,10 @@ class EventConverter {
                 yield new ReceptionOfMessage(msg, metadata);
             }
             case event_whenbackdropswitchesto -> {
-                final String backdropName = event.getFieldValueAsString(KnownFields.BACKDROP);
+                // Standard Scratch uses BACKDROP, but goboscript generates BACKDROP_OPTION
+                final String backdropName = event.hasField(KnownFields.BACKDROP)
+                        ? event.getFieldValueAsString(KnownFields.BACKDROP)
+                        : event.getFieldValueAsString(KnownFields.BACKDROP_OPTION);
                 final StrId backdropId = new StrId(backdropName);
                 yield new BackdropSwitchTo(backdropId, metadata);
             }

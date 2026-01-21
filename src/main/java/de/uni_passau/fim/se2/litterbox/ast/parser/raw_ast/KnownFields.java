@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast;
 public enum KnownFields {
     AXIS("AXIS"),
     BACKDROP("BACKDROP"),
+    BACKDROP_OPTION("BACKDROP_OPTION"),
     BLACK_WHITE("BLACK_WHITE"),
     BROADCAST_OPTION("BROADCAST_OPTION"),
     BUTTONS("BUTTONS"),
