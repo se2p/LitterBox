@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -62,7 +63,7 @@ public final class RawTarget {
     }
 
     public Map<RawBlockId, RawVariable<?>> variables() {
-        return variables;
+        return variables != null ? variables : Collections.emptyMap();
     }
 
     public void setVariables(
@@ -71,7 +72,7 @@ public final class RawTarget {
     }
 
     public Map<RawBlockId, RawList> lists() {
-        return lists;
+        return lists != null ? lists : Collections.emptyMap();
     }
 
     public void setLists(
@@ -80,7 +81,7 @@ public final class RawTarget {
     }
 
     public Map<RawBlockId, String> broadcasts() {
-        return broadcasts;
+        return broadcasts != null ? broadcasts : Collections.emptyMap();
     }
 
     public void setBroadcasts(
@@ -89,7 +90,7 @@ public final class RawTarget {
     }
 
     public Map<RawBlockId, RawBlock> blocks() {
-        return blocks;
+        return blocks != null ? blocks : Collections.emptyMap();
     }
 
     public void setBlocks(
@@ -98,7 +99,7 @@ public final class RawTarget {
     }
 
     public Map<RawBlockId, RawComment> comments() {
-        return comments;
+        return comments != null ? comments : Collections.emptyMap();
     }
 
     public void setComments(
@@ -115,7 +116,7 @@ public final class RawTarget {
     }
 
     public List<RawCostume> costumes() {
-        return costumes;
+        return costumes != null ? costumes : Collections.emptyList();
     }
 
     public void setCostumes(List<RawCostume> costumes) {
@@ -123,7 +124,7 @@ public final class RawTarget {
     }
 
     public List<RawSound> sounds() {
-        return sounds;
+        return sounds != null ? sounds : Collections.emptyList();
     }
 
     public void setSounds(List<RawSound> sounds) {

@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast;
 
 import tools.jackson.databind.annotation.JsonDeserialize;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -40,6 +41,15 @@ public sealed interface RawBlock {
             Optional<RawBlockId> comment,
             Optional<RawMutation> mutation
     ) implements RawBlock {
+        /**
+         * Compact constructor to handle null values from JSON deserialization.
+         * Replaces null maps with empty maps to avoid NullPointerExceptions.
+         */
+        public RawRegularBlock {
+            inputs = inputs != null ? inputs : Collections.emptyMap();
+            fields = fields != null ? fields : Collections.emptyMap();
+        }
+
         public boolean hasField(final KnownFields field) {
             return fields.containsKey(field.getName());
         }
