@@ -18,15 +18,15 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
-
 import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.program_relation.ProgramRelationFactory;
 import de.uni_passau.fim.se2.embedded_kittens.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.embedded_kittens.util.StringUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 public abstract class PathGenerator {
 
@@ -42,8 +42,8 @@ public abstract class PathGenerator {
     private final ProgramRelationFactory programRelationFactory;
 
     protected PathGenerator(
-        Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites,
-        PathFormatOptions pathFormatOptions, ProgramRelationFactory programRelationFactory
+            Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites,
+            PathFormatOptions pathFormatOptions, ProgramRelationFactory programRelationFactory
     ) {
         this.maxPathLength = maxPathLength;
         this.includeStage = includeStage;
@@ -67,8 +67,7 @@ public abstract class PathGenerator {
         pathBuilder.append(pathFormatOptions.startSymbol());
         if (pathFormatOptions.useNodeId()) {
             pathBuilder.append(getNodeTypeId(node));
-        }
-        else {
+        } else {
             pathBuilder.append(node.getUniqueName());
         }
         pathBuilder.append(pathFormatOptions.endSymbol());
@@ -106,13 +105,13 @@ public abstract class PathGenerator {
     }
 
     private void addFeature(
-        final ProgramFeatures programFeatures, final ASTNode source, final ASTNode target, final String path
+            final ProgramFeatures programFeatures, final ASTNode source, final ASTNode target, final String path
     ) {
         String sourceLiteral = TokenVisitorFactory.getNormalisedTokenWithDelimiter(
-            source, pathFormatOptions.delimiter()
+                source, pathFormatOptions.delimiter()
         );
         String targetLiteral = TokenVisitorFactory.getNormalisedTokenWithDelimiter(
-            target, pathFormatOptions.delimiter()
+                target, pathFormatOptions.delimiter()
         );
 
         if (pathFormatOptions.normaliseTokens()) {
@@ -145,8 +144,7 @@ public abstract class PathGenerator {
         int currentSourceAncestorIndex = sourceStack.size() - 1;
         int currentTargetAncestorIndex = targetStack.size() - 1;
 
-        while (
-            currentSourceAncestorIndex >= 0
+        while (currentSourceAncestorIndex >= 0
                 && currentTargetAncestorIndex >= 0
                 && sourceStack.get(currentSourceAncestorIndex) == targetStack.get(currentTargetAncestorIndex)
         ) {
@@ -170,7 +168,7 @@ public abstract class PathGenerator {
     }
 
     private void addSourceStackToPath(
-        final StringBuilder pathBuilder, final List<ASTNode> sourceStack, final int commonPrefix
+            final StringBuilder pathBuilder, final List<ASTNode> sourceStack, final int commonPrefix
     ) {
         for (int i = 0; i < sourceStack.size() - commonPrefix; i++) {
             ASTNode currentNode = sourceStack.get(i);
@@ -180,7 +178,7 @@ public abstract class PathGenerator {
     }
 
     private void addTargetStackToPath(
-        final StringBuilder pathBuilder, final List<ASTNode> targetStack, final int commonPrefix
+            final StringBuilder pathBuilder, final List<ASTNode> targetStack, final int commonPrefix
     ) {
         for (int i = targetStack.size() - commonPrefix - 1; i >= 0; i--) {
             ASTNode currentNode = targetStack.get(i);

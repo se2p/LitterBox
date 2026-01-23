@@ -19,8 +19,8 @@
 package de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration;
 
 public record PathFormatOptions(
-    String delimiter, String upSymbol, String downSymbol, String startSymbol, String endSymbol,
-    boolean useNodeId, boolean normaliseTokens
+        String delimiter, String upSymbol, String downSymbol, String startSymbol, String endSymbol,
+        boolean useNodeId, boolean normaliseTokens
 ) {
 
     public PathFormatOptions() {

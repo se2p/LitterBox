@@ -212,8 +212,8 @@ public enum Token {
     TTS_VOICE("tts_voice");
 
     private static final Set<Token> SPECIAL_TOKENS = Arrays.stream(Token.values())
-        .filter(token -> !token.getStrRep().matches("^[a-z0-9_]+$"))
-        .collect(Collectors.toUnmodifiableSet());
+            .filter(token -> !token.getStrRep().matches("^[a-z0-9_]+$"))
+            .collect(Collectors.toUnmodifiableSet());
 
     Token(final String strRep) {
         this.strRep = strRep;

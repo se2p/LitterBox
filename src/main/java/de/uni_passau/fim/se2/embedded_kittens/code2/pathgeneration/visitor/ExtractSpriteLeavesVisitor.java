@@ -55,8 +55,7 @@ public class ExtractSpriteLeavesVisitor extends ExtractLeavesVisitor<ActorDefini
     public void visit(final ASTNode node) {
         if (insideActor && node instanceof ASTLeaf leaf && !AstNodeUtil.isMetadata(node)) {
             addLeaf(leaf);
-        }
-        else {
+        } else {
             visitChildren(node);
         }
     }

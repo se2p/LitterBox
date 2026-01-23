@@ -18,14 +18,14 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.astnn;
 
-import java.util.stream.Stream;
-
 import de.uni_passau.fim.se2.embedded_kittens.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.embedded_kittens.MLProgramPreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.astnn.model.AstnnNode;
 import de.uni_passau.fim.se2.embedded_kittens.astnn.model.StatementTreeSequence;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import tools.jackson.databind.json.JsonMapper;
+
+import java.util.stream.Stream;
 
 public class AstnnProgramPreprocessor extends MLProgramPreprocessor<StatementTreeSequence> {
 
@@ -44,8 +44,8 @@ public class AstnnProgramPreprocessor extends MLProgramPreprocessor<StatementTre
     @Override
     public Stream<StatementTreeSequence> processWholeProgram(final Program program) {
         final Stream<StatementTreeSequence> nodes = Stream.of(
-            statementTreeSequenceBuilder
-                .build(program, commonOptions.includeStage(), commonOptions.includeDefaultSprites())
+                statementTreeSequenceBuilder
+                    .build(program, commonOptions.includeStage(), commonOptions.includeDefaultSprites())
         );
         return nodes.filter(this::isValidStatementSequence);
     }
@@ -53,7 +53,7 @@ public class AstnnProgramPreprocessor extends MLProgramPreprocessor<StatementTre
     @Override
     public Stream<StatementTreeSequence> processSprites(final Program program) {
         final Stream<StatementTreeSequence> nodes = statementTreeSequenceBuilder
-            .buildPerActor(program, commonOptions.includeStage(), commonOptions.includeDefaultSprites());
+                .buildPerActor(program, commonOptions.includeStage(), commonOptions.includeDefaultSprites());
         return nodes.filter(this::isValidStatementSequence);
     }
 
@@ -67,7 +67,7 @@ public class AstnnProgramPreprocessor extends MLProgramPreprocessor<StatementTre
         final boolean hasEmptyName = sequence.label().isBlank();
         // the actor definition might be the top-most "statement", so we check for actual blocks inside the actor, too
         final boolean hasNoStatements = sequence.statements().isEmpty()
-            || sequence.statements().stream().allMatch(AstnnNode::isLeaf);
+                || sequence.statements().stream().allMatch(AstnnNode::isLeaf);
 
         return !hasEmptyName && !hasNoStatements;
     }

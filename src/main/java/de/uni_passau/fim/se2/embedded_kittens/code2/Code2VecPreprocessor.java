@@ -23,7 +23,7 @@ import de.uni_passau.fim.se2.embedded_kittens.MLPreprocessorCommonOptions;
 public class Code2VecPreprocessor extends Code2Preprocessor {
 
     public Code2VecPreprocessor(
-        final MLPreprocessorCommonOptions commonOptions, int maxPathLength, boolean isPerScript
+            final MLPreprocessorCommonOptions commonOptions, int maxPathLength, boolean isPerScript
     ) {
         super(new Code2VecProgramPreprocessor(commonOptions, maxPathLength, isPerScript), commonOptions);
     }

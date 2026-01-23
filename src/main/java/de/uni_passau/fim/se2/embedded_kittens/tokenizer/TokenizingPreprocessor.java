@@ -18,27 +18,27 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.tokenizer;
 
-import java.nio.file.Path;
-
-import org.apache.commons.io.FilenameUtils;
-
 import de.uni_passau.fim.se2.embedded_kittens.MLFilePreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.embedded_kittens.util.MaskingStrategy;
+import org.apache.commons.io.FilenameUtils;
+
+import java.nio.file.Path;
 
 public class TokenizingPreprocessor extends MLFilePreprocessor<TokenSequence> {
 
     public TokenizingPreprocessor(
-        final MLPreprocessorCommonOptions commonOptions,
-        final boolean sequencePerScript,
-        final boolean abstractFixedNodeOption,
-        final TokenizingMethod tokenizingMethod,
-        final MaskingStrategy maskingStrategy
+            final MLPreprocessorCommonOptions commonOptions,
+            final boolean sequencePerScript,
+            final boolean abstractFixedNodeOption,
+            final TokenizingMethod tokenizingMethod,
+            final MaskingStrategy maskingStrategy
     ) {
         super(
-            new TokenizingProgramPreprocessor(
-                commonOptions, maskingStrategy, abstractFixedNodeOption, tokenizingMethod, sequencePerScript
-            ), commonOptions.outputPath()
+                new TokenizingProgramPreprocessor(
+                    commonOptions, maskingStrategy, abstractFixedNodeOption, tokenizingMethod, sequencePerScript
+                ),
+                commonOptions.outputPath()
         );
     }
 

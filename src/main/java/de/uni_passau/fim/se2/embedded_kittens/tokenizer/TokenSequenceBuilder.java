@@ -18,19 +18,19 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.tokenizer;
 
+import de.uni_passau.fim.se2.embedded_kittens.util.StringUtil;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import de.uni_passau.fim.se2.embedded_kittens.util.StringUtil;
-
 public final class TokenSequenceBuilder {
 
     private static final Set<String> SPECIAL_TOKENS = Token.getSpecialTokens()
-        .stream()
-        .map(Token::getStrRep)
-        .collect(Collectors.toUnmodifiableSet());
+            .stream()
+            .map(Token::getStrRep)
+            .collect(Collectors.toUnmodifiableSet());
 
     private TokenSequenceBuilder() {
         throw new IllegalCallerException("utility class");
@@ -52,8 +52,7 @@ public final class TokenSequenceBuilder {
     private static Stream<String> splitToken(final String token) {
         if (SPECIAL_TOKENS.contains(token)) {
             return Stream.of(token);
-        }
-        else {
+        } else {
             return StringUtil.splitToNormalisedSubtokenStream(token, "_");
         }
     }

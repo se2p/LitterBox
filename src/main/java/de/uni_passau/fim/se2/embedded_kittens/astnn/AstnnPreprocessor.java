@@ -18,13 +18,12 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.astnn;
 
-import java.nio.file.Path;
-
-import org.apache.commons.io.FilenameUtils;
-
 import de.uni_passau.fim.se2.embedded_kittens.MLFilePreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.embedded_kittens.astnn.model.StatementTreeSequence;
+import org.apache.commons.io.FilenameUtils;
+
+import java.nio.file.Path;
 
 public class AstnnPreprocessor extends MLFilePreprocessor<StatementTreeSequence> {
 

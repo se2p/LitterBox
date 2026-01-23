@@ -18,17 +18,16 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.util;
 
-import java.text.Normalizer;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-
 import de.uni_passau.fim.se2.litterbox.ast.Constants;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScriptEntityNameVisitor;
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.Normalizer;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public final class NodeNameUtil {
 
@@ -47,13 +46,12 @@ public final class NodeNameUtil {
     public static Optional<String> normalizeSpriteName(final ActorDefinition actor) {
         final String spriteName = actor.getIdent().getName();
         final String splitName = StringUtil.splitToNormalisedSubtokenStream(spriteName, "|")
-            .filter(subtoken -> !subtoken.matches("^\\d+$"))
-            .collect(Collectors.joining(String.valueOf(SPLIT_DELIMITER)));
+                .filter(subtoken -> !subtoken.matches("^\\d+$"))
+                .collect(Collectors.joining(String.valueOf(SPLIT_DELIMITER)));
 
         if (splitName.isEmpty()) {
             return Optional.empty();
-        }
-        else {
+        } else {
             final String truncated = truncateName(splitName);
             return Optional.of(truncated);
         }
@@ -74,14 +72,13 @@ public final class NodeNameUtil {
         final String spriteName = StringUtils.stripAccents(baseSpriteName);
 
         final String splitName = StringUtil.splitToNormalisedSubtokenStream(spriteName, "|")
-            .map(subtoken -> subtoken.replaceAll("[^a-zA-Z]", ""))
-            .filter(subtoken -> !subtoken.isEmpty())
-            .collect(Collectors.joining(String.valueOf(SPLIT_DELIMITER)));
+                .map(subtoken -> subtoken.replaceAll("[^a-zA-Z]", ""))
+                .filter(subtoken -> !subtoken.isEmpty())
+                .collect(Collectors.joining(String.valueOf(SPLIT_DELIMITER)));
 
         if (splitName.isEmpty()) {
             return Optional.empty();
-        }
-        else {
+        } else {
             final String truncated = truncateName(splitName);
             return Optional.of(truncated);
         }

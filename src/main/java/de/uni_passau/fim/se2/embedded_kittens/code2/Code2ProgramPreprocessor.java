@@ -29,7 +29,7 @@ public abstract class Code2ProgramPreprocessor extends MLProgramPreprocessor<Pro
     protected final int maxPathLength;
 
     protected Code2ProgramPreprocessor(
-        final MLPreprocessorCommonOptions commonOptions, final int maxPathLength, final boolean isPerScript
+            final MLPreprocessorCommonOptions commonOptions, final int maxPathLength, final boolean isPerScript
     ) {
         super(commonOptions);
 
@@ -37,8 +37,7 @@ public abstract class Code2ProgramPreprocessor extends MLProgramPreprocessor<Pro
 
         if (isPerScript) {
             this.pathType = PathType.SCRIPT;
-        }
-        else {
+        } else {
             this.pathType = PathType.SPRITE;
         }
     }

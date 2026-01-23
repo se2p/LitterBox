@@ -18,11 +18,6 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.tokenizer;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.stream.Stream;
-
 import de.uni_passau.fim.se2.embedded_kittens.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.embedded_kittens.MLProgramPreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.util.MaskingStrategy;
@@ -32,6 +27,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import tools.jackson.databind.json.JsonMapper;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.stream.Stream;
+
 public class TokenizingProgramPreprocessor extends MLProgramPreprocessor<TokenSequence> {
 
     private static final JsonMapper OBJECT_MAPPER = JsonMapper.shared();
@@ -40,8 +40,9 @@ public class TokenizingProgramPreprocessor extends MLProgramPreprocessor<TokenSe
     private final boolean sequencePerScript;
 
     public TokenizingProgramPreprocessor(
-        final MLPreprocessorCommonOptions commonOptions, final MaskingStrategy maskingStrategy,
-        final boolean abstractFixedNodeOption, final TokenizingMethod tokenizingMethod, final boolean sequencePerScript
+            final MLPreprocessorCommonOptions commonOptions, final MaskingStrategy maskingStrategy,
+            final boolean abstractFixedNodeOption, final TokenizingMethod tokenizingMethod,
+            final boolean sequencePerScript
     ) {
         super(commonOptions);
 
@@ -72,9 +73,9 @@ public class TokenizingProgramPreprocessor extends MLProgramPreprocessor<TokenSe
         final Stream<ActorDefinition> actors = getActors(program);
 
         final List<String> tokens = actors
-            .flatMap(actor -> getTokenSequencesForActor(program, actor))
-            .flatMap(List::stream)
-            .toList();
+                .flatMap(actor -> getTokenSequencesForActor(program, actor))
+                .flatMap(List::stream)
+                .toList();
         return Stream.of(TokenSequenceBuilder.build(program.getIdent().getName(), List.of(tokens)));
     }
 
@@ -86,8 +87,7 @@ public class TokenizingProgramPreprocessor extends MLProgramPreprocessor<TokenSe
     private Stream<ActorDefinition> getActors(final Program program) {
         if (commonOptions.includeDefaultSprites()) {
             return AstNodeUtil.getActors(program, commonOptions.includeStage());
-        }
-        else {
+        } else {
             return AstNodeUtil.getActorsWithoutDefaultSprites(program, commonOptions.includeStage());
         }
     }
@@ -102,14 +102,13 @@ public class TokenizingProgramPreprocessor extends MLProgramPreprocessor<TokenSe
     private Stream<List<String>> getTokenSequencesForActor(final Program program, final ActorDefinition actor) {
         if (sequencePerScript) {
             final Stream<ASTNode> scripts = actor.getScripts().getScriptList()
-                .stream().map(ASTNode.class::cast);
+                    .stream().map(ASTNode.class::cast);
             final Stream<ASTNode> procedures = actor.getProcedureDefinitionList()
-                .getList().stream().map(ASTNode.class::cast);
+                    .getList().stream().map(ASTNode.class::cast);
 
             return Stream.concat(procedures, scripts)
                 .map(node -> tokenizeFunction.apply(program, node));
-        }
-        else {
+        } else {
             return Stream.of(tokenizeFunction.apply(program, actor));
         }
     }

@@ -18,14 +18,14 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.tokenizer;
 
-import java.util.List;
-
 import de.uni_passau.fim.se2.embedded_kittens.util.MaskingStrategy;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
+
+import java.util.List;
 
 /**
  * Like the {@link Tokenizer}, but for binary expressions the prefix order is used.
@@ -38,16 +38,16 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitio
 public class PrefixTokenizer extends Tokenizer {
 
     protected PrefixTokenizer(
-        ProcedureDefinitionNameMapping procedureNameMapping,
-        boolean abstractTokens, boolean abstractFixedNodeOptions, boolean parenthesiseAtoms,
-        MaskingStrategy maskingStrategy
+            ProcedureDefinitionNameMapping procedureNameMapping,
+            boolean abstractTokens, boolean abstractFixedNodeOptions, boolean parenthesiseAtoms,
+            MaskingStrategy maskingStrategy
     ) {
         super(procedureNameMapping, abstractTokens, abstractFixedNodeOptions, parenthesiseAtoms, maskingStrategy);
     }
 
     public static List<String> tokenize(
-        final Program program, final ASTNode node, final boolean abstractTokens, final boolean abstractFixedNodeOptions,
-        final MaskingStrategy maskingStrategy
+            final Program program, final ASTNode node, final boolean abstractTokens,
+            final boolean abstractFixedNodeOptions, final MaskingStrategy maskingStrategy
     ) {
         return tokenize(
             program.getProcedureMapping(), node, abstractTokens, abstractFixedNodeOptions, true, maskingStrategy
@@ -70,8 +70,8 @@ public class PrefixTokenizer extends Tokenizer {
      * @return A sequence of tokens obtained when traversing the AST of {@code node}.
      */
     public static List<String> tokenizeWithReducedParentheses(
-        final Program program, final ASTNode node, final boolean abstractTokens, final boolean abstractFixedNodeOptions,
-        final MaskingStrategy maskingStrategy
+            final Program program, final ASTNode node, final boolean abstractTokens,
+            final boolean abstractFixedNodeOptions, final MaskingStrategy maskingStrategy
     ) {
         return tokenize(
             program.getProcedureMapping(), node, abstractTokens, abstractFixedNodeOptions, false, maskingStrategy
@@ -79,15 +79,15 @@ public class PrefixTokenizer extends Tokenizer {
     }
 
     private static List<String> tokenize(
-        final ProcedureDefinitionNameMapping procedureNameMapping,
-        final ASTNode node,
-        final boolean abstractTokens,
-        final boolean abstractFixedNodeOptions,
-        final boolean parenthesiseAtoms,
-        final MaskingStrategy maskingStrategy
+            final ProcedureDefinitionNameMapping procedureNameMapping,
+            final ASTNode node,
+            final boolean abstractTokens,
+            final boolean abstractFixedNodeOptions,
+            final boolean parenthesiseAtoms,
+            final MaskingStrategy maskingStrategy
     ) {
         final PrefixTokenizer v = new PrefixTokenizer(
-            procedureNameMapping, abstractTokens, abstractFixedNodeOptions, parenthesiseAtoms, maskingStrategy
+                procedureNameMapping, abstractTokens, abstractFixedNodeOptions, parenthesiseAtoms, maskingStrategy
         );
         node.accept(v);
         return v.getTokens();
@@ -97,8 +97,7 @@ public class PrefixTokenizer extends Tokenizer {
     protected void visitExpression(final Expression expr) {
         if (parenthesiseExpressions) {
             super.visitExpression(expr);
-        }
-        else {
+        } else {
             expr.accept(this);
         }
     }
@@ -107,8 +106,7 @@ public class PrefixTokenizer extends Tokenizer {
     protected void visitBinaryOperator(BinaryExpression<?, ?> node, Token opcode) {
         if (shouldBeMasked(node)) {
             addToken(Token.MASK);
-        }
-        else {
+        } else {
             addToken(opcode);
             visitChild(node.getOperand1());
             visitChild(node.getOperand2());

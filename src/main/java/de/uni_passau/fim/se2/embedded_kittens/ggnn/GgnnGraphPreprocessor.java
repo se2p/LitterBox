@@ -18,21 +18,20 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.ggnn;
 
-import java.nio.file.Path;
-
-import org.apache.commons.io.FilenameUtils;
-
 import de.uni_passau.fim.se2.embedded_kittens.MLFilePreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.MLPreprocessorCommonOptions;
+import org.apache.commons.io.FilenameUtils;
+
+import java.nio.file.Path;
 
 public class GgnnGraphPreprocessor extends MLFilePreprocessor<GgnnAnalyzerOutput> {
 
     private final GgnnOutputFormat outputFormat;
 
     public GgnnGraphPreprocessor(
-        final MLPreprocessorCommonOptions commonOptions,
-        GgnnOutputFormat outputFormat,
-        String labelName
+            final MLPreprocessorCommonOptions commonOptions,
+            GgnnOutputFormat outputFormat,
+            String labelName
     ) {
         super(new GgnnProgramPreprocessor(commonOptions, outputFormat, labelName), commonOptions.outputPath());
 
@@ -44,8 +43,7 @@ public class GgnnGraphPreprocessor extends MLFilePreprocessor<GgnnAnalyzerOutput
         final String format;
         if (outputFormat.isDotGraph()) {
             format = ".dot";
-        }
-        else {
+        } else {
             format = ".jsonl";
         }
 

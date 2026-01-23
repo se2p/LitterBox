@@ -18,8 +18,6 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.ggnn;
 
-import java.util.*;
-
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
@@ -27,6 +25,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
+
+import java.util.*;
 
 class LastLexicalUseVisitor extends GgnnDefineablesVisitor {
 

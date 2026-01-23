@@ -18,11 +18,11 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.shared;
 
-import java.util.Optional;
-import java.util.function.Function;
-
 import de.uni_passau.fim.se2.embedded_kittens.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+
+import java.util.Optional;
+import java.util.function.Function;
 
 @FunctionalInterface
 public interface ActorNameNormalizer extends Function<ActorDefinition, Optional<String>> {

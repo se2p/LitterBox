@@ -18,8 +18,6 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.code2;
 
-import java.util.stream.Stream;
-
 import de.uni_passau.fim.se2.embedded_kittens.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.GeneratePathTask;
 import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.PathGenerator;
@@ -29,10 +27,12 @@ import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.ProgramFeatur
 import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.program_relation.ProgramRelationFactory;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
+import java.util.stream.Stream;
+
 public class Code2VecProgramPreprocessor extends Code2ProgramPreprocessor {
 
     public Code2VecProgramPreprocessor(
-        final MLPreprocessorCommonOptions commonOptions, final int maxPathLength, final boolean isPerScript
+            final MLPreprocessorCommonOptions commonOptions, final int maxPathLength, final boolean isPerScript
     ) {
         super(commonOptions, maxPathLength, isPerScript);
     }
@@ -50,8 +50,8 @@ public class Code2VecProgramPreprocessor extends Code2ProgramPreprocessor {
     private Stream<ProgramFeatures> process(final Program program, final PathType pathType) {
         final ProgramRelationFactory programRelationFactory = ProgramRelationFactory.withHashCodeFactory();
         final PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(
-            pathType, maxPathLength, commonOptions.includeStage(), program, commonOptions.includeDefaultSprites(),
-            programRelationFactory, commonOptions.actorNameNormalizer()
+                pathType, maxPathLength, commonOptions.includeStage(), program, commonOptions.includeDefaultSprites(),
+                programRelationFactory, commonOptions.actorNameNormalizer()
         );
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
         return generatePathTask.createContext().stream();

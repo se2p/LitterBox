@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.llm;
 
-import java.util.Optional;
-import java.util.stream.Stream;
-
 import de.uni_passau.fim.se2.embedded_kittens.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.embedded_kittens.MLProgramPreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.util.NodeNameUtil;
@@ -29,6 +26,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import tools.jackson.databind.json.JsonMapper;
+
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class LlmProgramPreprocessor extends MLProgramPreprocessor<LlmPreprocessorOutput> {
 

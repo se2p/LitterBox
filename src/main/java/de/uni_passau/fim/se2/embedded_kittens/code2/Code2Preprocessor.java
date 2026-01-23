@@ -18,20 +18,19 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.code2;
 
-import java.nio.file.Path;
-
-import org.apache.commons.io.FilenameUtils;
-
 import de.uni_passau.fim.se2.embedded_kittens.MLFilePreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.ProgramFeatures;
+import org.apache.commons.io.FilenameUtils;
+
+import java.nio.file.Path;
 
 abstract class Code2Preprocessor extends MLFilePreprocessor<ProgramFeatures> {
 
     private final boolean isPerScript;
 
     protected Code2Preprocessor(
-        final Code2ProgramPreprocessor programAnalyzer, final MLPreprocessorCommonOptions commonOptions
+            final Code2ProgramPreprocessor programAnalyzer, final MLPreprocessorCommonOptions commonOptions
     ) {
         super(programAnalyzer, commonOptions.outputPath());
 
@@ -43,8 +42,7 @@ abstract class Code2Preprocessor extends MLFilePreprocessor<ProgramFeatures> {
         final String extension;
         if (isPerScript) {
             extension = ".script.txt";
-        }
-        else {
+        } else {
             extension = ".txt";
         }
 

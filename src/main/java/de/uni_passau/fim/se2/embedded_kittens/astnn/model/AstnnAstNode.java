@@ -18,10 +18,10 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.astnn.model;
 
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
 import java.util.List;
 import java.util.Objects;
-
-import com.google.common.base.Preconditions;
 
 /**
  * Represents an AST node that has children.
@@ -52,8 +52,7 @@ public final class AstnnAstNode implements AstnnNode {
 
         if (label.isBlank()) {
             this.label = EMPTY;
-        }
-        else {
+        } else {
             this.label = label;
         }
         this.statementType = statementType;
@@ -106,9 +105,9 @@ public final class AstnnAstNode implements AstnnNode {
     @Override
     public AstnnNode asStatementTree() {
         final List<AstnnNode> newChildren = children.stream()
-            .filter(c -> !c.isStatement() && isLegitimateNode(c))
-            .map(AstnnNode::asStatementTree)
-            .toList();
+                .filter(c -> !c.isStatement() && isLegitimateNode(c))
+                .map(AstnnNode::asStatementTree)
+                .toList();
 
         return AstnnAstNodeFactory.build(label, statementType, newChildren);
     }
@@ -129,11 +128,9 @@ public final class AstnnAstNode implements AstnnNode {
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        }
-        else if (o instanceof AstnnAstNode node) {
+        } else if (o instanceof AstnnAstNode node) {
             return label.equals(node.label) && children.equals(node.children);
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -146,6 +143,6 @@ public final class AstnnAstNode implements AstnnNode {
     @Override
     public String toString() {
         return "AstNode{" + "label='" + label + '\'' + ", statementType=" + statementType + ", children=" + children
-            + '}';
+                + '}';
     }
 }

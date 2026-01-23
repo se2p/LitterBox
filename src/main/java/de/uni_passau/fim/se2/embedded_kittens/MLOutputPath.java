@@ -18,9 +18,9 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens;
 
-import java.nio.file.Path;
-
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.nio.file.Path;
 
 /**
  * Machine learning preprocessors can either print their result to the console or write them to a file.
@@ -47,8 +47,8 @@ public class MLOutputPath {
      */
     public static MLOutputPath directory(final Path dir) {
         Preconditions.checkArgument(
-            !dir.toFile().exists() || dir.toFile().isDirectory(),
-            "The output path for a machine learning preprocessor must be a directory!"
+                !dir.toFile().exists() || dir.toFile().isDirectory(),
+                "The output path for a machine learning preprocessor must be a directory!"
         );
         return new MLOutputPath(MLOutputPathType.PATH, dir);
     }
@@ -61,8 +61,7 @@ public class MLOutputPath {
     public String toString() {
         if (MLOutputPathType.CONSOLE.equals(pathType)) {
             return "CONSOLE";
-        }
-        else {
+        } else {
             return path.toString();
         }
     }

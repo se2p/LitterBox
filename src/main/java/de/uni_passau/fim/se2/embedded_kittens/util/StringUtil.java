@@ -40,8 +40,8 @@ public class StringUtil {
     private static final String SPECIAL_WITHOUT_QUESTION_EXCLAMATION_MARK = "[\\p{P}\\p{S}&&[^?!]]";
 
     private static final Pattern SPLIT_PATTERN = Pattern.compile(
-        // digit followed by non-digit or other way round
-        "(?<=\\d)(?=\\D)|(?<=\\D)(?=\\d)"
+            // digit followed by non-digit or other way round
+            "(?<=\\d)(?=\\D)|(?<=\\D)(?=\\d)"
             // lowercase followed by uppercase
             + "|(?<=\\p{Ll})(?=\\p{Lu})"
             + "|" + SPECIAL_WITHOUT_QUESTION_EXCLAMATION_MARK

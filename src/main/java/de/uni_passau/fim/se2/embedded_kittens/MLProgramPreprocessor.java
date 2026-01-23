@@ -18,9 +18,9 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens;
 
-import java.util.stream.Stream;
-
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+
+import java.util.stream.Stream;
 
 public abstract class MLProgramPreprocessor<R> {
 

@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.astnn;
 
-import java.util.List;
-import java.util.stream.Stream;
-
 import de.uni_passau.fim.se2.embedded_kittens.astnn.model.AstnnAstNodeFactory;
 import de.uni_passau.fim.se2.embedded_kittens.astnn.model.AstnnNode;
 import de.uni_passau.fim.se2.embedded_kittens.shared.ActorNameNormalizer;
@@ -28,6 +25,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 class ToAstnnTransformer {
 
@@ -43,20 +43,19 @@ class ToAstnnTransformer {
         final Stream<ActorDefinition> actors;
         if (includeDefaultSprites) {
             actors = AstNodeUtil.getActors(program, includeStage);
-        }
-        else {
+        } else {
             actors = AstNodeUtil.getActorsWithoutDefaultSprites(program, includeStage);
         }
 
         final List<AstnnNode> nodes = actors
-            .map(actor -> transform(program, actor))
-            .toList();
+                .map(actor -> transform(program, actor))
+                .toList();
         return AstnnAstNodeFactory.program(program.getIdent().getName(), nodes);
     }
 
     public AstnnNode transform(final Program program, final ASTNode node) {
         final AstnnTransformationVisitor visitor = new AstnnTransformationVisitor(
-            program, actorNameNormalizer, abstractTokens
+                program, actorNameNormalizer, abstractTokens
         );
         node.accept(visitor);
         return visitor.getResult();

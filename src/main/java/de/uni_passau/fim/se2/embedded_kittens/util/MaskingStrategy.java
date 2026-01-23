@@ -133,12 +133,12 @@ public abstract sealed class MaskingStrategy {
 
     /**
      * A strategy that masks expression inputs, i.e., string/number reporters, boolean reporters, and primitives.
-     * <p>
-     * Expressions that have their own block ID (such as {@code operator_and} and {@code sensing_current}) can also be
-     * masked by the block masking strategy. However, masking primitive inputs (e.g., the literal "1") is only possible
-     * via the input masking strategy.
-     * <p>
-     * While technically also being inputs, this strategy does not support the inputs {@code SUBSTACK} or {@code
+     *
+     * <p>Expressions that have their own block ID (such as {@code operator_and} and {@code sensing_current}) can also
+     * be masked by the block masking strategy. However, masking primitive inputs (e.g., the literal "1") is only
+     * possible via the input masking strategy.
+     *
+     * <p>While technically also being inputs, this strategy does not support the inputs {@code SUBSTACK} or {@code
      * SUBSTACK2}, because they refer to entire statement lists, not single expressions.
      */
     public static final class Input extends MaskingStrategy {
@@ -154,7 +154,7 @@ public abstract sealed class MaskingStrategy {
         @Override
         public boolean shouldBeMasked(final ASTNode node) {
             return blockId.equals(AstNodeUtil.getBlockId(node.getParentNode()))
-                && AstNodeUtil.isInputOfKind(node, inputKey);
+                    && AstNodeUtil.isInputOfKind(node, inputKey);
         }
     }
 
@@ -172,13 +172,13 @@ public abstract sealed class MaskingStrategy {
         @Override
         public boolean shouldBeMasked(final ASTNode node) {
             final boolean isStopBlock = node instanceof StopAll
-                || node instanceof StopThisScript
-                || node instanceof StopOtherScriptsInSprite;
+                    || node instanceof StopThisScript
+                    || node instanceof StopOtherScriptsInSprite;
 
             // Special handling required for stop blocks due to inconsistent representation in the LitterBox AST.
             return isStopBlock
-                ? blockId.equals(AstNodeUtil.getBlockId(node))
-                : blockId.equals(AstNodeUtil.getBlockId(node.getParentNode()));
+                    ? blockId.equals(AstNodeUtil.getBlockId(node))
+                    : blockId.equals(AstNodeUtil.getBlockId(node.getParentNode()));
         }
     }
 }

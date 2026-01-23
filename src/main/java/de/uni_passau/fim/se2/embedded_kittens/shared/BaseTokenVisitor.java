@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.shared;
 
-import java.util.Locale;
-import java.util.Objects;
-
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.EventAttribute;
@@ -48,6 +45,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.Rotation
 import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 
+import java.util.Locale;
+import java.util.Objects;
+
 /**
  * Visits a single given node of the AST to generate a token for that node.
  *
@@ -55,8 +55,8 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
  * See {@link TokenVisitorFactory} for additional related utilities and a default implementation.
  */
 public abstract class BaseTokenVisitor implements
-    ScratchVisitor, PenExtensionVisitor, MusicExtensionVisitor, TranslateExtensionVisitor,
-    TextToSpeechExtensionVisitor {
+        ScratchVisitor, PenExtensionVisitor, MusicExtensionVisitor, TranslateExtensionVisitor,
+        TextToSpeechExtensionVisitor {
 
     protected final boolean normalised;
 
@@ -87,8 +87,7 @@ public abstract class BaseTokenVisitor implements
     protected void saveToken(final String token) {
         if (normalised) {
             this.finalToken = normaliseToken(token);
-        }
-        else {
+        } else {
             this.finalToken = token;
         }
     }
@@ -102,8 +101,7 @@ public abstract class BaseTokenVisitor implements
     protected void saveNumber(final double value) {
         if (Math.floor(value) == value) {
             finalToken = Integer.toString((int) value);
-        }
-        else {
+        } else {
             finalToken = String.format(Locale.ROOT, "%.2f", value);
         }
     }

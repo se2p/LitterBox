@@ -18,13 +18,13 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.ggnn;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import de.uni_passau.fim.se2.embedded_kittens.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.embedded_kittens.MLProgramPreprocessor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import tools.jackson.databind.json.JsonMapper;
+
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GgnnProgramPreprocessor extends MLProgramPreprocessor<GgnnAnalyzerOutput> {
 
@@ -34,7 +34,7 @@ public class GgnnProgramPreprocessor extends MLProgramPreprocessor<GgnnAnalyzerO
     private final GgnnOutputFormat outputFormat;
 
     public GgnnProgramPreprocessor(
-        final MLPreprocessorCommonOptions commonOptions, final GgnnOutputFormat outputFormat, final String labelName
+            final MLPreprocessorCommonOptions commonOptions, final GgnnOutputFormat outputFormat, final String labelName
     ) {
         super(commonOptions);
 
@@ -54,14 +54,13 @@ public class GgnnProgramPreprocessor extends MLProgramPreprocessor<GgnnAnalyzerO
 
     private Stream<GgnnAnalyzerOutput> process(final Program program, final boolean wholeProgram) {
         GenerateGgnnGraphTask generateGgnnGraphTask = new GenerateGgnnGraphTask(
-            program, commonOptions.includeStage(), commonOptions.includeDefaultSprites(), wholeProgram,
-            labelName, commonOptions.actorNameNormalizer()
+                program, commonOptions.includeStage(), commonOptions.includeDefaultSprites(), wholeProgram,
+                labelName, commonOptions.actorNameNormalizer()
         );
         if (outputFormat.isDotGraph()) {
             String label = program.getIdent().getName();
             return Stream.of(new GgnnAnalyzerOutput.DotGraph(generateGgnnGraphTask.generateDotGraphData(label)));
-        }
-        else {
+        } else {
             return generateGgnnGraphTask.generateGraphData().map(GgnnAnalyzerOutput.Graph::new);
         }
     }
@@ -71,7 +70,7 @@ public class GgnnProgramPreprocessor extends MLProgramPreprocessor<GgnnAnalyzerO
         return switch (result) {
             case GgnnAnalyzerOutput.DotGraph(String dotGraph) -> dotGraph;
             case GgnnAnalyzerOutput.Graph(GgnnProgramGraph graph) ->
-                graphToJson(graph).collect(Collectors.joining("\n"));
+                    graphToJson(graph).collect(Collectors.joining("\n"));
         };
     }
 

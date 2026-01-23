@@ -18,15 +18,15 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.ggnn;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import de.uni_passau.fim.se2.embedded_kittens.shared.ActorNameNormalizer;
 import de.uni_passau.fim.se2.embedded_kittens.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class GenerateGgnnGraphTask {
 
@@ -38,9 +38,9 @@ class GenerateGgnnGraphTask {
     private final String labelName;
 
     GenerateGgnnGraphTask(
-        Program program, boolean includeStage, boolean includeDefaultSprites,
-        boolean wholeProgramAsSingleGraph, String labelName,
-        ActorNameNormalizer actorNameNormalizer
+            Program program, boolean includeStage, boolean includeDefaultSprites,
+            boolean wholeProgramAsSingleGraph, String labelName,
+            ActorNameNormalizer actorNameNormalizer
     ) {
         this.program = program;
         this.includeStage = includeStage;
@@ -49,8 +49,7 @@ class GenerateGgnnGraphTask {
         this.actorNameNormalizer = actorNameNormalizer;
         if (labelName == null || labelName.isBlank()) {
             this.labelName = null;
-        }
-        else {
+        } else {
             this.labelName = labelName;
         }
     }
@@ -71,8 +70,7 @@ class GenerateGgnnGraphTask {
         if (wholeProgramAsSingleGraph) {
             String label = Objects.requireNonNullElseGet(labelName, () -> program.getIdent().getName());
             graphs = List.of(buildProgramGraph(program, label));
-        }
-        else {
+        } else {
             graphs = buildGraphs(program);
         }
 
@@ -110,8 +108,8 @@ class GenerateGgnnGraphTask {
     }
 
     private Set<Integer> findNodesOfType(
-        final GgnnProgramGraph.ContextGraph contextGraph,
-        final Class<? extends ASTNode> type
+            final GgnnProgramGraph.ContextGraph contextGraph,
+            final Class<? extends ASTNode> type
     ) {
         return contextGraph.nodeTypes().entrySet().stream()
             .filter(entry -> entry.getValue().equals(type.getSimpleName()))

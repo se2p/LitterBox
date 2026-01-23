@@ -29,8 +29,8 @@ public class PathGeneratorFactory {
     }
 
     public static PathGenerator createPathGenerator(
-        PathType type, int maxPathLength, boolean includeStage, Program program, boolean includeDefaultSprites,
-        ProgramRelationFactory programRelationFactory, ActorNameNormalizer actorNameNormalizer
+            PathType type, int maxPathLength, boolean includeStage, Program program, boolean includeDefaultSprites,
+            ProgramRelationFactory programRelationFactory, ActorNameNormalizer actorNameNormalizer
     ) {
         return createPathGenerator(
             type, maxPathLength, includeStage, program, includeDefaultSprites, new PathFormatOptions(),
@@ -53,22 +53,22 @@ public class PathGeneratorFactory {
      * @return A path generator.
      */
     public static PathGenerator createPathGenerator(
-        PathType type, int maxPathLength, boolean includeStage, Program program, boolean includeDefaultSprites,
-        PathFormatOptions pathFormatOptions, ProgramRelationFactory programRelationFactory,
-        ActorNameNormalizer actorNameNormalizer
+            PathType type, int maxPathLength, boolean includeStage, Program program, boolean includeDefaultSprites,
+            PathFormatOptions pathFormatOptions, ProgramRelationFactory programRelationFactory,
+            ActorNameNormalizer actorNameNormalizer
     ) {
         return switch (type) {
             case SCRIPT -> new ScriptEntityPathGenerator(
-                program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions,
-                programRelationFactory
+                    program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions,
+                    programRelationFactory
             );
             case PROGRAM -> new ProgramPathGenerator(
-                program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions,
-                programRelationFactory
+                    program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions,
+                    programRelationFactory
             );
             default -> new SpritePathGenerator(
-                program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions,
-                programRelationFactory, actorNameNormalizer
+                    program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions,
+                    programRelationFactory, actorNameNormalizer
             );
         };
     }

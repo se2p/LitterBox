@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.tokenizer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.uni_passau.fim.se2.embedded_kittens.util.AbstractToken;
 import de.uni_passau.fim.se2.embedded_kittens.util.MaskingStrategy;
 import de.uni_passau.fim.se2.embedded_kittens.util.StringUtil;
@@ -53,8 +50,11 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.TextToSpeechExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 abstract class AbstractTokenizer
-    implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor {
+        implements ScratchVisitor, PenExtensionVisitor, TextToSpeechExtensionVisitor, MusicExtensionVisitor {
 
     private final List<String> tokens = new ArrayList<>();
 
@@ -65,9 +65,9 @@ abstract class AbstractTokenizer
     private final ProcedureDefinitionNameMapping procedureNameMapping;
 
     protected AbstractTokenizer(
-        final ProcedureDefinitionNameMapping procedureNameMapping,
-        final boolean abstractTokens,
-        final MaskingStrategy maskingStrategy
+            final ProcedureDefinitionNameMapping procedureNameMapping,
+            final boolean abstractTokens,
+            final MaskingStrategy maskingStrategy
     ) {
         Preconditions.checkNotNull(procedureNameMapping);
         this.procedureNameMapping = procedureNameMapping;
@@ -107,8 +107,7 @@ abstract class AbstractTokenizer
     protected String getStatementId(final ASTNode node) {
         if (node.getMetadata() instanceof DataBlockMetadata block) {
             return block.getBlockId();
-        }
-        else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
+        } else if (node.getMetadata() instanceof NonDataBlockMetadata block) {
             return block.getBlockId();
         }
 
@@ -529,8 +528,7 @@ abstract class AbstractTokenizer
     public void visit(CallStmt node) {
         if (abstractTokens) {
             addToken(AbstractToken.CUSTOM_BLOCK);
-        }
-        else {
+        } else {
             final String fullProcedureName = node.getIdent().getName();
             final String name = AstNodeUtil.replaceProcedureParams(fullProcedureName, "");
             tokens.add(StringUtil.normaliseString(name));
@@ -545,8 +543,7 @@ abstract class AbstractTokenizer
 
         if (abstractTokens) {
             addToken(AbstractToken.PROCEDURE_DEFINITION);
-        }
-        else {
+        } else {
             final String fullName = procedureNameMapping.getProcedureInfo(node).getName();
             final String name = AstNodeUtil.replaceProcedureParams(fullName, "");
             tokens.add(StringUtil.normaliseString(name));

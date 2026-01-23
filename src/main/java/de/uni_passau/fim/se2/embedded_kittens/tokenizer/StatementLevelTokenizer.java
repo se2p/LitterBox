@@ -18,8 +18,6 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.tokenizer;
 
-import java.util.List;
-
 import de.uni_passau.fim.se2.embedded_kittens.util.MaskingStrategy;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -29,33 +27,35 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 
+import java.util.List;
+
 public class StatementLevelTokenizer extends AbstractTokenizer {
 
     private StatementLevelTokenizer(
-        final ProcedureDefinitionNameMapping procedureNameMapping,
-        final boolean abstractTokens,
-        final MaskingStrategy maskingStrategy
+            final ProcedureDefinitionNameMapping procedureNameMapping,
+            final boolean abstractTokens,
+            final MaskingStrategy maskingStrategy
     ) {
         super(procedureNameMapping, abstractTokens, maskingStrategy);
     }
 
     public static List<String> tokenize(
-        final Program program,
-        final ASTNode node,
-        final boolean abstractTokens,
-        final MaskingStrategy maskingStrategy
+            final Program program,
+            final ASTNode node,
+            final boolean abstractTokens,
+            final MaskingStrategy maskingStrategy
     ) {
         return tokenize(program.getProcedureMapping(), node, abstractTokens, maskingStrategy);
     }
 
     private static List<String> tokenize(
-        final ProcedureDefinitionNameMapping procedureNameMapping,
-        final ASTNode node,
-        final boolean abstractTokens,
-        final MaskingStrategy maskingStrategy
+            final ProcedureDefinitionNameMapping procedureNameMapping,
+            final ASTNode node,
+            final boolean abstractTokens,
+            final MaskingStrategy maskingStrategy
     ) {
         final StatementLevelTokenizer v = new StatementLevelTokenizer(
-            procedureNameMapping, abstractTokens, maskingStrategy
+                procedureNameMapping, abstractTokens, maskingStrategy
         );
         node.accept(v);
         return v.getTokens();
@@ -64,8 +64,7 @@ public class StatementLevelTokenizer extends AbstractTokenizer {
     private void visitControlBlock(final ASTNode node, final Token opcode) {
         if (shouldBeMasked(node)) {
             addToken(Token.MASK);
-        }
-        else {
+        } else {
             addToken(opcode);
             addToken(Token.BEGIN_SUBSTACK);
             visitChildren(node);
@@ -77,8 +76,7 @@ public class StatementLevelTokenizer extends AbstractTokenizer {
     protected void visit(final ASTNode node, final Token opcode) {
         if (shouldBeMasked(node)) {
             addToken(Token.MASK);
-        }
-        else {
+        } else {
             addToken(opcode);
         }
     }
@@ -107,8 +105,7 @@ public class StatementLevelTokenizer extends AbstractTokenizer {
     public void visit(IfElseStmt node) {
         if (shouldBeMasked(node)) {
             addToken(Token.MASK);
-        }
-        else {
+        } else {
             addToken(Token.CONTROL_IF_ELSE);
             addToken(Token.BEGIN_SUBSTACK);
             visitChildren(node.getThenStmts());

@@ -18,8 +18,6 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.tokenizer;
 
-import java.util.List;
-
 import de.uni_passau.fim.se2.embedded_kittens.shared.BaseTokenVisitor;
 import de.uni_passau.fim.se2.embedded_kittens.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.embedded_kittens.util.AbstractToken;
@@ -76,6 +74,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 
+import java.util.List;
+
 public class Tokenizer extends AbstractTokenizer {
 
     /**
@@ -100,11 +100,11 @@ public class Tokenizer extends AbstractTokenizer {
     private final boolean abstractFixedNodeOptions;
 
     protected Tokenizer(
-        final ProcedureDefinitionNameMapping procedureNameMapping,
-        final boolean abstractTokens,
-        final boolean abstractFixedNodeOptions,
-        final boolean parenthesiseExpressions,
-        final MaskingStrategy maskingStrategy
+            final ProcedureDefinitionNameMapping procedureNameMapping,
+            final boolean abstractTokens,
+            final boolean abstractFixedNodeOptions,
+            final boolean parenthesiseExpressions,
+            final MaskingStrategy maskingStrategy
     ) {
         super(procedureNameMapping, abstractTokens, maskingStrategy);
         this.abstractFixedNodeOptions = abstractFixedNodeOptions;
@@ -112,8 +112,8 @@ public class Tokenizer extends AbstractTokenizer {
     }
 
     public static List<String> tokenize(
-        final Program program, final ASTNode node, final boolean abstractTokens, final boolean abstractFixedNodeOptions,
-        final MaskingStrategy maskingStrategy
+            final Program program, final ASTNode node, final boolean abstractTokens,
+            final boolean abstractFixedNodeOptions, final MaskingStrategy maskingStrategy
     ) {
         return tokenize(
             program.getProcedureMapping(), node, abstractTokens, abstractFixedNodeOptions, true, maskingStrategy
@@ -136,8 +136,8 @@ public class Tokenizer extends AbstractTokenizer {
      * @return A sequence of tokens obtained when traversing the AST of {@code node}.
      */
     public static List<String> tokenizeWithReducedParentheses(
-        final Program program, final ASTNode node, final boolean abstractTokens, final boolean abstractFixedNodeOptions,
-        final MaskingStrategy maskingStrategy
+            final Program program, final ASTNode node, final boolean abstractTokens,
+            final boolean abstractFixedNodeOptions, final MaskingStrategy maskingStrategy
     ) {
         return tokenize(
             program.getProcedureMapping(), node, abstractTokens, abstractFixedNodeOptions, false, maskingStrategy
@@ -145,15 +145,15 @@ public class Tokenizer extends AbstractTokenizer {
     }
 
     private static List<String> tokenize(
-        final ProcedureDefinitionNameMapping procedureNameMapping,
-        final ASTNode node,
-        final boolean abstractTokens,
-        final boolean abstractFixedNodeOptions,
-        final boolean parenthesiseAtoms,
-        final MaskingStrategy maskingStrategy
+            final ProcedureDefinitionNameMapping procedureNameMapping,
+            final ASTNode node,
+            final boolean abstractTokens,
+            final boolean abstractFixedNodeOptions,
+            final boolean parenthesiseAtoms,
+            final MaskingStrategy maskingStrategy
     ) {
         final Tokenizer v = new Tokenizer(
-            procedureNameMapping, abstractTokens, abstractFixedNodeOptions, parenthesiseAtoms, maskingStrategy
+                procedureNameMapping, abstractTokens, abstractFixedNodeOptions, parenthesiseAtoms, maskingStrategy
         );
         node.accept(v);
         return v.getTokens();
@@ -163,8 +163,7 @@ public class Tokenizer extends AbstractTokenizer {
     protected void visit(final ASTNode node, final Token opcode) {
         if (shouldBeMasked(node)) {
             addToken(Token.MASK);
-        }
-        else {
+        } else {
             addToken(opcode);
             visitChildren(node);
         }
@@ -193,8 +192,7 @@ public class Tokenizer extends AbstractTokenizer {
     protected void visitChild(final ASTNode child) {
         if (child instanceof Expression childExpr) {
             visitExpression(childExpr);
-        }
-        else {
+        } else {
             child.accept(this);
         }
     }
@@ -332,8 +330,7 @@ public class Tokenizer extends AbstractTokenizer {
     public void visit(RepeatForeverStmt node) {
         if (shouldBeMasked(node)) {
             addToken(Token.MASK);
-        }
-        else {
+        } else {
             addToken(Token.CONTROL_FOREVER);
         }
         visitControlBlockBody(node.getStmtList());
@@ -362,8 +359,7 @@ public class Tokenizer extends AbstractTokenizer {
     private void visitControlBlockHead(final Stmt stmt, final Token opcode, final Expression condition) {
         if (shouldBeMasked(stmt)) {
             addToken(Token.MASK);
-        }
-        else {
+        } else {
             addToken(opcode);
             visitExpression(condition);
         }
@@ -414,11 +410,9 @@ public class Tokenizer extends AbstractTokenizer {
 
         if (shouldBeMasked && getMaskingStrategy() instanceof MaskingStrategy.FixedOption) {
             addToken(Token.MASK);
-        }
-        else if (abstractFixedNodeOptions) {
+        } else if (abstractFixedNodeOptions) {
             addToken("stop_target");
-        }
-        else {
+        } else {
             addToken(target);
         }
     }
@@ -514,8 +508,7 @@ public class Tokenizer extends AbstractTokenizer {
             addToken(Token.BEGIN_NUM_STR_EXPR);
             addToken("keyid");
             addToken(Token.END_NUM_STR_EXPR);
-        }
-        else {
+        } else {
             visit(node, Token.KEY);
         }
     }
@@ -532,8 +525,7 @@ public class Tokenizer extends AbstractTokenizer {
     protected void visitBinaryOperator(final BinaryExpression<?, ?> node, final Token opcode) {
         if (shouldBeMasked(node)) {
             addToken(Token.MASK);
-        }
-        else {
+        } else {
             visitChild(node.getOperand1());
             addToken(opcode);
             visitChild(node.getOperand2());
@@ -666,14 +658,11 @@ public class Tokenizer extends AbstractTokenizer {
     protected void visitExpression(final Expression expr) {
         if (!parenthesiseExpressions && isLiteralInsideExpression(expr)) {
             expr.accept(this);
-        }
-        else if (expr instanceof AsExprType asExprType) {
+        } else if (expr instanceof AsExprType asExprType) {
             visitExpressionTypeWrapper(asExprType);
-        }
-        else if (expr instanceof BoolExpr) {
+        } else if (expr instanceof BoolExpr) {
             visitBoolExpr(expr);
-        }
-        else {
+        } else {
             visitNumOrStringExpr(expr);
         }
     }
@@ -688,18 +677,17 @@ public class Tokenizer extends AbstractTokenizer {
         }
 
         return expr instanceof NumberLiteral
-            || expr instanceof ColorLiteral
-            || expr instanceof StringLiteral
-            || expr instanceof BoolLiteral
-            || expr instanceof Qualified
-            || expr instanceof Parameter;
+                || expr instanceof ColorLiteral
+                || expr instanceof StringLiteral
+                || expr instanceof BoolLiteral
+                || expr instanceof Qualified
+                || expr instanceof Parameter;
     }
 
     private void visitExpressionTypeWrapper(final AsExprType expr) {
         if (expr instanceof AsBool) {
             visitBoolExpr(expr.getOperand1());
-        }
-        else {
+        } else {
             visitNumOrStringExpr(expr.getOperand1());
         }
     }
@@ -771,8 +759,7 @@ public class Tokenizer extends AbstractTokenizer {
     public void visit(Parameter node) {
         if (isAbstractTokens()) {
             addToken(AbstractToken.PARAMETER);
-        }
-        else {
+        } else {
             node.getName().accept(this);
         }
     }
@@ -870,8 +857,7 @@ public class Tokenizer extends AbstractTokenizer {
         addToken(left);
         if (shouldBeMasked(node)) {
             addToken(Token.MASK);
-        }
-        else {
+        } else {
             node.accept(this);
         }
         addToken(right);
@@ -880,12 +866,10 @@ public class Tokenizer extends AbstractTokenizer {
     private void visitFixedNodeOption(final FixedNodeOption option, final Token opcode) {
         if (shouldBeMasked(option)) {
             addToken(Token.MASK);
-        }
-        else {
+        } else {
             if (abstractFixedNodeOptions) {
                 visit(option, opcode);
-            }
-            else {
+            } else {
                 visit(option, getNormalisedToken(option));
             }
         }
@@ -894,8 +878,7 @@ public class Tokenizer extends AbstractTokenizer {
     private void ifAbstractElse(final Token opcode, final String token) {
         if (isAbstractTokens()) {
             addToken(opcode);
-        }
-        else {
+        } else {
             addToken(token);
         }
     }
@@ -903,8 +886,7 @@ public class Tokenizer extends AbstractTokenizer {
     private void ifAbstractElse(final AbstractToken abstractToken, final String token) {
         if (isAbstractTokens()) {
             addToken(abstractToken);
-        }
-        else {
+        } else {
             addToken(token);
         }
     }

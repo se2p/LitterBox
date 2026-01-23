@@ -57,8 +57,7 @@ public class ExtractScriptLeavesVisitor extends ExtractLeavesVisitor<ScriptEntit
     public void visit(ASTNode node) {
         if (insideScript && node instanceof ASTLeaf leaf && !AstNodeUtil.isMetadata(node)) {
             addLeaf(leaf);
-        }
-        else {
+        } else {
             visitChildren(node);
         }
     }

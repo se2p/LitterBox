@@ -18,12 +18,12 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration;
 
+import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.program_relation.ProgramRelation;
+import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.program_relation.ProgramRelationFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.program_relation.ProgramRelation;
-import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.program_relation.ProgramRelationFactory;
 
 public class ProgramFeatures {
 

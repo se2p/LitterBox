@@ -18,8 +18,6 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.code2;
 
-import java.util.stream.Stream;
-
 import de.uni_passau.fim.se2.embedded_kittens.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.GeneratePathTask;
 import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.PathFormatOptions;
@@ -30,10 +28,12 @@ import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.ProgramFeatur
 import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.program_relation.ProgramRelationFactory;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
+import java.util.stream.Stream;
+
 public class Code2SeqProgramPreprocessor extends Code2ProgramPreprocessor {
 
     public Code2SeqProgramPreprocessor(
-        final MLPreprocessorCommonOptions commonOptions, final int maxPathLength, final boolean isPerScript
+            final MLPreprocessorCommonOptions commonOptions, final int maxPathLength, final boolean isPerScript
     ) {
         super(commonOptions, maxPathLength, isPerScript);
     }
@@ -52,8 +52,8 @@ public class Code2SeqProgramPreprocessor extends Code2ProgramPreprocessor {
         final ProgramRelationFactory programRelationFactory = new ProgramRelationFactory();
         final PathFormatOptions pathFormatOptions = new PathFormatOptions("|", "|", "|", "", "", true, true);
         PathGenerator pathGenerator = PathGeneratorFactory.createPathGenerator(
-            pathType, maxPathLength, commonOptions.includeStage(), program, commonOptions.includeDefaultSprites(),
-            pathFormatOptions, programRelationFactory, commonOptions.actorNameNormalizer()
+                pathType, maxPathLength, commonOptions.includeStage(), program, commonOptions.includeDefaultSprites(),
+                pathFormatOptions, programRelationFactory, commonOptions.actorNameNormalizer()
         );
         final GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
 

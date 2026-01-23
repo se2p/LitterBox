@@ -18,10 +18,6 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.util;
 
-import java.util.IdentityHashMap;
-import java.util.Map;
-import java.util.Optional;
-
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -31,6 +27,10 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitio
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public final class ProcedureMapping {
 

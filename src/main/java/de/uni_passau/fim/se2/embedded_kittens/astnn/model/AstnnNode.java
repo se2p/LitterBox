@@ -18,10 +18,10 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.astnn.model;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import java.util.List;
 
 /**
  * Represents a node in the simplified abstract syntax tree.

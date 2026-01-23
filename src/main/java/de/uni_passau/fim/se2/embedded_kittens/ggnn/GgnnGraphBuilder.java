@@ -18,13 +18,6 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.ggnn;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import de.uni_passau.fim.se2.embedded_kittens.shared.TokenVisitorFactory;
 import de.uni_passau.fim.se2.embedded_kittens.util.ProcedureMapping;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
@@ -39,6 +32,13 @@ import de.uni_passau.fim.se2.litterbox.cfg.ControlFlowGraphVisitor;
 import de.uni_passau.fim.se2.litterbox.dependency.DataDependenceGraph;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GgnnGraphBuilder {
 
@@ -80,16 +80,16 @@ public class GgnnGraphBuilder {
         final List<Pair<ASTNode>> guardedByEdges = GgnnGraphEdgesVisitor.getGuardedByEdges(astRoot);
         final List<Pair<ASTNode>> computedFromEdges = GgnnGraphEdgesVisitor.getComputedFromEdges(astRoot);
         final List<Pair<ASTNode>> parameterPassingEdges = GgnnGraphEdgesVisitor
-            .getParameterPassingEdges(program, astRoot);
+                .getParameterPassingEdges(program, astRoot);
         final List<Pair<ASTNode>> messagePassingEdges = GgnnGraphEdgesVisitor.getMessagePassingEdges(astRoot);
         final List<Pair<ASTNode>> dataDependencies = getDataDependencies();
         final List<Pair<ASTNode>> returnToEdges = GgnnGraphEdgesVisitor.getReturnToEdges(astRoot);
         final List<Pair<ASTNode>> lastLexicalUseEdges = LastLexicalUseVisitor.getEdges(astRoot);
 
         final Set<ASTNode> allNodes = getAllNodes(
-            childEdges, nextTokenEdges, guardedByEdges, computedFromEdges,
-            parameterPassingEdges, messagePassingEdges, dataDependencies,
-            returnToEdges, lastLexicalUseEdges
+                childEdges, nextTokenEdges, guardedByEdges, computedFromEdges,
+                parameterPassingEdges, messagePassingEdges, dataDependencies,
+                returnToEdges, lastLexicalUseEdges
         );
         final Map<ASTNode, Integer> nodeIndices = getNodeIndices(allNodes);
 
@@ -131,8 +131,8 @@ public class GgnnGraphBuilder {
     }
 
     private Set<Pair<Integer>> getIndexedEdges(
-        final Map<ASTNode, Integer> nodeIndices,
-        final List<Pair<ASTNode>> edges
+            final Map<ASTNode, Integer> nodeIndices,
+            final List<Pair<ASTNode>> edges
     ) {
         return edges.stream().map(edge -> {
             Integer idxFrom = nodeIndices.get(edge.getFst());
@@ -150,8 +150,8 @@ public class GgnnGraphBuilder {
     }
 
     private Map<Integer, String> getNodeLabels(
-        final Map<ASTNode, Integer> nodeIndices,
-        final Set<Integer> usedIndices
+            final Map<ASTNode, Integer> nodeIndices,
+            final Set<Integer> usedIndices
     ) {
         return getNodeInformation(nodeIndices, usedIndices, this::getNodeLabel);
     }
@@ -160,19 +160,16 @@ public class GgnnGraphBuilder {
         if (node instanceof StrId && node.getParentNode() instanceof ProcedureDefinition procedureDefinition) {
             final String name = procedureMapping.getName(procedureDefinition);
             return AstNodeUtil.replaceProcedureParams(name, PROCEDURE_PARAM_REPLACEMENT);
-        }
-        else if (node instanceof StrId && node.getParentNode() instanceof CallStmt callStmt) {
+        } else if (node instanceof StrId && node.getParentNode() instanceof CallStmt callStmt) {
             final Optional<ProcedureDefinition> definition = procedureMapping.findCalledProcedure(callStmt);
             if (definition.isEmpty()) {
                 log.info("Could not find procedure for custom block call: " + callStmt.getIdent().getName());
                 return TokenVisitorFactory.getNormalisedToken(node);
-            }
-            else {
+            } else {
                 final String name = procedureMapping.getName(definition.get());
                 return AstNodeUtil.replaceProcedureParams(name, PROCEDURE_PARAM_REPLACEMENT);
             }
-        }
-        else {
+        } else {
             return TokenVisitorFactory.getNormalisedToken(node);
         }
     }
@@ -182,8 +179,8 @@ public class GgnnGraphBuilder {
     }
 
     private Map<Integer, String> getNodeInformation(
-        final Map<ASTNode, Integer> nodeMap, final Set<Integer> usedIndices,
-        final Function<ASTNode, String> infoExtractor
+            final Map<ASTNode, Integer> nodeMap, final Set<Integer> usedIndices,
+            final Function<ASTNode, String> infoExtractor
     ) {
         final Map<Integer, String> nodeLabels = new HashMap<>();
 
@@ -201,18 +198,16 @@ public class GgnnGraphBuilder {
     }
 
     private List<Pair<ASTNode>> getDataDependencies() {
-        if (astRoot instanceof Program programRoot) {
-            return programRoot.getActorDefinitionList().getDefinitions()
-                .stream()
-                .flatMap(this::getDataDependencies)
-                .toList();
-        }
-        else if (astRoot instanceof ActorDefinition actorDefinition) {
-            return getDataDependencies(actorDefinition).toList();
-        }
-        else {
-            throw new UnsupportedOperationException("Can only extract data dependencies from programs and actors!");
-        }
+        return switch (astRoot) {
+            case Program programRoot -> programRoot.getActorDefinitionList().getDefinitions()
+                    .stream()
+                    .flatMap(this::getDataDependencies)
+                    .toList();
+            case ActorDefinition actorDefinition -> getDataDependencies(actorDefinition).toList();
+            default -> throw new UnsupportedOperationException(
+                    "Can only extract data dependencies from programs and actors!"
+            );
+        };
     }
 
     private Stream<Pair<ASTNode>> getDataDependencies(final ActorDefinition actor) {

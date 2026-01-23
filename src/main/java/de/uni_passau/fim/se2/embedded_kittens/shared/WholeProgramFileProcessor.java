@@ -18,18 +18,17 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.shared;
 
-import java.nio.file.Path;
-
-import org.apache.commons.io.FilenameUtils;
-
 import de.uni_passau.fim.se2.embedded_kittens.MLFilePreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.MLOutputPath;
 import de.uni_passau.fim.se2.embedded_kittens.MLProgramPreprocessor;
+import org.apache.commons.io.FilenameUtils;
+
+import java.nio.file.Path;
 
 public class WholeProgramFileProcessor<T> extends MLFilePreprocessor<WholeProgramOutput<T>> {
 
     public WholeProgramFileProcessor(
-        MLProgramPreprocessor<WholeProgramOutput<T>> programPreprocessor, MLOutputPath outputPath
+            MLProgramPreprocessor<WholeProgramOutput<T>> programPreprocessor, MLOutputPath outputPath
     ) {
         super(programPreprocessor, outputPath);
     }

@@ -18,13 +18,13 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.shared;
 
-import java.util.List;
-import java.util.stream.Stream;
-
 import de.uni_passau.fim.se2.embedded_kittens.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.embedded_kittens.MLProgramPreprocessor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import tools.jackson.databind.json.JsonMapper;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 public class WholeProgramJsonProcessor<T> extends MLProgramPreprocessor<WholeProgramOutput<T>> {
 
@@ -32,8 +32,8 @@ public class WholeProgramJsonProcessor<T> extends MLProgramPreprocessor<WholePro
     private final MLProgramPreprocessor<T> preprocessor;
 
     public WholeProgramJsonProcessor(
-        final MLPreprocessorCommonOptions commonOptions,
-        final MLProgramPreprocessor<T> programPreprocessor
+            final MLPreprocessorCommonOptions commonOptions,
+            final MLProgramPreprocessor<T> programPreprocessor
     ) {
         super(commonOptions);
         this.preprocessor = programPreprocessor;

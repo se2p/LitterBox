@@ -30,10 +30,10 @@ import de.uni_passau.fim.se2.embedded_kittens.shared.ActorNameNormalizer;
  *                              {@code var}.
  */
 public record MLPreprocessorCommonOptions(
-    MLOutputPath outputPath,
-    boolean includeStage,
-    boolean includeDefaultSprites,
-    boolean abstractTokens,
-    ActorNameNormalizer actorNameNormalizer
+        MLOutputPath outputPath,
+        boolean includeStage,
+        boolean includeDefaultSprites,
+        boolean abstractTokens,
+        ActorNameNormalizer actorNameNormalizer
 ) {
 }

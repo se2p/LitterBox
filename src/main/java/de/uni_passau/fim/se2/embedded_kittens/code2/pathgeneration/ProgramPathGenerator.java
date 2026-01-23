@@ -18,22 +18,22 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration;
 
-import java.util.*;
-import java.util.stream.Stream;
-
 import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.program_relation.ProgramRelationFactory;
 import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.visitor.ExtractSpriteLeavesVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
+import java.util.*;
+import java.util.stream.Stream;
+
 public final class ProgramPathGenerator extends PathGenerator {
 
     private final Map<ActorDefinition, List<ASTNode>> leavesMap;
 
     public ProgramPathGenerator(
-        Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites,
-        PathFormatOptions pathFormatOptions, ProgramRelationFactory programRelationFactory
+            Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites,
+            PathFormatOptions pathFormatOptions, ProgramRelationFactory programRelationFactory
     ) {
         super(program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions, programRelationFactory);
         this.leavesMap = Collections.unmodifiableMap(extractASTLeaves());
@@ -41,7 +41,7 @@ public final class ProgramPathGenerator extends PathGenerator {
 
     private Map<ActorDefinition, List<ASTNode>> extractASTLeaves() {
         ExtractSpriteLeavesVisitor spriteVisitor = new ExtractSpriteLeavesVisitor(
-            program.getProcedureMapping(), includeStage
+                program.getProcedureMapping(), includeStage
         );
         program.accept(spriteVisitor);
         return spriteVisitor.getLeaves();

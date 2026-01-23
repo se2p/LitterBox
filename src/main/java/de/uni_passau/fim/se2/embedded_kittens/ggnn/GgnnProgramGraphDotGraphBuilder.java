@@ -18,11 +18,11 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.ggnn;
 
+import de.uni_passau.fim.se2.litterbox.utils.Pair;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import de.uni_passau.fim.se2.litterbox.utils.Pair;
 
 public class GgnnProgramGraphDotGraphBuilder {
 
@@ -63,15 +63,14 @@ public class GgnnProgramGraphDotGraphBuilder {
     }
 
     private static String asDotGraph(
-        final GgnnProgramGraph.ContextGraph graph, final String label, int graphId,
-        boolean isSubgraph
+            final GgnnProgramGraph.ContextGraph graph, final String label, int graphId,
+            boolean isSubgraph
     ) {
         StringBuilder sb = new StringBuilder();
 
         if (isSubgraph) {
             sb.append("subgraph \"cluster_");
-        }
-        else {
+        } else {
             sb.append("digraph \"");
         }
         sb.append(label).append("\" {\n");

@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration;
 
-import java.util.*;
-import java.util.stream.Stream;
-
 import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.program_relation.ProgramRelationFactory;
 import de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.visitor.ExtractSpriteLeavesVisitor;
 import de.uni_passau.fim.se2.embedded_kittens.shared.ActorNameNormalizer;
@@ -29,15 +26,18 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
+import java.util.*;
+import java.util.stream.Stream;
+
 public final class SpritePathGenerator extends PathGenerator {
 
     private final ActorNameNormalizer actorNameNormalizer;
     private final Map<ActorDefinition, List<ASTNode>> leavesMap;
 
     public SpritePathGenerator(
-        Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites,
-        PathFormatOptions pathFormatOptions, ProgramRelationFactory programRelationFactory,
-        ActorNameNormalizer actorNameNormalizer
+            Program program, int maxPathLength, boolean includeStage, boolean includeDefaultSprites,
+            PathFormatOptions pathFormatOptions, ProgramRelationFactory programRelationFactory,
+            ActorNameNormalizer actorNameNormalizer
     ) {
         super(program, maxPathLength, includeStage, includeDefaultSprites, pathFormatOptions, programRelationFactory);
 
@@ -47,7 +47,7 @@ public final class SpritePathGenerator extends PathGenerator {
 
     private Map<ActorDefinition, List<ASTNode>> extractASTLeaves() {
         ExtractSpriteLeavesVisitor spriteVisitor = new ExtractSpriteLeavesVisitor(
-            program.getProcedureMapping(), includeStage
+                program.getProcedureMapping(), includeStage
         );
         program.accept(spriteVisitor);
         return spriteVisitor.getLeaves();

@@ -18,10 +18,6 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.concurrent.Callable;
-
 import de.uni_passau.fim.se2.embedded_kittens.astnn.AstnnPreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.code2.Code2SeqPreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.code2.Code2VecPreprocessor;
@@ -37,26 +33,30 @@ import de.uni_passau.fim.se2.embedded_kittens.util.MaskingStrategy;
 import de.uni_passau.fim.se2.embedded_kittens.util.NodeNameUtil;
 import picocli.CommandLine;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.util.concurrent.Callable;
+
 @CommandLine.Command(
-    name = "embedded-kittens",
-    description = "Preprocessing for code embedding models.",
-    mixinStandardHelpOptions = true,
-    subcommands = {
-        EmbeddedKittensMain.AstnnSubcommand.class,
-        EmbeddedKittensMain.Code2SeqSubcommand.class,
-        EmbeddedKittensMain.Code2vecSubcommand.class,
-        EmbeddedKittensMain.GgnnSubcommand.class,
-        EmbeddedKittensMain.LlmSubcommand.class,
-        EmbeddedKittensMain.TokenizerSubcommand.class
-    },
-    footerHeading = "%nExamples:%n",
-    footer = {
-        "%nExample for embedded-kittens code2vec preprocessing:%n"
-            + "java -jar Litterbox.jar code2vec%n"
-            + "    --path ~/path/to/json/project/or/folder/with/projects%n"
-            + "    -o ~/path/to/folder/or/file/for/the/output%n"
-            + "    --max-path-length 8",
-    }
+        name = "embedded-kittens",
+        description = "Preprocessing for code embedding models.",
+        mixinStandardHelpOptions = true,
+        subcommands = {
+                EmbeddedKittensMain.AstnnSubcommand.class,
+                EmbeddedKittensMain.Code2SeqSubcommand.class,
+                EmbeddedKittensMain.Code2vecSubcommand.class,
+                EmbeddedKittensMain.GgnnSubcommand.class,
+                EmbeddedKittensMain.LlmSubcommand.class,
+                EmbeddedKittensMain.TokenizerSubcommand.class
+        },
+        footerHeading = "%nExamples:%n",
+        footer = {
+                "%nExample for embedded-kittens code2vec preprocessing:%n"
+                    + "java -jar Litterbox.jar code2vec%n"
+                    + "    --path ~/path/to/json/project/or/folder/with/projects%n"
+                    + "    -o ~/path/to/folder/or/file/for/the/output%n"
+                    + "    --max-path-length 8",
+        }
 )
 public class EmbeddedKittensMain implements Callable<Integer> {
 
@@ -81,28 +81,28 @@ public class EmbeddedKittensMain implements Callable<Integer> {
         CommandLine.Model.CommandSpec spec;
 
         @CommandLine.Option(
-            names = { "-l", "--lang" },
-            description = "Language of the hints in the output."
+                names = { "-l", "--lang" },
+                description = "Language of the hints in the output."
         )
         String language = "en";
 
         @CommandLine.Option(
-            names = { "-p", "--path" },
-            description = "Path to the folder or file that should be analysed, "
-                + "or path in which to store downloaded projects."
+                names = { "-p", "--path" },
+                description = "Path to the folder or file that should be analysed, "
+                    + "or path in which to store downloaded projects."
         )
         Path projectPath;
 
         @CommandLine.Option(
-            names = { "-o", "--output" },
-            description = "Path to the file or folder for the analyser results. "
-                + "Has to be a folder if multiple projects are analysed."
+                names = { "-o", "--output" },
+                description = "Path to the file or folder for the analyser results. "
+                    + "Has to be a folder if multiple projects are analysed."
         )
         Path outputPath;
 
         @CommandLine.Option(
-            names = { "--exclude-stage" },
-            description = "Ignore the stage when performing the analysis."
+                names = { "--exclude-stage" },
+                description = "Ignore the stage when performing the analysis."
         )
         boolean excludeStage = false;
 
@@ -112,34 +112,34 @@ public class EmbeddedKittensMain implements Callable<Integer> {
         static class WholeProgramGroup {
 
             @CommandLine.Option(
-                names = { "-w", "--whole-program" },
-                description = "Treat the program as a single big sprite."
+                    names = { "-w", "--whole-program" },
+                    description = "Treat the program as a single big sprite."
             )
             boolean wholeProgram = false;
 
             @CommandLine.Option(
-                names = { "--whole-program-json" },
-                description = "Creates a JSON per program with the sub-outputs per sprite inside."
+                    names = { "--whole-program-json" },
+                    description = "Creates a JSON per program with the sub-outputs per sprite inside."
             )
             boolean wholeProgramJson = false;
         }
 
         @CommandLine.Option(
-            names = { "--exclude-default-sprites" },
-            description = "Ignore sprites that have the default name in any language, e.g. ‘Sprite1’, ‘Actor3’."
+                names = { "--exclude-default-sprites" },
+                description = "Ignore sprites that have the default name in any language, e.g. ‘Sprite1’, ‘Actor3’."
         )
         boolean excludeDefaultSprites = false;
 
         @CommandLine.Option(
-            names = { "--abstract-tokens" },
-            description = "Replaces literal values and variable names with abstract tokens. "
-                + "E.g., '1.0' -> 'numberliteral'."
+                names = { "--abstract-tokens" },
+                description = "Replaces literal values and variable names with abstract tokens. "
+                    + "E.g., '1.0' -> 'numberliteral'."
         )
         boolean abstractTokens = false;
 
         @CommandLine.Option(
-            names = { "--latin-only-sprite-names" },
-            description = "Normalise sprite names to include characters in the latin base alphabet (a-z) only."
+                names = { "--latin-only-sprite-names" },
+                description = "Normalise sprite names to include characters in the latin base alphabet (a-z) only."
         )
         boolean latinOnlyActorNames;
 
@@ -160,18 +160,17 @@ public class EmbeddedKittensMain implements Callable<Integer> {
             final MLFilePreprocessor<?> analyzer = getAnalyzer();
             if (wholeProgram.wholeProgramJson) {
                 return runWholeProgramJsonAnalysis(analyzer.getProgramPreprocessor());
-            }
-            else {
+            } else {
                 return runAnalysis(analyzer);
             }
         }
 
         private int runWholeProgramJsonAnalysis(final MLProgramPreprocessor<?> baseProcessor) {
             final WholeProgramJsonProcessor<?> wholeProgramJsonProcessor = new WholeProgramJsonProcessor<>(
-                getCommonOptions(), baseProcessor
+                    getCommonOptions(), baseProcessor
             );
             final WholeProgramFileProcessor<?> wholeProgramFileProcessor = new WholeProgramFileProcessor<>(
-                wholeProgramJsonProcessor, getOutputPath()
+                    wholeProgramJsonProcessor, getOutputPath()
             );
 
             wholeProgramFileProcessor.processProgram(projectPath);
@@ -182,8 +181,7 @@ public class EmbeddedKittensMain implements Callable<Integer> {
         private int runAnalysis(final MLFilePreprocessor<?> analyzer) {
             if (wholeProgram.wholeProgram) {
                 analyzer.processProgram(projectPath);
-            }
-            else {
+            } else {
                 analyzer.processPerSprite(projectPath);
             }
             return 0;
@@ -205,8 +203,7 @@ public class EmbeddedKittensMain implements Callable<Integer> {
                     );
                 }
                 return MLOutputPath.directory(outputDirectory.toPath());
-            }
-            else {
+            } else {
                 return MLOutputPath.console();
             }
         }
@@ -222,16 +219,15 @@ public class EmbeddedKittensMain implements Callable<Integer> {
         private ActorNameNormalizer buildActorNameNormalizer() {
             if (latinOnlyActorNames) {
                 return NodeNameUtil::normalizeSpriteNameLatinOnly;
-            }
-            else {
+            } else {
                 return ActorNameNormalizer.getDefault();
             }
         }
     }
 
     @CommandLine.Command(
-        name = "astnn",
-        description = "Transform Scratch projects into the ASTNN input format."
+            name = "astnn",
+            description = "Transform Scratch projects into the ASTNN input format."
     )
     static class AstnnSubcommand extends MLPreprocessorSubcommand {
 
@@ -244,16 +240,16 @@ public class EmbeddedKittensMain implements Callable<Integer> {
     private abstract static class Code2Subcommand extends MLPreprocessorSubcommand {
 
         @CommandLine.Option(
-            names = { "--max-path-length" },
-            description = "The maximum length for connecting two AST leaves. "
-                + "Zero means there is no max path length. "
-                + "Default: 8."
+                names = { "--max-path-length" },
+                description = "The maximum length for connecting two AST leaves. "
+                    + "Zero means there is no max path length. "
+                    + "Default: 8."
         )
         int maxPathLength = 8;
 
         @CommandLine.Option(
-            names = { "--scripts" },
-            description = "Generate token per script."
+                names = { "--scripts" },
+                description = "Generate token per script."
         )
         boolean isPerScript = false;
 
@@ -273,8 +269,8 @@ public class EmbeddedKittensMain implements Callable<Integer> {
     }
 
     @CommandLine.Command(
-        name = "code2vec",
-        description = "Transform Scratch projects into the code2vec input format."
+            name = "code2vec",
+            description = "Transform Scratch projects into the code2vec input format."
     )
     static class Code2vecSubcommand extends Code2Subcommand {
 
@@ -285,8 +281,8 @@ public class EmbeddedKittensMain implements Callable<Integer> {
     }
 
     @CommandLine.Command(
-        name = "code2seq",
-        description = "Transform Scratch projects into the code2seq input format."
+            name = "code2seq",
+            description = "Transform Scratch projects into the code2seq input format."
     )
     static class Code2SeqSubcommand extends Code2Subcommand {
 
@@ -297,20 +293,20 @@ public class EmbeddedKittensMain implements Callable<Integer> {
     }
 
     @CommandLine.Command(
-        name = "ggnn",
-        description = "Transform Scratch projects into the Gated Graph Neural Network input format."
+            name = "ggnn",
+            description = "Transform Scratch projects into the Gated Graph Neural Network input format."
     )
     static class GgnnSubcommand extends MLPreprocessorSubcommand {
 
         @CommandLine.Option(
-            names = { "--label" },
-            description = "Use a specific label for the graph instead of the file name."
+                names = { "--label" },
+                description = "Use a specific label for the graph instead of the file name."
         )
         String label;
 
         @CommandLine.Option(
-            names = { "--dotgraph" },
-            description = "Generate a dot-graph representation of the GGNN graph."
+                names = { "--dotgraph" },
+                description = "Generate a dot-graph representation of the GGNN graph."
         )
         boolean dotGraph;
 
@@ -319,8 +315,7 @@ public class EmbeddedKittensMain implements Callable<Integer> {
             final GgnnOutputFormat format;
             if (dotGraph) {
                 format = GgnnOutputFormat.DOT_GRAPH;
-            }
-            else {
+            } else {
                 format = GgnnOutputFormat.JSON_GRAPH;
             }
 
@@ -329,8 +324,8 @@ public class EmbeddedKittensMain implements Callable<Integer> {
     }
 
     @CommandLine.Command(
-        name = "llm",
-        description = "Transforms each Scratch project into the ScratchBlocks format for an LLM."
+            name = "llm",
+            description = "Transforms each Scratch project into the ScratchBlocks format for an LLM."
     )
     static class LlmSubcommand extends MLPreprocessorSubcommand {
 
@@ -341,8 +336,8 @@ public class EmbeddedKittensMain implements Callable<Integer> {
     }
 
     @CommandLine.Command(
-        name = "tokenizer",
-        description = "Transforms each Scratch project into a token sequence."
+            name = "tokenizer",
+            description = "Transforms each Scratch project into a token sequence."
     )
     static class TokenizerSubcommand extends MLPreprocessorSubcommand {
 
@@ -351,45 +346,45 @@ public class EmbeddedKittensMain implements Callable<Integer> {
         private static final String MASKED_FIXED_NODE_OPTION = "--masked-fixed-node-option";
 
         @CommandLine.Option(
-            names = { "--sequence-per-script" },
-            description = "Generate one token sequence per script instead of per sprite/program."
-                + "Custom procedure definitions count as scripts."
+                names = { "--sequence-per-script" },
+                description = "Generate one token sequence per script instead of per sprite/program."
+                    + "Custom procedure definitions count as scripts."
         )
         boolean sequencePerScript = false;
 
         @CommandLine.Option(
-            names = { "--abstract-fixed-node-options" },
-            description = "Replace fixed node options with abstract tokens."
+                names = { "--abstract-fixed-node-options" },
+                description = "Replace fixed node options with abstract tokens."
         )
         boolean abstractFixedNodeOption = false;
 
         @CommandLine.Option(
-            names = { "--tokenizing-method" },
-            defaultValue = "REGULAR",
-            description = "Selects the tokenizing method that should be used (case-sensitive): "
-                + "Regular (`REGULAR`), regular with prefix notation for binary expressions (`PREFIX`), "
-                + "prefix without parentheses around literals (`PREFIX_FEWER_PARENTHESES`), "
-                + "or only statements (`STATEMENT_LEVEL`). Default: REGULAR"
+                names = { "--tokenizing-method" },
+                defaultValue = "REGULAR",
+                description = "Selects the tokenizing method that should be used (case-sensitive): "
+                    + "Regular (`REGULAR`), regular with prefix notation for binary expressions (`PREFIX`), "
+                    + "prefix without parentheses around literals (`PREFIX_FEWER_PARENTHESES`), "
+                    + "or only statements (`STATEMENT_LEVEL`). Default: REGULAR"
         )
         TokenizingMethod tokenizingMethod;
 
         @CommandLine.Option(
-            names = { MASKED_BLOCK_ID },
-            description = "Mask the block with the given ID. Default: no masking."
+                names = { MASKED_BLOCK_ID },
+                description = "Mask the block with the given ID. Default: no masking."
         )
         String maskedBlockId = null;
 
         @CommandLine.Option(
-            names = { MASKED_INPUT_KEY },
-            description = "Mask the input of a block. Valid input keys are the same as in the Scratch JSON. "
-                + "Use together with " + MASKED_BLOCK_ID
-                + " to specify the block that takes the input. Default: no masking."
+                names = { MASKED_INPUT_KEY },
+                description = "Mask the input of a block. Valid input keys are the same as in the Scratch JSON. "
+                    + "Use together with " + MASKED_BLOCK_ID
+                    + " to specify the block that takes the input. Default: no masking."
         )
         String maskedInputKey = null;
 
         @CommandLine.Option(
-            names = { MASKED_FIXED_NODE_OPTION },
-            description = "Mask the fixed node option of the block with the given ID. Default: no masking."
+                names = { MASKED_FIXED_NODE_OPTION },
+                description = "Mask the fixed node option of the block with the given ID. Default: no masking."
         )
         String maskedFixedNodeOption = null;
 
@@ -404,7 +399,7 @@ public class EmbeddedKittensMain implements Callable<Integer> {
             if (maskedBlockId != null) {
                 if (maskedFixedNodeOption != null) {
                     throwParameterException(
-                        "You cannot use", MASKED_BLOCK_ID, "together with", MASKED_FIXED_NODE_OPTION
+                            "You cannot use", MASKED_BLOCK_ID, "together with", MASKED_FIXED_NODE_OPTION
                     );
                 }
 
@@ -418,7 +413,7 @@ public class EmbeddedKittensMain implements Callable<Integer> {
             if (maskedFixedNodeOption != null) {
                 if (maskedInputKey != null) {
                     throwParameterException(
-                        "You cannot use", MASKED_INPUT_KEY, "together with", MASKED_FIXED_NODE_OPTION
+                            "You cannot use", MASKED_INPUT_KEY, "together with", MASKED_FIXED_NODE_OPTION
                     );
                 }
 
@@ -427,7 +422,7 @@ public class EmbeddedKittensMain implements Callable<Integer> {
 
             if (maskedInputKey != null) {
                 throwParameterException(
-                    "You must also use", MASKED_BLOCK_ID, "to specify the ID of block whose input should be masked"
+                        "You must also use", MASKED_BLOCK_ID, "to specify the ID of block whose input should be masked"
                 );
             }
 

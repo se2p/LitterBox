@@ -18,10 +18,6 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.ggnn;
 
-import java.util.*;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
-
 import de.uni_passau.fim.se2.embedded_kittens.util.ProcedureMapping;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -51,12 +47,16 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Pair;
 
+import java.util.*;
+import java.util.logging.Logger;
+import java.util.stream.Stream;
+
 abstract class GgnnGraphEdgesVisitor implements ScratchVisitor {
 
     private static final Set<Class<? extends ASTNode>> IGNORED_NODE_TYPES = Set.of(
-        DeclarationStmtList.class,
-        DeclarationStmt.class,
-        SetStmtList.class
+            DeclarationStmtList.class,
+            DeclarationStmt.class,
+            SetStmtList.class
     );
 
     protected final List<Pair<ASTNode>> edges = new ArrayList<>();
@@ -133,8 +133,7 @@ abstract class GgnnGraphEdgesVisitor implements ScratchVisitor {
             .filter(c -> {
                 if (node instanceof StrId) {
                     return !(c instanceof StringLiteral);
-                }
-                else {
+                } else {
                     return true;
                 }
             })
@@ -217,8 +216,8 @@ abstract class GgnnGraphEdgesVisitor implements ScratchVisitor {
         }
 
         private <T extends DataExpr> void connectVars(
-            final Expression guardExpression, final Map<String, List<T>> guards,
-            final Map<String, List<T>> inBlock
+                final Expression guardExpression, final Map<String, List<T>> guards,
+                final Map<String, List<T>> inBlock
         ) {
             for (Map.Entry<String, List<T>> usedVar : inBlock.entrySet()) {
                 if (!guards.containsKey(usedVar.getKey())) {
@@ -232,8 +231,8 @@ abstract class GgnnGraphEdgesVisitor implements ScratchVisitor {
         }
 
         private void connectAttributes(
-            final Expression guardExpression, final List<ASTNode> guards,
-            final List<ASTNode> inBlock
+                final Expression guardExpression, final List<ASTNode> guards,
+                final List<ASTNode> inBlock
         ) {
             for (ASTNode guard : guards) {
                 for (ASTNode used : inBlock) {
@@ -267,7 +266,7 @@ abstract class GgnnGraphEdgesVisitor implements ScratchVisitor {
             Stream<ASTNode> attributes = v.getAttributes().stream();
 
             Stream.concat(variables, attributes)
-                .forEach(variable -> edges.add(Pair.of(assignTo.getSecond(), variable)));
+                    .forEach(variable -> edges.add(Pair.of(assignTo.getSecond(), variable)));
         }
     }
 
@@ -302,8 +301,7 @@ abstract class GgnnGraphEdgesVisitor implements ScratchVisitor {
 
             if (passedArguments.isEmpty()) {
                 edges.add(Pair.of(callStmt, procedure));
-            }
-            else {
+            } else {
                 for (int i = 0; i < passedArguments.size(); ++i) {
                     edges.add(Pair.of(passedArguments.get(i), parameters.get(i)));
                 }
