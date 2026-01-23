@@ -52,6 +52,16 @@ public class GoboscriptProjectExporter extends ProjectExporter {
     private Set<String> availableAssets;
 
     /**
+     * Global variables declared in Stage, to be shared with sprite visitors.
+     */
+    private Set<String> globalVariables = new HashSet<>();
+
+    /**
+     * Global lists declared in Stage, to be shared with sprite visitors.
+     */
+    private Set<String> globalLists = new HashSet<>();
+
+    /**
      * Exports a program to a full Goboscript project directory.
      *
      * @param sb3File   Path to the source .sb3 file (required for asset extraction)
@@ -69,9 +79,25 @@ public class GoboscriptProjectExporter extends ProjectExporter {
         // Extract assets from sb3 and collect available asset names
         availableAssets = extractAssets(sb3File, outputDir);
 
-        // Export each actor to separate .gs file
+        // Clear global variables/lists before processing
+        globalVariables.clear();
+        globalLists.clear();
+
+        // Export Stage first to collect global variables/lists
+        ActorDefinition stage = null;
         for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
-            exportActor(actor, program, outputDir);
+            if (actor.isStage()) {
+                stage = actor;
+                exportActor(actor, program, outputDir);
+                break;
+            }
+        }
+
+        // Export remaining actors (sprites), passing global variables/lists
+        for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
+            if (!actor.isStage()) {
+                exportActor(actor, program, outputDir);
+            }
         }
 
         logExportSummary(outputDir);
@@ -116,7 +142,20 @@ public class GoboscriptProjectExporter extends ProjectExporter {
         visitor.setCurrentActor(actor);
         visitor.setAssetPrefix(ASSETS_DIR + "/");
         visitor.setAvailableAssets(availableAssets);
+
+        // For sprites, pass global variables/lists from Stage
+        if (!actor.isStage()) {
+            visitor.setGlobalVariables(globalVariables);
+            visitor.setGlobalLists(globalLists);
+        }
+
         actor.accept(visitor);
+
+        // After processing Stage, capture its global variables/lists
+        if (actor.isStage()) {
+            globalVariables = visitor.getGlobalVariables();
+            globalLists = visitor.getGlobalLists();
+        }
 
         String code = visitor.getOutput();
         Files.writeString(actorFile, code, StandardCharsets.UTF_8);

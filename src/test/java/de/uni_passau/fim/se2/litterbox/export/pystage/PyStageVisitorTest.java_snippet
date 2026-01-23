@@ -1,0 +1,20 @@
+    @Test
+    public void testStageCostumeBlocks() throws IOException, ParsingException {
+        // Test that Stage uses backdrop methods for switch costume
+        String code = """
+                when green flag clicked
+                switch costume to [backdrop1 v]
+                next costume
+                """;
+
+        Program program = parseProgram(code, "Stage");
+        String result = PyStageVisitor.of(program);
+
+        // Verify correct method calls for Stage
+        assertThat(result).contains("stage.switch_backdrop_to(\"backdrop1\")");
+        assertThat(result).contains("stage.next_backdrop()");
+        
+        // Verify it does NOT use sprite methods
+        assertThat(result).doesNotContain("switch_costume_to");
+        assertThat(result).doesNotContain("next_costume");
+    }

@@ -235,12 +235,12 @@ public class PyStageAllBlocksUnitTests implements JsonTest {
 
     @Test
     public void testChangeSizeBy() {
-        assertBlock(ChangeSizeBy.class, "self.change_size_by(10)");
+        assertBlock(ChangeSizeBy.class, "self.change_size_by(min(max(10, -25000), 25000))");
     }
 
     @Test
     public void testSetSizeTo() {
-        assertBlock(SetSizeTo.class, "self.set_size_to(100)");
+        assertBlock(SetSizeTo.class, "self.set_size_to(min(max(100, 0), 25000))");
     }
 
     @Test
@@ -328,6 +328,11 @@ public class PyStageAllBlocksUnitTests implements JsonTest {
     }
     
     @Test
+    public void testPickRandom() {
+        assertBlock(PickRandom.class, "_pick_random(");
+    }
+    
+    @Test
     public void testSay() {
         assertBlock(Say.class, "self.say(\"Hello!\")");
     }
@@ -369,7 +374,7 @@ public class PyStageAllBlocksUnitTests implements JsonTest {
     
     @Test
     public void testChangeLayerBy() {
-        assertBlock(ChangeLayerBy.class, "self.change_layer_by(1)");
+        assertBlock(ChangeLayerBy.class, "self._core.looks_goforwardbackwardlayers_forward(1)");
     }
     
     @Test

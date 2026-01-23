@@ -520,7 +520,7 @@ public class PyStageVisitorTest implements JsonTest {
     }
     @Test
     public void testStageBroadcastHandler() throws IOException, ParsingException {
-        // Test that Stage uses manual registration for broadcast handlers
+        // Test that Stage uses when_i_receive for broadcast handlers
         String code = """
                 when I receive [message1 v]
                 wait (1) secs
@@ -530,11 +530,11 @@ public class PyStageVisitorTest implements JsonTest {
         String result = PyStageVisitor.of(program);
 
         // Verify correct event handler for Stage broadcast
-        // It should NOT contain .when_i_receive_message
-        assertThat(result).doesNotContain("stage.when_i_receive_message(");
-        // It SHOULD contain manual registration
-        assertThat(result).contains("stage._core.code_manager.code_blocks[\"stage_on_message_0\"] = stage_on_message_0");
-        assertThat(result).contains("stage._core.code_manager.broadcast_blocks.setdefault(\"message1\", []).append(\"stage_on_message_0\")");
+        assertThat(result).contains("stage.when_i_receive(\"message1\", stage_on_message_0)");
+        
+        // It should NOT contain manual registration
+        assertThat(result).doesNotContain("stage._core.code_manager.code_blocks[\"stage_on_message_0\"] = stage_on_message_0");
+        assertThat(result).doesNotContain("stage._core.code_manager.broadcast_blocks.setdefault(\"message1\", []).append(\"stage_on_message_0\")");
     }
     @Test
     public void testProcedureNameMismatch() throws IOException, ParsingException {
@@ -880,5 +880,27 @@ public class PyStageVisitorTest implements JsonTest {
         // say("Hello \"World\"")
         assertThat(result).contains("say(\"Hello \\\"World\\\"\")");
     }
-}
 
+
+    @Test
+    public void testStageCostumeBlocks() throws IOException, ParsingException {
+        // Test that Stage uses backdrop methods for switch costume
+        String code = """
+                when green flag clicked
+                switch costume to [backdrop1]
+                next costume
+                """;
+
+        Program program = parseProgram(code, "Stage");
+        String result = PyStageVisitor.of(program);
+
+        // Verify correct method calls for Stage
+        assertThat(result).contains("self.switch_backdrop_to(\"images/backdrop1.png\")");
+        assertThat(result).contains("self.next_backdrop()");
+        
+        // Verify it does NOT use sprite methods
+        assertThat(result).doesNotContain("self.switch_costume_to");
+        assertThat(result).doesNotContain("self.next_costume");
+    }
+
+}

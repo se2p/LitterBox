@@ -33,6 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.Tempo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
@@ -44,6 +45,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.ColorLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.MutationMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.SoundMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
@@ -79,7 +84,6 @@ import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.export.AbstractExportVisitor;
 import de.uni_passau.fim.se2.litterbox.export.ScratchKeyCode;
 import de.uni_passau.fim.se2.litterbox.export.StringExprNameVisitor;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.PrintStream;
 import java.util.HashSet;
@@ -120,7 +124,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
      * Set of escaped variable names declared in the Stage (global scope).
      * These are accessible from all sprites.
      */
-    private final Set<String> globalVariables = new HashSet<>();
+    private Set<String> globalVariables = new HashSet<>();
 
     /**
      * Set of escaped variable names declared in the current sprite (local scope).
@@ -131,7 +135,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     /**
      * Set of escaped list names declared in the Stage (global scope).
      */
-    private final Set<String> globalLists = new HashSet<>();
+    private Set<String> globalLists = new HashSet<>();
 
     /**
      * Set of escaped list names declared in the current sprite (local scope).
@@ -139,52 +143,10 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     private final Set<String> localLists = new HashSet<>();
 
     /**
-     * Set of Goboscript built-in command names that could conflict with user-defined procedure names.
-     * When a procedure has one of these names, it must be suffixed to avoid ambiguity.
+     * Map of variable names to their initial values (from SetStmtList).
+     * Used to emit variable declarations with initial values.
      */
-    private static final Set<String> GOBOSCRIPT_RESERVED_COMMANDS = Set.of(
-            // Motion blocks
-            "move", "turn_left", "turn_right", "goto", "glide", "glide_to", "glide_to_mouse_pointer",
-            "glide_to_random_position", "goto_mouse_pointer", "goto_random_position",
-            "point_in_direction", "point_towards", "point_towards_mouse_pointer", "point_towards_random_direction",
-            "change_x", "change_y", "set_x", "set_y", "if_on_edge_bounce",
-            "set_rotation_style_left_right", "set_rotation_style_do_not_rotate", "set_rotation_style_all_around",
-            // Looks blocks
-            "say", "think", "show", "hide", "switch_costume", "next_costume", "switch_backdrop",
-            "next_backdrop", "previous_backdrop", "random_backdrop", "change_size", "set_size",
-            "change_color_effect", "set_color_effect", "change_brightness_effect", "set_brightness_effect",
-            "change_ghost_effect", "set_ghost_effect", "change_fisheye_effect", "set_fisheye_effect",
-            "change_whirl_effect", "set_whirl_effect", "change_pixelate_effect", "set_pixelate_effect",
-            "change_mosaic_effect", "set_mosaic_effect", "clear_graphic_effects",
-            "go_forward", "go_backward", "goto_front", "goto_back",
-            // Sound blocks
-            "start_sound", "play_sound_until_done", "stop_all_sounds",
-            "change_volume", "set_volume", "change_pitch_effect", "set_pitch_effect",
-            "change_pan_effect", "set_pan_effect", "clear_sound_effects",
-            // Control blocks
-            "wait", "clone", "delete_this_clone", "stop_all", "stop_this_script", "stop_other_scripts",
-            // Sensing blocks
-            "ask", "reset_timer", "set_drag_mode_draggable", "set_drag_mode_not_draggable",
-            // Pen blocks
-            "erase_all", "stamp", "pen_down", "pen_up", "set_pen_color", "change_pen_size", "set_pen_size",
-            "change_pen_hue", "set_pen_hue", "change_pen_saturation", "set_pen_saturation",
-            "change_pen_brightness", "set_pen_brightness", "change_pen_transparency", "set_pen_transparency",
-            // Events
-            "broadcast", "broadcast_and_wait",
-            // Variables/Lists
-            "add", "delete", "insert", "replace",
-            // Music
-            "rest", "play", "set_tempo", "change_tempo"
-    );
-
-    /**
-     * Set of Goboscript keywords that cannot be used as variable or list names.
-     */
-    private static final Set<String> GOBOSCRIPT_KEYWORDS = Set.of(
-            "if", "else", "forever", "repeat", "until", "wait",
-            "onflag", "onkey", "onclick", "onbackdrop", "on", "onclone",
-            "proc", "var", "list", "costumes", "sounds", "local", "global"
-    );
+    private final java.util.Map<String, String> variableInitialValues = new java.util.HashMap<>();
 
     /**
      * Creates a new Goboscript visitor with internal buffering.
@@ -214,6 +176,46 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
      */
     public void setAvailableAssets(Set<String> assets) {
         this.availableAssets = assets;
+    }
+
+    /**
+     * Sets the global variables (declared in Stage) for cross-sprite reference validation.
+     * This should be called before visiting non-Stage actors.
+     *
+     * @param variables Set of escaped variable names from Stage
+     */
+    public void setGlobalVariables(Set<String> variables) {
+        this.globalVariables = new HashSet<>(variables);
+    }
+
+    /**
+     * Sets the global lists (declared in Stage) for cross-sprite reference validation.
+     * This should be called before visiting non-Stage actors.
+     *
+     * @param lists Set of escaped list names from Stage
+     */
+    public void setGlobalLists(Set<String> lists) {
+        this.globalLists = new HashSet<>(lists);
+    }
+
+    /**
+     * Returns the set of global variables (declared in Stage).
+     * Used by the exporter to pass to sprite visitors.
+     *
+     * @return Set of escaped variable names
+     */
+    public Set<String> getGlobalVariables() {
+        return new HashSet<>(globalVariables);
+    }
+
+    /**
+     * Returns the set of global lists (declared in Stage).
+     * Used by the exporter to pass to sprite visitors.
+     *
+     * @return Set of escaped list names
+     */
+    public Set<String> getGlobalLists() {
+        return new HashSet<>(globalLists);
     }
 
     /**
@@ -247,58 +249,211 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(ActorDefinition node) {
-        currentActor = node;
-        validCostumes.clear();
-        costumeCount = 0;
-        definedProcedures.clear();
-        localVariables.clear();
-        localLists.clear();
+        prepareActorScope(node);
 
-        // Collect defined procedures for validation
-        for (ProcedureDefinition proc : node.getProcedureDefinitionList().getList()) {
-            definedProcedures.add(getGoboscriptProcedureName(proc));
-        }
-
-        String actorType = node.isStage() ? "stage" : "sprite";
-        emitNoSpace("# " + actorType + " " + escapeIdentifier(node.getIdent().getName()));
-        newLine();
-        newLine();
+        emitActorHeader(node);
 
         node.getDecls().accept(this);
 
         if (node.getActorMetadata() != null) {
-            for (ImageMetadata costume : node.getActorMetadata().getCostumes().getList()) {
-                if (!isAssetAvailable(costume.getMd5ext())) {
-                    continue;
-                }
-                validCostumes.add(costume.getName());
-                costumeCount++;
-                emitAssetDeclaration("costumes", costume.getMd5ext(), costume.getName());
-            }
+            emitAssets(node.getActorMetadata());
+        }
 
-            // If all costumes were filtered out, we must emit at least one placeholder costume
-            // to satisfy Goboscript's requirement (it errors on "no costumes").
-            if (validCostumes.isEmpty() && availableAssets != null && !availableAssets.isEmpty()) {
-                String placeholderAsset = availableAssets.iterator().next();
-                emitNoSpace("# Warning: All original costumes/backdrops were missing. Using placeholder.");
-                newLine();
-                emitAssetDeclaration("costumes", placeholderAsset, "placeholder");
-                validCostumes.add("placeholder");
-                costumeCount++;
-            }
-            for (SoundMetadata sound : node.getActorMetadata().getSounds().getList()) {
-                // Skip sounds that don't exist in the available assets
-                if (!isAssetAvailable(sound.getMd5ext())) {
-                    continue;
-                }
-                emitAssetDeclaration("sounds", sound.getMd5ext(), sound.getName());
-            }
+        // Emit sprite metadata commands (position, size, direction, visibility, layer order)
+        // These must come after costumes/sounds but before procedures/scripts
+        if (!node.isStage()) {
+            emitSpriteMetadata(node);
         }
 
         node.getProcedureDefinitionList().accept(this);
         node.getScripts().accept(this);
 
         currentActor = null;
+    }
+
+    private void prepareActorScope(ActorDefinition node) {
+        currentActor = node;
+        validCostumes.clear();
+        costumeCount = 0;
+        definedProcedures.clear();
+        localVariables.clear();
+        localLists.clear();
+        variableInitialValues.clear();
+
+        // Collect defined procedures for validation
+        for (ProcedureDefinition proc : node.getProcedureDefinitionList().getList()) {
+            definedProcedures.add(getGoboscriptProcedureName(proc));
+        }
+
+        // Pre-collect initial variable values from SetStmtList for use in declarations
+        collectVariableInitialValues(node);
+    }
+
+    private void emitActorHeader(ActorDefinition node) {
+        String actorType = node.isStage() ? "stage" : "sprite";
+        emitNoSpace("# " + actorType + " " + escapeIdentifier(node.getIdent().getName()));
+        newLine();
+        newLine();
+    }
+
+    private void emitAssets(de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata metadata) {
+        for (ImageMetadata costume : metadata.getCostumes().getList()) {
+            if (!isAssetAvailable(costume.getMd5ext())) {
+                continue;
+            }
+            validCostumes.add(costume.getName());
+            costumeCount++;
+            emitAssetDeclaration("costumes", costume.getMd5ext(), costume.getName());
+        }
+
+        // If all costumes were filtered out, we must emit at least one placeholder costume
+        // to satisfy Goboscript's requirement (it errors on "no costumes").
+        if (validCostumes.isEmpty() && availableAssets != null && !availableAssets.isEmpty()) {
+            String placeholderAsset = availableAssets.iterator().next();
+            emitNoSpace("# Warning: All original costumes/backdrops were missing. Using placeholder.");
+            newLine();
+            emitAssetDeclaration("costumes", placeholderAsset, "placeholder");
+            validCostumes.add("placeholder");
+            costumeCount++;
+        }
+        for (SoundMetadata sound : metadata.getSounds().getList()) {
+            // Skip sounds that don't exist in the available assets
+            if (!isAssetAvailable(sound.getMd5ext())) {
+                continue;
+            }
+            emitAssetDeclaration("sounds", sound.getMd5ext(), sound.getName());
+        }
+    }
+
+    /**
+     * Collects initial variable values from the SetStmtList for use in declarations.
+     */
+    private void collectVariableInitialValues(ActorDefinition node) {
+        for (var stmt : node.getSetStmtList().getStmts()) {
+            if (stmt instanceof SetVariableTo setVar) {
+                Identifier id = setVar.getIdentifier();
+                String varName = null;
+                if (id instanceof Variable var) {
+                    varName = var.getName().getName();
+                } else if (id instanceof Qualified qual && qual.getSecond() instanceof Variable var) {
+                    varName = var.getName().getName();
+                }
+                if (varName != null) {
+                    String escapedName = escapeIdentifier(varName);
+                    // Get the initial value as a string
+                    GoboscriptVisitor tempVisitor = new GoboscriptVisitor();
+                    tempVisitor.setProgram(this.program);
+                    tempVisitor.setCurrentActor(this.currentActor);
+                    setVar.getExpr().accept(tempVisitor);
+                    String valueStr = tempVisitor.getOutput().trim();
+                    variableInitialValues.put(escapedName, valueStr);
+                }
+            }
+        }
+    }
+
+    /**
+     * Emits sprite metadata commands for position, size, direction, visibility, and layer order.
+     */
+    private void emitSpriteMetadata(ActorDefinition node) {
+        Double xpos = null;
+        Double ypos = null;
+        Double size = null;
+        Double direction = null;
+        Boolean visible = null;
+        Integer layerOrder = null;
+
+        // Extract metadata values from SetStmtList
+        for (var stmt : node.getSetStmtList().getStmts()) {
+            if (stmt instanceof SetAttributeTo setAttr) {
+                String attrName = getAttributeNameFromExpr(setAttr.getStringExpr());
+                if (attrName == null) {
+                    continue;
+                }
+                Double numValue = getNumericValue(setAttr.getExpr());
+                switch (attrName) {
+                    case "x" -> xpos = numValue;
+                    case "y" -> ypos = numValue;
+                    case "size" -> size = numValue;
+                    case "direction" -> direction = numValue;
+                    case "visible" -> {
+                        // Only set visible if we have a valid numeric value
+                        // Otherwise leave it null to avoid incorrectly emitting hide;
+                        if (numValue != null) {
+                            visible = numValue != 0;
+                        }
+                    }
+                    case "layerOrder" -> layerOrder = numValue != null ? numValue.intValue() : null;
+                    default -> { }
+                }
+            }
+        }
+
+        // Emit layer order first (if present and not default)
+        if (layerOrder != null && layerOrder != 1) {
+            emitNoSpace("set_layer_order " + layerOrder + ";");
+            newLine();
+        }
+
+        // Emit visibility if hidden (visible=false means emit hide;)
+        if (visible != null && !visible) {
+            emitNoSpace("hide;");
+            newLine();
+        }
+
+        // Emit position if non-zero
+        if (xpos != null && xpos != 0) {
+            emitNoSpace("set_x " + formatNumber(xpos) + ";");
+            newLine();
+        }
+        if (ypos != null && ypos != 0) {
+            emitNoSpace("set_y " + formatNumber(ypos) + ";");
+            newLine();
+        }
+
+        // Emit size if not default (100)
+        if (size != null && size != 100) {
+            emitNoSpace("set_size " + formatNumber(size) + ";");
+            newLine();
+        }
+
+        // Emit direction if not default (90)
+        if (direction != null && direction != 90) {
+            emitNoSpace("point_in_direction " + formatNumber(direction) + ";");
+            newLine();
+        }
+    }
+
+    /**
+     * Extracts the attribute name from a StringExpr.
+     */
+    private String getAttributeNameFromExpr(StringExpr expr) {
+        if (expr instanceof StringLiteral lit) {
+            return lit.getText();
+        } else if (expr instanceof FixedAttribute fixedAttr) {
+            return fixedAttr.getTypeName();
+        }
+        return null;
+    }
+
+    /**
+     * Extracts a numeric value from an expression if it's a NumberLiteral.
+     */
+    private Double getNumericValue(de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression expr) {
+        if (expr instanceof NumberLiteral num) {
+            return num.getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Formats a number for output, using integer format when appropriate.
+     */
+    private String formatNumber(double value) {
+        if (value == Math.floor(value) && !Double.isInfinite(value)) {
+            return String.valueOf((long) value);
+        }
+        return String.valueOf(value);
     }
 
     @Override
@@ -333,6 +488,12 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
                 globalVariables.add(escapedName);
             } else {
                 localVariables.add(escapedName);
+            }
+            // Emit initial value if available
+            String initialValue = variableInitialValues.get(escapedName);
+            if (initialValue != null && !initialValue.isEmpty()) {
+                emitNoSpace(" = ");
+                emitNoSpace(initialValue);
             }
         }
         emitNoSpace(";");
@@ -1412,7 +1573,16 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(ProcedureDefinition node) {
         String procName = getGoboscriptProcedureName(node);
-        emitNoSpace("proc " + escapeProcedureName(procName));
+
+        // Determine if the procedure runs with warp (without screen refresh)
+        // In goboscript: "proc" = warp (run without screen refresh)
+        //                "nowarp proc" = no warp (normal execution with screen refresh)
+        boolean isWarp = isProcedureWarp(node);
+        if (isWarp) {
+            emitNoSpace("proc " + escapeProcedureName(procName));
+        } else {
+            emitNoSpace("nowarp proc " + escapeProcedureName(procName));
+        }
 
         List<ParameterDefinition> params = node.getParameterDefinitionList().getParameterDefinitions();
 
@@ -2075,48 +2245,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     }
 
     private String escapeIdentifier(String name) {
-        // Replace German umlauts (these expand to two characters, so handle before stripAccents)
-        name = name.replace("ä", "ae")
-                .replace("ö", "oe")
-                .replace("ü", "ue")
-                .replace("Ä", "Ae")
-                .replace("Ö", "Oe")
-                .replace("Ü", "Ue")
-                .replace("ß", "ss");
-
-        // Strip accents from remaining characters (á→a, é→e, ñ→n, etc.)
-        name = StringUtils.stripAccents(name);
-
-        // Use a StringBuilder to construct the sanitized name
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < name.length(); i++) {
-            char c = name.charAt(i);
-            // Only allow ASCII letters, digits, and underscores (Goboscript doesn't support Unicode identifiers)
-            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_') {
-                sb.append(c);
-            } else {
-                sb.append('_');
-            }
-        }
-
-        String result = sb.toString();
-
-        // Ensure it doesn't start with a digit (Goboscript identifiers must start with letter or underscore)
-        if (!result.isEmpty() && Character.isDigit(result.charAt(0))) {
-            result = "_" + result;
-        }
-
-        // Fallback for empty or underscore-only strings (Goboscript requires at least one letter)
-        if (result.isEmpty() || result.chars().allMatch(c -> c == '_')) {
-            return "var_" + Math.abs(name.hashCode());
-        }
-
-        // Handle keywords
-        if (GOBOSCRIPT_KEYWORDS.contains(result.toLowerCase())) {
-            return "_" + result;
-        }
-
-        return result;
+        return GoboscriptSanitizer.escapeIdentifier(name);
     }
 
     /**
@@ -2124,7 +2253,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
      * with variables of the same name in Scratch.
      */
     private String escapeListIdentifier(String name) {
-        return escapeIdentifier(name) + "_list";
+        return GoboscriptSanitizer.escapeListIdentifier(name);
     }
 
     /**
@@ -2132,11 +2261,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
      * Goboscript built-in command name.
      */
     private String escapeProcedureName(String name) {
-        String escaped = escapeIdentifier(name);
-        if (GOBOSCRIPT_RESERVED_COMMANDS.contains(escaped.toLowerCase())) {
-            return escaped + "_proc";
-        }
-        return escaped;
+        return GoboscriptSanitizer.escapeProcedureName(name);
     }
 
     @Override
@@ -2164,6 +2289,24 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     private String getGoboscriptProcedureName(ProcedureDefinition node) {
         return getProcedureName(node, AbstractExportVisitor::normalizeProcedureName);
+    }
+
+    /**
+     * Checks whether a procedure definition has the "warp" flag set (run without screen refresh).
+     *
+     * @param node The procedure definition
+     * @return true if warp is enabled, false otherwise (defaults to true if metadata unavailable)
+     */
+    private boolean isProcedureWarp(ProcedureDefinition node) {
+        ProcedureMetadata metadata = node.getMetadata();
+        if (metadata != null && metadata.getPrototype() instanceof NonDataBlockMetadata protoMeta) {
+            MutationMetadata mutation = protoMeta.getMutation();
+            if (mutation instanceof ProcedureMutationMetadata procMutation) {
+                return procMutation.isWarp();
+            }
+        }
+        // Default to warp=true if metadata is unavailable
+        return true;
     }
 
     private String getGoboscriptProcedureCallName(CallStmt node) {
