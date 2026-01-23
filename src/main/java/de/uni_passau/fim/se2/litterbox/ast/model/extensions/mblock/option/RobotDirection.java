@@ -79,8 +79,12 @@ public class RobotDirection extends AbstractNode implements MBlockOption {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof RobotDirection that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof RobotDirection that)) {
+            return false;
+        }
         return directionType == that.directionType;
     }
 

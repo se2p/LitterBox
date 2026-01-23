@@ -22,7 +22,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.metrics.BlockCount;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.RefactorSequence;
 
-public class NumberOfBlocksFitness implements MinimizingFitnessFunction<RefactorSequence>{
+public class NumberOfBlocksFitness implements MinimizingFitnessFunction<RefactorSequence> {
     private static final String NAME = "number_of_blocks_fitness";
 
     @Override

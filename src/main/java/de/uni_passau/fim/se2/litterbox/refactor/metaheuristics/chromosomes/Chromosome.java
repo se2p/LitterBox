@@ -33,8 +33,8 @@ import java.util.Objects;
  *
  * @param <C> the type of chromosomes produced as offspring by mutation and crossover
  * @apiNote Usually, it is desired that chromosomes of type {@code C} produce offspring of the same
- * type {@code C}. This requirement can be enforced at compile time by specifying a recursive type
- * parameter, here: {@code C extends Chromosome<C>}.
+ *          type {@code C}. This requirement can be enforced at compile time by specifying a recursive type
+ *          parameter, here: {@code C extends Chromosome<C>}.
  */
 public abstract class Chromosome<C extends Chromosome<C>> implements SelfTyped<C> {
 
@@ -123,8 +123,7 @@ public abstract class Chromosome<C extends Chromosome<C>> implements SelfTyped<C
      *                        chromosome, not {@code null}
      * @return the fitness of this chromosome as computed by the given fitness function
      * @throws NullPointerException if the given fitness function is {@code null}
-     * @apiNote This method is primarily intended as syntactic sugar to allow for a more idiomatic,
-     * OOP-like use.
+     * @apiNote This method is primarily intended as syntactic sugar to allow for a more idiomatic, OOP-like use.
      */
     public double getFitness(final FitnessFunction<C> fitnessFunction) {
         Objects.requireNonNull(fitnessFunction);

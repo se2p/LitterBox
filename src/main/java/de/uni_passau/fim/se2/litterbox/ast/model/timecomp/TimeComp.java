@@ -103,8 +103,12 @@ public class TimeComp extends AbstractNode implements FixedNodeOption {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TimeComp timeComp)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TimeComp timeComp)) {
+            return false;
+        }
         return type == timeComp.type;
     }
 

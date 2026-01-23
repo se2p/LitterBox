@@ -134,7 +134,8 @@ import java.util.*;
  * [/scratchblocks]
  */
 public class ScratchBlocksVisitor extends PrintVisitor implements
-        PenExtensionVisitor, TextToSpeechExtensionVisitor, MBlockVisitor, MusicExtensionVisitor, VideoSensingExtensionVisitor {
+        PenExtensionVisitor, TextToSpeechExtensionVisitor, MBlockVisitor, MusicExtensionVisitor,
+        VideoSensingExtensionVisitor {
 
     private static final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
 

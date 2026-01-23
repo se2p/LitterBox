@@ -314,7 +314,7 @@ public abstract class AbstractFixHeuristic implements FixHeuristic, ScratchVisit
      *
      * @param program the program to check
      * @return Optional.empty() if block ID is null/blank or block was deleted (check fixes.isEmpty() to distinguish),
-     * or Optional containing the NodeContext if block exists
+     *         or Optional containing the NodeContext if block exists
      */
     protected Optional<BlockIdNodeFinder.NodeContext> initializeAndCheckBlockDeletion(Program program) {
         this.program = program;

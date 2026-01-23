@@ -27,8 +27,8 @@ import java.util.function.UnaryOperator;
  *
  * @param <C> the type of chromosomes supported by this mutation operator
  * @apiNote Usually, it is desired that the offspring of two chromosomes of type {@code C} is again
- * of the same type {@code C}. This requirement can be enforced at compile time by specifying a
- * recursive type parameter, here: {@code C extends Chromosome<C>}.
+ *          of the same type {@code C}. This requirement can be enforced at compile time by specifying a
+ *          recursive type parameter, here: {@code C extends Chromosome<C>}.
  */
 @FunctionalInterface
 public interface Mutation<C extends Chromosome<C>> extends UnaryOperator<C> {

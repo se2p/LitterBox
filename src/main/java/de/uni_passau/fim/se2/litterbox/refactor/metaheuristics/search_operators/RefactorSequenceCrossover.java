@@ -34,6 +34,7 @@ public class RefactorSequenceCrossover implements Crossover<RefactorSequence> {
     /**
      * Applies this crossover operator to the two given non-null parent chromosomes {@code parent1}
      * and {@code parent2}, and returns the resulting pair of offspring chromosomes.
+     *
      * <p>
      * Note: an offspring can equal one of its parents (in terms of {@link Chromosome#equals
      * equals()}. While not an absolute requirement, it is generally advisable parents and offspring
