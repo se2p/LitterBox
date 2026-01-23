@@ -103,16 +103,4 @@ deploy-gitlab:
     - 'mvn deploy -s ci_settings.xml'
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE != "schedule"
-
-nix-build:
-  stage: deploy
-  image: docker.io/nixos/nix
-  script:
-    - nix --experimental-features 'nix-command flakes' build --print-build-logs
-  rules:
-    - changes:
-        - default.nix
-        - flake.lock
-        - flake.nix
-        - pom.xml
 ...
