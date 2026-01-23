@@ -1,0 +1,274 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "backdrop1",
+                    "dataFormat": "svg",
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Sprite1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "6c1Mb+Jk._!CP_a6PcS5": {
+                    "opcode": "procedures_definition",
+                    "next": ":0rm0D#G+RHa?*OU67[R",
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "/#~`*oZ5W7#~`/O_lGrG"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 44,
+                    "y": 44
+                },
+                "/#~`*oZ5W7#~`/O_lGrG": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "6c1Mb+Jk._!CP_a6PcS5",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "bla",
+                        "argumentids": "[]",
+                        "argumentnames": "[]",
+                        "argumentdefaults": "[]",
+                        "warp": "false"
+                    }
+                },
+                ":0rm0D#G+RHa?*OU67[R": {
+                    "opcode": "data_setvariableto",
+                    "next": "k|;f^_sAP;}sZXnU%A}^",
+                    "parent": "6c1Mb+Jk._!CP_a6PcS5",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "y/8k$aO;5*EF3r^z9IIZ": {
+                    "opcode": "event_whenflagclicked",
+                    "next": ";j.r/3.,I,YJ!;6O!Xj@",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 408,
+                    "y": 34
+                },
+                ";j.r/3.,I,YJ!;6O!Xj@": {
+                    "opcode": "control_wait",
+                    "next": "SrS|`IiFni)I8uL_Yqo:",
+                    "parent": "y/8k$aO;5*EF3r^z9IIZ",
+                    "inputs": {
+                        "DURATION": [
+                            3,
+                            [
+                                12,
+                                "my variable",
+                                "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                            ],
+                            [
+                                5,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "k|;f^_sAP;}sZXnU%A}^": {
+                    "opcode": "sensing_askandwait",
+                    "next": "GG0Apqknq|;!woza*yEH",
+                    "parent": ":0rm0D#G+RHa?*OU67[R",
+                    "inputs": {
+                        "QUESTION": [
+                            3,
+                            "D:Vl-.2;^RMpx-/dx;Im",
+                            [
+                                10,
+                                "What's your name?"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "D:Vl-.2;^RMpx-/dx;Im": {
+                    "opcode": "sensing_answer",
+                    "next": null,
+                    "parent": "k|;f^_sAP;}sZXnU%A}^",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "SrS|`IiFni)I8uL_Yqo:": {
+                    "opcode": "sound_setvolumeto",
+                    "next": null,
+                    "parent": ";j.r/3.,I,YJ!;6O!Xj@",
+                    "inputs": {
+                        "VOLUME": [
+                            3,
+                            "5@JUG}).OF7PO}{A[,/A",
+                            [
+                                4,
+                                "100"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "5@JUG}).OF7PO}{A[,/A": {
+                    "opcode": "sound_volume",
+                    "next": null,
+                    "parent": "SrS|`IiFni)I8uL_Yqo:",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "GG0Apqknq|;!woza*yEH": {
+                    "opcode": "sound_changevolumeby",
+                    "next": null,
+                    "parent": "k|;f^_sAP;}sZXnU%A}^",
+                    "inputs": {
+                        "VOLUME": [
+                            3,
+                            "N8_l$M8So1G|I,c)/z9r",
+                            [
+                                4,
+                                "-10"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "N8_l$M8So1G|I,c)/z9r": {
+                    "opcode": "sound_volume",
+                    "next": null,
+                    "parent": "GG0Apqknq|;!woza*yEH",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "Meow",
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40682,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "2.3.0",
+        "agent": "no last lexical use connection should be made between scripts"
+    }
+}
