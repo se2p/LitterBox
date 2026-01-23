@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.algorithms;
 
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.chromosomes.Solution;
 import de.uni_passau.fim.se2.litterbox.refactor.metaheuristics.fitness_functions.FitnessFunction;
-import de.uni_passau.fim.se2.litterbox.utils.Pair;
 
 import java.util.*;
 

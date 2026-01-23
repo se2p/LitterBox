@@ -39,7 +39,6 @@ public class NumberOfSmells implements MinimizingFitnessFunction<RefactorSequenc
     }
 
     /**
-     * <p>
      * Computes and returns the fitness value of the given solution {@code c}.
      *
      * @param refactorSequence the solution to rate
@@ -51,9 +50,9 @@ public class NumberOfSmells implements MinimizingFitnessFunction<RefactorSequenc
         Program refactoredProgram = refactorSequence.getRefactoredProgram();
 
         Set<Issue> issues = new LinkedHashSet<>();
-        for (IssueFinder iF : issueFinders) {
-            iF.setIgnoreLooseBlocks(ignoreLooseBlocks);
-            issues.addAll(iF.check(refactoredProgram));
+        for (IssueFinder issueFinder : issueFinders) {
+            issueFinder.setIgnoreLooseBlocks(ignoreLooseBlocks);
+            issues.addAll(issueFinder.check(refactoredProgram));
         }
 
         return issues.size();

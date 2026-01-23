@@ -32,8 +32,8 @@ import java.util.function.BiFunction;
  *
  * @param <C> the type of chromosomes supported by this crossover operator
  * @apiNote Usually, it is desired that the offspring of two chromosomes of type {@code C} is again
- * of the same type {@code C}. This requirement can be enforced at compile time by specifying a
- * recursive type parameter, here: {@code C extends Chromosome<C>}.
+ *          of the same type {@code C}. This requirement can be enforced at compile time by specifying a
+ *          recursive type parameter, here: {@code C extends Chromosome<C>}.
  */
 @FunctionalInterface
 public interface Crossover<C extends Chromosome<C>> extends BiFunction<C, C, Pair<C>> {
@@ -53,6 +53,7 @@ public interface Crossover<C extends Chromosome<C>> extends BiFunction<C, C, Pai
     /**
      * Applies this crossover operator to the two given non-null parent chromosomes {@code parent1}
      * and {@code parent2}, and returns the resulting pair of offspring chromosomes.
+     *
      * <p>
      * Note: an offspring can equal one of its parents (in terms of {@link Chromosome#equals
      * equals()}. While not an absolute requirement, it is generally advisable parents and offspring
@@ -75,7 +76,7 @@ public interface Crossover<C extends Chromosome<C>> extends BiFunction<C, C, Pai
      * @return the offspring formed by applying crossover to the two parents
      * @throws NullPointerException if an argument is {@code null}
      * @apiNote This method is equivalent to {@link Crossover#apply(C, C)} but instead of taking the
-     * parents as individual arguments it receives them as pair.
+     *          parents as individual arguments it receives them as pair.
      */
     default Pair<C> apply(final Pair<? extends C> parents) {
         return Objects.requireNonNull(parents).reduce(this);

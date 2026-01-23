@@ -79,8 +79,12 @@ public class RobotButton extends AbstractNode implements MBlockOption {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof RobotButton that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof RobotButton that)) {
+            return false;
+        }
         return buttonType == that.buttonType;
     }
 

@@ -84,8 +84,7 @@ public abstract class Solution<C extends Solution<C>> extends Chromosome<C> {
      *                        chromosome, not {@code null}
      * @return the fitness of this chromosome as computed by the given fitness function
      * @throws NullPointerException if the given fitness function is {@code null}
-     * @apiNote This method is primarily intended as syntactic sugar to allow for a more idiomatic,
-     * OOP-like use.
+     * @apiNote This method is primarily intended as syntactic sugar to allow for a more idiomatic, OOP-like use.
      */
     @Override
     public double getFitness(final FitnessFunction<C> fitnessFunction) {

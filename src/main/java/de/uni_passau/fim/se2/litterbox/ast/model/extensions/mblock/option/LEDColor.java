@@ -79,8 +79,12 @@ public class LEDColor extends AbstractNode implements MBlockOption {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof LEDColor that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof LEDColor that)) {
+            return false;
+        }
         return type == that.type;
     }
 

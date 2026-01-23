@@ -132,8 +132,18 @@ import java.util.List;
 
 public class CloneVisitor {
 
+    private final boolean freshBlockIds;
+
+    public CloneVisitor() {
+        this(false);
+    }
+
+    public CloneVisitor(boolean freshBlockIds) {
+        this.freshBlockIds = freshBlockIds;
+    }
+
     /**
-     * Apply the copying or transformation to an ASTNode
+     * Apply the copying or transformation to an ASTNode.
      *
      * @param node the original node
      * @return the transformed node
@@ -151,7 +161,7 @@ public class CloneVisitor {
     }
 
     /**
-     * Apply the copying or transformation to a list of ASTNodes
+     * Apply the copying or transformation to a list of ASTNodes.
      *
      * @param theList the original list of nodes
      * @return a copy of the list, with transformed content
@@ -3217,27 +3227,6 @@ public class CloneVisitor {
      */
     public ASTNode visit(MonitorParamMetadata node) {
         return new MonitorParamMetadata(node.getInputName(), node.getInputValue());
-    }
-
-    /**
-     * Default implementation of visit method for {@link DataBlockMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node DataBlockMetadata Node of which the children will
-     * be iterated
-     * @return the copy of the visited node
-     */
-    private final boolean freshBlockIds;
-
-    public CloneVisitor() {
-        this(false);
-    }
-
-    public CloneVisitor(boolean freshBlockIds) {
-        this.freshBlockIds = freshBlockIds;
     }
 
     /**

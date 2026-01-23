@@ -112,8 +112,12 @@ public class DragMode extends AbstractNode implements FixedNodeOption {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DragMode dragMode)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DragMode dragMode)) {
+            return false;
+        }
         return type == dragMode.type;
     }
 

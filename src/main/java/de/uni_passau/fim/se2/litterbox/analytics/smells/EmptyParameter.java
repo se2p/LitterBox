@@ -58,6 +58,7 @@ public class EmptyParameter extends AbstractIssueFinder {
 
     /**
      * Stores nodes that have already been handled by a specific visitor method (e.g., visit(SetXTo)).
+     *
      * <p>
      * When a specific visitor detects and reports an empty parameter, it adds the node to this set.
      * We continue traversal (super.visit) to ensure we find nested issues in other parameters.

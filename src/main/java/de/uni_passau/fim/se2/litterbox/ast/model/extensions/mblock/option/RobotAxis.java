@@ -79,8 +79,12 @@ public class RobotAxis extends AbstractNode implements MBlockOption {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof RobotAxis that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof RobotAxis that)) {
+            return false;
+        }
         return type == that.type;
     }
 

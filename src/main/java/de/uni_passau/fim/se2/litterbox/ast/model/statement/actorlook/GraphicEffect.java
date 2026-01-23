@@ -107,8 +107,12 @@ public class GraphicEffect extends AbstractNode implements FixedNodeOption {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GraphicEffect that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof GraphicEffect that)) {
+            return false;
+        }
         return type == that.type;
     }
 

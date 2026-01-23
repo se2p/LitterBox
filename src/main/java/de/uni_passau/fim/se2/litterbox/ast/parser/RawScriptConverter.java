@@ -155,8 +155,8 @@ final class RawScriptConverter {
     private static boolean isShadowParameter(final RawBlock.RawRegularBlock block) {
         return block.shadow()
                 && (
-                ProcedureOpcode.argument_reporter_string_number.name().equals(block.opcode())
+                        ProcedureOpcode.argument_reporter_string_number.name().equals(block.opcode())
                         || ProcedureOpcode.argument_reporter_boolean.name().equals(block.opcode())
-        );
+                );
     }
 }

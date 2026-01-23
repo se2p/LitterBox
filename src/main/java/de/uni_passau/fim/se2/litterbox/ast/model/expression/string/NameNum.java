@@ -98,8 +98,12 @@ public class NameNum extends AbstractNode implements FixedNodeOption {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof NameNum nameNum)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof NameNum nameNum)) {
+            return false;
+        }
         return type == nameNum.type;
     }
 

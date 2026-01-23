@@ -70,7 +70,7 @@ public class ImmediateResultHandler implements AnalysisResultHandler {
                     reportGenerator.generateReport(program, result);
                 }
             } else {
-                 throw new IllegalArgumentException("Unknown file type: " + output);
+                throw new IllegalArgumentException("Unknown file type: " + output);
             }
         } catch (IOException e) {
             log.warning(e.getMessage());

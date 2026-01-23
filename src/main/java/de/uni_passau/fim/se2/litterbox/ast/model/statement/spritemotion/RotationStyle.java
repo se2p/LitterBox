@@ -113,8 +113,12 @@ public class RotationStyle extends AbstractNode implements FixedNodeOption {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof RotationStyle that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof RotationStyle that)) {
+            return false;
+        }
         return type == that.type;
     }
 

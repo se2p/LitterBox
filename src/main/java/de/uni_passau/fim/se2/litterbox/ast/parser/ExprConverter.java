@@ -115,8 +115,7 @@ abstract class ExprConverter {
     }
 
     protected static boolean hasCorrectShadow(final RawInput exprBlock) {
-        return exprBlock.shadowType() == ShadowType.SHADOW || (
-                exprBlock.shadowType() == ShadowType.NO_SHADOW && !(exprBlock.input() instanceof BlockRef.IdRef)
-        );
+        return exprBlock.shadowType() == ShadowType.SHADOW
+                || (exprBlock.shadowType() == ShadowType.NO_SHADOW && !(exprBlock.input() instanceof BlockRef.IdRef));
     }
 }

@@ -108,7 +108,7 @@ public class RefactorSequence extends Solution<RefactorSequence> {
     }
 
     /**
-     * Copy constructor
+     * Copy constructor.
      *
      * @param other RefactoringSequence to copy
      */

@@ -97,10 +97,10 @@ public class CloneAnalysis {
         }
         return false;
         // TODO: Why does this not work with identity hashsets?
-//        Set<Stmt> statements = Sets.newIdentityHashSet();
-//        statements.addAll(statements1);
-//        statements..removeAll(statements2);
-//        return statements.size() != statements1.size();
+        // Set<Stmt> statements = Sets.newIdentityHashSet();
+        // statements.addAll(statements1);
+        // statements..removeAll(statements2);
+        // return statements.size() != statements1.size();
     }
 
     private boolean[][] getSimilarityMatrix(List<Stmt> normalizedStatements1, List<Stmt> normalizedStatements2, boolean isComparisonWithSelf) {
