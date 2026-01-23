@@ -1,0 +1,256 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ],
+                "73GpClJG71?MsW@v;kGf": [
+                    "abcdef",
+                    0
+                ]
+            },
+            "lists": {
+                "6/|~qUew~e3dG9-xcM];": [
+                    "tryg",
+                    []
+                ]
+            },
+            "broadcasts": {},
+            "blocks": {
+                "tyUsLq2jTYsQ~-#f]}A.": {
+                    "opcode": "control_repeat",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "TIMES": [
+                            3,
+                            "kc-7WeS]j7E2Zya0QcKX",
+                            [
+                                6,
+                                "10"
+                            ]
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "r2JF]hN(UYW|:@5gH2L4"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 55,
+                    "y": 175
+                },
+                "3V~ZN|hCr,*EYf{%jp}n": [
+                    12,
+                    "my variable",
+                    "`jEk@4|i[#Fk?(8x)AV.-my variable",
+                    165,
+                    227
+                ],
+                "r2JF]hN(UYW|:@5gH2L4": {
+                    "opcode": "data_setvariableto",
+                    "next": "Xu2VP|NJe}jYLI)ke7H-",
+                    "parent": "tyUsLq2jTYsQ~-#f]}A.",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Xu2VP|NJe}jYLI)ke7H-": {
+                    "opcode": "data_changevariableby",
+                    "next": "189{_(5RW8=%rNLudg*z",
+                    "parent": "r2JF]hN(UYW|:@5gH2L4",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "189{_(5RW8=%rNLudg*z": {
+                    "opcode": "data_showvariable",
+                    "next": "B~o%NoX]xQ.kPjh:ZL;W",
+                    "parent": "Xu2VP|NJe}jYLI)ke7H-",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "B~o%NoX]xQ.kPjh:ZL;W": {
+                    "opcode": "data_hidevariable",
+                    "next": "e_Du[UYNEH8G`12?%1*V",
+                    "parent": "189{_(5RW8=%rNLudg*z",
+                    "inputs": {},
+                    "fields": {
+                        "VARIABLE": [
+                            "my variable",
+                            "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "e_Du[UYNEH8G`12?%1*V": {
+                    "opcode": "data_setvariableto",
+                    "next": null,
+                    "parent": "B~o%NoX]xQ.kPjh:ZL;W",
+                    "inputs": {
+                        "VALUE": [
+                            1,
+                            [
+                                10,
+                                "0"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLE": [
+                            "abcdef",
+                            "73GpClJG71?MsW@v;kGf"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "kc-7WeS]j7E2Zya0QcKX": {
+                    "opcode": "operator_add",
+                    "next": null,
+                    "parent": "tyUsLq2jTYsQ~-#f]}A.",
+                    "inputs": {
+                        "NUM1": [
+                            3,
+                            [
+                                12,
+                                "abcdef",
+                                "73GpClJG71?MsW@v;kGf"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ],
+                        "NUM2": [
+                            3,
+                            [
+                                12,
+                                "my variable",
+                                "`jEk@4|i[#Fk?(8x)AV.-my variable"
+                            ],
+                            [
+                                4,
+                                ""
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "backdrop1",
+                    "dataFormat": "svg",
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        }
+    ],
+    "monitors": [
+        {
+            "id": "6/|~qUew~e3dG9-xcM];",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "tryg"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true
+        },
+        {
+            "id": "73GpClJG71?MsW@v;kGf",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "abcdef"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 212,
+            "visible": true,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        }
+    ],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "2.3.0",
+        "agent": "SetVariable, … use the variable in rectangular drop-down inputs. Those should also be connected."
+    }
+}

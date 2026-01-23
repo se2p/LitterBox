@@ -1,0 +1,87 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "B*|(c6HYN~4N0yJXD%%6": {
+                    "opcode": "operator_and",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "OPERAND2": [
+                            2,
+                            "alL49hHEAfb8FGXHDulz"
+                        ],
+                        "OPERAND1": [
+                            2,
+                            "WY1`M,/c|}dyK*z;RO1b"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 181,
+                    "y": 150
+                },
+                "alL49hHEAfb8FGXHDulz": {
+                    "opcode": "operator_or",
+                    "next": null,
+                    "parent": "B*|(c6HYN~4N0yJXD%%6",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "WY1`M,/c|}dyK*z;RO1b": {
+                    "opcode": "operator_not",
+                    "next": null,
+                    "parent": "B*|(c6HYN~4N0yJXD%%6",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "backdrop1",
+                    "dataFormat": "svg",
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "4.8.32",
+        "agent": ""
+    }
+}

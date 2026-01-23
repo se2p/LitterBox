@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox;
 
+import de.uni_passau.fim.se2.embedded_kittens.EmbeddedKittensMain;
 import de.uni_passau.fim.se2.litterbox.analytics.*;
 import de.uni_passau.fim.se2.litterbox.injection.InjectorAnalyzer;
 import de.uni_passau.fim.se2.litterbox.injection.InjectorTool;
@@ -54,6 +55,7 @@ import java.util.concurrent.Callable;
                 Main.ScratchBlocksSubcommand.class,
                 Main.ExtractSubcommand.class,
                 MineSubcommand.class,
+                EmbeddedKittensMain.class,
         },
         footerHeading = "%nExamples:%n",
         footer = {

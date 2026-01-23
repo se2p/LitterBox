@@ -41,7 +41,6 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.utils.PropertyLoader;
 import org.junit.jupiter.api.Assertions;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -54,24 +53,28 @@ public interface JsonTest {
     boolean LOAD_GENERAL = PropertyLoader.getSystemBooleanProperty("issues.load_general");
     boolean LOAD_MBLOCK = PropertyLoader.getSystemBooleanProperty("issues.load_mblock");
 
-    default Program getAST(String fileName) throws IOException, ParsingException {
-        Scratch3Parser parser = new Scratch3Parser();
-        return parser.parseFile(Path.of(fileName).toFile());
+    default Program getAST(String fileName) throws ParsingException {
+        return getAST(Path.of(fileName));
     }
 
-    default ControlFlowGraph getCFG(String fileName) throws IOException, ParsingException {
+    default Program getAST(Path fileName) throws ParsingException {
+        Scratch3Parser parser = new Scratch3Parser();
+        return parser.parseFile(fileName.toFile());
+    }
+
+    default ControlFlowGraph getCFG(String fileName) throws ParsingException {
         ControlFlowGraphVisitor visitor = new ControlFlowGraphVisitor();
         visitor.visit(getAST(fileName));
         return visitor.getControlFlowGraph();
     }
 
     // TODO: This is a bit redundant wrt getAST (it is added for the tests that have a static test fixture)
-    static Program parseProgram(String fileName) throws IOException, ParsingException {
+    static Program parseProgram(String fileName) throws ParsingException {
         Scratch3Parser parser = new Scratch3Parser();
         return parser.parseFile(Path.of(fileName).toFile());
     }
 
-    default Program parseScratchBlocks(String code) throws IOException, ParsingException {
+    default Program parseScratchBlocks(String code) throws ParsingException {
         Program baseProject = getAST("src/test/fixtures/emptyProject.json");
         ScratchBlocksParser parser = new ScratchBlocksParser();
         String spriteName = baseProject.getActorDefinitionList().getDefinitions().stream()
@@ -85,7 +88,7 @@ public interface JsonTest {
     }
 
 
-    default Set<Issue> generateIssues(IssueFinder finder, String filePath) throws IOException, ParsingException {
+    default Set<Issue> generateIssues(IssueFinder finder, String filePath) throws ParsingException {
         Program prog = getAST(filePath);
         return finder.check(prog);
     }
@@ -103,29 +106,29 @@ public interface JsonTest {
         assertThat(unknownStmt).isEmpty();
     }
 
-    default void assertThatFinderReports(int expectedIssues, IssueFinder finder, String filePath) throws IOException, ParsingException {
+    default void assertThatFinderReports(int expectedIssues, IssueFinder finder, String filePath) throws ParsingException {
         Program prog = getAST(filePath);
         Set<Issue> reports = finder.check(prog);
         Assertions.assertEquals(expectedIssues, reports.size());
     }
 
-    default void assertThatExtractionReports(List<String> expected, NameExtraction finder, String filePath) throws IOException, ParsingException {
+    default void assertThatExtractionReports(List<String> expected, NameExtraction finder, String filePath) throws ParsingException {
         Program prog = getAST(filePath);
         List<String> reports = finder.extractNames(prog);
         Assertions.assertEquals(expected, reports);
     }
 
-    default void assertThatMetricReports(double expectedIssues, MetricExtractor<Program> finder, String filePath) throws IOException, ParsingException {
+    default void assertThatMetricReports(double expectedIssues, MetricExtractor<Program> finder, String filePath) throws ParsingException {
         Program prog = getAST(filePath);
         Assertions.assertEquals(expectedIssues, finder.calculateMetric(prog));
     }
 
-    default void assertThatMetricReportsWithin(double expectedIssues, double epsilon, MetricExtractor<Program> finder, String filePath) throws IOException, ParsingException {
+    default void assertThatMetricReportsWithin(double expectedIssues, double epsilon, MetricExtractor<Program> finder, String filePath) throws ParsingException {
         Program prog = getAST(filePath);
         assertThat(finder.calculateMetric(prog)).isWithin(epsilon).of(expectedIssues);
     }
 
-    default void assertNumberActorDefinitions(int expectedActors, String filePath) throws IOException, ParsingException {
+    default void assertNumberActorDefinitions(int expectedActors, String filePath) throws ParsingException {
         Program prog = getAST(filePath);
         ActorDefinitionList list = prog.getActorDefinitionList();
         Truth.assertThat(list.getDefinitions().size()).isEqualTo(expectedActors);

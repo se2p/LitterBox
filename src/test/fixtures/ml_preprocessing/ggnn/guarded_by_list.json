@@ -1,0 +1,381 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ],
+                "73GpClJG71?MsW@v;kGf": [
+                    "abcdef",
+                    0
+                ]
+            },
+            "lists": {
+                "U9E9Hz=@+)e8nVY#SS_z": [
+                    "custom list",
+                    []
+                ]
+            },
+            "broadcasts": {},
+            "blocks": {
+                "zUskuUwCqWK2$NA2Yo7,": {
+                    "opcode": "control_repeat",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "TIMES": [
+                            3,
+                            [
+                                13,
+                                "custom list",
+                                "U9E9Hz=@+)e8nVY#SS_z"
+                            ],
+                            [
+                                6,
+                                "10"
+                            ]
+                        ],
+                        "SUBSTACK": [
+                            2,
+                            "M5%*Pn#R]CM=|J#xRDyh"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 25,
+                    "y": 228
+                },
+                "M5%*Pn#R]CM=|J#xRDyh": {
+                    "opcode": "data_addtolist",
+                    "next": ")+~%T5+tHNM-}`!nm9d.",
+                    "parent": "zUskuUwCqWK2$NA2Yo7,",
+                    "inputs": {
+                        "ITEM": [
+                            1,
+                            [
+                                10,
+                                "thing"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "custom list",
+                            "U9E9Hz=@+)e8nVY#SS_z"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ")+~%T5+tHNM-}`!nm9d.": {
+                    "opcode": "data_deleteoflist",
+                    "next": "PWhS:+QT=zs:G;BC:e}Z",
+                    "parent": "M5%*Pn#R]CM=|J#xRDyh",
+                    "inputs": {
+                        "INDEX": [
+                            1,
+                            [
+                                7,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "custom list",
+                            "U9E9Hz=@+)e8nVY#SS_z"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "PWhS:+QT=zs:G;BC:e}Z": {
+                    "opcode": "data_deletealloflist",
+                    "next": "j#7BcA:jprOht0+[hkpt",
+                    "parent": ")+~%T5+tHNM-}`!nm9d.",
+                    "inputs": {},
+                    "fields": {
+                        "LIST": [
+                            "custom list",
+                            "U9E9Hz=@+)e8nVY#SS_z"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "j#7BcA:jprOht0+[hkpt": {
+                    "opcode": "data_insertatlist",
+                    "next": "?[;`dgStJKT#p2]-,*R2",
+                    "parent": "PWhS:+QT=zs:G;BC:e}Z",
+                    "inputs": {
+                        "ITEM": [
+                            1,
+                            [
+                                10,
+                                "thing"
+                            ]
+                        ],
+                        "INDEX": [
+                            1,
+                            [
+                                7,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "custom list",
+                            "U9E9Hz=@+)e8nVY#SS_z"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "?[;`dgStJKT#p2]-,*R2": {
+                    "opcode": "data_replaceitemoflist",
+                    "next": "_uSsTs$hC+CD!B6u!S4g",
+                    "parent": "j#7BcA:jprOht0+[hkpt",
+                    "inputs": {
+                        "INDEX": [
+                            1,
+                            [
+                                7,
+                                "1"
+                            ]
+                        ],
+                        "ITEM": [
+                            1,
+                            [
+                                10,
+                                "thing"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "custom list",
+                            "U9E9Hz=@+)e8nVY#SS_z"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "_uSsTs$hC+CD!B6u!S4g": {
+                    "opcode": "data_showlist",
+                    "next": "r@9WFEaB%C{qAjwdAVc`",
+                    "parent": "?[;`dgStJKT#p2]-,*R2",
+                    "inputs": {},
+                    "fields": {
+                        "LIST": [
+                            "custom list",
+                            "U9E9Hz=@+)e8nVY#SS_z"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "r@9WFEaB%C{qAjwdAVc`": {
+                    "opcode": "data_hidelist",
+                    "next": "dvAjXwxCl~6j@(#vc*7G",
+                    "parent": "_uSsTs$hC+CD!B6u!S4g",
+                    "inputs": {},
+                    "fields": {
+                        "LIST": [
+                            "custom list",
+                            "U9E9Hz=@+)e8nVY#SS_z"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ".S%4PTGig1t4zxQ_A0TZ": {
+                    "opcode": "data_itemoflist",
+                    "next": null,
+                    "parent": "dvAjXwxCl~6j@(#vc*7G",
+                    "inputs": {
+                        "INDEX": [
+                            1,
+                            [
+                                7,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "custom list",
+                            "U9E9Hz=@+)e8nVY#SS_z"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "RyuSAb{/{98/Wo%`:g])": {
+                    "opcode": "data_itemnumoflist",
+                    "next": null,
+                    "parent": "UG]/m9xB)gCIdB+xD8hN",
+                    "inputs": {
+                        "ITEM": [
+                            1,
+                            [
+                                10,
+                                "thing"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "custom list",
+                            "U9E9Hz=@+)e8nVY#SS_z"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "{Q:A1od=w#-)/YtQfHC{": {
+                    "opcode": "data_lengthoflist",
+                    "next": null,
+                    "parent": "Rl`;Ne@kS^jA*#dwwW)e",
+                    "inputs": {},
+                    "fields": {
+                        "LIST": [
+                            "custom list",
+                            "U9E9Hz=@+)e8nVY#SS_z"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "dvAjXwxCl~6j@(#vc*7G": {
+                    "opcode": "sound_setvolumeto",
+                    "next": "UG]/m9xB)gCIdB+xD8hN",
+                    "parent": "r@9WFEaB%C{qAjwdAVc`",
+                    "inputs": {
+                        "VOLUME": [
+                            3,
+                            ".S%4PTGig1t4zxQ_A0TZ",
+                            [
+                                4,
+                                "100"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "UG]/m9xB)gCIdB+xD8hN": {
+                    "opcode": "sound_setvolumeto",
+                    "next": "Rl`;Ne@kS^jA*#dwwW)e",
+                    "parent": "dvAjXwxCl~6j@(#vc*7G",
+                    "inputs": {
+                        "VOLUME": [
+                            3,
+                            "RyuSAb{/{98/Wo%`:g])",
+                            [
+                                4,
+                                "100"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "Rl`;Ne@kS^jA*#dwwW)e": {
+                    "opcode": "sound_setvolumeto",
+                    "next": null,
+                    "parent": "UG]/m9xB)gCIdB+xD8hN",
+                    "inputs": {
+                        "VOLUME": [
+                            3,
+                            "{Q:A1od=w#-)/YtQfHC{",
+                            [
+                                4,
+                                "100"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "backdrop1",
+                    "dataFormat": "svg",
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        }
+    ],
+    "monitors": [
+        {
+            "id": "73GpClJG71?MsW@v;kGf",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "abcdef"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 212,
+            "visible": true,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "U9E9Hz=@+)e8nVY#SS_z",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "custom list"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true
+        }
+    ],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "2.3.0",
+        "agent": "list is used in loop condition and used in dropdowns inside the loop"
+    }
+}
