@@ -24,7 +24,6 @@ package de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.params.ParameterizedTest;
@@ -46,7 +45,7 @@ class PathGenerationVisitorTest implements JsonTest {
             "src/test/fixtures/customBlockNumTextParameters.json"
         }
     )
-    void testAllBlocksVisitable(final String programPath) throws ParsingException, IOException {
+    void testAllBlocksVisitable(final String programPath) throws ParsingException {
         final Program program = getAST(programPath);
 
         assertAll(traverse(program).map(node -> () -> {

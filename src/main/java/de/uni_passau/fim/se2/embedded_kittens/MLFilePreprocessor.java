@@ -128,7 +128,7 @@ public abstract class MLFilePreprocessor<R> {
         }
     }
 
-    private Optional<Program> readProgram(final Path programPath) throws IOException {
+    private Optional<Program> readProgram(final Path programPath) {
         try {
             return Optional.of(PARSER.parseFile(programPath.toFile()));
         }
@@ -161,7 +161,7 @@ public abstract class MLFilePreprocessor<R> {
 
         try (
             BufferedWriter bw = Files.newBufferedWriter(outputFile, StandardCharsets.UTF_8);
-            PrintWriter pw = new PrintWriter(bw);
+            PrintWriter pw = new PrintWriter(bw)
         ) {
             writeResult(inputFile, pw, result);
         }

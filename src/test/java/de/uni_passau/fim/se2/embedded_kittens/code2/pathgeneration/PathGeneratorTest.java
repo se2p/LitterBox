@@ -24,7 +24,6 @@ package de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -50,7 +49,7 @@ class PathGeneratorTest implements JsonTest {
         "COLOR", "0", "1", "FORWARD", "FRONT", "NUMBER", "Size", "1", "2", "LOG", "YEAR" };
 
     @Test
-    void testGeneratePaths() throws ParsingException, IOException {
+    void testGeneratePaths() throws ParsingException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
         PathGenerator generator = PathGeneratorFactory.createPathGenerator(
             PathType.SPRITE, 8, false, program, true,
@@ -88,11 +87,11 @@ class PathGeneratorTest implements JsonTest {
         ProgramFeatures abby = pathContextsPerSprite.get(positionAbby);
         assertEquals("abby", abby.getName());
         assertEquals(1, abby.getFeatures().size());
-        assertEquals("GreenFlag,-2069003229,hello_!", abby.getFeatures().get(0).toString());
+        assertEquals("GreenFlag,-2069003229,hello_!", abby.getFeatures().getFirst().toString());
     }
 
     @Test
-    void testGeneratePathsWithDifferentTokens() throws ParsingException, IOException {
+    void testGeneratePathsWithDifferentTokens() throws ParsingException {
         Program program = getAST("src/test/fixtures/allChangeableTokens.json");
         PathGenerator generator = PathGeneratorFactory.createPathGenerator(
             PathType.SPRITE, 8, false, program, true,
@@ -104,7 +103,7 @@ class PathGeneratorTest implements JsonTest {
 
     @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")
     @ValueSource(booleans = { true, false })
-    void testGeneratePathsWholeProgram(boolean includeStage) throws ParsingException, IOException {
+    void testGeneratePathsWholeProgram(boolean includeStage) throws ParsingException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
         PathGenerator generator = PathGeneratorFactory.createPathGenerator(
             PathType.PROGRAM, 8, includeStage, program,
@@ -113,7 +112,7 @@ class PathGeneratorTest implements JsonTest {
 
         List<ProgramFeatures> pathContexts = generator.generatePaths();
         assertEquals(1, pathContexts.size());
-        assertEquals("program", pathContexts.get(0).getName());
+        assertEquals("program", pathContexts.getFirst().getName());
 
         int expectedPathCount;
         List<String> expectedPaths = new ArrayList<>(
@@ -133,7 +132,7 @@ class PathGeneratorTest implements JsonTest {
             expectedPathCount = 4;
         }
 
-        List<String> actualPaths = pathContexts.get(0).getFeatures()
+        List<String> actualPaths = pathContexts.getFirst().getFeatures()
             .stream().map(ProgramRelation::toString).toList();
         assertEquals(expectedPathCount, actualPaths.size());
 
@@ -143,7 +142,7 @@ class PathGeneratorTest implements JsonTest {
     @ParameterizedTest(name = "{displayName} [{index}] pathType={0}, includeStage={1}")
     @MethodSource("code2vecOptions")
 
-    void testGeneratePathsEmptyProgram(PathType pathType, boolean includeStage) throws ParsingException, IOException {
+    void testGeneratePathsEmptyProgram(PathType pathType, boolean includeStage) throws ParsingException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
 
         PathGenerator generator = PathGeneratorFactory.createPathGenerator(

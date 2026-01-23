@@ -23,7 +23,6 @@ package de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import java.io.IOException;
 import java.util.*;
 
 import org.junit.jupiter.api.Test;
@@ -58,7 +57,7 @@ class GeneratePathTaskTest implements JsonTest {
     );
 
     @Test
-    void testCreateContextEmptyProgram() throws ParsingException, IOException {
+    void testCreateContextEmptyProgram() throws ParsingException {
         Program program = getAST("src/test/fixtures/emptyProject.json");
         PathGenerator pathGenerator = getPathGenerator(program, true);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
@@ -68,7 +67,7 @@ class GeneratePathTaskTest implements JsonTest {
 
     @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")
     @ValueSource(booleans = { true, false })
-    void testCreateContextForCode2Vec(boolean includeStage) throws ParsingException, IOException {
+    void testCreateContextForCode2Vec(boolean includeStage) throws ParsingException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
         PathGenerator pathGenerator = getPathGenerator(program, includeStage);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
@@ -99,14 +98,14 @@ class GeneratePathTaskTest implements JsonTest {
 
     @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")
     @ValueSource(booleans = { true, false })
-    void testCreateContextCustomProcedures(boolean includeStage) throws ParsingException, IOException {
+    void testCreateContextCustomProcedures(boolean includeStage) throws ParsingException {
         Program program = getAST("src/test/fixtures/ml_preprocessing/shared/custom_blocks_simple.json");
         PathGenerator pathGenerator = getPathGenerator(program, includeStage);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
 
         List<ProgramFeatures> pathContextsForCode2Vec = generatePathTask.createContext();
         assertThat(pathContextsForCode2Vec).hasSize(1);
-        List<ProgramRelation> programRelations = pathContextsForCode2Vec.get(0).getFeatures();
+        List<ProgramRelation> programRelations = pathContextsForCode2Vec.getFirst().getFeatures();
 
         assertThat(programRelations).hasSize(11);
 
@@ -120,7 +119,7 @@ class GeneratePathTaskTest implements JsonTest {
 
     @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")
     @ValueSource(booleans = { true, false })
-    void testCreateContextForCode2VecPerScripts(boolean includeStage) throws ParsingException, IOException {
+    void testCreateContextForCode2VecPerScripts(boolean includeStage) throws ParsingException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
         PathGenerator pathGenerator = getPathGenerator(program, includeStage);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);
@@ -146,7 +145,7 @@ class GeneratePathTaskTest implements JsonTest {
     @ParameterizedTest(name = "{displayName} [{index}] includeStage={0}")
     @ValueSource(booleans = { true, false })
     void testCreateContextForCode2VecPerScriptsCountForProgramWithOnlyValidScripts(boolean includeStage)
-        throws IOException, ParsingException {
+        throws ParsingException {
         Program program = getAST("src/test/fixtures/bugsPerScripts/random_project.json");
         PathGenerator pathGenerator = getScriptPathGenerator(program, includeStage);
         GeneratePathTask generatePathTask = new GeneratePathTask(pathGenerator);

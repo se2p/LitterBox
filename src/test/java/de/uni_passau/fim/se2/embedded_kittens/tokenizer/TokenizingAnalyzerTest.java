@@ -225,7 +225,7 @@ class TokenizingAnalyzerTest implements JsonTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
-    void testLiteralTokenization(boolean fewerParentheses) throws ParsingException, IOException {
+    void testLiteralTokenization(boolean fewerParentheses) throws ParsingException {
         final var output = tokenizeFirstSprite("ml_preprocessing/tokenizer/literals.json", fewerParentheses);
 
         final List<String> expected;
@@ -256,7 +256,7 @@ class TokenizingAnalyzerTest implements JsonTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
-    void testVariableTokenization(boolean fewerParentheses) throws ParsingException, IOException {
+    void testVariableTokenization(boolean fewerParentheses) throws ParsingException {
         final var output = tokenizeFirstSprite("ml_preprocessing/tokenizer/variables.json", fewerParentheses);
 
         final List<String> expected;
@@ -301,7 +301,7 @@ class TokenizingAnalyzerTest implements JsonTest {
 
     private List<String> tokenizeFirstSprite(
         final String fixturePath, final boolean fewerParentheses
-    ) throws ParsingException, IOException {
+    ) throws ParsingException {
         final Program program = getAST("src/test/fixtures/" + fixturePath);
         final ActorDefinition sprite = program.getActorDefinitionList().getDefinitions().stream()
             .filter(ActorDefinition::isSprite)
@@ -323,9 +323,9 @@ class TokenizingAnalyzerTest implements JsonTest {
 
         final var output = analyzer.processWholeProgram(inputFile("multipleSprites.json")).toList();
         assertThat(output).hasSize(1);
-        assertThat(output.get(0).label()).isEqualTo("multipleSprites");
+        assertThat(output.getFirst().label()).isEqualTo("multipleSprites");
 
-        final List<String> tokens = output.get(0).tokens().get(0);
+        final List<String> tokens = output.getFirst().tokens().getFirst();
 
         int expectedSize = includeStage ? 34 : 23;
         assertThat(tokens).hasSize(expectedSize);
@@ -334,10 +334,10 @@ class TokenizingAnalyzerTest implements JsonTest {
         final String beginSprite = Token.BEGIN_SPRITE.getStrRep();
         assertThat(tokens.stream().filter(beginSprite::equals).count()).isEqualTo(expectedSpriteCount);
 
-        assertThat(tokens).containsAtLeastElementsIn(concreteScriptSequences.get(1).tokens().get(0));
-        assertThat(tokens).containsAtLeastElementsIn(concreteScriptSequences.get(2).tokens().get(0));
+        assertThat(tokens).containsAtLeastElementsIn(concreteScriptSequences.get(1).tokens().getFirst());
+        assertThat(tokens).containsAtLeastElementsIn(concreteScriptSequences.get(2).tokens().getFirst());
         if (includeStage) {
-            assertThat(tokens).containsAtLeastElementsIn(concreteScriptSequences.get(0).tokens().get(0));
+            assertThat(tokens).containsAtLeastElementsIn(concreteScriptSequences.getFirst().tokens().getFirst());
         }
     }
 
@@ -489,13 +489,13 @@ class TokenizingAnalyzerTest implements JsonTest {
         final var output = analyzer.processWholeProgram(input).toList();
 
         assertThat(output).hasSize(1);
-        assertThat(output.get(0).tokens().get(0)).hasSize(39);
-        assertThat(output.get(0).tokens().get(0)).containsAtLeast(
+        assertThat(output.getFirst().tokens().getFirst()).hasSize(39);
+        assertThat(output.getFirst().tokens().getFirst()).containsAtLeast(
             "pen_clear", "pen_stamp", "pen_pendown", "pen_penup", "pen_setpencolortocolor", "pen_param",
             "LITERAL_COLOR", "pen_changecolorby", "pen_setcolorto", "pen_changepensizeby", "pen_setpensizeto"
         );
 
-        final List<String> penColorParamBlockSequence = output.get(0).tokens().get(0).subList(19, 24);
+        final List<String> penColorParamBlockSequence = output.getFirst().tokens().getFirst().subList(19, 24);
         assertThat(penColorParamBlockSequence)
             .containsExactly("pen_setcolorto", "pen_param", "(", "LITERAL_NUMBER", ")")
             .inOrder();
@@ -509,9 +509,9 @@ class TokenizingAnalyzerTest implements JsonTest {
         final var output = analyzer.processWholeProgram(input).toList();
 
         assertThat(output).hasSize(1);
-        assertThat(output.get(0).tokens()).hasSize(1);
-        assertThat(output.get(0).tokens().get(0)).hasSize(15);
-        assertThat(output.get(0).tokens().get(0))
+        assertThat(output.getFirst().tokens()).hasSize(1);
+        assertThat(output.getFirst().tokens().getFirst()).hasSize(15);
+        assertThat(output.getFirst().tokens().getFirst())
             .containsAtLeast("tts_speak", "tts_setvoice", "tts_voice", "tts_setlanguage", "tts_language");
     }
 
@@ -524,9 +524,9 @@ class TokenizingAnalyzerTest implements JsonTest {
         final var output = analyzer.processWholeProgram(input).toList();
 
         assertThat(output).hasSize(1);
-        assertThat(output.get(0).tokens()).hasSize(1);
-        assertThat(output.get(0).tokens().get(0)).hasSize(36);
-        assertThat(output.get(0).tokens().get(0))
+        assertThat(output.getFirst().tokens()).hasSize(1);
+        assertThat(output.getFirst().tokens().getFirst()).hasSize(36);
+        assertThat(output.getFirst().tokens().getFirst())
             .containsAtLeast(
                 "music_playdrumforbeats", "music_restforbeats", "music_playnoteforbeats",
                 "music_playnoteforbeats", "music_setinstrumentto", "music_settempoto", "music_tempo",
@@ -534,11 +534,11 @@ class TokenizingAnalyzerTest implements JsonTest {
             );
 
         if (abstractTokens) {
-            assertThat(output.get(0).tokens().get(0))
+            assertThat(output.getFirst().tokens().getFirst())
                 .containsAtLeast("music_noteliteral", "music_drumliteral", "music_instrumentliteral");
         }
         else {
-            assertThat(output.get(0).tokens().get(0))
+            assertThat(output.getFirst().tokens().getFirst())
                 .containsAtLeast("BASS_DRUM", "0.25", "60", "my variable", "ORGAN");
         }
     }
@@ -559,7 +559,7 @@ class TokenizingAnalyzerTest implements JsonTest {
     }
 
     private Stream<TokenSequence> mask(final String path, final MaskingStrategy strategy)
-        throws ParsingException, IOException {
+        throws ParsingException {
         final var program = getAST(path);
         final var analyzer = getAnalyzer(true, true, false, strategy);
         return analyzer.processSprites(program);
@@ -573,26 +573,26 @@ class TokenizingAnalyzerTest implements JsonTest {
     }
 
     private void assertMaskingSuccessful(final MaskingStrategy strategy, final List<String> expected)
-        throws ParsingException, IOException {
+        throws ParsingException {
         final String defaultPath = "src/test/fixtures/ml_preprocessing/tokenizer/masking_scenarios.json";
         assertMaskingSuccessful(defaultPath, strategy, expected);
     }
 
     private void assertMaskingSuccessful(final String path, final MaskingStrategy strategy, final List<String> expected)
-        throws ParsingException, IOException {
+        throws ParsingException {
         final var tokens = getMaskedSequence(mask(path, strategy));
         assertThat(tokens).isPresent();
         assertThat(tokens.get()).isEqualTo(expected);
     }
 
-    private void assertNoMask(final MaskingStrategy strategy) throws ParsingException, IOException {
+    private void assertNoMask(final MaskingStrategy strategy) throws ParsingException {
         final String path = "src/test/fixtures/ml_preprocessing/tokenizer/masking_scenarios.json";
         assertThat(getMaskedSequence(mask(path, strategy))).isEmpty();
         assertThat(mask(path, strategy).toList()).isEqualTo(mask(path, MaskingStrategy.none()).toList());
     }
 
     @Test
-    void testTokenizeUnconnectedScript() throws ParsingException, IOException {
+    void testTokenizeUnconnectedScript() throws ParsingException {
         final var path = "src/test/fixtures/ml_preprocessing/tokenizer/unconnected_script.json";
         final var strategy = MaskingStrategy.block("NeSwTQKd7cASL.mXXiMu");
         final var expected = List.of(
@@ -608,7 +608,7 @@ class TokenizingAnalyzerTest implements JsonTest {
     }
 
     @Test
-    void testMaskStmtBlock() throws ParsingException, IOException {
+    void testMaskStmtBlock() throws ParsingException {
         final var strategy = MaskingStrategy.block(SOUND_STOPALLSOUNDS);
         final var expected = List.of(
             BEGIN_SPRITE, BEGIN_SCRIPT,
@@ -629,7 +629,7 @@ class TokenizingAnalyzerTest implements JsonTest {
     }
 
     @Test
-    void testMaskCBlock() throws ParsingException, IOException {
+    void testMaskCBlock() throws ParsingException {
         final var strategy = MaskingStrategy.block(CONTROL_IF);
         // Masking a C block should retain its SUBSTACK(s)
         final var expected = List.of(
@@ -652,7 +652,7 @@ class TokenizingAnalyzerTest implements JsonTest {
 
     @ValueSource(booleans = { true, false })
     @ParameterizedTest
-    void testMaskExprBlock(final boolean useDirectReference) throws ParsingException, IOException {
+    void testMaskExprBlock(final boolean useDirectReference) throws ParsingException {
 
         // Expression blocks can be selected in two ways:
         // (1) Direct reference via block ID
@@ -682,7 +682,7 @@ class TokenizingAnalyzerTest implements JsonTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
-    void testMaskSubstacks(final boolean maskEmptySubstack) throws ParsingException, IOException {
+    void testMaskSubstacks(final boolean maskEmptySubstack) throws ParsingException {
         // The MaskingType `Input` is only intended for expressions. Applying it to SUBSTACKs should do nothing;
         // it must neither mask the first statement of the SUBSTACK nor the entire SUBSTACK. This holds for both
         // empty and non-empty SUBSTACKs.
@@ -692,7 +692,7 @@ class TokenizingAnalyzerTest implements JsonTest {
     }
 
     @Test
-    void testMaskEmptyExprInput() throws ParsingException, IOException {
+    void testMaskEmptyExprInput() throws ParsingException {
         final var strategy = MaskingStrategy.input(CONTROL_IF_ELSE, "CONDITION");
         // Unlike masking an empty SUBSTACK, masking an empty input must produce a MASK token.
         final var expected = List.of(
@@ -714,19 +714,19 @@ class TokenizingAnalyzerTest implements JsonTest {
     }
 
     @Test
-    void testMaskInvalidBlockId() throws ParsingException, IOException {
+    void testMaskInvalidBlockId() throws ParsingException {
         final var strategy = MaskingStrategy.block("invalid");
         assertNoMask(strategy);
     }
 
     @Test
-    void testMaskInvalidInputKey() throws ParsingException, IOException {
+    void testMaskInvalidInputKey() throws ParsingException {
         final var strategy = MaskingStrategy.input(CONTROL_WAIT, "INVALID");
         assertNoMask(strategy);
     }
 
     @Test
-    void testMaskPrimitive() throws ParsingException, IOException {
+    void testMaskPrimitive() throws ParsingException {
         final var strategy = MaskingStrategy.input(CONTROL_WAIT, "DURATION");
         final var expected = List.of(
             BEGIN_SPRITE, BEGIN_SCRIPT,
@@ -748,7 +748,7 @@ class TokenizingAnalyzerTest implements JsonTest {
     }
 
     @Test
-    void testMaskStopBlock() throws ParsingException, IOException {
+    void testMaskStopBlock() throws ParsingException {
         final var strategy = MaskingStrategy.block(CONTROL_STOP);
         final var expected = List.of(
             BEGIN_SPRITE, BEGIN_SCRIPT,
@@ -769,7 +769,7 @@ class TokenizingAnalyzerTest implements JsonTest {
     }
 
     @Test
-    void testMaskFixedOption() throws ParsingException, IOException {
+    void testMaskFixedOption() throws ParsingException {
         final var strategy = MaskingStrategy.fixedOption(CONTROL_STOP);
         final var expected = List.of(
             BEGIN_SPRITE, BEGIN_SCRIPT,
@@ -797,7 +797,7 @@ class TokenizingAnalyzerTest implements JsonTest {
         final var output = analyzer.processWholeProgram(input).toList();
 
         assertThat(output).hasSize(1);
-        assertThat(output.get(0).tokens().get(0)).containsExactly(
+        assertThat(output.getFirst().tokens().getFirst()).containsExactly(
             BEGIN_SCRIPT,
             Token.EVENT_NEVER.getStrRep(), CONTROL_WAIT,
             OPERATOR_ADD_TOKEN, "1", Token.OPERATOR_DIVIDE.getStrRep(), LITERAL_2, "3",
@@ -813,7 +813,7 @@ class TokenizingAnalyzerTest implements JsonTest {
         final var output = analyzer.processWholeProgram(input).toList();
 
         assertThat(output).hasSize(1);
-        assertThat(output.get(0).tokens().get(0)).containsExactly(
+        assertThat(output.getFirst().tokens().getFirst()).containsExactly(
             BEGIN_SCRIPT,
             Token.EVENT_NEVER.getStrRep(), CONTROL_WAIT, BEGIN_NUM_STR_EXPR,
             OPERATOR_ADD_TOKEN, BEGIN_NUM_STR_EXPR, "1", END_NUM_STR_EXPR,
@@ -833,7 +833,7 @@ class TokenizingAnalyzerTest implements JsonTest {
         final var output = analyzer.processWholeProgram(input).toList();
 
         assertThat(output).hasSize(1);
-        assertThat(output.get(0).tokens().get(0)).containsExactly(
+        assertThat(output.getFirst().tokens().getFirst()).containsExactly(
             BEGIN_SCRIPT,
             Token.EVENT_NEVER.getStrRep(),
             Token.OPERATOR_AND.getStrRep(), Token.OPERATOR_NOT.getStrRep(), NOTHING,
@@ -850,7 +850,7 @@ class TokenizingAnalyzerTest implements JsonTest {
         final var output = analyzer.processWholeProgram(input).toList();
 
         assertThat(output).hasSize(1);
-        assertThat(output.get(0).tokens().get(0)).containsExactly(
+        assertThat(output.getFirst().tokens().getFirst()).containsExactly(
             BEGIN_SCRIPT,
             Token.EVENT_NEVER.getStrRep(),
             BEGIN_BOOL_EXPR, Token.OPERATOR_AND.getStrRep(), BEGIN_BOOL_EXPR, Token.OPERATOR_NOT.getStrRep(),
@@ -868,7 +868,7 @@ class TokenizingAnalyzerTest implements JsonTest {
         final var output = analyzer.processWholeProgram(input).toList();
 
         assertThat(output).hasSize(1);
-        assertThat(output.get(0).tokens().get(0)).containsExactly(
+        assertThat(output.getFirst().tokens().getFirst()).containsExactly(
             BEGIN_SCRIPT,
             Token.EVENT_NEVER.getStrRep(),
             Token.CONTROL_WAIT.getStrRep(),

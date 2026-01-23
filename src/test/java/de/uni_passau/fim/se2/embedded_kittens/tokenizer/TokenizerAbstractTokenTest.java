@@ -22,7 +22,6 @@
 package de.uni_passau.fim.se2.embedded_kittens.tokenizer;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -67,7 +66,7 @@ class TokenizerAbstractTokenTest extends AbstractTokenCheck {
             "src/test/fixtures/ml_preprocessing/shared/tts_blocks.json",
         }
     )
-    void testAllBlocksVisitableAbstract(final String filename) throws ParsingException, IOException {
+    void testAllBlocksVisitableAbstract(final String filename) throws ParsingException {
         final TokenizingProgramPreprocessor analyzer = getAnalyzer();
         final File inputFile = Path.of(filename).toFile();
         final Program program = new Scratch3Parser().parseFile(inputFile);

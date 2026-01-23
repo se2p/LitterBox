@@ -65,7 +65,7 @@ class GgnnProgramGraphDotGraphBuilderTest implements JsonTest {
         List<GgnnProgramGraph> graphs = graphTask.getProgramGraphs();
         assertThat(graphs).hasSize(1);
 
-        String dotGraph = GgnnProgramGraphDotGraphBuilder.asDotGraph(graphs.get(0));
+        String dotGraph = GgnnProgramGraphDotGraphBuilder.asDotGraph(graphs.getFirst());
         assertThat(dotGraph).startsWith("digraph \"multipleSprites\" {");
     }
 

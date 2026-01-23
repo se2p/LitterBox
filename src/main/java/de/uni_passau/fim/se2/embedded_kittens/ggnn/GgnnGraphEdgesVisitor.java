@@ -387,7 +387,7 @@ abstract class GgnnGraphEdgesVisitor implements ScratchVisitor {
                 return;
             }
 
-            final Stmt lastStmt = statements.get(statements.size() - 1);
+            final Stmt lastStmt = statements.getLast();
             edges.add(Pair.of(lastStmt, node));
         }
     }

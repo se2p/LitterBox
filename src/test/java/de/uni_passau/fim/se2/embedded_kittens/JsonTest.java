@@ -21,7 +21,6 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens;
 
-import java.io.IOException;
 import java.nio.file.Path;
 
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -30,17 +29,17 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 
 public interface JsonTest {
 
-    default Program getAST(String fileName) throws IOException, ParsingException {
+    default Program getAST(String fileName) throws ParsingException {
         Scratch3Parser parser = new Scratch3Parser();
         return parser.parseFile(Path.of(fileName).toFile());
     }
 
-    default Program getAST(Path fileName) throws IOException, ParsingException {
+    default Program getAST(Path fileName) throws ParsingException {
         Scratch3Parser parser = new Scratch3Parser();
         return parser.parseFile(fileName.toFile());
     }
 
-    static Program parseProgram(String fileName) throws IOException, ParsingException {
+    static Program parseProgram(String fileName) throws ParsingException {
         Scratch3Parser parser = new Scratch3Parser();
         return parser.parseFile(Path.of(fileName).toFile());
     }

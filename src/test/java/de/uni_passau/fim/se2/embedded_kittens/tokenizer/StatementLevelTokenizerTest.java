@@ -23,7 +23,6 @@ package de.uni_passau.fim.se2.embedded_kittens.tokenizer;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 class StatementLevelTokenizerTest implements JsonTest {
 
     @Test
-    void testTokenizeSimpleExpressionIgnored() throws ParsingException, IOException {
+    void testTokenizeSimpleExpressionIgnored() throws ParsingException {
         final Program program = getAST("src/test/fixtures/ml_preprocessing/tokenizer/simple_binary_expr.json");
         final List<String> tokens = StatementLevelTokenizer.tokenize(program, program, false, MaskingStrategy.none());
 
@@ -46,7 +45,7 @@ class StatementLevelTokenizerTest implements JsonTest {
     }
 
     @Test
-    void testMaskRegularStatement() throws ParsingException, IOException {
+    void testMaskRegularStatement() throws ParsingException {
         final Program program = getAST("src/test/fixtures/ml_preprocessing/tokenizer/simple_binary_expr.json");
         final List<String> tokens = StatementLevelTokenizer
             .tokenize(program, program, false, MaskingStrategy.block("s}Q,l-$=;zl*WHEIQ-#r"));
@@ -57,7 +56,7 @@ class StatementLevelTokenizerTest implements JsonTest {
     }
 
     @Test
-    void testTokenizeIfElse() throws ParsingException, IOException {
+    void testTokenizeIfElse() throws ParsingException {
         final Program program = getAST("src/test/fixtures/simpleIfElse.json");
         final List<String> tokens = StatementLevelTokenizer.tokenize(program, program, false, MaskingStrategy.none());
 
@@ -70,7 +69,7 @@ class StatementLevelTokenizerTest implements JsonTest {
     }
 
     @Test
-    void testTokenizeIfElseMasked() throws ParsingException, IOException {
+    void testTokenizeIfElseMasked() throws ParsingException {
         final Program program = getAST("src/test/fixtures/simpleIfElse.json");
         final List<String> tokens = StatementLevelTokenizer
             .tokenize(program, program, false, MaskingStrategy.block("v]7T@CzT2y51/G*z53r8"));
@@ -81,7 +80,7 @@ class StatementLevelTokenizerTest implements JsonTest {
     }
 
     @Test
-    void testTokenizeRepeat() throws ParsingException, IOException {
+    void testTokenizeRepeat() throws ParsingException {
         final Program program = getAST("src/test/fixtures/simpleRepeatUntil.json");
         final List<String> tokens = StatementLevelTokenizer.tokenize(program, program, false, MaskingStrategy.none());
 
@@ -94,7 +93,7 @@ class StatementLevelTokenizerTest implements JsonTest {
     }
 
     @Test
-    void testTokenizeRepeatMasked() throws ParsingException, IOException {
+    void testTokenizeRepeatMasked() throws ParsingException {
         final Program program = getAST("src/test/fixtures/simpleRepeatUntil.json");
         final List<String> tokens = StatementLevelTokenizer
             .tokenize(program, program, false, MaskingStrategy.block("?~*3Bq5_ct;#4Bmncl%y"));

@@ -70,7 +70,7 @@ class AstnnAnalyzerTest {
     }
 
     @Test
-    void testIgnoreEmptySprites() throws ParsingException, IOException {
+    void testIgnoreEmptySprites() throws ParsingException {
         // one actor with an empty name, another one with no blocks
         final Stream<StatementTreeSequence> result = processFixture(
             "ml_preprocessing/astnn/empty_actors.json", false, true, false
@@ -80,7 +80,7 @@ class AstnnAnalyzerTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
-    void testFilterSpritesDefaultName(boolean includeDefaultSprites) throws ParsingException, IOException {
+    void testFilterSpritesDefaultName(boolean includeDefaultSprites) throws ParsingException {
         final List<StatementTreeSequence> result = processFixture(
             "allBlocks.json", true, includeDefaultSprites, false
         ).toList();
@@ -103,7 +103,7 @@ class AstnnAnalyzerTest {
 
     // ToDo: test for empty_string label
     @Test
-    void testEmptyStringLabel() throws ParsingException, IOException {
+    void testEmptyStringLabel() throws ParsingException {
         final Program program = new Scratch3Parser()
             .parseFile(Path.of("src/test/fixtures/allBlocks.json").toFile());
 
@@ -131,7 +131,7 @@ class AstnnAnalyzerTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
-    void testStageIncludedPerSprite(boolean includeStage) throws ParsingException, IOException {
+    void testStageIncludedPerSprite(boolean includeStage) throws ParsingException {
         final Stream<StatementTreeSequence> result = processFixture(
             "multipleSprites.json", includeStage, true, false
         );
@@ -142,14 +142,14 @@ class AstnnAnalyzerTest {
 
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
-    void testStageIncludedWholeProgram(boolean includeStage) throws ParsingException, IOException {
+    void testStageIncludedWholeProgram(boolean includeStage) throws ParsingException {
         final List<StatementTreeSequence> result = processFixture(
             "multipleSprites.json", includeStage, true, true
         ).toList();
 
         assertThat(result).hasSize(1);
 
-        final StatementTreeSequence sequence = result.get(0);
+        final StatementTreeSequence sequence = result.getFirst();
         assertThat(sequence.label()).isEqualTo("multipleSprites");
         assertThat(sequence.originalLabel()).isEqualTo(sequence.label());
     }
@@ -176,7 +176,7 @@ class AstnnAnalyzerTest {
 
     private Stream<StatementTreeSequence> processFixture(
         final String program, boolean includeStage, boolean includeDefaultSprites, boolean wholeProgram
-    ) throws ParsingException, IOException {
+    ) throws ParsingException {
         final Path programPath = Path.of("src/test/fixtures").resolve(program);
         final AstnnProgramPreprocessor analyzer = new AstnnProgramPreprocessor(
             options(includeStage, includeDefaultSprites)

@@ -55,11 +55,11 @@ class GgnnGraphAnalyzerTest {
         List<String> output = Files.readAllLines(expectedOutputFile);
         if (!outputFormat.isDotGraph()) {
             assertThat(output).hasSize(3);
-            assertThat(output.get(0)).contains("\"nodeLabelMap\"");
-            assertThat(output.get(0)).contains("\"nodeTypeMap\"");
+            assertThat(output.getFirst()).contains("\"nodeLabelMap\"");
+            assertThat(output.getFirst()).contains("\"nodeTypeMap\"");
         }
         else {
-            assertThat(output.get(0)).startsWith("digraph");
+            assertThat(output.getFirst()).startsWith("digraph");
         }
     }
 

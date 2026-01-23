@@ -42,9 +42,9 @@ class LlmCliTest extends CliTest {
 
         final List<String> outputLines = getOutput().lines().toList();
         assertThat(outputLines).hasSize(1);
-        assertThat(outputLines.get(0)).contains("//Sprite: Stage");
-        assertThat(outputLines.get(0)).contains("//Sprite: abby");
-        assertThat(outputLines.get(0)).contains("when green flag clicked");
+        assertThat(outputLines.getFirst()).contains("//Sprite: Stage");
+        assertThat(outputLines.getFirst()).contains("//Sprite: abby");
+        assertThat(outputLines.getFirst()).contains("when green flag clicked");
     }
 
     @Test

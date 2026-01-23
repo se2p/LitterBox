@@ -82,7 +82,7 @@ class ToAstnnTransformerTest implements JsonTest {
 
         assertAll(
             () -> assertThat(node.children()).hasSize(2),
-            () -> assertThat(node.children().get(0).children()).hasSize(2),
+            () -> assertThat(node.children().getFirst().children()).hasSize(2),
             () -> assertThat(node.children().get(1).isLeaf()).isTrue()
         );
     }
@@ -168,15 +168,15 @@ class ToAstnnTransformerTest implements JsonTest {
 
         final List<AstnnNode> children = node.children();
         assertAll(
-            () -> assertThat(children.get(0)).isInstanceOf(AstnnAstLeaf.class),
-            () -> assertThat(children.get(0).label()).isEqualTo(NodeType.EMPTY_BOOL.toString())
+            () -> assertThat(children.getFirst()).isInstanceOf(AstnnAstLeaf.class),
+            () -> assertThat(children.getFirst().label()).isEqualTo(NodeType.EMPTY_BOOL.toString())
         );
 
         final List<AstnnNode> statements = node.children().get(1).children();
         assertAll(
             () -> assertThat(statements).hasSize(1),
-            () -> assertThat(statements.get(0)).isInstanceOf(AstnnAstLeaf.class),
-            () -> assertThat(statements.get(0).label()).isEqualTo(StatementType.MOTION_IFONEDGEBOUNCE.toString())
+            () -> assertThat(statements.getFirst()).isInstanceOf(AstnnAstLeaf.class),
+            () -> assertThat(statements.getFirst().label()).isEqualTo(StatementType.MOTION_IFONEDGEBOUNCE.toString())
         );
     }
 
@@ -210,10 +210,10 @@ class ToAstnnTransformerTest implements JsonTest {
         final Program program = getProgram("custom_block.json");
         final var customBlock = program.getActorDefinitionList()
             .getDefinitions()
-            .get(0)
+            .getFirst()
             .getProcedureDefinitionList()
             .getList()
-            .get(0);
+            .getFirst();
 
         final ToAstnnTransformer toAstnnTransformer = new ToAstnnTransformer(
             ActorNameNormalizer.getDefault(), abstractTokens
@@ -240,14 +240,14 @@ class ToAstnnTransformerTest implements JsonTest {
 
         final List<AstnnNode> statements = walkTree(customBlockNode, 1).children();
         assertThat(statements).hasSize(1);
-        assertThat(statements.get(0).getStatementType()).isEqualTo(StatementType.SOUND_STOPALLSOUNDS);
+        assertThat(statements.getFirst().getStatementType()).isEqualTo(StatementType.SOUND_STOPALLSOUNDS);
     }
 
     @ParameterizedTest(name = "{displayName} abstractTokens={0}")
     @ValueSource(booleans = { true, false })
     void testTransformCustomBlockCall(boolean abstractTokens) throws Exception {
         final Program program = getProgram("custom_block.json");
-        final CallStmt customBlockCall = NodeFilteringVisitor.getBlocks(program, CallStmt.class).get(0);
+        final CallStmt customBlockCall = NodeFilteringVisitor.getBlocks(program, CallStmt.class).getFirst();
 
         final ToAstnnTransformer toAstnnTransformer = new ToAstnnTransformer(
             ActorNameNormalizer.getDefault(), abstractTokens
@@ -286,7 +286,7 @@ class ToAstnnTransformerTest implements JsonTest {
     @ValueSource(booleans = { true, false })
     void testTransformMessage(boolean abstractTokens) throws Exception {
         final Program program = getProgram("messages.json");
-        final Script script = NodeFilteringVisitor.getBlocks(program, Script.class).get(0);
+        final Script script = NodeFilteringVisitor.getBlocks(program, Script.class).getFirst();
 
         final ToAstnnTransformer toAstnnTransformer = new ToAstnnTransformer(
             ActorNameNormalizer.getDefault(), abstractTokens
@@ -297,7 +297,7 @@ class ToAstnnTransformerTest implements JsonTest {
         final AstnnNode receivedMessage = walkTree(node, 0, 0);
         assertThat(receivedMessage.label()).isEqualTo(NodeType.EVENT_MESSAGE.name());
         final String message = abstractTokens ? AbstractToken.LITERAL_STRING.name() : "message_1";
-        assertThat(receivedMessage.children().get(0).label()).isEqualTo(message);
+        assertThat(receivedMessage.children().getFirst().label()).isEqualTo(message);
 
         {
             final AstnnNode broadcastBlock = walkTree(node, 1, 0);
@@ -319,7 +319,8 @@ class ToAstnnTransformerTest implements JsonTest {
     @Test
     void testTransformRepeatTimes() throws Exception {
         final Program program = getProgram("control_blocks.json");
-        final RepeatTimesStmt repeatTimesStmt = NodeFilteringVisitor.getBlocks(program, RepeatTimesStmt.class).get(0);
+        final RepeatTimesStmt repeatTimesStmt = NodeFilteringVisitor.getBlocks(program, RepeatTimesStmt.class)
+            .getFirst();
 
         final ToAstnnTransformer toAstnnTransformer = new ToAstnnTransformer(ActorNameNormalizer.getDefault(), false);
         final AstnnNode node = toAstnnTransformer.transform(program, repeatTimesStmt);
@@ -350,7 +351,7 @@ class ToAstnnTransformerTest implements JsonTest {
     @Test
     void testTransformIf() throws Exception {
         final Program program = getProgram("control_blocks.json");
-        final IfThenStmt ifThenStmt = NodeFilteringVisitor.getBlocks(program, IfThenStmt.class).get(0);
+        final IfThenStmt ifThenStmt = NodeFilteringVisitor.getBlocks(program, IfThenStmt.class).getFirst();
 
         final ToAstnnTransformer toAstnnTransformer = new ToAstnnTransformer(ActorNameNormalizer.getDefault(), false);
         final AstnnNode node = toAstnnTransformer.transform(program, ifThenStmt);
@@ -377,7 +378,7 @@ class ToAstnnTransformerTest implements JsonTest {
     @ValueSource(booleans = { true, false })
     void testTransformCreateCloneVariable(boolean abstractTokens) throws Exception {
         final Program program = getProgram("control_blocks.json");
-        final CreateCloneOf createCloneOf = NodeFilteringVisitor.getBlocks(program, CreateCloneOf.class).get(0);
+        final CreateCloneOf createCloneOf = NodeFilteringVisitor.getBlocks(program, CreateCloneOf.class).getFirst();
 
         final ToAstnnTransformer toAstnnTransformer = new ToAstnnTransformer(
             ActorNameNormalizer.getDefault(), abstractTokens

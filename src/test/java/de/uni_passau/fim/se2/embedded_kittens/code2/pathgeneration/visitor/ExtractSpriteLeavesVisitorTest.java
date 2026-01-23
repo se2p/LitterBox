@@ -23,7 +23,6 @@ package de.uni_passau.fim.se2.embedded_kittens.code2.pathgeneration.visitor;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,7 +38,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 class ExtractSpriteLeavesVisitorTest implements JsonTest {
 
     @Test
-    void testVisit() throws ParsingException, IOException {
+    void testVisit() throws ParsingException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
         ExtractSpriteLeavesVisitor spriteVisitor = new ExtractSpriteLeavesVisitor(
             program.getProcedureMapping(), false
@@ -47,7 +46,7 @@ class ExtractSpriteLeavesVisitorTest implements JsonTest {
         program.accept(spriteVisitor);
         Map<ActorDefinition, List<ASTNode>> leavesMap = spriteVisitor.getLeaves();
 
-        assertEquals(2, leavesMap.keySet().size());
+        assertEquals(2, leavesMap.size());
 
         ActorDefinition[] sprites = getSpriteArrayFromLeavesMap(leavesMap);
 
@@ -68,7 +67,7 @@ class ExtractSpriteLeavesVisitorTest implements JsonTest {
     }
 
     @Test
-    void testVisitIncludeStage() throws ParsingException, IOException {
+    void testVisitIncludeStage() throws ParsingException {
         Program program = getAST("src/test/fixtures/multipleSprites.json");
         ExtractSpriteLeavesVisitor spriteVisitor = new ExtractSpriteLeavesVisitor(
             program.getProcedureMapping(), true
@@ -76,7 +75,7 @@ class ExtractSpriteLeavesVisitorTest implements JsonTest {
         program.accept(spriteVisitor);
 
         Map<ActorDefinition, List<ASTNode>> leavesMap = spriteVisitor.getLeaves();
-        assertEquals(3, leavesMap.keySet().size());
+        assertEquals(3, leavesMap.size());
 
         Optional<ActorDefinition> stage = leavesMap.keySet().stream().filter(ActorDefinition::isStage).findFirst();
         assertTrue(stage.isPresent());
