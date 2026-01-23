@@ -22,12 +22,7 @@
 package de.uni_passau.fim.se2.embedded_kittens.llm;
 
 import java.util.Optional;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 
 import de.uni_passau.fim.se2.embedded_kittens.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.embedded_kittens.MLProgramPreprocessor;
@@ -36,12 +31,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import tools.jackson.databind.json.JsonMapper;
 
 public class LlmProgramPreprocessor extends MLProgramPreprocessor<LlmPreprocessorOutput> {
 
-    private static final Logger log = Logger.getLogger(LlmProgramPreprocessor.class.getName());
-
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().registerModule(new Jdk8Module());
+    private static final JsonMapper OBJECT_MAPPER = JsonMapper.shared();
 
     protected LlmProgramPreprocessor(MLPreprocessorCommonOptions commonOptions) {
         super(commonOptions);
@@ -72,15 +66,7 @@ public class LlmProgramPreprocessor extends MLProgramPreprocessor<LlmPreprocesso
 
     @Override
     public String resultToString(LlmPreprocessorOutput result) {
-        try {
-            return OBJECT_MAPPER.writeValueAsString(result);
-        }
-        catch (JsonProcessingException ex) {
-            // If this breaks: check that Jackson has reflection access to the classes
-            log.warning("The output cannot be converted to JSON. Please report this bug to the developers.");
-            ex.printStackTrace();
-            return null;
-        }
+        return OBJECT_MAPPER.writeValueAsString(result);
     }
 
 }

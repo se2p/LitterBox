@@ -26,9 +26,6 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.uni_passau.fim.se2.embedded_kittens.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.embedded_kittens.MLProgramPreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.util.MaskingStrategy;
@@ -36,10 +33,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import tools.jackson.databind.json.JsonMapper;
 
 public class TokenizingProgramPreprocessor extends MLProgramPreprocessor<TokenSequence> {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final JsonMapper OBJECT_MAPPER = JsonMapper.shared();
 
     private final BiFunction<Program, ASTNode, List<String>> tokenizeFunction;
     private final boolean sequencePerScript;
@@ -85,13 +83,7 @@ public class TokenizingProgramPreprocessor extends MLProgramPreprocessor<TokenSe
 
     @Override
     public String resultToString(TokenSequence result) {
-        try {
-            return OBJECT_MAPPER.writeValueAsString(result);
-        }
-        catch (JsonProcessingException e) {
-            // should never happen
-            throw new RuntimeException(e);
-        }
+        return OBJECT_MAPPER.writeValueAsString(result);
     }
 
     private Stream<ActorDefinition> getActors(final Program program) {

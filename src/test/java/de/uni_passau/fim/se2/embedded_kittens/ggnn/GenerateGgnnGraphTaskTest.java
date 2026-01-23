@@ -58,7 +58,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         Path fixture = fixture("emptyProject.json");
         List<GgnnProgramGraph> graphs = getGraphs(fixture, false, wholeProgram, "  \t\n  ");
 
-        String actualLabel = graphs.get(0).label();
+        String actualLabel = graphs.getFirst().label();
         if (wholeProgram) {
             assertThat(actualLabel).isEqualTo("emptyProject");
         }
@@ -98,7 +98,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         else {
             expectedNodeCount = 5;
         }
-        assertThat(graphs.get(0).contextGraph().nodeLabels()).hasSize(expectedNodeCount);
+        assertThat(graphs.getFirst().contextGraph().nodeLabels()).hasSize(expectedNodeCount);
     }
 
     @ParameterizedTest
@@ -188,7 +188,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph graph = graphs.get(0);
+        GgnnProgramGraph graph = graphs.getFirst();
 
         List<Pair<String>> edges = List.of(
             Pair.of("Never", "StmtList"),
@@ -203,7 +203,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, true, true);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph graph = graphs.get(0);
+        GgnnProgramGraph graph = graphs.getFirst();
 
         List<Pair<String>> edges = List.of(
             Pair.of(LIST_TYPE, LIST_TYPE),
@@ -218,7 +218,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, true, true);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph graph = graphs.get(0);
+        GgnnProgramGraph graph = graphs.getFirst();
 
         List<Pair<String>> edges = List.of(Pair.of("Variable", "Variable"));
         assertContainsEdges(graph, GgnnProgramGraph.EdgeType.LAST_LEXICAL_USE, edges);
@@ -230,7 +230,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, true, true);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph graph = graphs.get(0);
+        GgnnProgramGraph graph = graphs.getFirst();
 
         assertContainsEdges(graph, GgnnProgramGraph.EdgeType.LAST_LEXICAL_USE, Collections.emptyList());
     }
@@ -241,7 +241,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, true, true);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph graph = graphs.get(0);
+        GgnnProgramGraph graph = graphs.getFirst();
 
         List<Pair<String>> edges = List.of(Pair.of("Variable", "Variable"));
         assertContainsEdges(graph, GgnnProgramGraph.EdgeType.LAST_LEXICAL_USE, edges);
@@ -253,7 +253,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, true, true);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph graph = graphs.get(0);
+        GgnnProgramGraph graph = graphs.getFirst();
 
         assertContainsEdges(graph, GgnnProgramGraph.EdgeType.LAST_LEXICAL_USE, Collections.emptyList());
     }
@@ -264,7 +264,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, true, true);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph graph = graphs.get(0);
+        GgnnProgramGraph graph = graphs.getFirst();
 
         Pair<String> edge = Pair.of("Volume", "Volume");
         assertContainsEdges(graph, GgnnProgramGraph.EdgeType.LAST_LEXICAL_USE, List.of(edge));
@@ -276,7 +276,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
         assertThat(spriteGraph.label()).isEqualTo("sprite");
         assertThat(spriteGraph.filename()).endsWith("guarded_by");
         assertThat(spriteGraph.contextGraph().nodeLabels()).hasSize(spriteGraph.contextGraph().nodeTypes().size());
@@ -291,7 +291,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
 
         // three different variables are connected to the expression
         Pair<String> edge = Pair.of(VAR_TYPE, "BiggerThan");
@@ -305,7 +305,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
 
         assertDifferentEdgeStartsCount(spriteGraph, GgnnProgramGraph.EdgeType.GUARDED_BY, 2);
         assertDifferentEdgeTargetsCount(spriteGraph, GgnnProgramGraph.EdgeType.GUARDED_BY, 2);
@@ -321,7 +321,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, true, true);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
 
         assertDifferentEdgeStartsCount(spriteGraph, GgnnProgramGraph.EdgeType.GUARDED_BY, 5);
         assertDifferentEdgeTargetsCount(spriteGraph, GgnnProgramGraph.EdgeType.GUARDED_BY, 1);
@@ -336,7 +336,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, true, true);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
 
         assertDifferentEdgeStartsCount(spriteGraph, GgnnProgramGraph.EdgeType.GUARDED_BY, 10);
         assertDifferentEdgeTargetsCount(spriteGraph, GgnnProgramGraph.EdgeType.GUARDED_BY, 1);
@@ -353,7 +353,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, true, true);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
 
         assertDifferentEdgeStartsCount(spriteGraph, GgnnProgramGraph.EdgeType.GUARDED_BY, 2);
         assertDifferentEdgeTargetsCount(spriteGraph, GgnnProgramGraph.EdgeType.GUARDED_BY, 1);
@@ -368,7 +368,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
 
         // only a single edge should be added, the other two attribute of usages within the block query other attributes
         List<Pair<String>> expectedEdges = List.of(Pair.of("AttributeOf", "AsNumber"));
@@ -381,7 +381,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
 
         // two different variables on the right side
         Pair<String> edge = Pair.of(VAR_TYPE, VAR_TYPE);
@@ -395,7 +395,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
 
         assertDifferentEdgeStartsCount(spriteGraph, GgnnProgramGraph.EdgeType.COMPUTED_FROM, 3);
 
@@ -415,7 +415,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
 
         assertDifferentEdgeStartsCount(spriteGraph, GgnnProgramGraph.EdgeType.COMPUTED_FROM, 1);
 
@@ -431,7 +431,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
 
         Pair<String> expectedEdge1 = Pair.of("some_text_input", "ParameterDefinition");
         Pair<String> expectedEdge2 = Pair.of("BiggerThan", "ParameterDefinition");
@@ -447,7 +447,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
 
         Pair<String> expectedEdge = Pair.of("CallStmt", "ProcedureDefinition");
         assertHasEdges(spriteGraph, GgnnProgramGraph.EdgeType.PARAMETER_PASSING, List.of(expectedEdge));
@@ -459,7 +459,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
 
         Pair<String> expectedEdge1 = Pair.of("Broadcast", "ReceptionOfMessage");
         Pair<String> expectedEdge2 = Pair.of("Broadcast", "ReceptionOfMessage");
@@ -477,16 +477,15 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, true, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph stageGraph = graphs.get(0);
+        GgnnProgramGraph stageGraph = graphs.getFirst();
 
         Pair<String> expectedEdge1 = Pair.of("SetVariableTo", "ChangeVariableBy");
-        Pair<String> expectedEdge2 = Pair.of("SetVariableTo", "SetVariableTo");
         Pair<String> expectedEdge3 = Pair.of("ChangeVariableBy", "ChangeVariableBy");
         Pair<String> expectedEdge4 = Pair.of("ChangeVariableBy", "SetVariableTo");
 
         assertHasEdges(
             stageGraph, GgnnProgramGraph.EdgeType.DATA_DEPENDENCY,
-            List.of(expectedEdge1, expectedEdge2, expectedEdge3, expectedEdge4)
+            List.of(expectedEdge1, expectedEdge3, expectedEdge4)
         );
     }
 
@@ -496,7 +495,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph stageGraph = graphs.get(0);
+        GgnnProgramGraph stageGraph = graphs.getFirst();
 
         Pair<String> expectedEdge = Pair.of("TurnRight", "TurnRight");
         assertHasEdges(stageGraph, GgnnProgramGraph.EdgeType.DATA_DEPENDENCY, List.of(expectedEdge));
@@ -508,7 +507,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, true, true);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph stageGraph = graphs.get(0);
+        GgnnProgramGraph stageGraph = graphs.getFirst();
 
         Pair<String> expectedEdge = Pair.of("AddTo", "InsertAt");
         assertHasEdges(stageGraph, GgnnProgramGraph.EdgeType.DATA_DEPENDENCY, List.of(expectedEdge));
@@ -519,7 +518,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(multipleSpritesFixture, true, true);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph programGraph = graphs.get(0);
+        GgnnProgramGraph programGraph = graphs.getFirst();
 
         Set<Integer> expectedNodeIndices = programGraph.contextGraph().nodeLabels().entrySet().stream()
             .filter(entry -> "Program".equals(entry.getValue()))
@@ -543,7 +542,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
 
         Collection<String> nodeLabels = spriteGraph.contextGraph().nodeLabels().values();
         assertThat(nodeLabels).containsAtLeast("BlockNoInputs", "BlockWithInputs");
@@ -557,7 +556,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, true, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
         Set<Pair<Integer>> edges = spriteGraph.contextGraph().getEdges(GgnnProgramGraph.EdgeType.PARAMETER_PASSING);
 
         assertThat(edges).hasSize(8);
@@ -569,7 +568,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
 
         int callStmtCount = (int) spriteGraph.contextGraph().nodeLabels().values().stream()
             .filter(label -> label.startsWith("add note"))
@@ -586,7 +585,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
 
         Pair<String> expectedEdge = Pair.of("custom_param", "ParameterDefinition");
         assertHasEdges(spriteGraph, GgnnProgramGraph.EdgeType.PARAMETER_PASSING, List.of(expectedEdge));
@@ -598,7 +597,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, false, false);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
 
         Pair<String> expectedEdge = Pair.of("PlaySoundUntilDone", "ProcedureDefinition");
         assertHasEdges(spriteGraph, GgnnProgramGraph.EdgeType.RETURN_TO, List.of(expectedEdge));
@@ -610,7 +609,7 @@ class GenerateGgnnGraphTaskTest implements JsonTest {
         List<GgnnProgramGraph> graphs = getGraphs(inputPath, true, true);
         assertThat(graphs).hasSize(1);
 
-        GgnnProgramGraph spriteGraph = graphs.get(0);
+        GgnnProgramGraph spriteGraph = graphs.getFirst();
 
         assertThat(spriteGraph.contextGraph().edges().get(GgnnProgramGraph.EdgeType.RETURN_TO)).isEmpty();
     }

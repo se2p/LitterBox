@@ -21,22 +21,17 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.ggnn;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.uni_passau.fim.se2.embedded_kittens.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.embedded_kittens.MLProgramPreprocessor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import tools.jackson.databind.json.JsonMapper;
 
 public class GgnnProgramPreprocessor extends MLProgramPreprocessor<GgnnAnalyzerOutput> {
 
-    private static final Logger log = Logger.getLogger(GgnnProgramPreprocessor.class.getName());
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final JsonMapper OBJECT_MAPPER = JsonMapper.shared();
 
     private final String labelName;
     private final GgnnOutputFormat outputFormat;
@@ -76,31 +71,14 @@ public class GgnnProgramPreprocessor extends MLProgramPreprocessor<GgnnAnalyzerO
 
     @Override
     public String resultToString(final GgnnAnalyzerOutput result) {
-        if (result instanceof GgnnAnalyzerOutput.DotGraph graph) {
-            return graph.dotGraph();
-        }
-        else if (result instanceof GgnnAnalyzerOutput.Graph graph) {
-            return graphToJson(graph.graph()).collect(Collectors.joining("\n"));
-        }
-        else {
-            // todo: refactor into switch pattern when upgrading to Java 21
-            throw new IllegalStateException("Unknown GGNN output format!");
-        }
+        return switch (result) {
+            case GgnnAnalyzerOutput.DotGraph(String dotGraph) -> dotGraph;
+            case GgnnAnalyzerOutput.Graph(GgnnProgramGraph graph) ->
+                graphToJson(graph).collect(Collectors.joining("\n"));
+        };
     }
 
     private Stream<String> graphToJson(GgnnProgramGraph graph) {
-        try {
-            return Stream.of(OBJECT_MAPPER.writeValueAsString(graph));
-        }
-        catch (JsonProcessingException e) {
-            // can only happen in case LitterBox is used as a dependency and e.g., due to
-            // multiple competing Jackson versions in the classpath the conversion fails
-            log.log(
-                Level.SEVERE,
-                "Jackson could not convert the GGNN graph to JSON. Probable misconfiguration.",
-                e
-            );
-            return Stream.empty();
-        }
+        return Stream.of(OBJECT_MAPPER.writeValueAsString(graph));
     }
 }

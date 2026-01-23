@@ -21,29 +21,24 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.astnn;
 
-import java.util.logging.Logger;
 import java.util.stream.Stream;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.uni_passau.fim.se2.embedded_kittens.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.embedded_kittens.MLProgramPreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.astnn.model.AstnnNode;
 import de.uni_passau.fim.se2.embedded_kittens.astnn.model.StatementTreeSequence;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import tools.jackson.databind.json.JsonMapper;
 
 public class AstnnProgramPreprocessor extends MLProgramPreprocessor<StatementTreeSequence> {
 
-    private static final Logger log = Logger.getLogger(AstnnProgramPreprocessor.class.getName());
-
-    private final ObjectMapper objectMapper;
+    private final JsonMapper objectMapper;
     private final StatementTreeSequenceBuilder statementTreeSequenceBuilder;
 
     public AstnnProgramPreprocessor(final MLPreprocessorCommonOptions commonOptions) {
         super(commonOptions);
 
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = JsonMapper.shared();
         statementTreeSequenceBuilder = new StatementTreeSequenceBuilder(
             commonOptions.actorNameNormalizer(), commonOptions.abstractTokens()
         );
@@ -86,14 +81,6 @@ public class AstnnProgramPreprocessor extends MLProgramPreprocessor<StatementTre
     }
 
     private String sequenceToString(final StatementTreeSequence sequence) {
-        try {
-            return objectMapper.writeValueAsString(sequence);
-        }
-        catch (JsonProcessingException ex) {
-            // If this breaks: check that Jackson has reflection access to the classes
-            log.warning("The ASTNN node cannot be converted to JSON. Please report this bug to the developers.");
-            ex.printStackTrace();
-            return null;
-        }
+        return objectMapper.writeValueAsString(sequence);
     }
 }

@@ -23,6 +23,7 @@ package de.uni_passau.fim.se2.embedded_kittens;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 
 import de.uni_passau.fim.se2.embedded_kittens.astnn.AstnnPreprocessor;
@@ -39,6 +40,7 @@ import de.uni_passau.fim.se2.embedded_kittens.tokenizer.TokenizingPreprocessor;
 import de.uni_passau.fim.se2.embedded_kittens.util.MaskingStrategy;
 import de.uni_passau.fim.se2.embedded_kittens.util.NodeNameUtil;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import picocli.CommandLine;
 
 @CommandLine.Command(
@@ -160,7 +162,7 @@ public class Main implements Callable<Integer> {
 
         @Override
         public final Integer call() throws Exception {
-            IssueTranslator.getInstance().setLanguage(language);
+            IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.of(language));
 
             validateParams();
 

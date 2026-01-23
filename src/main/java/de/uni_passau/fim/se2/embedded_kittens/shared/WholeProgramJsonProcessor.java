@@ -24,16 +24,14 @@ package de.uni_passau.fim.se2.embedded_kittens.shared;
 import java.util.List;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.uni_passau.fim.se2.embedded_kittens.MLPreprocessorCommonOptions;
 import de.uni_passau.fim.se2.embedded_kittens.MLProgramPreprocessor;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import tools.jackson.databind.json.JsonMapper;
 
 public class WholeProgramJsonProcessor<T> extends MLProgramPreprocessor<WholeProgramOutput<T>> {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final JsonMapper objectMapper = JsonMapper.shared();
     private final MLProgramPreprocessor<T> preprocessor;
 
     public WholeProgramJsonProcessor(
@@ -46,15 +44,7 @@ public class WholeProgramJsonProcessor<T> extends MLProgramPreprocessor<WholePro
 
     @Override
     public String resultToString(final WholeProgramOutput<T> result) {
-        try {
-            return objectMapper.writeValueAsString(result);
-        }
-        catch (JsonProcessingException e) {
-            throw new IllegalStateException(
-                "The object to JSON conversion is misconfigured. Cannot convert result to JSON string.",
-                e
-            );
-        }
+        return objectMapper.writeValueAsString(result);
     }
 
     @Override
