@@ -27,7 +27,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
-import de.uni_passau.fim.se2.embedded_kittens.JsonTest;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 class GgnnGraphBuilderTest implements JsonTest {

@@ -26,7 +26,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import de.uni_passau.fim.se2.embedded_kittens.JsonTest;
+import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;

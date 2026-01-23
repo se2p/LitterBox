@@ -20,18 +20,22 @@ package de.uni_passau.fim.se2.embedded_kittens.shared;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import de.uni_passau.fim.se2.CliTest;
+import de.uni_passau.fim.se2.embedded_kittens.EmbeddedKittensMain;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import de.uni_passau.fim.se2.embedded_kittens.CliTest;
-
-class WholeProgramJsonIntegrationTest extends CliTest {
+class WholeProgramJsonIntegrationTest extends CliTest<EmbeddedKittensMain> {
 
     private static final String GGNN_CMD = "ggnn";
     private static final String INPUT_FLAG = "-p";
     private static final String WHOLE_PROGRAM_FLAG = "--whole-program-json";
+
+    WholeProgramJsonIntegrationTest() {
+        super(new EmbeddedKittensMain());
+    }
 
     @Test
     void noWholeProgramAndWholeProgramJsonAllowed() {

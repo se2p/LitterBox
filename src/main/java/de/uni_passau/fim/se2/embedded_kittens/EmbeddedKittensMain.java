@@ -39,6 +39,7 @@ import picocli.CommandLine;
 
 @CommandLine.Command(
     name = "embedded-kittens",
+    description = "Preprocessing for code embedding models.",
     mixinStandardHelpOptions = true,
     subcommands = {
         EmbeddedKittensMain.AstnnSubcommand.class,

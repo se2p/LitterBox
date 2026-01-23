@@ -16,22 +16,21 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.embedded_kittens;
+package de.uni_passau.fim.se2;
 
-import static com.google.common.truth.Truth.assertThat;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.parallel.Isolated;
+import picocli.CommandLine;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.parallel.Isolated;
-
-import picocli.CommandLine;
+import static com.google.common.truth.Truth.assertThat;
 
 @Isolated
-public abstract class CliTest {
+public abstract class CliTest<T> {
 
     private PrintStream out = System.out;
     private PrintStream err = System.err;
@@ -39,6 +38,11 @@ public abstract class CliTest {
     private final ByteArrayOutputStream mockErr = new ByteArrayOutputStream();
 
     protected CommandLine commandLine;
+    protected T mainClass;
+
+    protected CliTest(T mainClass) {
+        this.mainClass = mainClass;
+    }
 
     @AfterEach
     public void restoreStreams() {
@@ -56,7 +60,7 @@ public abstract class CliTest {
         System.setOut(new PrintStream(mockOut, true, StandardCharsets.UTF_8));
         System.setErr(new PrintStream(mockErr, true, StandardCharsets.UTF_8));
 
-        commandLine = new CommandLine(new EmbeddedKittensMain());
+        commandLine = new CommandLine(mainClass);
     }
 
     protected void assertStdOutContains(final String expected) {

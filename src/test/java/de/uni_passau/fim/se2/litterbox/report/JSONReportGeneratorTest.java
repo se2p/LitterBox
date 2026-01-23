@@ -126,7 +126,7 @@ public class JSONReportGeneratorTest implements JsonTest {
         os.close();
         String jsonText = os.toString();
         JsonNode rootNode = mapper.readTree(jsonText);
-        String code = rootNode.get("issues").get(0).get("code").asText();
+        String code = rootNode.get("issues").get(0).get("code").asString();
         assertThat(code).isEqualTo("[scratchblocks]" + System.lineSeparator() +
                 "repeat until <(x position) = (50) :: #ff0000> // " + ScratchBlocksVisitor.BUG_NOTE + System.lineSeparator() +
                 "end" + System.lineSeparator() +

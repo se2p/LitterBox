@@ -23,14 +23,18 @@ import static com.google.common.truth.Truth.assertThat;
 import java.nio.file.Path;
 import java.util.List;
 
+import de.uni_passau.fim.se2.CliTest;
+import de.uni_passau.fim.se2.embedded_kittens.EmbeddedKittensMain;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import de.uni_passau.fim.se2.embedded_kittens.CliTest;
+class LlmCliTest extends CliTest<EmbeddedKittensMain> {
 
-class LlmCliTest extends CliTest {
+    LlmCliTest() {
+        super(new EmbeddedKittensMain());
+    }
 
     @Test
     void buildProgramScratchBlocks() {

@@ -25,12 +25,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import de.uni_passau.fim.se2.CliTest;
+import de.uni_passau.fim.se2.embedded_kittens.EmbeddedKittensMain;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import de.uni_passau.fim.se2.embedded_kittens.CliTest;
+class Code2vecIntegrationTest extends CliTest<EmbeddedKittensMain> {
 
-class Code2vecIntegrationTest extends CliTest {
+    Code2vecIntegrationTest() {
+        super(new EmbeddedKittensMain());
+    }
 
     @Test
     void processProgramWithMultipleSpritesToFile(@TempDir Path tempDir) throws IOException {

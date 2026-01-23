@@ -28,15 +28,19 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 
+import de.uni_passau.fim.se2.CliTest;
+import de.uni_passau.fim.se2.embedded_kittens.EmbeddedKittensMain;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import de.uni_passau.fim.se2.embedded_kittens.CliTest;
+class Code2seqIntegrationTest extends CliTest<EmbeddedKittensMain> {
 
-class Code2seqIntegrationTest extends CliTest {
+    private static final String C2S_CMD = "code2seq";
+    private static final String INPUT_FLAG = "-p";
 
-    private final String C2S_CMD = "code2seq";
-    private final String INPUT_FLAG = "-p";
+    Code2seqIntegrationTest() {
+        super(new EmbeddedKittensMain());
+    }
 
     @Test
     void disallowBothWholeProgramAndPerSprite() {
