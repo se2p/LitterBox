@@ -301,6 +301,68 @@ You can find other configuration options that can be passed via `-D` flags (e.g.
 For our integration of some of the LLM-features into the Scratch browser interface, see https://github.com/se2p/NuzzleBug and https://github.com/se2p/LitterBox-Web.
 
 
+### EmbeddedKittens: Preprocessing for Code Embedding Models
+
+> Code embeddings are used in machine learning to map source code into a dense vector space.
+> Various models have been proposed to learn this mapping.
+> They use different information from the code (eg just tokens, AST, control/data flow, …) as model input.
+> EmbeddedKittens[^1] can be used to extract this information from Scratch projects and transform it into the required format to be used as input for the machine learning model.
+
+
+To see an overview of the available command line options, type:
+
+```bash
+java -jar Litterbox-1.11.full.jar embedded-kittens --help
+```
+
+All the subcommands also accept the `--help` flag to show information about the specific parameters.
+Eg
+```bash
+java -jar embedded-kittens-1.0.full.jar code2vec --help
+```
+
+
+#### Output formats
+
+The currently supported formats are suitable for the following models:
+
+- [ASTNN](https://doi.org/10.1109/ICSE.2019.00086)
+- [code2vec](https://doi.org/10.1145/3291636)
+- [code2seq](https://arxiv.org/abs/1808.01400)
+- [GGNN](https://arxiv.org/abs/1711.00740)
+- and tokenised sequences for Transformers/LSTM/…
+
+
+##### Example: code2vec output
+
+To be able to use the code2vec model with the programming language Scratch, a scratch parser is needed to generate the required input representation.
+According to the description on https://github.com/tech-srl/code2vec#extending-to-other-languages,
+EmbeddedKittens produces for each Scratch program a file with these rules.
+EmbeddedKittens needs a path to a single file or a folder with multiple projects and produces the output to the declared output folder.
+
+```bash
+java -jar embedded-kittens-1.0.full.jar code2vec \
+  --output "<path/to/folder/for/the/output>" \
+  --path "<path/to/json/project/or/folder/with/projects>"
+```
+
+There are some differences between Scratch and "normal" programming languages like Java.
+The most important is that sprites are primarily split into *unnamed* scripts rather than *named* methods.
+Because of that, Litterbox uses sprite names like method names and creates path contexts from every single sprite in a project.
+
+###### Code2vec output per script
+
+EmbeddedKittens can generate the context paths per scripts and procedures.
+Given a Scratch program as input, it produces for each script and procedure a file containing the needed input representation for the code2vec model.
+
+```bash
+java -jar embedded-kittens-1.0.full.jar code2vec \
+  --output "<path/to/folder/for/the/output>" \
+  --path "<path/to/json/project/or/folder/with/projects>" \
+  --scripts
+``` 
+
+
 ## Adding new bug patterns or code smells
 
 To implement your own bug patterns, extend the `AbstractIssueFinder`
@@ -408,3 +470,8 @@ LitterBox is supported by the project FR 2955/3-1 funded by the
 "Deutsche Forschungsgemeinschaft" and BMBF project
 "primary::programming" as part of the Qualitätsoffensive
 Lehrerbildung.
+
+
+<!-- links and footnotes -->
+
+[^1]: Neither atomic, nor [exploding](https://www.explodingkittens.com/), but peacefully sleeping in vector space.
