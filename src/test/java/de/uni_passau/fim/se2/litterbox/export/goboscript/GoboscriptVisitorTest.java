@@ -21,10 +21,46 @@ package de.uni_passau.fim.se2.litterbox.export.goboscript;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.Tempo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Minus;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
+import de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -335,6 +371,55 @@ public class GoboscriptVisitorTest implements JsonTest {
         assertThat(result).contains("\"apple\"[1]");
     }
 
+    // ==================== Custom Blocks and Procedures ====================
+
+    @Test
+    public void testUndefinedProcedureCall() throws IOException, ParsingException {
+        String code = """
+                when green flag clicked
+                undefined_block
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        // Undefined procedures should be commented out
+        assertThat(result).contains("# Unsupported procedure call (cross-sprite or undefined): undefined_block;");
+    }
+
+    @Test
+    public void testProcedureNameConflict() throws IOException, ParsingException {
+        String code = """
+                define move
+                move 10 steps
+                
+                when green flag clicked
+                move
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        // 'move' is a keyword in Goboscript, so it should be renamed to 'move_proc'
+        assertThat(result).contains("proc move_proc {");
+        assertThat(result).contains("move_proc;");
+    }
+
+    // ==================== Qualified Access ====================
+
+    @Test
+    public void testQualifiedVariableAccess() throws IOException, ParsingException {
+        String code = """
+                when green flag clicked
+                say ([Score v] of (Stage v))
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        // Stage variables are global in Goboscript, but AttributeOf currently emits qualification
+        assertThat(result).contains("say \"Stage\".Score;");
+    }
+
+    // ==================== Other Sensing Repoters ====================
+
     @Test
     public void testOtherSensingReporters() throws IOException, ParsingException {
         String code = """
@@ -429,6 +514,42 @@ public class GoboscriptVisitorTest implements JsonTest {
         assertThat(result).contains("costume_name()");
     }
 
+    // ==================== Graphic Effects ====================
+
+    @Test
+    public void testGraphicEffects() throws IOException, ParsingException {
+        String code = """
+                when green flag clicked
+                change [color v] effect by (25)
+                set [ghost v] effect to (50)
+                clear graphic effects
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        assertThat(result).contains("change_color_effect 25;");
+        assertThat(result).contains("set_ghost_effect 50;");
+        assertThat(result).contains("clear_graphic_effects;");
+    }
+
+    // ==================== Music and Tempo ====================
+
+    @Test
+    public void testTempoFallback() {
+        // say (tempo)
+        NoBlockMetadata meta = new NoBlockMetadata();
+        Tempo tempoNode = new Tempo(meta);
+        Say sayNode = new Say(new AsString(tempoNode), meta);
+
+        GoboscriptVisitor visitor = new GoboscriptVisitor();
+        sayNode.accept(visitor);
+        String result = visitor.getOutput();
+
+        // Goboscript doesn't support tempo, should fall back to 60
+        assertThat(result).contains("say 60;");
+        assertThat(result).doesNotContain("tempo()");
+    }
+
     // ==================== Attribute Of Blocks ====================
 
     @Test
@@ -441,6 +562,201 @@ public class GoboscriptVisitorTest implements JsonTest {
         String result = GoboscriptVisitor.of(program);
 
         assertThat(result).contains("\"Stage\".backdrop_number");
+    }
+
+    @Test
+    public void testCrossSpriteAttributeAccessFallback() {
+        NoBlockMetadata meta = new NoBlockMetadata();
+
+        // say ([x position] of [OtherSprite])
+        AttributeOf attrOf = new AttributeOf(
+                new AttributeFromFixed(
+                        new FixedAttribute(FixedAttribute.FixedAttributeType.X_POSITION.getType())
+                ),
+                new WithExpr(new StringLiteral("OtherSprite"), meta),
+                meta
+        );
+        Say say = new Say(attrOf, meta);
+
+        GoboscriptVisitor visitor = new GoboscriptVisitor();
+        say.accept(visitor);
+        String result = visitor.getOutput();
+
+        // Accessing non-Stage sprite attributes is not supported, should fall back to 0
+        assertThat(result).contains("say 0;");
+        assertThat(result).doesNotContain("\"OtherSprite\".x");
+    }
+
+    // ==================== Special Number Values ====================
+
+    @Test
+    public void testSpecialNumberValues() throws IOException, ParsingException {
+        String code = """
+                when green flag clicked
+                set [x v] to ((1) / (0))
+                set [x v] to ((-1) / (0))
+                set [x v] to ((0) / (0))
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        assertThat(result).contains("x = (1 / 0);");
+        assertThat(result).contains("x = (-1 / 0);");
+        assertThat(result).contains("x = (0 / 0);");
+    }
+
+    // ==================== Video Sensing (Unsupported) ====================
+
+    @Test
+    public void testVideoSensingUnsupported() {
+        NoBlockMetadata meta = new NoBlockMetadata();
+        
+        GoboscriptVisitor visitor = new GoboscriptVisitor();
+        
+        new TurnVideo("on", meta).accept(visitor);
+        new SetVideoTransparency(new NumberLiteral(50), meta).accept(visitor);
+        
+        String result = visitor.getOutput();
+
+        assertThat(result).contains("# Unsupported: turn video on/off");
+        assertThat(result).contains("# Unsupported: set video transparency");
+    }
+
+    // ==================== List Access ====================
+
+    @Test
+    public void testListAccess() throws IOException, ParsingException {
+        String code = """
+                when green flag clicked
+                add [thing] to [my list v]
+                delete (1) of [my list v]
+                insert [thing] at (1) of [my list v]
+                replace item (1) of [my list v] with [new thing]
+                say (item (1) of [my list v])
+                say (item # of [thing] in [my list v])
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        assertThat(result).contains("add \"thing\" to my_list_list;");
+        assertThat(result).contains("delete my_list_list[1];");
+        assertThat(result).contains("insert \"thing\" at my_list_list[1];");
+        assertThat(result).contains("my_list_list[1] = \"new thing\";");
+        assertThat(result).contains("say my_list_list[1];");
+        assertThat(result).contains("say \"thing\" in my_list_list;");
+    }
+
+    @Test
+    public void testUndeclaredVariableOrList() throws IOException, ParsingException {
+        String code = """
+                when green flag clicked
+                show variable [unknown var v]
+                hide variable [unknown var v]
+                show list [unknown list v]
+                hide list [unknown list v]
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        assertThat(result).contains("# Skipped: show undeclared variable");
+        assertThat(result).contains("# Skipped: hide undeclared variable");
+        assertThat(result).contains("# Skipped: show undeclared list");
+        assertThat(result).contains("# Skipped: hide undeclared list");
+    }
+
+    @Test
+    public void testNonAsciiIdentifier() throws IOException, ParsingException {
+        String code = """
+                when green flag clicked
+                change [Meine_Züge v] by (1)
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        // Goboscript should escape non-ASCII characters
+        assertThat(result).contains("Meine_Zuege += 1;");
+    }
+
+    // ==================== Numeric Index Wrapping ====================
+
+    @Test
+    public void testSwitchCostumeNumericWrapping() throws IOException, ParsingException {
+        String code = """
+                when green flag clicked
+                switch costume to ((0) - (1))
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        // The emptyProject.json has 2 costumes for Sprite1
+        assertThat(result).contains("switch_costume (((0 - 1) - 1) % 2 + 1);");
+    }
+
+    // ==================== Manual AST Construction Edge Cases ====================
+
+    @Test
+    public void testNullMd5extInCostume() {
+        // Costume metadata with null md5ext should not throw NPE
+        List<ImageMetadata> costumes = new ArrayList<>();
+        costumes.add(new ImageMetadata("assetId", "costume1", null, "svg", 1.0, 0, 0));
+        ImageMetadataList costumeList = new ImageMetadataList(costumes);
+
+        ActorMetadata actorMeta = new ActorMetadata(
+                new CommentMetadataList(new ArrayList<>()),
+                0,
+                costumeList,
+                new SoundMetadataList(new ArrayList<>())
+        );
+
+        ActorDefinition actor = new ActorDefinition(
+                ActorType.getSprite(),
+                new StrId("Sprite1"),
+                new DeclarationStmtList(new ArrayList<>()),
+                new SetStmtList(new ArrayList<>()),
+                new ProcedureDefinitionList(new ArrayList<>()),
+                new ScriptList(new ArrayList<>()),
+                actorMeta
+        );
+
+        GoboscriptVisitor visitor = new GoboscriptVisitor();
+        // Should not throw NPE
+        visitor.visit(actor);
+    }
+
+    @Test
+    public void testAllCostumesMissingPlaceholder() {
+        // When all costumes are missing, a placeholder should be emitted
+        List<ImageMetadata> costumes = new ArrayList<>();
+        costumes.add(new ImageMetadata("assetId", "missing_costume", "md5", "svg", 1.0, 0, 0));
+        ImageMetadataList costumeList = new ImageMetadataList(costumes);
+
+        ActorMetadata actorMeta = new ActorMetadata(
+                new CommentMetadataList(new ArrayList<>()),
+                0,
+                costumeList,
+                new SoundMetadataList(new ArrayList<>())
+        );
+
+        ActorDefinition actor = new ActorDefinition(
+                ActorType.getSprite(),
+                new StrId("Sprite1"),
+                new DeclarationStmtList(new ArrayList<>()),
+                new SetStmtList(new ArrayList<>()),
+                new ProcedureDefinitionList(new ArrayList<>()),
+                new ScriptList(new ArrayList<>()),
+                actorMeta
+        );
+
+        GoboscriptVisitor visitor = new GoboscriptVisitor();
+        // Set available assets to exclude the costume
+        visitor.setAvailableAssets(new HashSet<>(List.of("other_md5")));
+        visitor.visit(actor);
+
+        String result = visitor.getOutput();
+
+        assertThat(result).contains("sprite Sprite1");
+        // Should have a placeholder costume
+        assertThat(result).contains("costumes \"other_md5\" as \"placeholder\";");
     }
 
     // ==================== Costume and Sound Declarations ====================

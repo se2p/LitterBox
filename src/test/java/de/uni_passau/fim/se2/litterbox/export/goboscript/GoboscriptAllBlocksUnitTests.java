@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.export.goboscript;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -62,7 +63,7 @@ public class GoboscriptAllBlocksUnitTests implements JsonTest {
     private final Set<ASTNode> assertedNodes = Collections.newSetFromMap(new IdentityHashMap<>());
 
     @BeforeAll
-    public void setup() throws IOException, de.uni_passau.fim.se2.litterbox.ast.ParsingException {
+    public void setup() throws IOException, ParsingException {
         program = getAST("src/test/fixtures/allBlocks.json");
     }
 
