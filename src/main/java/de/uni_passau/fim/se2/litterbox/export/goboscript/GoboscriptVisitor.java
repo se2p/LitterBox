@@ -112,7 +112,6 @@ import java.util.Set;
  */
 public class GoboscriptVisitor extends AbstractExportVisitor {
 
-    private boolean inScript = false;
     private boolean inProcedure = false;
     private final Set<String> currentProcedureParams = new HashSet<>();
     private String assetPrefix = "";
@@ -384,7 +383,8 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
                         }
                     }
                     case "layerOrder" -> layerOrder = numValue != null ? numValue.intValue() : null;
-                    default -> { }
+                    default -> {
+                    }
                 }
             }
         }
@@ -531,9 +531,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         if (script.getEvent() instanceof Never) {
             return; // Skip loose blocks
         }
-        inScript = true;
         script.getEvent().accept(this);
-        inScript = false;
     }
 
     @Override
@@ -1605,11 +1603,9 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         emitNoSpace(" {");
         newLine();
         beginIndentation();
-        inScript = true;
         inProcedure = true;
         node.getStmtList().accept(this);
         inProcedure = false;
-        inScript = false;
         currentProcedureParams.clear();
         endIndentation();
         emitNoSpace("}");

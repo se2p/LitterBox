@@ -174,17 +174,17 @@ public class PyStageAllBlocksUnitTests implements JsonTest {
     private record StmtCollector(Set<ASTNode> statements) implements ScratchVisitor {
 
         @Override
-            public void visit(Stmt node) {
-                statements.add(node);
-                visitChildren(node);
-            }
-
-            @Override
-            public void visit(Event node) {
-                statements.add(node);
-                visitChildren(node);
-            }
+        public void visit(Stmt node) {
+            statements.add(node);
+            visitChildren(node);
         }
+
+        @Override
+        public void visit(Event node) {
+            statements.add(node);
+            visitChildren(node);
+        }
+    }
 
     @Test
     public void testMoveSteps() {

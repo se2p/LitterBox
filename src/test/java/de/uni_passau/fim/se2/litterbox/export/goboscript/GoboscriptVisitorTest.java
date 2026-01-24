@@ -20,40 +20,27 @@ package de.uni_passau.fim.se2.litterbox.export.goboscript;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetadataList;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
-import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.Tempo;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ParameterDefinitionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.ProcedureMetadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Minus;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SwitchCostumeTo;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AsString;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorType;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptList;
-import de.uni_passau.fim.se2.litterbox.ast.model.SetStmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.CommentMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import org.junit.jupiter.api.Test;
 
@@ -66,7 +53,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 /**
  * Tests for the {@link GoboscriptVisitor} export functionality.
- *
+ * <p>
  * This test class uses the ScratchBlocks parsing approach where possible,
  * following the pattern established in PyStageVisitorTest.
  */
@@ -391,7 +378,7 @@ public class GoboscriptVisitorTest implements JsonTest {
         String code = """
                 define move
                 move 10 steps
-                
+
                 when green flag clicked
                 move
                 """;
@@ -610,12 +597,12 @@ public class GoboscriptVisitorTest implements JsonTest {
     @Test
     public void testVideoSensingUnsupported() {
         NoBlockMetadata meta = new NoBlockMetadata();
-        
+
         GoboscriptVisitor visitor = new GoboscriptVisitor();
-        
+
         new TurnVideo("on", meta).accept(visitor);
         new SetVideoTransparency(new NumberLiteral(50), meta).accept(visitor);
-        
+
         String result = visitor.getOutput();
 
         assertThat(result).contains("# Unsupported: turn video on/off");
