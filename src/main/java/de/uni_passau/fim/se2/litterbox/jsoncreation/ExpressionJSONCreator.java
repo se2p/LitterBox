@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.Tempo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.ExprDrum;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.ExprInstrument;
@@ -843,6 +844,11 @@ public class ExpressionJSONCreator
     @Override
     public void visit(ExprInstrument node) {
         node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(Tempo node) {
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     // Translate Extension
