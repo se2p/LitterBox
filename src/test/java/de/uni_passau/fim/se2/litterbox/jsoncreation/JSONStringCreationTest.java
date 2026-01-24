@@ -26,15 +26,22 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.ast.util.StructuralEquality;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import picocli.CommandLine;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
 
 class JSONStringCreationTest implements JsonTest {
 
@@ -107,5 +114,39 @@ class JSONStringCreationTest implements JsonTest {
         final Program parsedProgram = parser.parseString("quantum", json);
 
         Assertions.assertTrue(StructuralEquality.areStructurallyEqual(program, parsedProgram));
+    }
+
+    @ParameterizedTest
+    @MethodSource("jsonFixtures")
+    void testJsonIdempotent(final Path fixture) throws ParsingException {
+        final Program program;
+        try {
+            program = getAST(fixture);
+        } catch (Exception e) {
+            // original program cannot be parsed, ignore for this test
+            return;
+        }
+
+        final String json = JSONStringCreator.createProgramJSONString(program);
+        final Program parsedProgram = new Scratch3Parser().parseString("program", json);
+
+        assertWithMessage(json)
+                .that(StructuralEquality.areStructurallyEqual(program, parsedProgram))
+                .isTrue();
+    }
+
+    static Stream<Arguments> jsonFixtures() throws IOException {
+        final Set<String> ignoredProjects = Set.of(
+                "undefinedBlocks.json",
+                "undefinedBlocksEvent.json",
+                "invalidOPCodes.json"
+        );
+        return Files.walk(Path.of("src/test/fixtures/"))
+                .filter(p -> p.toFile().isFile())
+                .filter(p -> p.getFileName().toString().endsWith(".json"))
+                // ignore mblock projects since they currently cannot be written to JSON
+                .filter(p -> !p.toString().contains("mblock"))
+                .filter(p -> !ignoredProjects.contains(p.getFileName().toString()))
+                .map(p -> Arguments.of(Named.of(p.toString(), p)));
     }
 }
