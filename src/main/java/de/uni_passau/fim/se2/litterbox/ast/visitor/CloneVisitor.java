@@ -57,6 +57,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.Fi
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.ExprNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
@@ -5505,7 +5506,6 @@ public class CloneVisitor {
     //Translate
 
     public ASTNode visit(TFixedLanguage node) {
-
         return new TFixedLanguage(node.getType().getType(), apply(node.getMetadata()));
     }
 
@@ -5520,5 +5520,80 @@ public class CloneVisitor {
 
     public ASTNode visit(ViewerLanguage node) {
         return new ViewerLanguage(apply(node.getMetadata()));
+    }
+
+    // Quantum
+
+    public ASTNode visit(WhenMeasured node) {
+        return new WhenMeasured(apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(WhenEntanglementStarted node) {
+        return new WhenEntanglementStarted(apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(WhenSuperpositionStarted node) {
+        return new WhenSuperpositionStarted(apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(FixedQuantumAttribute node) {
+        return new FixedQuantumAttribute(node.getType());
+    }
+
+    public ASTNode visit(Measure node) {
+        return new Measure(apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(QuantumSuperpositionPossibilities node) {
+        return new QuantumSuperpositionPossibilities(
+                apply(node.getAttribute()),
+                apply(node.getPossibilities()),
+                apply(node.getMetadata())
+        );
+    }
+
+    public ASTNode visit(QuantumSuperpositionList node) {
+        return new QuantumSuperpositionList(
+                apply(node.getAttribute()),
+                apply(node.getList()),
+                apply(node.getMetadata())
+        );
+    }
+
+    public ASTNode visit(QuantumSuperpositionPossibilitiesList node) {
+        return new QuantumSuperpositionPossibilitiesList(
+                apply(node.getAttribute()),
+                apply(node.getPossibilities()),
+                apply(node.getList()),
+                apply(node.getMetadata())
+        );
+    }
+
+    public ASTNode visit(QuantumEntanglementPossibilities node) {
+        return new QuantumEntanglementPossibilities(
+                apply(node.getAttribute()),
+                apply(node.getTarget()),
+                apply(node.getPossibilities()),
+                apply(node.getMetadata())
+        );
+    }
+
+    public ASTNode visit(QuantumEntanglementList node) {
+        return new QuantumEntanglementList(
+                apply(node.getAttribute()),
+                apply(node.getTarget()),
+                apply(node.getList()),
+                apply(node.getMetadata())
+        );
+    }
+
+    public ASTNode visit(QuantumEntanglementPossibilitiesList node) {
+        return new QuantumEntanglementPossibilitiesList(
+                apply(node.getAttribute()),
+                apply(node.getTarget()),
+                apply(node.getPossibilities()),
+                apply(node.getList()),
+                apply(node.getMetadata())
+        );
     }
 }
