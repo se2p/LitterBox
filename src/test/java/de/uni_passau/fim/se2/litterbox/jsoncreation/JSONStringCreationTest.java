@@ -36,17 +36,17 @@ import java.nio.file.Path;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class JSONStringCreationTest implements JsonTest {
+class JSONStringCreationTest implements JsonTest {
 
     @Test
-    void createProgramJSONStringWithVariableInComparison() throws ParsingException, IOException {
+    void createProgramJSONStringWithVariableInComparison() throws ParsingException {
         final var program = getAST("src/test/fixtures/MWE.json");
         final String json = JSONStringCreator.createProgramJSONString(program);
         Assertions.assertTrue(json.contains("\"inputs\": {\"OPERAND1\": [3,[12,\"my variable\",\"`jEk@4|i[#Fk?(8x)AV.-my variable\"],[10,\"\"]],\"OPERAND2\": [1,[4,\"50\"]]}"));
     }
 
     @Test
-    void createProgramJSONStringWithLooseVariable() throws ParsingException, IOException {
+    void createProgramJSONStringWithLooseVariable() throws ParsingException {
         final var program = getAST("src/test/fixtures/looseVariable.json");
         final String json = JSONStringCreator.createProgramJSONString(program);
         Assertions.assertTrue(json.contains("[12,\"meine Variable\",\"`jEk@4|i[#Fk?(8x)AV.-my variable\",676.0,120.0]"));
@@ -71,7 +71,7 @@ public class JSONStringCreationTest implements JsonTest {
     }
 
     @Test
-    void testCrashInNPEFixture() throws ParsingException, IOException {
+    void testCrashInNPEFixture() throws ParsingException {
         final var program = getAST("src/test/fixtures/refactoring/NPE.json");
         // This should not throw NPE
         String json = JSONStringCreator.createProgramJSONString(program);
@@ -84,17 +84,28 @@ public class JSONStringCreationTest implements JsonTest {
     }
 
     @Test
-    void testEscapeQuotesInString() throws ParsingException, IOException {
+    void testEscapeQuotesInString() throws ParsingException {
         final var program = getAST("src/test/fixtures/escape-special-chars.json");
         final String json = JSONStringCreator.createProgramJSONString(program);
         assertThat(json).contains("\\\"the quotes should have been escaped\\\"");
     }
 
     @Test
-    void testEscapeQuotesInBroadcastMessage() throws ParsingException, IOException {
+    void testEscapeQuotesInBroadcastMessage() throws ParsingException {
         final var program = getAST("src/test/fixtures/escape-special-chars-broadcast-message.json");
         final String json = JSONStringCreator.createProgramJSONString(program);
         assertThat(json).contains("the \\\"quotes\\\" should have been escaped");
         assertThat(json).doesNotContain("the \"quotes\" should have been escaped");
+    }
+
+    @Test
+    void testQuantumBlocks() throws ParsingException {
+        final var program = getAST("src/test/fixtures/quantum.json");
+        final String json = JSONStringCreator.createProgramJSONString(program);
+
+        final Scratch3Parser parser = new Scratch3Parser();
+        final Program parsedProgram = parser.parseString("quantum", json);
+
+        Assertions.assertTrue(StructuralEquality.areStructurallyEqual(program, parsedProgram));
     }
 }
