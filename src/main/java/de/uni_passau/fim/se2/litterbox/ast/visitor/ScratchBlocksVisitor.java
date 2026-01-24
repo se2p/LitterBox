@@ -60,6 +60,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.Fi
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.ExprNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
@@ -135,7 +136,7 @@ import java.util.*;
  */
 public class ScratchBlocksVisitor extends PrintVisitor implements
         PenExtensionVisitor, TextToSpeechExtensionVisitor, MBlockVisitor, MusicExtensionVisitor,
-        VideoSensingExtensionVisitor {
+        VideoSensingExtensionVisitor, QuantumExtensionVisitor {
 
     private static final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
 
@@ -3423,4 +3424,118 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     public void setAddActorNames(boolean addActorNames) {
         this.addActorNames = addActorNames;
     }
+
+    // region: quantum extension
+
+    private static final String QUANTUM_COLOR = "#5c068c";
+    private static final String QUANTUM_SUFFIX = " :: " + QUANTUM_COLOR;
+    private static final String QUANTUM_LIST = "list:";
+    private static final String QUANTUM_POSSIBILITIES = "possibilities:";
+    private static final String QUANTUM_WITH = "with";
+    private static final String QUANTUM_SUPERPOSE = "superpose ";
+    private static final String QUANTUM_ENTANGLE = "entangle ";
+
+    @Override
+    public void visit(FixedQuantumAttribute node) {
+        emitNoSpace("[");
+        emitNoSpace(node.getTypeName());
+        emitNoSpace(" v]");
+    }
+
+    @Override
+    public void visit(WhenMeasured node) {
+        emitNoSpace("when measured :: events hat " + QUANTUM_COLOR);
+        newLine();
+    }
+
+    @Override
+    public void visit(WhenEntanglementStarted node) {
+        emitNoSpace("when superposition started :: events hat " + QUANTUM_COLOR);
+        newLine();
+    }
+
+    @Override
+    public void visit(WhenSuperpositionStarted node) {
+        emitNoSpace("when entanglement started :: events hat " + QUANTUM_COLOR);
+        newLine();
+    }
+
+    @Override
+    public void visit(Measure node) {
+        emitNoSpace("measure");
+        emitNoSpace(QUANTUM_SUFFIX);
+        newLine();
+    }
+
+    @Override
+    public void visit(QuantumSuperpositionPossibilities node) {
+        emitNoSpace(QUANTUM_SUPERPOSE);
+        node.getAttribute().accept(this);
+        emitSpaced(QUANTUM_POSSIBILITIES);
+        node.getPossibilities().accept(this);
+        emitNoSpace(QUANTUM_SUFFIX);
+        newLine();
+    }
+
+    @Override
+    public void visit(QuantumSuperpositionList node) {
+        emitNoSpace(QUANTUM_SUPERPOSE);
+        node.getAttribute().accept(this);
+        emitSpaced(QUANTUM_LIST);
+        node.getList().accept(this);
+        emitNoSpace(QUANTUM_SUFFIX);
+        newLine();
+    }
+
+    @Override
+    public void visit(QuantumSuperpositionPossibilitiesList node) {
+        emitNoSpace(QUANTUM_SUPERPOSE);
+        node.getAttribute().accept(this);
+        emitSpaced(QUANTUM_POSSIBILITIES);
+        node.getPossibilities().accept(this);
+        emitSpaced(QUANTUM_LIST);
+        node.getList().accept(this);
+        emitNoSpace(QUANTUM_SUFFIX);
+        newLine();
+    }
+
+    @Override
+    public void visit(QuantumEntanglementPossibilities node) {
+        emitNoSpace(QUANTUM_ENTANGLE);
+        node.getAttribute().accept(this);
+        emitSpaced(QUANTUM_WITH);
+        node.getTarget().accept(this);
+        emitSpaced(QUANTUM_POSSIBILITIES);
+        node.getPossibilities().accept(this);
+        emitNoSpace(QUANTUM_SUFFIX);
+        newLine();
+    }
+
+    @Override
+    public void visit(QuantumEntanglementList node) {
+        emitNoSpace(QUANTUM_ENTANGLE);
+        node.getAttribute().accept(this);
+        emitSpaced(QUANTUM_WITH);
+        node.getTarget().accept(this);
+        emitSpaced(QUANTUM_LIST);
+        node.getList().accept(this);
+        emitNoSpace(QUANTUM_SUFFIX);
+        newLine();
+    }
+
+    @Override
+    public void visit(QuantumEntanglementPossibilitiesList node) {
+        emitNoSpace(QUANTUM_ENTANGLE);
+        node.getAttribute().accept(this);
+        emitSpaced(QUANTUM_WITH);
+        node.getTarget().accept(this);
+        emitSpaced(QUANTUM_POSSIBILITIES);
+        node.getPossibilities().accept(this);
+        emitSpaced(QUANTUM_LIST);
+        node.getList().accept(this);
+        emitNoSpace(QUANTUM_SUFFIX);
+        newLine();
+    }
+
+    // endregion
 }
