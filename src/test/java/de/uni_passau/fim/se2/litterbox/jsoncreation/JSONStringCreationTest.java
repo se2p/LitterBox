@@ -139,7 +139,18 @@ class JSONStringCreationTest implements JsonTest {
         final Set<String> ignoredProjects = Set.of(
                 "undefinedBlocks.json",
                 "undefinedBlocksEvent.json",
-                "invalidOPCodes.json"
+                "invalidOPCodes.json",
+                "manipulatedFixedNoteBlock.json",
+                // contains invalid opcode motion_move100steps
+                // -> block skipped when parsing for the first time
+                // -> broken next pointer when writing JSON
+                "eraseOtherSprite.json",
+                // contains invalid opcode motion_move100steps
+                "missingEraseAll.json",
+                // invalid JSON (multiple expressions in a single stmt-list)
+                "inappropriateIntimacy.json",
+                // no support for the wedo2 extension
+                "testExtension.json"
         );
         return Files.walk(Path.of("src/test/fixtures/"))
                 .filter(p -> p.toFile().isFile())
