@@ -26,8 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Prev;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.ComparableExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
@@ -147,6 +147,8 @@ public class PyStageVisitor extends AbstractExportVisitor {
     private boolean inHandler = false;
     private final Map<String, String> parameterNameMapping = new HashMap<>();
     private final Set<String> validSpriteNames = new HashSet<>();
+    private final Map<String, String> variableRenames = new HashMap<>();
+    private final Set<String> globalVariableNames = new HashSet<>();
 
     // ---------------------------------------------------------------
     // Constructors
@@ -203,6 +205,13 @@ public class PyStageVisitor extends AbstractExportVisitor {
     // ---------------------------------------------------------------
 
     /**
+     * Returns the name of the variable, applying any necessary renaming to handle collisions.
+     */
+    private String getVariableName(String originalName) {
+        return variableRenames.getOrDefault(originalName, originalName);
+    }
+
+    /**
      * Returns the appropriate object reference ("self" in handlers, sprite name otherwise).
      */
     private String getSelfOrSprite() {
@@ -214,6 +223,22 @@ public class PyStageVisitor extends AbstractExportVisitor {
      */
     private boolean isCurrentActorStage() {
         return currentActor != null && currentActor.isStage();
+    }
+
+    /**
+     * Checks if the current actor is the stage and emits a warning comment and pass if so.
+     * Use this for blocks that are not supported on the Stage (e.g., motion blocks).
+     *
+     * @param operation The name of the operation (e.g., "move", "turn")
+     * @return true if the actor is the stage and the warning was emitted; false otherwise.
+     */
+    private boolean isStageWithWarning(String operation) {
+        if (isCurrentActorStage()) {
+            emitNoSpace("pass # Stage cannot " + operation);
+            newLine();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -255,26 +280,12 @@ public class PyStageVisitor extends AbstractExportVisitor {
     }
 
     /**
-     * Emits a core method call on self.
-     * Example: self._core.motion_setx(...)
-     */
-    private void emitCoreMethodCall(String methodName, Runnable argEmitter) {
-        emitNoSpace(SELF + CORE_ACCESSOR + "." + methodName + "(");
-        argEmitter.run();
-        emitNoSpace(")");
-        newLine();
-    }
-
-    /**
      * Builds the Python image path for a costume/backdrop.
      */
-
-
 
     // ---------------------------------------------------------------
     // Default Behavior Override
     // ---------------------------------------------------------------
-
     @Override
     public void visit(ASTNode node) {
         // Handle unhandled expression nodes by emitting neutral values.
@@ -320,6 +331,21 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
         analyzeAndEmitInferredGlobals(program);
 
+        // Collect explicit global variables (Stage variables)
+        globalVariableNames.clear();
+        globalVariableNames.addAll(inferredGlobals);
+        for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
+            if (actor.isStage()) {
+                for (var decl : actor.getDecls().getDeclarationStmts()) {
+                    String name = getDeclarationName(decl);
+                    if (name != null) {
+                        globalVariableNames.add(name);
+                    }
+                }
+                break;
+            }
+        }
+
         // Process all actors
         for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
             actor.accept(this);
@@ -333,6 +359,8 @@ public class PyStageVisitor extends AbstractExportVisitor {
     private void emitProgramHeader() {
         // Import statements
         emitNoSpace("from pystage.en import Stage");
+        newLine();
+        emitNoSpace("from pystage.core.constants import KEY_MAPPINGS");
         newLine();
         emitNoSpace("import pygame");
         newLine();
@@ -351,6 +379,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
         emitGoToHelper();
         emitPickRandomHelper();
+        emitGetXYHelper();
 
         // Create stage
         emitNoSpace(STAGE_VAR_NAME + " = Stage()");
@@ -425,7 +454,6 @@ public class PyStageVisitor extends AbstractExportVisitor {
                         return value
                 """);
         newLine();
-
     }
 
     private void emitGoToHelper() {
@@ -433,11 +461,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
                 def _go_to_helper(source_sprite, target):
                     try:
                         if hasattr(target, "x_position"):
-                            source_sprite.go_to_sprite(target)
-                        elif isinstance(target, str):
-                            # Try to find sprite by name (runtime lookup if necessary)
-                            # but pystage go_to_sprite already handles string naming lookup reasonably well
-                            # IF it is a valid sprite name. If it is random string, it might fail.
+                            # motion_goto_sprite expects a facade sprite with x_position() method
                             source_sprite.go_to_sprite(target)
                         else:
                             pass
@@ -458,6 +482,40 @@ public class PyStageVisitor extends AbstractExportVisitor {
                         return random.randint(int(from_num), int(to_num))
                     else:
                         return random.uniform(from_num, to_num)
+                """);
+        newLine();
+    }
+
+    private void emitGetXYHelper() {
+        emitNoSpace("""
+                def _get_xy(stage, current, target):
+                    if hasattr(target, "x_position"):
+                        return target.x_position(), target.y_position()
+                    target_str = str(target)
+                    if target_str == "_mouse_":
+                        return stage.sensing_mousex(), stage.sensing_mousey()
+                    if target_str == "_random_":
+                        w = 480
+                        h = 360
+                        if hasattr(stage, "_core"):
+                            w = stage._core.width
+                            h = stage._core.height
+                        return random.randint(-int(w/2), int(w/2)), random.randint(-int(h/2), int(h/2))
+                    if hasattr(stage, "_core"):
+                        for s in stage._core.sprites:
+                            if str(getattr(s, "name", "")) == target_str:
+                                return s.motion_xposition(), s.motion_yposition()
+                    return current.x_position(), current.y_position()
+
+                def _get_sprite(stage, current, target):
+                    if hasattr(target, "_core"):
+                        return target
+                    target_str = str(target)
+                    if hasattr(stage, "_core"):
+                        for s in stage._core.sprites:
+                            if str(getattr(s, "name", "")) == target_str:
+                                return s.facade if s.facade else s
+                    return current
                 """);
         newLine();
     }
@@ -587,6 +645,10 @@ public class PyStageVisitor extends AbstractExportVisitor {
             }
         }
 
+        if (!node.isStage()) {
+            calculateVariableRenames(node);
+        }
+
         node.getDecls().accept(this);
         emitMissingVariables(node);
 
@@ -595,6 +657,34 @@ public class PyStageVisitor extends AbstractExportVisitor {
         node.getScripts().accept(this);
 
         currentActor = null;
+    }
+
+    private void calculateVariableRenames(ActorDefinition node) {
+        variableRenames.clear();
+        Set<String> localNames = new HashSet<>();
+        for (var decl : node.getDecls().getDeclarationStmts()) {
+            String name = getDeclarationName(decl);
+            if (name != null) {
+                localNames.add(name);
+            }
+        }
+
+        for (var decl : node.getDecls().getDeclarationStmts()) {
+            String name = getDeclarationName(decl);
+            if (name != null) {
+                if (globalVariableNames.contains(name)) {
+                    // Collision detected - rename local variable
+                    String newName = name + "_local";
+                    int counter = 1;
+                    while (localNames.contains(newName) || globalVariableNames.contains(newName)) {
+                        newName = name + "_local_" + counter++;
+                    }
+                    variableRenames.put(name, newName);
+                    // Add new name to used names to prevend subsequent collisions
+                    localNames.add(newName);
+                }
+            }
+        }
     }
 
     private void setupActorContext(ActorDefinition node) {
@@ -729,7 +819,8 @@ public class PyStageVisitor extends AbstractExportVisitor {
         if (isStage) {
             emitNoSpace(currentSpritePyName + ".create_variable(\"" + escapeString(varName) + "\")");
         } else {
-            emitNoSpace(currentSpritePyName + CORE_ACCESSOR + ".pystage_makevariable(\""
+            // Use internal method directly because PyStage's facade ignores all_sprites parameter
+            emitNoSpace(currentSpritePyName + "._core.pystage_makevariable(\""
                     + escapeString(varName) + "\", all_sprites=False)");
         }
         newLine();
@@ -754,18 +845,22 @@ public class PyStageVisitor extends AbstractExportVisitor {
         }
 
         if (name != null) {
+            String originalName = name;
+            name = getVariableName(name); // Apply renaming if needed
+
             if (emittedVariables.contains(name)) {
                 return;
             }
             emittedVariables.add(name);
 
             if (ident instanceof ScratchList) {
-                knownLists.add(name);
+                knownLists.add(originalName); // Track original name for lists since visitor uses original ID
             }
 
             if (currentActor != null && currentActor.isStage()) {
                 emitNoSpace(currentSpritePyName + ".create_variable(\"" + escapeString(name) + "\")");
             } else {
+                // Use internal method directly because PyStage's facade ignores all_sprites parameter
                 emitNoSpace(currentSpritePyName + "._core.pystage_makevariable(\""
                         + escapeString(name) + "\", all_sprites=False)");
             }
@@ -835,13 +930,13 @@ public class PyStageVisitor extends AbstractExportVisitor {
                 newLine();
             }
             case "x" -> {
-                emitNoSpace(currentSpritePyName + "._core.motion_setx(");
+                emitNoSpace(currentSpritePyName + ".set_x(");
                 node.getExpr().accept(this);
                 emitNoSpace(")");
                 newLine();
             }
             case "y" -> {
-                emitNoSpace(currentSpritePyName + "._core.motion_sety(");
+                emitNoSpace(currentSpritePyName + ".set_y(");
                 node.getExpr().accept(this);
                 emitNoSpace(")");
                 newLine();
@@ -896,7 +991,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
     public void visit(ShowVariable node) {
         String obj = inHandler ? "self" : currentSpritePyName;
         String name = getIdentifierName(node.getIdentifier());
-        emitNoSpace(obj + ".show_variable(\"" + escapeString(name) + "\")");
+        emitNoSpace(obj + ".show_variable(\"" + escapeString(getVariableName(name)) + "\")");
         newLine();
     }
 
@@ -904,7 +999,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
     public void visit(HideVariable node) {
         String obj = inHandler ? "self" : currentSpritePyName;
         String name = getIdentifierName(node.getIdentifier());
-        emitNoSpace(obj + ".hide_variable(\"" + escapeString(name) + "\")");
+        emitNoSpace(obj + ".hide_variable(\"" + escapeString(getVariableName(name)) + "\")");
         newLine();
     }
 
@@ -912,7 +1007,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
     public void visit(ShowList node) {
         String obj = inHandler ? "self" : currentSpritePyName;
         String name = getIdentifierName(node.getIdentifier());
-        emitNoSpace(obj + ".show_variable(\"" + escapeString(name) + "\")");
+        emitNoSpace(obj + ".show_variable(\"" + escapeString(getVariableName(name)) + "\")");
         newLine();
     }
 
@@ -920,7 +1015,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
     public void visit(HideList node) {
         String obj = inHandler ? "self" : currentSpritePyName;
         String name = getIdentifierName(node.getIdentifier());
-        emitNoSpace(obj + ".hide_variable(\"" + escapeString(name) + "\")");
+        emitNoSpace(obj + ".hide_variable(\"" + escapeString(getVariableName(name)) + "\")");
         newLine();
     }
 
@@ -986,62 +1081,61 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(GreenFlag greenFlag) {
-        String handlerName = currentSpritePyName + "_on_start_" + (handlerCounter++);
-        emitEventHandler(handlerName, greenFlag);
-
-        if (currentActor != null && currentActor.isStage()) {
-            eventRegistrations.add(currentSpritePyName + ".when_GREENFLAG_clicked(" + handlerName + ")");
-        } else {
-            eventRegistrations.add(currentSpritePyName + ".when_program_starts(" + handlerName + ")");
-        }
+        handleEvent(greenFlag, "_on_start_", name ->
+                isCurrentActorStage()
+                        ? currentSpritePyName + ".when_GREENFLAG_clicked(" + name + ")"
+                        : currentSpritePyName + ".when_program_starts(" + name + ")"
+        );
     }
 
     @Override
     public void visit(KeyPressed keyPressed) {
-        String handlerName = currentSpritePyName + "_on_key_" + (handlerCounter++);
-        emitEventHandler(handlerName, keyPressed);
-
         String keyName = getKeyName(keyPressed.getKey());
-        eventRegistrations.add(currentSpritePyName + ".when_key_pressed(\"" + keyName + "\", " + handlerName + ")");
+        if ("any".equals(keyName)) {
+            handleEvent(keyPressed, "_on_key_", name ->
+                    "for key in KEY_MAPPINGS:\n"
+                            + "    " + currentSpritePyName + ".when_key_pressed(key, " + name + ")"
+            );
+        } else {
+            handleEvent(keyPressed, "_on_key_", name ->
+                    currentSpritePyName + ".when_key_pressed(\"" + keyName + "\", " + name + ")"
+            );
+        }
     }
 
     @Override
     public void visit(SpriteClicked spriteClicked) {
-        String handlerName = currentSpritePyName + "_on_click_" + (handlerCounter++);
-        emitEventHandler(handlerName, spriteClicked);
-        eventRegistrations.add(currentSpritePyName + ".when_this_sprite_clicked(" + handlerName + ")");
+        handleEvent(spriteClicked, "_on_click_", name ->
+                currentSpritePyName + ".when_this_sprite_clicked(" + name + ")"
+        );
     }
 
     @Override
     public void visit(StageClicked stageClicked) {
-        String handlerName = currentSpritePyName + "_on_click_" + (handlerCounter++);
-        emitEventHandler(handlerName, stageClicked);
-        eventRegistrations.add(currentSpritePyName + ".when_this_sprite_clicked(" + handlerName + ")");
+        handleEvent(stageClicked, "_on_click_", name ->
+                currentSpritePyName + ".when_this_sprite_clicked(" + name + ")"
+        );
     }
 
     @Override
     public void visit(BackdropSwitchTo backdrop) {
-        String handlerName = currentSpritePyName + "_on_backdrop_" + (handlerCounter++);
-        emitEventHandler(handlerName, backdrop);
-
         String backdropName = backdrop.getBackdrop().getName();
-        eventRegistrations.add(currentSpritePyName + ".when_backdrop_switches_to(\""
-                + escapeString(resolveBackdropPath(backdropName)) + "\", " + handlerName + ")");
+        handleEvent(backdrop, "_on_backdrop_", name ->
+                currentSpritePyName + ".when_backdrop_switches_to(\""
+                        + escapeString(resolveBackdropPath(backdropName)) + "\", " + name + ")"
+        );
     }
 
     @Override
     public void visit(ReceptionOfMessage receptionOfMessage) {
-        String handlerName = currentSpritePyName + "_on_message_" + (handlerCounter++);
-        emitEventHandler(handlerName, receptionOfMessage);
-
         String messageName = getExpressionString(receptionOfMessage.getMsg().getMessage());
-        if (currentActor.isStage()) {
-            eventRegistrations.add(currentSpritePyName + ".when_i_receive(\""
-                    + escapeString(messageName) + "\", " + handlerName + ")");
-        } else {
-            eventRegistrations.add(currentSpritePyName + ".when_i_receive_message(\""
-                    + escapeString(messageName) + "\", " + handlerName + ")");
-        }
+        handleEvent(receptionOfMessage, "_on_message_", name ->
+                isCurrentActorStage()
+                        ? currentSpritePyName + ".when_i_receive(\"" + escapeString(messageName) + "\", "
+                        + name + ")"
+                        : currentSpritePyName + ".when_i_receive_message(\"" + escapeString(messageName) + "\", "
+                        + name + ")"
+        );
     }
 
     @Override
@@ -1132,6 +1226,21 @@ public class PyStageVisitor extends AbstractExportVisitor {
     @Override
     public void visit(Never never) {
         // Loose blocks - skip
+    }
+
+    /**
+     * Helper to handle common event emission logic.
+     * Generates a handler name, emits the handler function, and registers it.
+     *
+     * @param event                 The event node
+     * @param suffix                The suffix for the handler name (e.g. "_on_start_")
+     * @param registrationGenerator Function to generate the registration code given the handler name
+     */
+    private void handleEvent(Event event, String suffix,
+                             java.util.function.Function<String, String> registrationGenerator) {
+        String handlerName = currentSpritePyName + suffix + (handlerCounter++);
+        emitEventHandler(handlerName, event);
+        eventRegistrations.add(registrationGenerator.apply(handlerName));
     }
 
     private void emitEventHandler(String handlerName, Event event) {
@@ -1259,39 +1368,54 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(MoveSteps node) {
+        if (isStageWithWarning("move")) {
+            return;
+        }
         emitSelfMethodCall("move", () -> node.getSteps().accept(this));
     }
 
     @Override
     public void visit(TurnLeft node) {
+        if (isStageWithWarning("turn")) {
+            return;
+        }
         emitSelfMethodCall("turn_left", () -> node.getDegrees().accept(this));
     }
 
     @Override
     public void visit(TurnRight node) {
+        if (isStageWithWarning("turn")) {
+            return;
+        }
         emitSelfMethodCall("turn_right", () -> node.getDegrees().accept(this));
     }
 
     @Override
     public void visit(GoToPos node) {
+        if (isStageWithWarning("move")) {
+            return;
+        }
+
         Position pos = node.getPosition();
         switch (pos) {
             case MousePos mousePos -> emitNoSpace("self.go_to_mouse_pointer()");
             case RandomPos randomPos -> emitNoSpace("self.go_to_random_position()");
             case FromExpression fromExpr -> {
                 String spriteName = resolveSpriteName(fromExpr);
-                if (spriteName != null && !validSpriteNames.contains(spriteName)) {
+                if (spriteName == null || !validSpriteNames.contains(spriteName)) {
                     // Try helper if it's a string expression that couldn't be resolved or is dynamic
-                     emitNoSpace("_go_to_helper(" + getSelfOrSprite() + ", ");
-                     emitSpriteReference(fromExpr);
-                     emitNoSpace(")");
+                    emitNoSpace("_go_to_helper(" + getSelfOrSprite() + ", ");
+                    emitSpriteReference(fromExpr);
+                    emitNoSpace(")");
                 } else {
+                    // motion_goto_sprite expects facade sprite with x_position() method
                     emitNoSpace("self.go_to_sprite(");
                     emitSpriteReference(fromExpr);
                     emitNoSpace(")");
                 }
             }
             default -> {
+                // motion_goto_sprite expects facade sprite with x_position() method
                 emitNoSpace("self.go_to_sprite(");
                 pos.accept(this);
                 emitNoSpace(")");
@@ -1302,6 +1426,9 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(GoToPosXY node) {
+        if (isStageWithWarning("move")) {
+            return;
+        }
         emitSelfMethodCall("go_to_x_y", () -> {
             node.getX().accept(this);
             emitNoSpace(", ");
@@ -1311,6 +1438,10 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(GlideSecsTo node) {
+        if (isStageWithWarning("move")) {
+            return;
+        }
+
         Position pos = node.getPosition();
         switch (pos) {
             case MousePos mousePos -> {
@@ -1330,19 +1461,20 @@ public class PyStageVisitor extends AbstractExportVisitor {
                 } else {
                     emitNoSpace("self.glide_to_x_y(");
                     node.getSecs().accept(this);
-                    emitNoSpace(", ");
+                    emitNoSpace(", *_get_xy(stage, self, ");
                     emitSpriteReference(fromExpr);
-                    emitNoSpace(".x_position(), ");
-                    emitSpriteReference(fromExpr);
-                    emitNoSpace(".y_position())");
+                    emitNoSpace("))");
                 }
             }
             default -> {
-                emitNoSpace("self.glide_to_sprite(");
+                // motion_glideto_sprite is broken in PyStage (expects sprite.x/y which don't exist)
+                // Use glide_to_x_y with x_position()/y_position() as workaround
+                // Use _get_xy helper to handle dynamic targets (e.g. random numbers)
+                emitNoSpace("self.glide_to_x_y(");
                 node.getSecs().accept(this);
-                emitNoSpace(", ");
+                emitNoSpace(", *_get_xy(stage, self, ");
                 pos.accept(this);
-                emitNoSpace(")");
+                emitNoSpace("))");
             }
         }
         newLine();
@@ -1350,6 +1482,9 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(GlideSecsToXY node) {
+        if (isStageWithWarning("move")) {
+            return;
+        }
         emitSelfMethodCall("glide_to_x_y", () -> {
             node.getSecs().accept(this);
             emitNoSpace(", ");
@@ -1361,11 +1496,18 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(PointInDirection node) {
+        if (isStageWithWarning("rotate")) {
+            return;
+        }
         emitSelfMethodCall("point_in_direction", () -> node.getDirection().accept(this));
     }
 
     @Override
     public void visit(PointTowards node) {
+        if (isStageWithWarning("rotate")) {
+            return;
+        }
+
         Position pos = node.getPosition();
         if (pos instanceof MousePos) {
             emitSimpleCall("point_towards_mouse_pointer");
@@ -1375,13 +1517,16 @@ public class PyStageVisitor extends AbstractExportVisitor {
                 emitNoSpace("pass");
                 newLine();
             } else {
-                emitSelfMethodCall("point_towards_sprite", () -> {
-                    emitSpriteReference(fromExpr);
-                    emitNoSpace("._core");
-                });
+                emitNoSpace("self.point_towards_sprite(_get_sprite(stage, self, ");
+                emitSpriteReference(fromExpr);
+                emitNoSpace(")._core)");
+                newLine();
             }
         } else {
-            emitSelfMethodCall("point_towards_sprite", () -> pos.accept(this));
+            emitNoSpace("self.point_towards_sprite(_get_sprite(stage, self, ");
+            pos.accept(this);
+            emitNoSpace(")._core)");
+            newLine();
         }
     }
 
@@ -1422,33 +1567,61 @@ public class PyStageVisitor extends AbstractExportVisitor {
         }
     }
 
+    /**
+     * Emit a sprite reference with ._core appended.
+     * Needed because PyStage's facade methods (go_to_sprite, point_towards_sprite, etc.)
+     * don't properly unwrap the facade before calling internal _core methods.
+     */
+    private void emitSpriteReferenceCore(FromExpression fromExpr) {
+        emitSpriteReference(fromExpr);
+        emitNoSpace("._core");
+    }
+
     @Override
     public void visit(ChangeXBy node) {
-        emitCoreMethodCall("motion_changexby", () -> node.getNum().accept(this));
+        if (isStageWithWarning("move")) {
+            return;
+        }
+        emitSelfMethodCall("change_x_by", () -> node.getNum().accept(this));
     }
 
     @Override
     public void visit(ChangeYBy node) {
-        emitCoreMethodCall("motion_changeyby", () -> node.getNum().accept(this));
+        if (isStageWithWarning("move")) {
+            return;
+        }
+        emitSelfMethodCall("change_y_by", () -> node.getNum().accept(this));
     }
 
     @Override
     public void visit(SetXTo node) {
-        emitCoreMethodCall("motion_setx", () -> node.getNum().accept(this));
+        if (isStageWithWarning("move")) {
+            return;
+        }
+        emitSelfMethodCall("set_x", () -> node.getNum().accept(this));
     }
 
     @Override
     public void visit(SetYTo node) {
-        emitCoreMethodCall("motion_sety", () -> node.getNum().accept(this));
+        if (isStageWithWarning("move")) {
+            return;
+        }
+        emitSelfMethodCall("set_y", () -> node.getNum().accept(this));
     }
 
     @Override
     public void visit(IfOnEdgeBounce node) {
+        if (isStageWithWarning("bounce")) {
+            return;
+        }
         emitSimpleCall("if_on_edge_bounce");
     }
 
     @Override
     public void visit(SetRotationStyle node) {
+        if (isStageWithWarning("rotate")) {
+            return;
+        }
         RotationStyle.RotationStyleType type = node.getRotation().getType();
         switch (type) {
             case dont_rotate -> emitSimpleCall("set_rotation_style_none");
@@ -1479,62 +1652,42 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(Say node) {
-        if (isCurrentActorStage()) {
-            emitNoSpace("# Stage does not support say");
-            newLine();
-            appendIndentation();
-            emitNoSpace("pass");
-            newLine();
-        } else {
-            emitSelfMethodCall("say", () -> node.getString().accept(this));
+        if (isStageWithWarning("say")) {
+            return;
         }
+        emitSelfMethodCall("say", () -> node.getString().accept(this));
     }
 
     @Override
     public void visit(SayForSecs node) {
-        if (isCurrentActorStage()) {
-            emitNoSpace("# Stage does not support say");
-            newLine();
-            appendIndentation();
-            emitNoSpace("pass");
-            newLine();
-        } else {
-            emitSelfMethodCall("say_for_seconds", () -> {
-                node.getString().accept(this);
-                emitNoSpace(", ");
-                node.getSecs().accept(this);
-            });
+        if (isStageWithWarning("say")) {
+            return;
         }
+        emitSelfMethodCall("say_for_seconds", () -> {
+            node.getString().accept(this);
+            emitNoSpace(", ");
+            node.getSecs().accept(this);
+        });
     }
 
     @Override
     public void visit(Think node) {
-        if (isCurrentActorStage()) {
-            emitNoSpace("# Stage does not support think");
-            newLine();
-            appendIndentation();
-            emitNoSpace("pass");
-            newLine();
-        } else {
-            emitSelfMethodCall("think", () -> node.getThought().accept(this));
+        if (isStageWithWarning("think")) {
+            return;
         }
+        emitSelfMethodCall("think", () -> node.getThought().accept(this));
     }
 
     @Override
     public void visit(ThinkForSecs node) {
-        if (isCurrentActorStage()) {
-            emitNoSpace("# Stage does not support think");
-            newLine();
-            appendIndentation();
-            emitNoSpace("pass");
-            newLine();
-        } else {
-            emitSelfMethodCall("think_for_seconds", () -> {
-                node.getThought().accept(this);
-                emitNoSpace(", ");
-                node.getSecs().accept(this);
-            });
+        if (isStageWithWarning("think")) {
+            return;
         }
+        emitSelfMethodCall("think_for_seconds", () -> {
+            node.getThought().accept(this);
+            emitNoSpace(", ");
+            node.getSecs().accept(this);
+        });
     }
 
     @Override
@@ -1591,16 +1744,18 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(SwitchBackdropAndWait node) {
-        emitSelfMethodCall("switch_backdrop_to_and_wait", () -> {
-            switch (node.getElementChoice()) {
-                case Next ignored -> emitNoSpace("\"next backdrop\"");
-                case Prev ignored -> emitNoSpace("\"previous backdrop\"");
-                case Random ignored -> emitNoSpace("\"random backdrop\"");
-                case WithExpr withExpr when withExpr.getExpression() instanceof StringLiteral str ->
-                        emitNoSpace("\"" + escapeString(resolveBackdropPath(str.getText())) + "\"");
-                default -> node.getElementChoice().accept(this);
-            }
-        });
+        // switch_backdrop_to_and_wait only exists on stage, so always use stage reference
+        emitNoSpace(STAGE_VAR_NAME + ".switch_backdrop_to_and_wait(");
+        switch (node.getElementChoice()) {
+            case Next ignored -> emitNoSpace("\"next backdrop\"");
+            case Prev ignored -> emitNoSpace("\"previous backdrop\"");
+            case Random ignored -> emitNoSpace("\"random backdrop\"");
+            case WithExpr withExpr when withExpr.getExpression() instanceof StringLiteral str ->
+                    emitNoSpace("\"" + escapeString(resolveBackdropPath(str.getText())) + "\"");
+            default -> node.getElementChoice().accept(this);
+        }
+        emitNoSpace(")");
+        newLine();
     }
 
     @Override
@@ -1610,6 +1765,9 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(ChangeSizeBy node) {
+        if (isStageWithWarning("change_size_by")) {
+            return;
+        }
         emitSelfMethodCall("change_size_by", () -> {
             emitNoSpace("min(max(");
             emitAsNumber(node.getNum());
@@ -1619,6 +1777,9 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(SetSizeTo node) {
+        if (isStageWithWarning("set_size_to")) {
+            return;
+        }
         emitSelfMethodCall("set_size_to", () -> {
             emitNoSpace("min(max(");
             emitAsNumber(node.getPercent());
@@ -1628,28 +1789,18 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(Show node) {
-        if (isCurrentActorStage()) {
-            emitNoSpace("# Stage does not support show");
-            newLine();
-            appendIndentation();
-            emitNoSpace("pass");
-            newLine();
-        } else {
-            emitSimpleCall("show");
+        if (isStageWithWarning("show")) {
+            return;
         }
+        emitSimpleCall("show");
     }
 
     @Override
     public void visit(Hide node) {
-        if (isCurrentActorStage()) {
-            emitNoSpace("# Stage does not support hide");
-            newLine();
-            appendIndentation();
-            emitNoSpace("pass");
-            newLine();
-        } else {
-            emitSimpleCall("hide");
+        if (isStageWithWarning("hide")) {
+            return;
         }
+        emitSimpleCall("hide");
     }
 
     @Override
@@ -1666,9 +1817,9 @@ public class PyStageVisitor extends AbstractExportVisitor {
     public void visit(ChangeLayerBy node) {
         String direction = node.getForwardBackwardChoice().getTypeName();
         if ("backward".equals(direction)) {
-            emitNoSpace("self._core.looks_goforwardbackwardlayers_backward(");
+            emitNoSpace("self.go_backward(");
         } else {
-            emitNoSpace("self._core.looks_goforwardbackwardlayers_forward(");
+            emitNoSpace("self.go_forward(");
         }
         node.getNum().accept(this);
         emitNoSpace(")");
@@ -1831,7 +1982,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
     @Override
     public void visit(ChangeVariableBy node) {
         String obj = inHandler ? "self" : currentSpritePyName;
-        String varName = escapeString(getIdentifierName(node.getIdentifier()));
+        String varName = escapeString(getVariableName(getIdentifierName(node.getIdentifier())));
 
         emitNoSpace(obj + ".set_variable(\"" + varName + "\", ");
         emitNoSpace("_to_num(" + obj + ".get_variable(\"" + varName + "\")) + ");
@@ -1841,7 +1992,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
     }
 
     private void emitVariableName(Identifier id) {
-        emitNoSpace(escapeString(getIdentifierName(id)));
+        emitNoSpace(escapeString(getVariableName(getIdentifierName(id))));
     }
 
     // ---------------------------------------------------------------
@@ -1901,7 +2052,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(AddTo node) {
-        String listName = escapeString(getIdentifierName(node.getIdentifier()));
+        String listName = escapeString(getVariableName(getIdentifierName(node.getIdentifier())));
         emitListAccessor(listName);
         emitNoSpace(".append(");
         node.getString().accept(this);
@@ -1911,7 +2062,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(DeleteOf node) {
-        String listName = escapeString(getIdentifierName(node.getIdentifier()));
+        String listName = escapeString(getVariableName(getIdentifierName(node.getIdentifier())));
         Expression indexExpr = node.getNum();
         ListIndexType indexType = getListIndexType(indexExpr);
 
@@ -1930,14 +2081,14 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(DeleteAllOf node) {
-        String listName = escapeString(getIdentifierName(node.getIdentifier()));
+        String listName = escapeString(getVariableName(getIdentifierName(node.getIdentifier())));
         emitNoSpace(SELF + ".set_variable(\"" + listName + "\", [])");
         newLine();
     }
 
     @Override
     public void visit(InsertAt node) {
-        String listName = escapeString(getIdentifierName(node.getIdentifier()));
+        String listName = escapeString(getVariableName(getIdentifierName(node.getIdentifier())));
         Expression indexExpr = node.getIndex();
         ListIndexType indexType = getListIndexType(indexExpr);
 
@@ -1969,7 +2120,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(ReplaceItem node) {
-        String listName = escapeString(getIdentifierName(node.getIdentifier()));
+        String listName = escapeString(getVariableName(getIdentifierName(node.getIdentifier())));
         Expression indexExpr = node.getIndex();
         ListIndexType indexType = getListIndexType(indexExpr);
 
@@ -2005,9 +2156,9 @@ public class PyStageVisitor extends AbstractExportVisitor {
     @Override
     public void visit(CreateCloneOf node) {
         if (node.getCloneChoice() instanceof Myself) {
-            emitNoSpace("self._core.control_create_clone_of_myself()");
+            emitNoSpace("self.create_clone_of_myself()");
         } else if (node.getCloneChoice() instanceof WithCloneExpr cloneExpr) {
-            emitNoSpace("self._core.control_create_clone_of_sprite(");
+            emitNoSpace("self.create_clone_of_sprite(");
             if (cloneExpr.getExpression() instanceof StringLiteral str) {
                 emitNoSpace(toPythonIdentifier(str.getText()));
             } else if (cloneExpr.getExpression() instanceof StrId strId) {
@@ -2017,7 +2168,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
             }
             emitNoSpace(")");
         } else {
-            emitNoSpace("self._core.control_create_clone_of_sprite(");
+            emitNoSpace("self.create_clone_of_sprite(");
             node.getCloneChoice().accept(this);
             emitNoSpace(")");
         }
@@ -2036,7 +2187,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(DeleteClone node) {
-        emitNoSpace("self._core.control_delete_this_clone()");
+        emitNoSpace("self.delete_this_clone()");
         newLine();
     }
 
@@ -2276,29 +2427,53 @@ public class PyStageVisitor extends AbstractExportVisitor {
     public void visit(DistanceTo node) {
         Position pos = node.getPosition();
         if (pos instanceof MousePos) {
-            emitCoreMethodCall("sensing_distanceto_pointer", () -> {
-            });
+            emitNoSpace("self.distance_to_mouse_pointer()");
         } else if (pos instanceof FromExpression fromExpr) {
             String spriteName = resolveSpriteName(fromExpr);
             if (spriteName != null && !validSpriteNames.contains(spriteName)) {
                 emitNoSpace("10000");
             } else {
-                emitCoreMethodCall("sensing_distanceto_sprite", () -> {
-                    emitSpriteReference(fromExpr);
-                    emitNoSpace("._core");
-                });
+                // sensing_distanceto_sprite unwraps ._core internally, expects facade sprite
+                emitNoSpace("self.distance_to_sprite(");
+                emitSpriteReference(fromExpr);
+                emitNoSpace(")");
             }
         } else {
-            // Fallback for unknown position types
-            emitCoreMethodCall("sensing_distanceto", () -> pos.accept(this));
+            // sensing_distanceto_sprite unwraps ._core internally, expects facade sprite
+            emitNoSpace("self.distance_to_sprite(");
+            pos.accept(this);
+            emitNoSpace(")");
         }
     }
 
     @Override
     public void visit(AttributeOf node) {
-        // Resolve target sprite variable name
+        String targetVar = resolveTargetVariable(node.getElementChoice());
+        Attribute attr = node.getAttribute();
+
+        if (attr instanceof AttributeFromFixed fixed) {
+            switch (fixed.getAttribute().getType()) {
+                case X_POSITION -> emitNoSpace(targetVar + ".x_position()");
+                case Y_POSITION -> emitNoSpace(targetVar + ".y_position()");
+                case DIRECTION -> emitNoSpace(targetVar + ".direction()");
+                case COSTUME_NUMBER -> emitNoSpace(targetVar + ".costume_number()");
+                case COSTUME_NAME -> emitNoSpace(targetVar + ".costume_name()");
+                case SIZE -> emitNoSpace(targetVar + ".size()");
+                case VOLUME -> emitNoSpace(targetVar + ".volume()");
+                case BACKDROP_NUMBER -> emitNoSpace("stage.backdrop_number()");
+                case BACKDROP_NAME -> emitNoSpace("stage.backdrop_name()");
+                default -> {
+                }
+            }
+        } else {
+            // Assume it is a variable name
+            String attrName = getAttributeString(attr);
+            emitNoSpace(targetVar + ".get_variable(\"" + escapeString(attrName) + "\")");
+        }
+    }
+
+    private String resolveTargetVariable(ASTNode choice) {
         String targetVar = "stage"; // Default fallback
-        ASTNode choice = node.getElementChoice();
 
         // Unwrap WithExpr if present
         if (choice instanceof WithExpr withExpr) {
@@ -2316,35 +2491,16 @@ public class PyStageVisitor extends AbstractExportVisitor {
                 targetVar = toPythonIdentifier(targetName);
             }
         }
-
-        String objCode = targetVar + "._core";
-        Attribute attr = node.getAttribute();
-
-        if (attr instanceof AttributeFromFixed fixed) {
-            switch (fixed.getAttribute().getType()) {
-                case X_POSITION -> emitNoSpace(objCode + ".motion_xposition()");
-                case Y_POSITION -> emitNoSpace(objCode + ".motion_yposition()");
-                case DIRECTION -> emitNoSpace(objCode + ".motion_direction()");
-                case COSTUME_NUMBER -> emitNoSpace(objCode + ".looks_costumenumbername_number()");
-                case COSTUME_NAME -> emitNoSpace(objCode + ".looks_costumenumbername_name()");
-                case SIZE -> emitNoSpace(objCode + ".looks_size()");
-                case VOLUME -> emitNoSpace(objCode + ".sound_volume()");
-                case BACKDROP_NUMBER -> emitNoSpace("stage._core.looks_backdropnumbername_number()");
-                case BACKDROP_NAME -> emitNoSpace("stage._core.looks_backdropnumbername_name()");
-                default -> {
-                }
-            }
-        } else {
-            // Assume it is a variable name
-            String attrName = getAttributeString(attr);
-            emitNoSpace(objCode + ".data_variable(\"" + escapeString(attrName) + "\")");
-        }
+        return targetVar;
     }
 
     private String getAttributeString(Attribute attr) {
         if (attr instanceof AttributeFromFixed fixed) {
             return fixed.getAttribute().getTypeName();
         } else if (attr instanceof AttributeFromVariable varAttr) {
+            // Apply renaming here?
+            // Better to apply at call site if we knew target.
+            // Without context, we return original name.
             return varAttr.getVariable().getName().getName();
         }
         return "unknown";
@@ -2352,9 +2508,8 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(AttributeFromVariable node) {
-        // This should generally be handled by getAttributeString inside AttributeOf,
-        // but if visited standalone, we return the variable name as string.
-        emitNoSpace("\"" + escapeString(node.getVariable().getName().getName()) + "\"");
+        // standalone usage
+        emitNoSpace("\"" + escapeString(getVariableName(node.getVariable().getName().getName())) + "\"");
     }
 
     @Override
@@ -2384,13 +2539,13 @@ public class PyStageVisitor extends AbstractExportVisitor {
     @Override
     public void visit(LengthOfVar node) {
         emitNoSpace("len(self.get_variable(\"");
-        emitNoSpace(escapeString(getIdentifierName(node.getIdentifier())));
+        emitNoSpace(escapeString(getVariableName(getIdentifierName(node.getIdentifier()))));
         emitNoSpace("\"))");
     }
 
     @Override
     public void visit(IndexOf node) {
-        String listName = escapeString(getIdentifierName(node.getIdentifier()));
+        String listName = escapeString(getVariableName(getIdentifierName(node.getIdentifier())));
         emitNoSpace("_index_of(self.get_variable(\"");
         emitNoSpace(listName);
         emitNoSpace("\"), ");
@@ -2460,18 +2615,18 @@ public class PyStageVisitor extends AbstractExportVisitor {
     public void visit(Costume node) {
         String obj = inHandler ? "self" : currentSpritePyName;
         if (node.getType().getType() == NameNum.NameNumType.NUMBER) {
-            emitNoSpace(obj + "._core.looks_costumenumbername_number()");
+            emitNoSpace(obj + ".costume_number()");
         } else {
-            emitNoSpace(obj + "._core.looks_costumenumbername_name()");
+            emitNoSpace(obj + ".costume_name()");
         }
     }
 
     @Override
     public void visit(Backdrop node) {
         if (node.getType().getType() == NameNum.NameNumType.NUMBER) {
-            emitNoSpace("stage._core.looks_backdropnumbername_number()");
+            emitNoSpace("stage.backdrop_number()");
         } else {
-            emitNoSpace("stage._core.looks_backdropnumbername_name()");
+            emitNoSpace("stage.backdrop_name()");
         }
     }
 
@@ -2596,11 +2751,12 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(ListContains node) {
-        emitNoSpace("self.list_contains(\"");
-        emitNoSpace(escapeString(getIdentifierName(node.getIdentifier())));
-        emitNoSpace("\", ");
+        // Use inline Python since list_contains doesn't exist in PyStage API
+        emitNoSpace("(");
         node.getElement().accept(this);
-        emitNoSpace(")");
+        emitNoSpace(" in self.get_variable(\"");
+        emitNoSpace(escapeString(getVariableName(getIdentifierName(node.getIdentifier()))));
+        emitNoSpace("\"))");
     }
 
     // ---------------------------------------------------------------
@@ -2658,12 +2814,13 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(Variable node) {
-        emitNoSpace("self.get_variable(\"" + escapeString(node.getName().getName()) + "\")");
+        emitNoSpace("self.get_variable(\"" + escapeString(getVariableName(node.getName().getName())) + "\")");
     }
 
     @Override
     public void visit(ScratchList node) {
-        emitNoSpace("self.get_list(\"" + escapeString(node.getName().getName()) + "\")");
+        // Lists are stored as variables in PyStage, so use get_variable
+        emitNoSpace("self.get_variable(\"" + escapeString(getVariableName(node.getName().getName())) + "\")");
     }
 
     @Override
@@ -2854,16 +3011,10 @@ public class PyStageVisitor extends AbstractExportVisitor {
     }
 
     /**
-     * Gets the output extension for a file, converting SVG to PNG since PyStage
-     * has limited SVG support.
+     * Gets the output extension for a file.
      */
     private String getOutputExtension(String fileName) {
-        String extension = getExtension(fileName);
-        // Convert SVG to PNG for PyStage compatibility
-        if (extension.equalsIgnoreCase(".svg")) {
-            return ".png";
-        }
-        return extension;
+        return getExtension(fileName);
     }
 
     /**
@@ -2872,6 +3023,11 @@ public class PyStageVisitor extends AbstractExportVisitor {
      *
      * <p>The handler counter is shared across all event types, so we need to
      * iterate through all scripts in order to match the actual naming scheme.
+     *
+     * <p><b>Note:</b> This method replicates the handler naming logic used in
+     * {@link #handleEvent(Event, String, java.util.function.Function)}.
+     * Any changes to the handler naming convention (e.g. "_on_message_")
+     * must be reflected here as well.
      */
     private Map<String, String> findMessageHandlers(ActorDefinition actor) {
         Map<String, String> handlers = new HashMap<>();
