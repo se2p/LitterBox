@@ -97,6 +97,7 @@ public final class FixHeuristicRegistry {
         registerHeuristic(registry, ImmediateDeleteCloneAfterBroadcastFix::new);
         registerHeuristic(registry, ImmediateStopAfterSayFix::new);
         registerHeuristic(registry, InappropriateHandlerDeleteCloneFix::new);
+        registerHeuristic(registry, InvalidActorBlocksFix::new);
         registerHeuristic(registry, InterruptedLoopSensingFix::new);
         registerHeuristic(registry, InvalidNumberStringFix::new);
         registerHeuristic(registry, KeySetPositionFix::new);

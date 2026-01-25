@@ -63,6 +63,7 @@ public class IssueTool {
             registerBugFinder(new ImmediateStopAfterSayThink(), bugFinders);
             registerBugFinder(new InappropriateHandlerDeleteClone(), bugFinders);
             registerBugFinder(new InterruptedLoopSensing(), bugFinders);
+            registerBugFinder(new InvalidActorBlocks(), bugFinders);
             registerBugFinder(new InvalidNumberString(), bugFinders);
             registerBugFinder(new KeySetPosition(), bugFinders);
             registerBugFinder(new MessageAsLiteral(), bugFinders);
