@@ -73,7 +73,7 @@ public class GoboscriptProjectExporterTest implements JsonTest {
         assertThat(gsFiles).hasSize(2);
 
         // Check that expected files exist
-        assertThat(Files.exists(outputDir.resolve("Stage.gs"))).isTrue();
+        assertThat(Files.exists(outputDir.resolve("stage.gs"))).isTrue();
         assertThat(Files.exists(outputDir.resolve("Sprite1.gs"))).isTrue();
     }
 
@@ -110,8 +110,8 @@ public class GoboscriptProjectExporterTest implements JsonTest {
         GoboscriptProjectExporter exporter = new GoboscriptProjectExporter();
         exporter.export(sb3File, program, outputDir);
 
-        // Check Stage.gs content
-        String stageContent = Files.readString(outputDir.resolve("Stage.gs"));
+        // Check stage.gs content
+        String stageContent = Files.readString(outputDir.resolve("stage.gs"));
         assertThat(stageContent).contains("stage Stage");
         assertThat(stageContent).contains("costumes \"assets/cd21514d0531fdffb22204e0ec5ed84a.svg\" as \"backdrop1\"");
 
@@ -131,8 +131,8 @@ public class GoboscriptProjectExporterTest implements JsonTest {
         GoboscriptProjectExporter exporter = new GoboscriptProjectExporter();
         exporter.export(sb3File, program, outputDir);
 
-        // Check Stage.gs content has pop sound
-        String stageContent = Files.readString(outputDir.resolve("Stage.gs"));
+        // Check stage.gs content has pop sound
+        String stageContent = Files.readString(outputDir.resolve("stage.gs"));
         assertThat(stageContent).contains("sounds \"assets/83a9787d4cb6f3b7632b4ddfebf74367.wav\" as \"pop\"");
 
         // Check Sprite1.gs content has Meow sound
@@ -184,7 +184,7 @@ public class GoboscriptProjectExporterTest implements JsonTest {
         exporter.export(sb3File, program, outputDir);
 
         // Should still work and create files
-        assertThat(Files.exists(outputDir.resolve("Stage.gs"))).isTrue();
+        assertThat(Files.exists(outputDir.resolve("stage.gs"))).isTrue();
         assertThat(Files.exists(outputDir.resolve("Sprite1.gs"))).isTrue();
     }
 
@@ -245,7 +245,7 @@ public class GoboscriptProjectExporterTest implements JsonTest {
         GoboscriptProjectExporter exporter = new TestExporter();
         exporter.export(sb3File, program, outputDir);
 
-        // Even with no assets, Stage.gs MUST be created
+        // Even with no assets, stage.gs MUST be created
         Path stageFile = outputDir.resolve("stage.gs");
 
         assertThat(Files.exists(stageFile)).isTrue();

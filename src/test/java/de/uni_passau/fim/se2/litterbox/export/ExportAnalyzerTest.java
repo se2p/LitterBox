@@ -103,7 +103,7 @@ public class ExportAnalyzerTest implements JsonTest {
         assertThat(Files.isDirectory(outputDir)).isTrue();
 
         // Should have separate .gs files for each actor
-        assertThat(Files.exists(outputDir.resolve("Stage.gs"))).isTrue();
+        assertThat(Files.exists(outputDir.resolve("stage.gs"))).isTrue();
         assertThat(Files.exists(outputDir.resolve("Sprite1.gs"))).isTrue();
 
         // Should have extracted assets in assets/ subdirectory
@@ -124,7 +124,7 @@ public class ExportAnalyzerTest implements JsonTest {
         // Should create subdirectory named after project
         Path projectDir = tempDir.resolve("emptyProject");
         assertThat(Files.exists(projectDir)).isTrue();
-        assertThat(Files.exists(projectDir.resolve("Stage.gs"))).isTrue();
+        assertThat(Files.exists(projectDir.resolve("stage.gs"))).isTrue();
     }
 
     @Test
