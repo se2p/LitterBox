@@ -123,10 +123,10 @@ final class RawStmtConverter {
                 }
 
                 yield switch (stopOption) {
-                    case "all" -> new StopAll(newMetadata);
-                    case "this script" -> new StopThisScript(newMetadata);
-                    default -> throw new InternalParsingException("Unknown stop option: " + stopOption);
-                };
+                        case "all" -> new StopAll(newMetadata);
+                        case "this script" -> new StopThisScript(newMetadata);
+                        default -> throw new InternalParsingException("Unknown stop option: " + stopOption);
+                    };
             }
         };
     }
@@ -182,6 +182,7 @@ final class RawStmtConverter {
         addOpcodes(choices, ResetStmtOpcode.values(), new ResetStmtConverter(state));
         addOpcodes(choices, IRStmtOpcode.values(), new IrStmtConverter(state));
         addOpcodes(choices, VideoSensingOpcode.values(), new VideoSensingStmtConverter(state));
+        addOpcodes(choices, QuantumOpcode.values(), new QuantumStmtConverter(state));
 
         return choices;
     }

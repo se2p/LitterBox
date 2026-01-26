@@ -78,7 +78,9 @@ public enum KnownFields {
     VALUE("VALUE"),
     VARIABLE("VARIABLE"),
     VOICES("voices"),
-    WHEN_GREATER_THAN_MENU("WHENGREATERTHANMENU");
+    WHEN_GREATER_THAN_MENU("WHENGREATERTHANMENU"),
+    // quantum
+    VARIABLES("VARIABLES");
 
     private final String name;
 
