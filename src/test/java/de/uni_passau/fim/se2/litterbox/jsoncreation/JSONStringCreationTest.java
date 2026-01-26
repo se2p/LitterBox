@@ -152,8 +152,9 @@ class JSONStringCreationTest implements JsonTest {
                 // contains invalid opcode motion_move100steps
                 // -> block skipped when parsing for the first time
                 // -> broken next pointer when writing JSON
+                // -> missing two blocks afterwards in the stmtlist
                 "eraseOtherSprite.json",
-                // contains invalid opcode motion_move100steps
+                // same issue as eraseOtherSprite.json
                 "missingEraseAll.json",
                 // invalid JSON (multiple expressions in a single stmt-list)
                 "inappropriateIntimacy.json",
@@ -165,7 +166,13 @@ class JSONStringCreationTest implements JsonTest {
                 // does not exist in the original JSON
                 // there even is not a single note opcode in the JSON
                 // tl;dr the original JSON is broken
-                "broadcastCostumeFix.json"
+                "broadcastCostumeFix.json",
+                // contains `data_setvariableto (var) (3)` with 3 stored with type String in the original JSON
+                // LitterBox eagerly converts the 3 into a NumberLiteral when parsing
+                // Since the type is then different in the resulting JSON, they are no longer structurally equal.
+                // Due to the loose JavaScript typing (and type coercion) when performing equality checks or applying
+                // mathematical operators, this change of type should not change program behaviour.
+                "missingBackdropSwitchAndWaitAsString.json"
         );
         return Files.walk(Path.of("src/test/fixtures/"))
                 .filter(p -> p.toFile().isFile())
