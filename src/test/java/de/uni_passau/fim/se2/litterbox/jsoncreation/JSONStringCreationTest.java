@@ -160,7 +160,6 @@ class JSONStringCreationTest implements JsonTest {
                 // there even is not a single note opcode in the JSON
                 // tl;dr the original JSON is broken
                 "broadcastCostumeFix.json"
-
         );
         return Files.walk(Path.of("src/test/fixtures/"))
                 .filter(p -> p.toFile().isFile())
@@ -169,23 +168,5 @@ class JSONStringCreationTest implements JsonTest {
                 .filter(p -> !p.toString().contains("mblock"))
                 .filter(p -> !ignoredProjects.contains(p.getFileName().toString()))
                 .map(p -> Arguments.of(Named.of(p.toString(), p)));
-    }
-
-    @Test
-    void testExprLit() throws ParsingException {
-        final Program program;
-        try {
-            program = getAST("src/test/fixtures/bugs/exprLit");
-        } catch (Exception e) {
-            // original program cannot be parsed, ignore for this test
-            return;
-        }
-
-        final String json = JSONStringCreator.createProgramJSONString(program);
-        final Program parsedProgram = new Scratch3Parser().parseString("program", json);
-
-        assertWithMessage(json)
-                .that(StructuralEquality.areStructurallyEqual(program, parsedProgram))
-                .isTrue();
     }
 }

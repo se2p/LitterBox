@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.CommentMetadata;
@@ -256,6 +257,12 @@ public class ActorJSONCreator {
                     .append(BlockJsonCreatorHelper.escape(variableName))
                     .append("\", ")
                     .append(numberLiteral.getValue())
+                    .append("]");
+        } else if (expr instanceof BoolLiteral boolLiteral) {
+            jsonString.append("\"")
+                    .append(BlockJsonCreatorHelper.escape(variableName))
+                    .append("\", ")
+                    .append(boolLiteral.getValue())
                     .append("]");
         }
         return jsonString;
