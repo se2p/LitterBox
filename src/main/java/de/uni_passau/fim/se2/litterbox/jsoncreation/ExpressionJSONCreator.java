@@ -70,11 +70,8 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.TranslateExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.VideoSensingExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
@@ -171,11 +168,8 @@ public class ExpressionJSONCreator
 
     @Override
     public void visit(NumberLiteral node) {
-        NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
-        format.setGroupingUsed(false);
-        format.setMinimumFractionDigits(0);
-        finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
-                format.format(node.getValue())));
+        final String number = BlockJsonCreatorHelper.formatNumberLiteral(node);
+        finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE, number));
     }
 
     @Override

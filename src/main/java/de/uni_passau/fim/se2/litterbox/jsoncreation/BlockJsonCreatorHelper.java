@@ -18,21 +18,41 @@
  */
 package de.uni_passau.fim.se2.litterbox.jsoncreation;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.BlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.DataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.TopNonDataBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.createField;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.createFieldValue;
 
-public abstract class BlockJsonCreatorHelper {
+public final class BlockJsonCreatorHelper {
 
     public static final String DEFAULT_VALUE = "[10,\"\"]";
+
+    private BlockJsonCreatorHelper() {
+        // utility class
+    }
+
+    public static String formatNumberLiteral(final NumberLiteral numberLiteral) {
+        final NumberFormat format = NumberFormat.getInstance(Locale.ROOT);
+        format.setGroupingUsed(false);
+        // format x.0 as whole integer
+        format.setMinimumFractionDigits(0);
+        // currently, we do not perform any calculations and store the results in NumberLiterals within LitterBox
+        // therefore, no floating point rounding errors can have occurred and all digits we know are given by the
+        // user
+        format.setMaximumFractionDigits(Integer.MAX_VALUE);
+
+        return format.format(numberLiteral.getValue());
+    }
 
     public static StringBuilder createBlockUpToParent(StringBuilder jsonString, BlockMetadata meta,
                                                       String nextId, String parentId, Opcode opcode) {

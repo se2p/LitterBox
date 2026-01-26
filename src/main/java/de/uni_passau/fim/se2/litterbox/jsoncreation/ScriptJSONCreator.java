@@ -37,8 +37,6 @@ import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -78,11 +76,8 @@ public class ScriptJSONCreator {
                 if (numExpr instanceof UnspecifiedNumExpr) {
                     inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE, ""));
                 } else if (numExpr instanceof NumberLiteral numberLiteral) {
-                    NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
-                    format.setGroupingUsed(false);
-                    format.setMinimumFractionDigits(0);
-                    inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
-                            format.format(numberLiteral.getValue())));
+                    final String number = BlockJsonCreatorHelper.formatNumberLiteral(numberLiteral);
+                    inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE, number));
                 } else {
                     IdJsonStringTuple tuple = exprCreator.createExpressionJSON(meta.getBlockId(),
                             numExpr, symbol);
@@ -109,11 +104,10 @@ public class ScriptJSONCreator {
                 if (numExpr instanceof UnspecifiedNumExpr) {
                     inputs.add(createTypeInputWithName(REFERENCE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE, ""));
                 } else if (numExpr instanceof NumberLiteral numberLiteral) {
-                    NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
-                    format.setGroupingUsed(false);
-                    format.setMinimumFractionDigits(0);
-                    inputs.add(createTypeInputWithName(REFERENCE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
-                            format.format(numberLiteral.getValue())));
+                    final String number = BlockJsonCreatorHelper.formatNumberLiteral(numberLiteral);
+                    inputs.add(
+                            createTypeInputWithName(REFERENCE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE, number)
+                    );
                 } else {
                     IdJsonStringTuple tuple = exprCreator.createExpressionJSON(meta.getBlockId(),
                             numExpr, symbol);

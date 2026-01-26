@@ -36,12 +36,10 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ExpressionListInfo
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.VariableInfo;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.NodeReplacementVisitor;
+import de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.LinkedHashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -99,10 +97,7 @@ public class VariableAsLiteral extends AbstractIssueFinder {
             return;
         }
 
-        NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
-        format.setGroupingUsed(false);
-        format.setMinimumFractionDigits(0);
-        String literal = format.format(node.getValue());
+        String literal = BlockJsonCreatorHelper.formatNumberLiteral(node);
 
         if (variablesInScope.contains(literal)) {
             IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.HIGH).withMetadata(getMetadata(node));

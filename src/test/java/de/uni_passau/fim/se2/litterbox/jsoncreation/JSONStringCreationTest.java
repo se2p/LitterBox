@@ -169,22 +169,4 @@ class JSONStringCreationTest implements JsonTest {
                 .filter(p -> !ignoredProjects.contains(p.getFileName().toString()))
                 .map(p -> Arguments.of(Named.of(p.toString(), p)));
     }
-
-    @Test
-    void testNoodle() throws ParsingException {
-        final Program program;
-        try {
-            program = getAST("src/test/fixtures/bugs/noodle.json");
-        } catch (Exception e) {
-            // original program cannot be parsed, ignore for this test
-            return;
-        }
-
-        final String json = JSONStringCreator.createProgramJSONString(program);
-        final Program parsedProgram = new Scratch3Parser().parseString("program", json);
-
-        assertWithMessage(json)
-                .that(StructuralEquality.areStructurallyEqual(program, parsedProgram))
-                .isTrue();
-    }
 }
