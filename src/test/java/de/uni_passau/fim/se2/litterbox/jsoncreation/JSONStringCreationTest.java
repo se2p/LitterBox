@@ -139,6 +139,8 @@ class JSONStringCreationTest implements JsonTest {
         final Set<String> ignoredProjects = Set.of(
                 "undefinedBlocks.json",
                 "undefinedBlocksEvent.json",
+                // contains invalid opcodes for multiple blocks, adding more letters
+                // e.g. sound_sounds_menuuu, event_whenflagclickeeeed, control_waiiiit
                 "invalidOPCodes.json",
                 "manipulatedFixedNoteBlock.json",
                 // contains invalid opcode motion_move100steps
@@ -150,7 +152,15 @@ class JSONStringCreationTest implements JsonTest {
                 // invalid JSON (multiple expressions in a single stmt-list)
                 "inappropriateIntimacy.json",
                 // no support for the wedo2 extension
-                "testExtension.json"
+                "testExtension.json",
+                // contains PlayNoteForBeats blocks that do not have an input for the note
+                // the reference value in the json is null, while the shadow input says that
+                // a FixedNote should be created, which of course then has no metadata as it
+                // does not exist in the original JSON
+                // there even is not a single note opcode in the JSON
+                // tl;dr the original JSON is broken
+                "broadcastCostumeFix.json"
+
         );
         return Files.walk(Path.of("src/test/fixtures/"))
                 .filter(p -> p.toFile().isFile())
@@ -159,5 +169,23 @@ class JSONStringCreationTest implements JsonTest {
                 .filter(p -> !p.toString().contains("mblock"))
                 .filter(p -> !ignoredProjects.contains(p.getFileName().toString()))
                 .map(p -> Arguments.of(Named.of(p.toString(), p)));
+    }
+
+    @Test
+    void testExprLit() throws ParsingException {
+        final Program program;
+        try {
+            program = getAST("src/test/fixtures/bugs/exprLit");
+        } catch (Exception e) {
+            // original program cannot be parsed, ignore for this test
+            return;
+        }
+
+        final String json = JSONStringCreator.createProgramJSONString(program);
+        final Program parsedProgram = new Scratch3Parser().parseString("program", json);
+
+        assertWithMessage(json)
+                .that(StructuralEquality.areStructurallyEqual(program, parsedProgram))
+                .isTrue();
     }
 }
