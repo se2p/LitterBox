@@ -644,7 +644,7 @@ public class ExpressionJSONCreator
             String listId = symbolTable.getListIdentifierFromActorAndName(actor, listName);
             BlockMetadata metadata = list.getMetadata();
             if (metadata instanceof DataBlockMetadata dataBlockMetadata) {
-                createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(LIST_PRIMITIVE);
+                createField(jsonString, dataBlockMetadata.getScriptId()).append("[").append(LIST_PRIMITIVE);
                 jsonString.append(",\"").append(BlockJsonCreatorHelper.escape(listName)).append("\",\"");
                 jsonString.append(BlockJsonCreatorHelper.escape(listId));
                 if (dataBlockMetadata.getCommentId() != null) {
@@ -674,7 +674,7 @@ public class ExpressionJSONCreator
             String variableId = symbolTable.getVariableIdentifierFromActorAndName(actor, variableName);
             BlockMetadata metadata = variable.getMetadata();
             if (metadata instanceof DataBlockMetadata dataBlockMetadata) {
-                createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(VAR_PRIMITIVE);
+                createField(jsonString, dataBlockMetadata.getScriptId()).append("[").append(VAR_PRIMITIVE);
                 jsonString.append(",\"").append(BlockJsonCreatorHelper.escape(variableName)).append("\",\"");
                 jsonString.append(BlockJsonCreatorHelper.escape(variableId));
                 if (dataBlockMetadata.getCommentId() != null) {

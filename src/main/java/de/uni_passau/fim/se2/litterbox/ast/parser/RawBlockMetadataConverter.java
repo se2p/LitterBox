@@ -22,6 +22,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.*;
 import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.Coordinates;
 import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawBlock;
 import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.RawBlockId;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -31,19 +33,24 @@ final class RawBlockMetadataConverter {
     }
 
     static BlockMetadata convertBlockMetadata(final RawBlockId blockId, final RawBlock block) {
-        return convertBlockMetadata(blockId, block, false);
+        return convertBlockMetadata(null, blockId, block, false);
     }
 
-    static BlockMetadata convertTopLevelBlockMetadata(final RawBlockId blockId, final RawBlock block) {
-        return convertBlockMetadata(blockId, block, true);
+    static BlockMetadata convertTopLevelBlockMetadata(
+            @NonNull final RawBlockId scriptId, final RawBlockId blockId, final RawBlock block
+    ) {
+        return convertBlockMetadata(scriptId, blockId, block, true);
     }
 
     private static BlockMetadata convertBlockMetadata(
-            final RawBlockId blockId, final RawBlock block, final boolean isTopLevel
+            @Nullable final RawBlockId scriptId,
+            final RawBlockId blockId,
+            final RawBlock block,
+            final boolean isTopLevel
     ) {
         return switch (block) {
             case RawBlock.RawRegularBlock regularBlock -> convertRegularBlockMetadata(blockId, regularBlock);
-            case RawBlock.ArrayBlock arrayBlock -> convertArrayBlockMetadata(blockId, arrayBlock, isTopLevel);
+            case RawBlock.ArrayBlock arrayBlock -> convertArrayBlockMetadata(scriptId, blockId, arrayBlock, isTopLevel);
         };
     }
 
@@ -63,7 +70,10 @@ final class RawBlockMetadataConverter {
     }
 
     private static BlockMetadata convertArrayBlockMetadata(
-            final RawBlockId id, final RawBlock.ArrayBlock block, final boolean isTopLevel
+            @Nullable final RawBlockId scriptId,
+            final RawBlockId id,
+            final RawBlock.ArrayBlock block,
+            final boolean isTopLevel
     ) {
         if (!isTopLevel) {
             return new NoBlockMetadata();
@@ -90,6 +100,8 @@ final class RawBlockMetadataConverter {
         final double x = coordinates.map(Coordinates::x).orElse(0.0);
         final double y = coordinates.map(Coordinates::y).orElse(0.0);
 
-        return new DataBlockMetadata(id.id(), commentId, x, y);
+        final String topScriptId = scriptId == null ? null : scriptId.id();
+
+        return new DataBlockMetadata(topScriptId, id.id(), commentId, x, y);
     }
 }

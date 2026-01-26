@@ -305,7 +305,9 @@ public class InvalidNumberStringInjector extends AbstractBugInjector {
     private NumExpr createInvalidNumExpr(double value) {
         return new AsNumber(
                 new StringLiteral(makeInvalidNumber(value)),
-                new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
+                new DataBlockMetadata(
+                        CloneVisitor.generateUID(), CloneVisitor.generateUID(), null, 0, 0
+                )
         );
     }
 

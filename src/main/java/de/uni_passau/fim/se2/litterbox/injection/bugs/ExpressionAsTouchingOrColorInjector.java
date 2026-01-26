@@ -108,14 +108,18 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
         return super.findContextNode(node);
     }
 
+    private DataBlockMetadata generateMetadata() {
+        return new DataBlockMetadata(null, CloneVisitor.generateUID(), null, 0, 0);
+    }
+
     private Expression getRandomReporter() {
         // Create new metadata with unique ID for the injected block
-        BlockMetadata metadata = new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0);
+        BlockMetadata metadata = generateMetadata();
         int choice = RANDOM.nextInt(9);
         return switch (choice) {
             case 0 -> new Add(new NumberLiteral(1), new NumberLiteral(1), metadata);
             case 1 -> new DistanceTo(
-                    new MousePos(new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)),
+                    new MousePos(generateMetadata()),
                     metadata
             );
             case 2 -> new MouseX(metadata);
@@ -157,9 +161,7 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
                 // Touching block expects an Expression wrapped in AsTouchable
                 // Any reporter is fine here
                 Touching replacement = new Touching(
-                        new AsTouchable(injector.getRandomReporter(),
-                                new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
-                        ),
+                        new AsTouchable(injector.getRandomReporter(), injector.generateMetadata()),
                         apply(node.getMetadata())
                 );
                 markModified(node, replacement);
@@ -182,14 +184,12 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
                     // Wrap non-number reporters in AsNumber
                     numExpr = new AsNumber(
                             randomReporter,
-                            new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
+                            injector.generateMetadata()
                     );
                 }
 
                 ColorTouchingColor replacement = new ColorTouchingColor(
-                        new FromNumber(numExpr,
-                                new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
-                        ),
+                        new FromNumber(numExpr, injector.generateMetadata()),
                         apply(node.getOperand2()),
                         apply(node.getMetadata())
                 );
@@ -208,16 +208,11 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
                 if (randomReporter instanceof NumExpr tmp) {
                     numExpr = tmp;
                 } else {
-                    numExpr = new AsNumber(
-                            randomReporter,
-                            new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
-                    );
+                    numExpr = new AsNumber(randomReporter, injector.generateMetadata());
                 }
 
                 SpriteTouchingColor replacement = new SpriteTouchingColor(
-                        new FromNumber(numExpr,
-                                new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
-                        ),
+                        new FromNumber(numExpr, injector.generateMetadata()),
                         apply(node.getMetadata())
                 );
                 markModified(node, replacement);
@@ -235,16 +230,11 @@ public class ExpressionAsTouchingOrColorInjector extends AbstractBugInjector {
                 if (randomReporter instanceof NumExpr tmp) {
                     numExpr = tmp;
                 } else {
-                    numExpr = new AsNumber(
-                            randomReporter,
-                            new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
-                    );
+                    numExpr = new AsNumber(randomReporter, injector.generateMetadata());
                 }
 
                 SetPenColorToColorStmt replacement = new SetPenColorToColorStmt(
-                        new FromNumber(numExpr,
-                                new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
-                        ),
+                        new FromNumber(numExpr, injector.generateMetadata()),
                         apply(node.getMetadata())
                 );
                 markModified(node, replacement);

@@ -1410,7 +1410,9 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         if (topExprBlock) {
             list = new ScratchList(
                     new StrId(ctx.stringArgument().getText()),
-                    new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0)
+                    new DataBlockMetadata(
+                            CloneVisitor.generateUID(), CloneVisitor.generateUID(), null, 0, 0
+                    )
             );
             topExprBlock = false;
         } else {
@@ -1430,7 +1432,10 @@ class ScratchBlocksToScratchVisitor extends ScratchBlocksBaseVisitor<ASTNode> {
         } else {
             final Variable variable;
             if (topExprBlock) {
-                variable = new Variable(id, new DataBlockMetadata(CloneVisitor.generateUID(), null, 0, 0));
+                variable = new Variable(
+                        id,
+                        new DataBlockMetadata(CloneVisitor.generateUID(), CloneVisitor.generateUID(), null, 0, 0)
+                );
             } else {
                 variable = new Variable(id);
             }
