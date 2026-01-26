@@ -24,6 +24,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.UnspecifiedNumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.WhenEntanglementStarted;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.WhenMeasured;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.WhenSuperpositionStarted;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -181,6 +184,18 @@ public class ScriptJSONCreator {
                 TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) startedAsClone.getMetadata();
                 blockId = meta.getBlockId();
                 jsonString.append(createFixedBlock(meta, nextId, null, startedAsClone.getOpcode()));
+            } else if (event instanceof WhenMeasured whenMeasured) {
+                TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) whenMeasured.getMetadata();
+                blockId = meta.getBlockId();
+                jsonString.append(createFixedBlock(meta, nextId, null, whenMeasured.getOpcode()));
+            } else if (event instanceof WhenSuperpositionStarted whenSuperpositionStarted) {
+                TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) whenSuperpositionStarted.getMetadata();
+                blockId = meta.getBlockId();
+                jsonString.append(createFixedBlock(meta, nextId, null, whenSuperpositionStarted.getOpcode()));
+            } else if (event instanceof WhenEntanglementStarted whenEntanglementStarted) {
+                TopNonDataBlockMetadata meta = (TopNonDataBlockMetadata) whenEntanglementStarted.getMetadata();
+                blockId = meta.getBlockId();
+                jsonString.append(createFixedBlock(meta, nextId, null, whenEntanglementStarted.getOpcode()));
             }
 
             if (!script.getStmtList().getStmts().isEmpty()) {

@@ -26,6 +26,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.UnspecifiedBoolExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.NumExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.StringExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.*;
@@ -37,6 +38,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.ExprNote
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.Note;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
@@ -77,6 +79,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.DependentBlockOpcode;
 import de.uni_passau.fim.se2.litterbox.ast.opcodes.Opcode;
+import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.KnownFields;
+import de.uni_passau.fim.se2.litterbox.ast.parser.raw_ast.KnownInputs;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
@@ -97,7 +101,8 @@ public class StmtListJSONCreator
         TextToSpeechExtensionVisitor,
         MusicExtensionVisitor,
         TranslateExtensionVisitor,
-        VideoSensingExtensionVisitor {
+        VideoSensingExtensionVisitor,
+        QuantumExtensionVisitor {
     private String previousBlockId = null;
     private final List<String> finishedJSONStrings;
     private final List<Stmt> stmtList;
@@ -1363,5 +1368,150 @@ public class StmtListJSONCreator
         NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
         createSingleNumExprBlock(metadata, BEATS, node.getBeats(), MATH_NUM_PRIMITIVE, node.getOpcode());
     }
+
+    // region: quantum extension
+
+    private String quantumAttributeJsonValue(final FixedQuantumAttribute attribute) {
+        return "_" + attribute.getType().getType() + "_";
+    }
+
+    @Override
+    public void visit(Measure node) {
+        finishedJSONStrings.add(createFixedBlock(node.getMetadata(), getNextId(), previousBlockId, node.getOpcode()));
+        previousBlockId = node.getMetadata().getBlockId();
+    }
+
+    @Override
+    public void visit(QuantumSuperpositionPossibilities node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+
+        String variablesField = createFields(
+                KnownFields.VARIABLES.getName(),
+                quantumAttributeJsonValue(node.getAttribute()),
+                null
+        );
+
+        List<String> inputs = new ArrayList<>();
+        inputs.add(
+                createNumExpr(metadata, KnownInputs.N_CLONES.getName(), node.getPossibilities(), MATH_NUM_PRIMITIVE)
+        );
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(
+                metadata, getNextId(), previousBlockId, createInputs(inputs), variablesField, node.getOpcode()
+        ));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(QuantumSuperpositionList node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+
+        String variablesField = createFields(
+                KnownFields.VARIABLES.getName(),
+                quantumAttributeJsonValue(node.getAttribute()),
+                null
+        );
+
+        List<String> inputs = new ArrayList<>();
+        inputs.add(
+                createNumExpr(metadata, KnownInputs.LISTA.getName(), new AsNumber(node.getList()), MATH_NUM_PRIMITIVE)
+        );
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(
+                metadata, getNextId(), previousBlockId, createInputs(inputs), variablesField, node.getOpcode()
+        ));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(QuantumSuperpositionPossibilitiesList node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+
+        String variablesField = createFields(
+                KnownFields.VARIABLES.getName(),
+                quantumAttributeJsonValue(node.getAttribute()),
+                null
+        );
+
+        List<String> inputs = new ArrayList<>();
+        inputs.add(
+                createNumExpr(metadata, KnownInputs.N_CLONES.getName(), node.getPossibilities(), MATH_NUM_PRIMITIVE)
+        );
+        inputs.add(
+                createNumExpr(metadata, KnownInputs.LISTA.getName(), new AsNumber(node.getList()), MATH_NUM_PRIMITIVE)
+        );
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(
+                metadata, getNextId(), previousBlockId, createInputs(inputs), variablesField, node.getOpcode()
+        ));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(QuantumEntanglementPossibilities node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+
+        String variablesField = createFields(
+                KnownFields.VARIABLES.getName(),
+                quantumAttributeJsonValue(node.getAttribute()),
+                null
+        );
+
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createExpr(metadata, KnownInputs.TARGET.getName(), node.getTarget()));
+        inputs.add(
+                createNumExpr(metadata, KnownInputs.N_CLONES.getName(), node.getPossibilities(), MATH_NUM_PRIMITIVE)
+        );
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(
+                metadata, getNextId(), previousBlockId, createInputs(inputs), variablesField, node.getOpcode()
+        ));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(QuantumEntanglementList node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+
+        String variablesField = createFields(
+                KnownFields.VARIABLES.getName(),
+                quantumAttributeJsonValue(node.getAttribute()),
+                null
+        );
+
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createExpr(metadata, KnownInputs.TARGET.getName(), node.getTarget()));
+        inputs.add(
+                createNumExpr(metadata, KnownInputs.LISTA1.getName(), new AsNumber(node.getList()), MATH_NUM_PRIMITIVE)
+        );
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(
+                metadata, getNextId(), previousBlockId, createInputs(inputs), variablesField, node.getOpcode()
+        ));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    @Override
+    public void visit(QuantumEntanglementPossibilitiesList node) {
+        NonDataBlockMetadata metadata = (NonDataBlockMetadata) node.getMetadata();
+
+        String variablesField = createFields(
+                KnownFields.VARIABLES.getName(),
+                quantumAttributeJsonValue(node.getAttribute()),
+                null
+        );
+
+        List<String> inputs = new ArrayList<>();
+        inputs.add(createExpr(metadata, KnownInputs.TARGET.getName(), node.getTarget()));
+        inputs.add(createNumExpr(metadata, KnownInputs.LISTA1.getName(), node.getPossibilities(), MATH_NUM_PRIMITIVE));
+        inputs.add(createExpr(metadata, KnownInputs.LISTA2.getName(), node.getList()));
+
+        finishedJSONStrings.add(createBlockWithoutMutationString(
+                metadata, getNextId(), previousBlockId, createInputs(inputs), variablesField, node.getOpcode()
+        ));
+        previousBlockId = metadata.getBlockId();
+    }
+
+    // endregion
 }
 

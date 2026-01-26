@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDru
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.FixedInstrument;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
@@ -58,7 +59,8 @@ public class IdVisitor
         TextToSpeechExtensionVisitor,
         MusicExtensionVisitor,
         VideoSensingExtensionVisitor,
-        TranslateExtensionVisitor {
+        TranslateExtensionVisitor,
+        QuantumExtensionVisitor {
     private String id;
 
     public String getBlockId(Stmt stmt) {
@@ -598,4 +600,58 @@ public class IdVisitor
     public void visit(TExprLanguage node) {
         id = node.getMetadata().getBlockId();
     }
+
+    // region: quantum extension
+
+    @Override
+    public void visit(WhenMeasured node) {
+        id = node.getMetadata().getBlockId();
+    }
+
+    @Override
+    public void visit(WhenEntanglementStarted node) {
+        id = node.getMetadata().getBlockId();
+    }
+
+    @Override
+    public void visit(WhenSuperpositionStarted node) {
+        id = node.getMetadata().getBlockId();
+    }
+
+    @Override
+    public void visit(Measure node) {
+        id = node.getMetadata().getBlockId();
+    }
+
+    @Override
+    public void visit(QuantumSuperpositionPossibilities node) {
+        id = node.getMetadata().getBlockId();
+    }
+
+    @Override
+    public void visit(QuantumSuperpositionList node) {
+        id = node.getMetadata().getBlockId();
+    }
+
+    @Override
+    public void visit(QuantumSuperpositionPossibilitiesList node) {
+        id = node.getMetadata().getBlockId();
+    }
+
+    @Override
+    public void visit(QuantumEntanglementPossibilities node) {
+        id = node.getMetadata().getBlockId();
+    }
+
+    @Override
+    public void visit(QuantumEntanglementList node) {
+        id = node.getMetadata().getBlockId();
+    }
+
+    @Override
+    public void visit(QuantumEntanglementPossibilitiesList node) {
+        id = node.getMetadata().getBlockId();
+    }
+
+    // endregion
 }
