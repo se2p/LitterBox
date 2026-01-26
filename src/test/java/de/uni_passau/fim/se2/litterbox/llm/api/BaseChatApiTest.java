@@ -22,14 +22,20 @@ import de.uni_passau.fim.se2.litterbox.llm.Conversation;
 import de.uni_passau.fim.se2.litterbox.llm.LlmMessage;
 import de.uni_passau.fim.se2.litterbox.llm.LlmMessageSender;
 import dev.langchain4j.data.message.AiMessage;
+import dev.langchain4j.exception.RateLimitException;
+import dev.langchain4j.exception.TimeoutException;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class BaseChatApiTest {
 
@@ -77,6 +83,12 @@ class BaseChatApiTest {
         ).inOrder();
     }
 
+    @Test
+    void shouldTerminateOnFailure() {
+        final FailingChatApi api = new FailingChatApi();
+        assertThrows(LitterBoxLlmException.class, () -> api.query("message"));
+    }
+
     private static class DummyChatApi extends BaseChatApi {
 
         @Override
@@ -88,6 +100,29 @@ class BaseChatApiTest {
                             .modelName("dummy")
                             .aiMessage(new AiMessage("model message"))
                             .build();
+                }
+            };
+        }
+    }
+
+    private static class FailingChatApi extends BaseChatApi {
+
+        int requestId = 1;
+
+        private FailingChatApi() {
+            super(3, Duration.ofMillis(100));
+        }
+
+        @Override
+        protected ChatModel buildModel() {
+            return new ChatModel() {
+                @Override
+                public ChatResponse chat(ChatRequest chatRequest) {
+                    if (requestId++ == 1) {
+                        throw new RateLimitException("dummy rate limit");
+                    } else {
+                        throw new TimeoutException("dummy timeout");
+                    }
                 }
             };
         }
