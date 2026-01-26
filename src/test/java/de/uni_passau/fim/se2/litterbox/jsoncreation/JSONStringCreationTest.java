@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.ast.util.StructuralEquality;
 
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,7 @@ import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class JSONStringCreationTest implements JsonTest {
 
@@ -130,9 +132,13 @@ class JSONStringCreationTest implements JsonTest {
         final String json = JSONStringCreator.createProgramJSONString(program);
         final Program parsedProgram = new Scratch3Parser().parseString("program", json);
 
-        assertWithMessage(json)
-                .that(StructuralEquality.areStructurallyEqual(program, parsedProgram))
-                .isTrue();
+        assertAll(
+                () -> assertWithMessage(json)
+                        .that(StructuralEquality.areStructurallyEqual(program, parsedProgram))
+                        .isTrue(),
+                // just to make it easier to debug
+                () -> assertThat(ScratchBlocksVisitor.of(parsedProgram)).isEqualTo(ScratchBlocksVisitor.of(program))
+        );
     }
 
     static Stream<Arguments> jsonFixtures() throws IOException {
