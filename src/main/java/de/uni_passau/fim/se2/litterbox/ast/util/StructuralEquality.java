@@ -221,14 +221,21 @@ public final class StructuralEquality {
     private static <N extends ASTNode> boolean allHaveStructurallyEqualPartner(
             final Collection<N> nodes1, final Collection<N> nodes2, final BiFunction<N, N, Boolean> comparison
     ) {
+        ScratchBlocksVisitor visitor = new ScratchBlocksVisitor();
         for (final N node1 : nodes1) {
             if (noneStructurallyEqual(node1, nodes2, comparison)) {
+                System.out.println("node1");
+                visitor.visit(node1);
+                System.out.println(visitor.getScratchBlocks());
                 return false;
             }
         }
 
         for (final N node2 : nodes2) {
             if (noneStructurallyEqual(node2, nodes1, comparison)) {
+                System.out.println("node2");
+                visitor.visit(node2);
+                System.out.println(visitor.getScratchBlocks());
                 return false;
             }
         }
