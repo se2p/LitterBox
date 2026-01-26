@@ -1,0 +1,313 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {},
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "backdrop1",
+                    "dataFormat": "svg",
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        },
+        {
+            "isStage": false,
+            "name": "Sprite1",
+            "variables": {},
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "R0*PS3-?JtF(695iI.(n": {
+                    "opcode": "quantum_whenSuperpositionStart",
+                    "next": "?I06tpH?KR7WiiIE5f6O",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 246,
+                    "y": 93
+                },
+                "?I06tpH?KR7WiiIE5f6O": {
+                    "opcode": "quantum_superposition_no_list",
+                    "next": ".lu]/,#Zg)DsLAjl134/",
+                    "parent": "R0*PS3-?JtF(695iI.(n",
+                    "inputs": {
+                        "N_CLONES": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLES": [
+                            "_position_",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                ".lu]/,#Zg)DsLAjl134/": {
+                    "opcode": "quantum_superposition_only_list",
+                    "next": "uJGGjAr=`x-|^nPQYQR=",
+                    "parent": "?I06tpH?KR7WiiIE5f6O",
+                    "inputs": {
+                        "LISTA": [
+                            1,
+                            [
+                                4,
+                                "list"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLES": [
+                            "_size_",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "uJGGjAr=`x-|^nPQYQR=": {
+                    "opcode": "quantum_superpositions",
+                    "next": null,
+                    "parent": ".lu]/,#Zg)DsLAjl134/",
+                    "inputs": {
+                        "N_CLONES": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ],
+                        "LISTA": [
+                            1,
+                            [
+                                4,
+                                "list"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLES": [
+                            "_direction_",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "aC4Z^GrIn+[bzND7wnJz": {
+                    "opcode": "quantum_whenEntanglementStart",
+                    "next": "+PuB#l,X-Yc^]9f^bWUn",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 239,
+                    "y": 384
+                },
+                "+PuB#l,X-Yc^]9f^bWUn": {
+                    "opcode": "quantum_entanglement_no_list",
+                    "next": "GM6$w7I!~kQ][0{iKK^.",
+                    "parent": "aC4Z^GrIn+[bzND7wnJz",
+                    "inputs": {
+                        "TARGET": [
+                            1,
+                            [
+                                10,
+                                "name"
+                            ]
+                        ],
+                        "N_CLONES": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLES": [
+                            "_color_",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "GM6$w7I!~kQ][0{iKK^.": {
+                    "opcode": "quantum_entanglement_only_list",
+                    "next": "`6;#6JJ0{aID$Rby%T.#",
+                    "parent": "+PuB#l,X-Yc^]9f^bWUn",
+                    "inputs": {
+                        "TARGET": [
+                            1,
+                            [
+                                10,
+                                "name"
+                            ]
+                        ],
+                        "LISTA1": [
+                            1,
+                            [
+                                4,
+                                "list"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLES": [
+                            "_costume_",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "`6;#6JJ0{aID$Rby%T.#": {
+                    "opcode": "quantum_entanglement",
+                    "next": null,
+                    "parent": "GM6$w7I!~kQ][0{iKK^.",
+                    "inputs": {
+                        "TARGET": [
+                            1,
+                            [
+                                10,
+                                "name"
+                            ]
+                        ],
+                        "LISTA1": [
+                            1,
+                            [
+                                4,
+                                "1"
+                            ]
+                        ],
+                        "LISTA2": [
+                            1,
+                            [
+                                4,
+                                "list"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "VARIABLES": [
+                            "_size_",
+                            null
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "7KAV]yfp{L61B%nr8~i(": {
+                    "opcode": "quantum_whenMeasured",
+                    "next": "^cVp.yUUBhfY!8`+J:=y",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 242,
+                    "y": 693
+                },
+                "^cVp.yUUBhfY!8`+J:=y": {
+                    "opcode": "quantum_measure",
+                    "next": null,
+                    "parent": "7KAV]yfp{L61B%nr8~i(",
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "costume1",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "bcf454acf82e4504149f7ffe07081dbc",
+                    "md5ext": "bcf454acf82e4504149f7ffe07081dbc.svg",
+                    "rotationCenterX": 48,
+                    "rotationCenterY": 50
+                },
+                {
+                    "name": "costume2",
+                    "bitmapResolution": 1,
+                    "dataFormat": "svg",
+                    "assetId": "0fb9be3e8397c983338cb71dc84d0b25",
+                    "md5ext": "0fb9be3e8397c983338cb71dc84d0b25.svg",
+                    "rotationCenterX": 46,
+                    "rotationCenterY": 53
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "Meow",
+                    "assetId": "83c36d806dc92327b9e7049a565c6bff",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 40682,
+                    "md5ext": "83c36d806dc92327b9e7049a565c6bff.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 1,
+            "visible": true,
+            "x": 0,
+            "y": 0,
+            "size": 100,
+            "direction": 90,
+            "draggable": false,
+            "rotationStyle": "all around"
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "4.6.2",
+        "agent": "ignored"
+    }
+}

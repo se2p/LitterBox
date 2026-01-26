@@ -89,8 +89,12 @@ public class ActorType extends AbstractNode implements ASTLeaf {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ActorType actorType)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ActorType actorType)) {
+            return false;
+        }
         return type == actorType.type;
     }
 

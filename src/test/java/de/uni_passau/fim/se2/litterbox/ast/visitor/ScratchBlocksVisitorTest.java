@@ -2028,4 +2028,29 @@ public class ScratchBlocksVisitorTest implements JsonTest {
 
         assertEquals("when stage clicked", result.trim());
     }
+
+    @Test
+    void testQuantumBlocks() throws ParsingException {
+        final Program program = getAST("src/test/fixtures/quantum.json");
+        final String sb = ScratchBlocksVisitor.of(program);
+        assertEquals("""
+                //Sprite: Sprite1
+
+                //Script: R0*PS3-?JtF(695iI.(n
+                when entanglement started :: events hat #5c068c
+                superpose [position v] possibilities: (1) :: #5c068c
+                superpose [size v] list: [list] :: #5c068c
+                superpose [direction v] possibilities: (1) list: [list] :: #5c068c
+
+                //Script: aC4Z^GrIn+[bzND7wnJz
+                when superposition started :: events hat #5c068c
+                entangle [color v] with [name] possibilities: (1) :: #5c068c
+                entangle [costume v] with [name] list: [list] :: #5c068c
+                entangle [size v] with [name] possibilities: (1) list: [list] :: #5c068c
+
+                //Script: 7KAV]yfp{L61B%nr8~i(
+                when measured :: events hat #5c068c
+                measure :: #5c068c
+                """.replaceAll("\r?\n", System.lineSeparator()), sb);
+    }
 }

@@ -79,8 +79,12 @@ public class MCorePort extends AbstractNode implements MBlockOption {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MCorePort that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MCorePort that)) {
+            return false;
+        }
         return type == that.type;
     }
 

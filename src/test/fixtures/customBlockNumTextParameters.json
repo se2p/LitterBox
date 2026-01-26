@@ -1,0 +1,260 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ]
+            },
+            "lists": {},
+            "broadcasts": {},
+            "blocks": {
+                "6.0gN^Bj#.:,c-{jD4w_": {
+                    "opcode": "procedures_definition",
+                    "next": null,
+                    "parent": null,
+                    "inputs": {
+                        "custom_block": [
+                            1,
+                            "g1mG*`mWv99McPyKndkb"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 44,
+                    "y": 44
+                },
+                "g1mG*`mWv99McPyKndkb": {
+                    "opcode": "procedures_prototype",
+                    "next": null,
+                    "parent": "6.0gN^Bj#.:,c-{jD4w_",
+                    "inputs": {
+                        "!K^Gf)g7.Zado#|q=5yE": [
+                            1,
+                            "b~utPKaL!p:bwt4N(MkR"
+                        ],
+                        "GAaQZAU$BTv{M/!vX$X:": [
+                            1,
+                            "XrC;ZD~KY(I1s{WeIXgw"
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": true,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "custom block %s %s",
+                        "argumentids": "[\"!K^Gf)g7.Zado#|q=5yE\",\"GAaQZAU$BTv{M/!vX$X:\"]",
+                        "argumentnames": "[\"number\",\"text\"]",
+                        "argumentdefaults": "[\"\",\"\"]",
+                        "warp": "false"
+                    }
+                },
+                "b~utPKaL!p:bwt4N(MkR": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "g1mG*`mWv99McPyKndkb",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "number",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "XrC;ZD~KY(I1s{WeIXgw": {
+                    "opcode": "argument_reporter_string_number",
+                    "next": null,
+                    "parent": "g1mG*`mWv99McPyKndkb",
+                    "inputs": {},
+                    "fields": {
+                        "VALUE": [
+                            "text",
+                            null
+                        ]
+                    },
+                    "shadow": true,
+                    "topLevel": false
+                },
+                "b1[e61web_iN+35zC9#L": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "@0!PJD`MX?fg+hkK/876",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 49,
+                    "y": 277
+                },
+                "@0!PJD`MX?fg+hkK/876": {
+                    "opcode": "procedures_call",
+                    "next": "-}F0|M_I%l/~=;cPR{8T",
+                    "parent": "b1[e61web_iN+35zC9#L",
+                    "inputs": {
+                        "!K^Gf)g7.Zado#|q=5yE": [
+                            1,
+                            [
+                                10,
+                                "123"
+                            ]
+                        ],
+                        "GAaQZAU$BTv{M/!vX$X:": [
+                            1,
+                            [
+                                10,
+                                "abc"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "custom block %s %s",
+                        "argumentids": "[\"!K^Gf)g7.Zado#|q=5yE\",\"GAaQZAU$BTv{M/!vX$X:\"]",
+                        "warp": "false"
+                    }
+                },
+                "-}F0|M_I%l/~=;cPR{8T": {
+                    "opcode": "procedures_call",
+                    "next": "aX@_ME;6T%_OqBzc$]7M",
+                    "parent": "@0!PJD`MX?fg+hkK/876",
+                    "inputs": {
+                        "!K^Gf)g7.Zado#|q=5yE": [
+                            1,
+                            [
+                                10,
+                                "abc"
+                            ]
+                        ],
+                        "GAaQZAU$BTv{M/!vX$X:": [
+                            1,
+                            [
+                                10,
+                                "abc"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "custom block %s %s",
+                        "argumentids": "[\"!K^Gf)g7.Zado#|q=5yE\",\"GAaQZAU$BTv{M/!vX$X:\"]",
+                        "warp": "false"
+                    }
+                },
+                "aX@_ME;6T%_OqBzc$]7M": {
+                    "opcode": "procedures_call",
+                    "next": "(9XmO_d-@Kw*=D1H2GOj",
+                    "parent": "-}F0|M_I%l/~=;cPR{8T",
+                    "inputs": {
+                        "!K^Gf)g7.Zado#|q=5yE": [
+                            1,
+                            [
+                                10,
+                                "123"
+                            ]
+                        ],
+                        "GAaQZAU$BTv{M/!vX$X:": [
+                            1,
+                            [
+                                10,
+                                "123"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "custom block %s %s",
+                        "argumentids": "[\"!K^Gf)g7.Zado#|q=5yE\",\"GAaQZAU$BTv{M/!vX$X:\"]",
+                        "warp": "false"
+                    }
+                },
+                "(9XmO_d-@Kw*=D1H2GOj": {
+                    "opcode": "procedures_call",
+                    "next": null,
+                    "parent": "aX@_ME;6T%_OqBzc$]7M",
+                    "inputs": {
+                        "!K^Gf)g7.Zado#|q=5yE": [
+                            1,
+                            [
+                                10,
+                                "abc"
+                            ]
+                        ],
+                        "GAaQZAU$BTv{M/!vX$X:": [
+                            1,
+                            [
+                                10,
+                                "123"
+                            ]
+                        ]
+                    },
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": false,
+                    "mutation": {
+                        "tagName": "mutation",
+                        "children": [],
+                        "proccode": "custom block %s %s",
+                        "argumentids": "[\"!K^Gf)g7.Zado#|q=5yE\",\"GAaQZAU$BTv{M/!vX$X:\"]",
+                        "warp": "false"
+                    }
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "backdrop1",
+                    "dataFormat": "svg",
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        }
+    ],
+    "monitors": [],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "2.3.0",
+        "agent": "Custom block with two num/text parameters that are called with mixed numbers and text"
+    }
+}

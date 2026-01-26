@@ -112,8 +112,12 @@ public class NumFunct extends AbstractNode implements FixedNodeOption {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof NumFunct numFunct)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof NumFunct numFunct)) {
+            return false;
+        }
         return type == numFunct.type;
     }
 

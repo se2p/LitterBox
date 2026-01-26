@@ -57,6 +57,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.Fi
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.ExprNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.notes.FixedNote;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetLanguage;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.SetVoice;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.Speak;
@@ -132,8 +133,18 @@ import java.util.List;
 
 public class CloneVisitor {
 
+    private final boolean freshBlockIds;
+
+    public CloneVisitor() {
+        this(false);
+    }
+
+    public CloneVisitor(boolean freshBlockIds) {
+        this.freshBlockIds = freshBlockIds;
+    }
+
     /**
-     * Apply the copying or transformation to an ASTNode
+     * Apply the copying or transformation to an ASTNode.
      *
      * @param node the original node
      * @return the transformed node
@@ -151,7 +162,7 @@ public class CloneVisitor {
     }
 
     /**
-     * Apply the copying or transformation to a list of ASTNodes
+     * Apply the copying or transformation to a list of ASTNodes.
      *
      * @param theList the original list of nodes
      * @return a copy of the list, with transformed content
@@ -175,7 +186,15 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(ActorDefinition node) {
-        return new ActorDefinition(apply(node.getActorType()), apply(node.getIdent()), apply(node.getDecls()), apply(node.getSetStmtList()), apply(node.getProcedureDefinitionList()), apply(node.getScripts()), apply(node.getActorMetadata()));
+        return new ActorDefinition(
+                apply(node.getActorType()),
+                apply(node.getIdent()),
+                apply(node.getDecls()),
+                apply(node.getSetStmtList()),
+                apply(node.getProcedureDefinitionList()),
+                apply(node.getScripts()),
+                apply(node.getActorMetadata())
+        );
     }
 
     /**
@@ -273,7 +292,12 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(ProcedureDefinition node) {
-        return new ProcedureDefinition(apply(node.getIdent()), apply(node.getParameterDefinitionList()), apply(node.getStmtList()), apply(node.getMetadata()));
+        return new ProcedureDefinition(
+                apply(node.getIdent()),
+                apply(node.getParameterDefinitionList()),
+                apply(node.getStmtList()),
+                apply(node.getMetadata())
+        );
     }
 
     /**
@@ -371,7 +395,12 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(IfElseStmt node) {
-        return new IfElseStmt(apply(node.getBoolExpr()), apply(node.getThenStmts()), apply(node.getElseStmts()), apply(node.getMetadata()));
+        return new IfElseStmt(
+                apply(node.getBoolExpr()),
+                apply(node.getThenStmts()),
+                apply(node.getElseStmts()),
+                apply(node.getMetadata())
+        );
     }
 
     /**
@@ -1976,7 +2005,11 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(DeclarationAttributeOfIdentAsTypeStmt node) {
-        return new DeclarationAttributeOfIdentAsTypeStmt(apply(node.getStringExpr()), apply(node.getIdent()), apply(node.getType()));
+        return new DeclarationAttributeOfIdentAsTypeStmt(
+                apply(node.getStringExpr()),
+                apply(node.getIdent()),
+                apply(node.getType())
+        );
     }
 
     /**
@@ -2074,7 +2107,12 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(InsertAt node) {
-        return new InsertAt(apply(node.getString()), apply(node.getIndex()), apply(node.getIdentifier()), apply(node.getMetadata()));
+        return new InsertAt(
+                apply(node.getString()),
+                apply(node.getIndex()),
+                apply(node.getIdentifier()),
+                apply(node.getMetadata())
+        );
     }
 
     /**
@@ -2088,7 +2126,12 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(ReplaceItem node) {
-        return new ReplaceItem(apply(node.getString()), apply(node.getIndex()), apply(node.getIdentifier()), apply(node.getMetadata()));
+        return new ReplaceItem(
+                apply(node.getString()),
+                apply(node.getIndex()),
+                apply(node.getIdentifier()),
+                apply(node.getMetadata())
+        );
     }
 
     /**
@@ -2102,7 +2145,11 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(ChangeLayerBy node) {
-        return new ChangeLayerBy(apply(node.getNum()), apply(node.getForwardBackwardChoice()), apply(node.getMetadata()));
+        return new ChangeLayerBy(
+                apply(node.getNum()),
+                apply(node.getForwardBackwardChoice()),
+                apply(node.getMetadata())
+        );
     }
 
     /**
@@ -2340,7 +2387,9 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(GlideSecsToXY node) {
-        return new GlideSecsToXY(apply(node.getSecs()), apply(node.getX()), apply(node.getY()), apply(node.getMetadata()));
+        return new GlideSecsToXY(
+                apply(node.getSecs()), apply(node.getX()), apply(node.getY()), apply(node.getMetadata())
+        );
     }
 
     /**
@@ -3120,7 +3169,16 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(CommentMetadata node) {
-        return new CommentMetadata(node.getCommentId(), node.getBlockId(), node.getX(), node.getY(), node.getWidth(), node.getHeight(), node.isMinimized(), node.getText());
+        return new CommentMetadata(
+                node.getCommentId(),
+                node.getBlockId(),
+                node.getX(),
+                node.getY(),
+                node.getWidth(),
+                node.getHeight(),
+                node.isMinimized(),
+                node.getText()
+        );
     }
 
     /**
@@ -3182,9 +3240,22 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(MonitorSliderMetadata node) {
-        return new MonitorSliderMetadata(node.getId(), node.getMode(), node.getMonitorOpcode(),
-                apply(node.getParamsMetadata()), node.getSpriteName(), node.getWidth(), node.getHeight(),
-                node.getX(), node.getY(), node.isVisible(), node.getValue(), node.getSliderMin(), node.getSliderMax(), node.isDiscrete());
+        return new MonitorSliderMetadata(
+                node.getId(),
+                node.getMode(),
+                node.getMonitorOpcode(),
+                apply(node.getParamsMetadata()),
+                node.getSpriteName(),
+                node.getWidth(),
+                node.getHeight(),
+                node.getX(),
+                node.getY(),
+                node.isVisible(),
+                node.getValue(),
+                node.getSliderMin(),
+                node.getSliderMax(),
+                node.isDiscrete()
+        );
     }
 
     /**
@@ -3217,27 +3288,6 @@ public class CloneVisitor {
      */
     public ASTNode visit(MonitorParamMetadata node) {
         return new MonitorParamMetadata(node.getInputName(), node.getInputValue());
-    }
-
-    /**
-     * Default implementation of visit method for {@link DataBlockMetadata}.
-     *
-     * <p>
-     * Creates a deep copy of this node.
-     * </p>
-     *
-     * @param node DataBlockMetadata Node of which the children will
-     * be iterated
-     * @return the copy of the visited node
-     */
-    private final boolean freshBlockIds;
-
-    public CloneVisitor() {
-        this(false);
-    }
-
-    public CloneVisitor(boolean freshBlockIds) {
-        this.freshBlockIds = freshBlockIds;
     }
 
     /**
@@ -3799,7 +3849,12 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(PortOnLine node) {
-        return new PortOnLine(apply(node.getOperand1()), apply(node.getOperand2()), apply(node.getOperand3()), apply(node.getMetadata()));
+        return new PortOnLine(
+                apply(node.getOperand1()),
+                apply(node.getOperand2()),
+                apply(node.getOperand3()),
+                apply(node.getMetadata())
+        );
     }
 
     /**
@@ -4805,7 +4860,9 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(LEDColorShowPosition node) {
-        return new LEDColorShowPosition(apply(node.getPosition()), apply(node.getColorString()), apply(node.getMetadata()));
+        return new LEDColorShowPosition(
+                apply(node.getPosition()), apply(node.getColorString()), apply(node.getMetadata())
+        );
     }
 
     /**
@@ -4833,7 +4890,12 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(LEDColorTimedPosition node) {
-        return new LEDColorTimedPosition(apply(node.getPosition()), apply(node.getColorString()), apply(node.getTime()), apply(node.getMetadata()));
+        return new LEDColorTimedPosition(
+                apply(node.getPosition()),
+                apply(node.getColorString()),
+                apply(node.getTime()),
+                apply(node.getMetadata())
+        );
     }
 
     /**
@@ -4875,7 +4937,13 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(RGBValuesPosition node) {
-        return new RGBValuesPosition(apply(node.getPosition()), apply(node.getRed()), apply(node.getGreen()), apply(node.getBlue()), apply(node.getMetadata()));
+        return new RGBValuesPosition(
+                apply(node.getPosition()),
+                apply(node.getRed()),
+                apply(node.getGreen()),
+                apply(node.getBlue()),
+                apply(node.getMetadata())
+        );
     }
 
     /**
@@ -4919,7 +4987,12 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(FacePosition node) {
-        return new FacePosition(apply(node.getLedMatrix()), apply(node.getxAxis()), apply(node.getyAxis()), apply(node.getMetadata()));
+        return new FacePosition(
+                apply(node.getLedMatrix()),
+                apply(node.getxAxis()),
+                apply(node.getyAxis()),
+                apply(node.getMetadata())
+        );
     }
 
     /**
@@ -4933,7 +5006,13 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(FacePositionPort node) {
-        return new FacePositionPort(apply(node.getPort()), apply(node.getLedMatrix()), apply(node.getxAxis()), apply(node.getyAxis()), apply(node.getMetadata()));
+        return new FacePositionPort(
+                apply(node.getPort()),
+                apply(node.getLedMatrix()),
+                apply(node.getxAxis()),
+                apply(node.getyAxis()),
+                apply(node.getMetadata())
+        );
     }
 
     /**
@@ -4961,7 +5040,12 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(FaceTimedPort node) {
-        return new FaceTimedPort(apply(node.getPort()), apply(node.getLedMatrix()), apply(node.getTime()), apply(node.getMetadata()));
+        return new FaceTimedPort(
+                apply(node.getPort()),
+                apply(node.getLedMatrix()),
+                apply(node.getTime()),
+                apply(node.getMetadata())
+        );
     }
 
     /**
@@ -5017,7 +5101,12 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(LEDStringPosition node) {
-        return new LEDStringPosition(apply(node.getText()), apply(node.getxAxis()), apply(node.getyAxis()), apply(node.getMetadata()));
+        return new LEDStringPosition(
+                apply(node.getText()),
+                apply(node.getxAxis()),
+                apply(node.getyAxis()),
+                apply(node.getMetadata())
+        );
     }
 
     /**
@@ -5031,7 +5120,13 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(LEDStringPositionPort node) {
-        return new LEDStringPositionPort(apply(node.getPort()), apply(node.getText()), apply(node.getxAxis()), apply(node.getyAxis()), apply(node.getMetadata()));
+        return new LEDStringPositionPort(
+                apply(node.getPort()),
+                apply(node.getText()),
+                apply(node.getxAxis()),
+                apply(node.getyAxis()),
+                apply(node.getMetadata())
+        );
     }
 
     /**
@@ -5087,7 +5182,12 @@ public class CloneVisitor {
      * @return the copy of the visited node
      */
     public ASTNode visit(LEDTimePort node) {
-        return new LEDTimePort(apply(node.getPort()), apply(node.getHour()), apply(node.getMinute()), apply(node.getMetadata()));
+        return new LEDTimePort(
+                apply(node.getPort()),
+                apply(node.getHour()),
+                apply(node.getMinute()),
+                apply(node.getMetadata())
+        );
     }
 
     /**
@@ -5516,7 +5616,6 @@ public class CloneVisitor {
     //Translate
 
     public ASTNode visit(TFixedLanguage node) {
-
         return new TFixedLanguage(node.getType().getType(), apply(node.getMetadata()));
     }
 
@@ -5531,5 +5630,80 @@ public class CloneVisitor {
 
     public ASTNode visit(ViewerLanguage node) {
         return new ViewerLanguage(apply(node.getMetadata()));
+    }
+
+    // Quantum
+
+    public ASTNode visit(WhenMeasured node) {
+        return new WhenMeasured(apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(WhenEntanglementStarted node) {
+        return new WhenEntanglementStarted(apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(WhenSuperpositionStarted node) {
+        return new WhenSuperpositionStarted(apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(FixedQuantumAttribute node) {
+        return new FixedQuantumAttribute(node.getType());
+    }
+
+    public ASTNode visit(Measure node) {
+        return new Measure(apply(node.getMetadata()));
+    }
+
+    public ASTNode visit(QuantumSuperpositionPossibilities node) {
+        return new QuantumSuperpositionPossibilities(
+                apply(node.getAttribute()),
+                apply(node.getPossibilities()),
+                apply(node.getMetadata())
+        );
+    }
+
+    public ASTNode visit(QuantumSuperpositionList node) {
+        return new QuantumSuperpositionList(
+                apply(node.getAttribute()),
+                apply(node.getList()),
+                apply(node.getMetadata())
+        );
+    }
+
+    public ASTNode visit(QuantumSuperpositionPossibilitiesList node) {
+        return new QuantumSuperpositionPossibilitiesList(
+                apply(node.getAttribute()),
+                apply(node.getPossibilities()),
+                apply(node.getList()),
+                apply(node.getMetadata())
+        );
+    }
+
+    public ASTNode visit(QuantumEntanglementPossibilities node) {
+        return new QuantumEntanglementPossibilities(
+                apply(node.getAttribute()),
+                apply(node.getTarget()),
+                apply(node.getPossibilities()),
+                apply(node.getMetadata())
+        );
+    }
+
+    public ASTNode visit(QuantumEntanglementList node) {
+        return new QuantumEntanglementList(
+                apply(node.getAttribute()),
+                apply(node.getTarget()),
+                apply(node.getList()),
+                apply(node.getMetadata())
+        );
+    }
+
+    public ASTNode visit(QuantumEntanglementPossibilitiesList node) {
+        return new QuantumEntanglementPossibilitiesList(
+                apply(node.getAttribute()),
+                apply(node.getTarget()),
+                apply(node.getPossibilities()),
+                apply(node.getList()),
+                apply(node.getMetadata())
+        );
     }
 }

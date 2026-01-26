@@ -1,0 +1,159 @@
+{
+    "targets": [
+        {
+            "isStage": true,
+            "name": "Stage",
+            "variables": {
+                "`jEk@4|i[#Fk?(8x)AV.-my variable": [
+                    "my variable",
+                    0
+                ],
+                "73GpClJG71?MsW@v;kGf": [
+                    "abcdef",
+                    0
+                ]
+            },
+            "lists": {
+                "U9E9Hz=@+)e8nVY#SS_z": [
+                    "custom list",
+                    []
+                ]
+            },
+            "broadcasts": {},
+            "blocks": {
+                "6@LbXW.gBa?_x+?zgG:#": {
+                    "opcode": "event_whenflagclicked",
+                    "next": "AV{^x|`HOg04j^e0ovY/",
+                    "parent": null,
+                    "inputs": {},
+                    "fields": {},
+                    "shadow": false,
+                    "topLevel": true,
+                    "x": 82,
+                    "y": 309
+                },
+                "AV{^x|`HOg04j^e0ovY/": {
+                    "opcode": "data_addtolist",
+                    "next": "#58:cUqcW.*w@=UL$Q@%",
+                    "parent": "6@LbXW.gBa?_x+?zgG:#",
+                    "inputs": {
+                        "ITEM": [
+                            1,
+                            [
+                                10,
+                                "thing"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "custom list",
+                            "U9E9Hz=@+)e8nVY#SS_z"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                },
+                "#58:cUqcW.*w@=UL$Q@%": {
+                    "opcode": "data_insertatlist",
+                    "next": null,
+                    "parent": "AV{^x|`HOg04j^e0ovY/",
+                    "inputs": {
+                        "ITEM": [
+                            1,
+                            [
+                                10,
+                                "thing"
+                            ]
+                        ],
+                        "INDEX": [
+                            1,
+                            [
+                                7,
+                                "1"
+                            ]
+                        ]
+                    },
+                    "fields": {
+                        "LIST": [
+                            "custom list",
+                            "U9E9Hz=@+)e8nVY#SS_z"
+                        ]
+                    },
+                    "shadow": false,
+                    "topLevel": false
+                }
+            },
+            "comments": {},
+            "currentCostume": 0,
+            "costumes": [
+                {
+                    "name": "backdrop1",
+                    "dataFormat": "svg",
+                    "assetId": "cd21514d0531fdffb22204e0ec5ed84a",
+                    "md5ext": "cd21514d0531fdffb22204e0ec5ed84a.svg",
+                    "rotationCenterX": 240,
+                    "rotationCenterY": 180
+                }
+            ],
+            "sounds": [
+                {
+                    "name": "pop",
+                    "assetId": "83a9787d4cb6f3b7632b4ddfebf74367",
+                    "dataFormat": "wav",
+                    "format": "",
+                    "rate": 48000,
+                    "sampleCount": 1124,
+                    "md5ext": "83a9787d4cb6f3b7632b4ddfebf74367.wav"
+                }
+            ],
+            "volume": 100,
+            "layerOrder": 0,
+            "tempo": 60,
+            "videoTransparency": 50,
+            "videoState": "on",
+            "textToSpeechLanguage": null
+        }
+    ],
+    "monitors": [
+        {
+            "id": "73GpClJG71?MsW@v;kGf",
+            "mode": "default",
+            "opcode": "data_variable",
+            "params": {
+                "VARIABLE": "abcdef"
+            },
+            "spriteName": null,
+            "value": 0,
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 212,
+            "visible": true,
+            "sliderMin": 0,
+            "sliderMax": 100,
+            "isDiscrete": true
+        },
+        {
+            "id": "U9E9Hz=@+)e8nVY#SS_z",
+            "mode": "list",
+            "opcode": "data_listcontents",
+            "params": {
+                "LIST": "custom list"
+            },
+            "spriteName": null,
+            "value": [],
+            "width": 0,
+            "height": 0,
+            "x": 5,
+            "y": 5,
+            "visible": true
+        }
+    ],
+    "extensions": [],
+    "meta": {
+        "semver": "3.0.0",
+        "vm": "2.3.0",
+        "agent": "data dependencies between lists should be part of the graph"
+    }
+}

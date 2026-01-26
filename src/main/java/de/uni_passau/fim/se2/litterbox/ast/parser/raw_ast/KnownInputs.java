@@ -60,7 +60,11 @@ public enum KnownInputs {
     LED_RED("R"),
     LEFT_POWER("LEFT_POWER"),
     LETTER("LETTER"),
+    LISTA("LISTA"), // quantum
+    LISTA1("LISTA1"), // quantum
+    LISTA2("LISTA2"), // quantum
     MESSAGE("MESSAGE"),
+    N_CLONES("N_CLONES"), // quantum
     NOTE("NOTE"),
     NUM("NUM"),
     NUM1("NUM1"),
@@ -99,6 +103,7 @@ public enum KnownInputs {
     SUBJECT("SUBJECT"),
     SUBSTACK("SUBSTACK"),
     SUBSTACK2("SUBSTACK2"),
+    TARGET("TARGET"), // quantum
     TEMPO("TEMPO"),
     TEXT("TEXT"),
     TIME("TIME"),

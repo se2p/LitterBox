@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox;
 
+import de.uni_passau.fim.se2.CliTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.Isolated;
@@ -29,7 +30,11 @@ import java.nio.file.Path;
 import static com.google.common.truth.Truth.assertThat;
 
 @Isolated
-public class CommandlineTest extends CliTest {
+public class CommandlineTest extends CliTest<Main> {
+
+    CommandlineTest() {
+        super(new Main());
+    }
 
     @Test
     public void testInvalidOptionPrintsAnError() {

@@ -37,10 +37,9 @@ public class Dominance<C extends Solution<C>> implements BiPredicate<C, C> {
      * solution1 is said to dominate the other solution2 if both condition 1 and 2 below are true:
      * Condition 1: solution1 is no worse than solution2 for all objectives
      * Condition 2: solution1 is strictly better than solution2 in at least one objective
-     * <p>
      *
      * @param solution1 Chromosome 1, which is checked, whether it dominates the other chromosome
-     * @param solution2 Chromosome 2, which is checked, whether it is dominates by the other chromosome
+     * @param solution2 Chromosome 2, which is checked, whether it is dominated by the other chromosome
      * @return {@code true} if solution1 dominates solution2, {@code false} otherwise
      */
     @Override

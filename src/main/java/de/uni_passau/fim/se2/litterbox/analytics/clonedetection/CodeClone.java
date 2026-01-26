@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 public class CodeClone {
 
-    public enum CloneType {TYPE1, TYPE2, TYPE3}
+    public enum CloneType { TYPE1, TYPE2, TYPE3 }
 
     private CloneType type = CloneType.TYPE1;
 

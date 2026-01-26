@@ -26,6 +26,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.PressedState;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RobotButton;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.mblock.option.RobotDirection;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.WhenEntanglementStarted;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.WhenMeasured;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.WhenSuperpositionStarted;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -109,6 +112,9 @@ class EventConverter {
                 final NumExpr reference = NumExprConverter.convertNumExpr(state, event, KnownInputs.REFERENCE);
                 yield new WhenVideoMotionGreaterThan(reference, metadata);
             }
+            case quantum_whenMeasured -> new WhenMeasured(metadata);
+            case quantum_whenSuperpositionStart -> new WhenSuperpositionStarted(metadata);
+            case quantum_whenEntanglementStart -> new WhenEntanglementStarted(metadata);
         };
     }
 }

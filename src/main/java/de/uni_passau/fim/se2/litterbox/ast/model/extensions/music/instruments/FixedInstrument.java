@@ -92,7 +92,7 @@ public class FixedInstrument extends AbstractNode implements Instrument, FixedNo
             throw new IllegalArgumentException("Unknown FixedInstrument: " + type);
         }
 
-        public String getName(){
+        public String getName() {
             return switch (this) {
                 case PIANO -> "(1) Piano";
                 case ELECTRIC_PIANO -> "(2) Electric Piano";

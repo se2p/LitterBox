@@ -98,8 +98,12 @@ public class ForwardBackwardChoice extends AbstractNode implements FixedNodeOpti
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ForwardBackwardChoice that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ForwardBackwardChoice that)) {
+            return false;
+        }
         return type == that.type;
     }
 

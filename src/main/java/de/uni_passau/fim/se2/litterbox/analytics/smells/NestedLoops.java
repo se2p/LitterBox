@@ -54,11 +54,12 @@ public class NestedLoops extends AbstractIssueFinder {
     }
 
     private boolean checkNested(List<Stmt> stmts) {
-        return stmts.size() == 1 && (
-                (stmts.getFirst() instanceof UntilStmt)
+        return stmts.size() == 1
+                && (
+                        (stmts.getFirst() instanceof UntilStmt)
                         || (stmts.getFirst() instanceof RepeatTimesStmt)
                         || (stmts.getFirst() instanceof RepeatForeverStmt)
-        );
+                );
     }
 
     @Override

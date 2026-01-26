@@ -29,7 +29,10 @@ public enum EventOpcode implements Opcode {
     when_volume_over, when_brightness_less, when_button_press,
 
     // Video Sensing
-    videoSensing_whenMotionGreaterThan;
+    videoSensing_whenMotionGreaterThan,
+
+    // QScratch
+    quantum_whenSuperpositionStart, quantum_whenEntanglementStart, quantum_whenMeasured;
 
     public static boolean contains(String opcode) {
         opcode = Opcode.removePrefix(opcode);
