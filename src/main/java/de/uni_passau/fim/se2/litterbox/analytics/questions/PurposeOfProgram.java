@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 /**
@@ -36,13 +33,27 @@ public class PurposeOfProgram extends AbstractQuestionFinder {
         currentScript = null;
         currentProcedure = null;
 
-        IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
-        Hint hint = Hint.fromKey(getName());
-        addIssue(builder.withHint(hint));
+        QuestionBuilder builder = prepareQuestionBuilder();
+        addQuestion(builder);
     }
 
     @Override
     public String getName() {
         return "purpose_of_program";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.PURPOSE;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.MACRO;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.FREE_TEXT;
     }
 }

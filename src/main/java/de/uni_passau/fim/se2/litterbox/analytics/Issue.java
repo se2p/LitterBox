@@ -18,39 +18,24 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.clonedetection.NormalizationVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
- * The Issue represents issues that are identified in Scratch Projects.
+ * Represents an issue (bug, smell, or perfume) identified in a Scratch project.
+ * Extends {@link Finding} with issue-specific fields like severity, hints, and refactorings.
  */
-public class Issue {
+public class Issue extends Finding {
 
     private final IssueFinder finder;
     private final IssueSeverity severity;
-    private final ActorDefinition actor;
-    private final ASTNode node;
-    private final ASTNode normalizedNode;
-
-    private final ScriptEntity script;
-    private final ScriptEntity normalizedScript;
-    private ScriptEntity refactoredScript;
-
-    private final Program program;
-    private final Metadata metaData;
     private final Hint hint;
-    private final int id;
+    private ScriptEntity refactoredScript;
     private final String originalBlockId;
     private final String originalCodeSnippet;
-
-    private static final AtomicInteger globalIssueCount = new AtomicInteger(0);
 
     /**
      * Creates a new issue the contains the finder that created this issue, the actor in which the issue was found and
@@ -65,40 +50,22 @@ public class Issue {
      */
     protected Issue(IssueFinder finder, IssueSeverity severity, Program program, ActorDefinition actor,
                     ScriptEntity script, ASTNode currentNode, Metadata metaData, Hint hint) {
+        super(program, actor, script, currentNode, metaData, null);
         Preconditions.checkArgument((currentNode == null) == (script == null));
         this.finder = finder;
         this.severity = severity;
-        this.program = program;
-        this.actor = actor;
-        this.script = script;
-        this.node = currentNode;
-        this.normalizedNode = normalize(this.node);
-        this.normalizedScript = normalize(script);
-        this.metaData = metaData;
         this.hint = hint;
-        this.id = globalIssueCount.getAndIncrement();
         this.originalBlockId = null;
         this.originalCodeSnippet = null;
     }
 
     public Issue(IssueBuilder builder) {
+        super(builder.getProgram(), builder.getActor(), builder.getScript(),
+              builder.getCurrentNode(), builder.getMetadata(), builder.getId());
         this.finder = builder.getFinder();
         this.severity = builder.getSeverity();
-        this.program = builder.getProgram();
-        this.actor = builder.getActor();
-        this.script = builder.getScript();
-        this.node = builder.getCurrentNode();
-        this.normalizedNode = normalize(this.node);
-        this.normalizedScript = normalize(script);
         this.refactoredScript = builder.getRefactoring();
-        this.metaData = builder.getMetaData();
         this.hint = builder.getHint();
-
-        if (builder.getId() == null) {
-            this.id = globalIssueCount.getAndIncrement();
-        } else {
-            this.id = builder.getId();
-        }
         this.originalBlockId = builder.getOriginalBlockId();
         this.originalCodeSnippet = builder.getOriginalCodeSnippet();
     }
@@ -115,50 +82,7 @@ public class Issue {
         return finder.getIssueType();
     }
 
-    public ActorDefinition getActor() {
-        return actor;
-    }
-
-    public Script getScript() {
-        return script instanceof Script s ? s : null;
-    }
-
-    public ProcedureDefinition getProcedure() {
-        return script instanceof ProcedureDefinition procedure ? procedure : null;
-    }
-
-    public Program getProgram() {
-        return program;
-    }
-
-    public String getActorName() {
-        return actor.getIdent().getName();
-    }
-
-    /**
-     * Returns the script or procedure definition that is set.
-     *
-     * <p>The issue contains either a script or a procedure definition.
-     * If a script is set, the script is returned, if no script is present a procedure definition is returned
-     *
-     * @return an astNode that represents a script or procedure-definition
-     */
-    public ScriptEntity getScriptOrProcedureDefinition() {
-        return script;
-    }
-
-    public ScriptEntity getNormalizedScriptOrProcedureDefinition() {
-        return normalizedScript;
-    }
-
-    public ScriptEntity getRefactoredScriptOrProcedureDefinition() {
-        return refactoredScript;
-    }
-
-    public void setRefactoredScriptOrProcedureDefinition(ScriptEntity script) {
-        this.refactoredScript = script;
-    }
-
+    @Override
     public String getFinderName() {
         return finder.getName();
     }
@@ -175,28 +99,16 @@ public class Issue {
         return hint.getHintText(translator);
     }
 
-    public ASTNode getCodeLocation() {
-        return node;
+    public ScriptEntity getRefactoredScriptOrProcedureDefinition() {
+        return refactoredScript;
     }
 
-    public ASTNode getNormalizedCodeLocation() {
-        return normalizedNode;
-    }
-
-    public boolean isCodeLocation(ASTNode node) {
-        return this.node == node;
+    public void setRefactoredScriptOrProcedureDefinition(ScriptEntity script) {
+        this.refactoredScript = script;
     }
 
     public boolean hasMultipleBlocks() {
         return false;
-    }
-
-    public Metadata getCodeMetadata() {
-        return metaData;
-    }
-
-    public int getId() {
-        return id;
     }
 
     /**
@@ -238,23 +150,5 @@ public class Issue {
 
     public int getDistanceTo(Issue other) {
         return finder.getDistanceTo(this, other);
-    }
-
-    private <T extends ASTNode> T normalize(T node) {
-        if (node == null) {
-            return null;
-        }
-        NormalizationVisitor visitor = new NormalizationVisitor();
-        return (T) node.accept(visitor);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return (o instanceof Issue issue) && id == issue.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }

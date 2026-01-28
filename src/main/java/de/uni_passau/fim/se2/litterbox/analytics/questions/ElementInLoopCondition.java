@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.KeyPressed;
@@ -67,11 +64,10 @@ public class ElementInLoopCondition extends AbstractQuestionFinder {
             } else {
                 topBlockCurrent = node.getStmtList().getStmts().getFirst();
             }
-            IssueBuilder builder = prepareIssueBuilder(topBlockCurrent).withSeverity(IssueSeverity.LOW);
-            Hint hint = Hint.fromKey(getName());
-            hint.setParameter(Hint.CHOICES, getChoices());
-            hint.setParameter(Hint.ANSWER, getAnswers());
-            addIssue(builder.withHint(hint));
+            QuestionBuilder builder = prepareQuestionBuilder(topBlockCurrent)
+                    .withChoices(getChoicesList())
+                    .withCorrectAnswers(getAnswersList());
+            addQuestion(builder);
         }
     }
 
@@ -201,5 +197,20 @@ public class ElementInLoopCondition extends AbstractQuestionFinder {
     @Override
     public String getName() {
         return "element_in_loop_condition";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.TEXT;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.BLOCK;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

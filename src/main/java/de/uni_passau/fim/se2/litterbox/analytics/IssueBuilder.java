@@ -22,117 +22,101 @@ import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
-public class IssueBuilder {
+/**
+ * Builder for creating {@link Issue} instances.
+ * Extends {@link FindingBuilder} with issue-specific fields.
+ */
+public class IssueBuilder extends FindingBuilder<Issue, IssueBuilder> {
 
     private IssueFinder finder;
     private IssueSeverity severity;
-    private Program program;
-    private ActorDefinition actor;
-    private ScriptEntity script;
-    private ASTNode currentNode;
-    private Metadata metaData;
     private Hint hint;
     private ScriptEntity refactoring;
-    private Integer id = null;
-    private String originalBlockId = null;
-    private String originalCodeSnippet = null;
+    private String originalBlockId;
+    private String originalCodeSnippet;
 
     public IssueBuilder withFinder(IssueFinder finder) {
         this.finder = finder;
-        return this;
+        return self();
     }
 
     public IssueBuilder withSeverity(IssueSeverity severity) {
         this.severity = severity;
-        return this;
-    }
-
-    public IssueBuilder withProgram(Program program) {
-        this.program = program;
-        return this;
-    }
-
-    public IssueBuilder withActor(ActorDefinition actor) {
-        this.actor = actor;
-        return this;
-    }
-
-    public IssueBuilder withScriptOrProcedure(ScriptEntity script) {
-        this.script = script;
-        return this;
-    }
-
-    public IssueBuilder withScript(Script script) {
-        this.script = script;
-        return this;
-    }
-
-    public IssueBuilder withProcedure(ProcedureDefinition procedure) {
-        this.script = procedure;
-        return this;
-    }
-
-    public IssueBuilder withCurrentNode(ASTNode currentNode) {
-        this.currentNode = currentNode;
-        return this;
-    }
-
-    public IssueBuilder withMetadata(Metadata metaData) {
-        this.metaData = metaData;
-        return this;
+        return self();
     }
 
     public IssueBuilder withHint(Hint hint) {
         this.hint = hint;
-        return this;
+        return self();
     }
 
     public IssueBuilder withHint(String hintKey) {
         this.hint = Hint.fromKey(hintKey);
-        return this;
+        return self();
     }
 
     public IssueBuilder withHintParameter(String key, String value) {
         this.hint.setParameter(key, value);
-        return this;
+        return self();
     }
 
     public IssueBuilder withHintParameter(String key, HintPlaceholder value) {
         this.hint.setParameter(key, value);
-        return this;
+        return self();
     }
 
     public IssueBuilder withRefactoring(ScriptEntity refactoring) {
         this.refactoring = refactoring;
-        return this;
-    }
-
-    public IssueBuilder withId(int id) {
-        this.id = id;
-        return this;
+        return self();
     }
 
     public IssueBuilder withOriginalBlockId(String blockId) {
         this.originalBlockId = blockId;
-        return this;
+        return self();
     }
 
     public IssueBuilder withOriginalCodeSnippet(String codeSnippet) {
         this.originalCodeSnippet = codeSnippet;
-        return this;
+        return self();
     }
 
+    /**
+     * Copies fields from an existing issue into this builder.
+     *
+     * @param issue the issue to copy from
+     * @return this builder
+     */
     public IssueBuilder fromIssue(Issue issue) {
         this.finder = issue.getFinder();
         this.severity = issue.getSeverity();
         this.program = issue.getProgram();
         this.actor = issue.getActor();
-        this.script = issue.getScript();
+        this.script = issue.getScriptOrProcedureDefinition();
         this.currentNode = issue.getCodeLocation();
-        this.metaData = issue.getCodeMetadata();
+        this.metadata = issue.getCodeMetadata();
         this.hint = issue.getHint();
         this.refactoring = issue.getRefactoredScriptOrProcedureDefinition();
-        return this;
+        return self();
+    }
+
+    // Override parent methods to also set metadata from node
+    @Override
+    public IssueBuilder withCurrentNode(ASTNode currentNode) {
+        super.withCurrentNode(currentNode);
+        if (currentNode != null && this.metadata == null) {
+            this.metadata = currentNode.getMetadata();
+        }
+        return self();
+    }
+
+    // Legacy method name compatibility
+    public IssueBuilder withMetadata(Metadata metadata) {
+        return super.withMetadata(metadata);
+    }
+
+    // Legacy getter name
+    public Metadata getMetaData() {
+        return getMetadata();
     }
 
     private void validate() {
@@ -147,10 +131,13 @@ public class IssueBuilder {
         }
     }
 
+    @Override
     public Issue build() {
         validate();
         return new Issue(this);
     }
+
+    // Issue-specific getters
 
     public IssueFinder getFinder() {
         return finder;
@@ -160,36 +147,12 @@ public class IssueBuilder {
         return severity;
     }
 
-    public Program getProgram() {
-        return program;
-    }
-
-    public ActorDefinition getActor() {
-        return actor;
-    }
-
-    public ScriptEntity getScript() {
-        return script;
-    }
-
-    public ASTNode getCurrentNode() {
-        return currentNode;
-    }
-
-    public Metadata getMetaData() {
-        return metaData;
-    }
-
     public Hint getHint() {
         return hint;
     }
 
     public ScriptEntity getRefactoring() {
         return refactoring;
-    }
-
-    public Integer getId() {
-        return id;
     }
 
     public String getOriginalBlockId() {

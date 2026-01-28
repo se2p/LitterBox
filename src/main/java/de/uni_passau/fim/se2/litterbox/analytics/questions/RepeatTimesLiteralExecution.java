@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
@@ -57,11 +54,10 @@ public class RepeatTimesLiteralExecution extends AbstractQuestionFinder {
                 if (node.getStmtList().hasStatements() && !hasStop) {
                     ASTNode stmt = getSingleStmt(node.getStmtList().getStmts().getFirst());
 
-                    IssueBuilder builder = prepareIssueBuilder(stmt).withSeverity(IssueSeverity.LOW);
-                    Hint hint = Hint.fromKey(getName());
-                    hint.setParameter(Hint.STATEMENT, ScratchBlocksVisitor.of(stmt));
-                    hint.setParameter(Hint.ANSWER, String.valueOf(num.getValue()));
-                    addIssue(builder.withHint(hint));
+                    QuestionBuilder builder = prepareQuestionBuilder(stmt)
+                            .withQuestionText(ScratchBlocksVisitor.of(stmt))
+                            .withCorrectAnswers(String.valueOf(num.getValue()));
+                    addQuestion(builder);
                 }
             }
             inLoop--;
@@ -80,5 +76,20 @@ public class RepeatTimesLiteralExecution extends AbstractQuestionFinder {
     @Override
     public String getName() {
         return "repeat_times_literal_execution";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.EXECUTION;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.BLOCK;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.NUMBER;
     }
 }

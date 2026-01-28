@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -83,12 +80,12 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
                 } else {
                     topBlockCurrent = currentScript.getStmtList().getStmts().getFirst();
                 }
-                IssueBuilder builder = prepareIssueBuilder(topBlockCurrent).withSeverity(IssueSeverity.LOW);
-                Hint hint = Hint.fromKey(getName());
-                hint.setParameter(Hint.CHOICES, getChoices());
                 answers = eventStatements.get(event);
-                hint.setParameter(Hint.ANSWER, getAnswers());
-                addIssue(builder.withHint(hint));
+                QuestionBuilder builder = prepareQuestionBuilder(topBlockCurrent)
+                        .withScript(currentScript)
+                        .withChoices(getChoicesList())
+                        .withCorrectAnswers(getAnswersList());
+                addQuestion(builder);
             }
         });
     }
@@ -217,5 +214,20 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
     @Override
     public String getName() {
         return "statement_triggers_event";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.EXECUTION;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.RELATION;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

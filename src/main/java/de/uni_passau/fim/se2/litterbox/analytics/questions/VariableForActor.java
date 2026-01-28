@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
@@ -53,12 +50,11 @@ public class VariableForActor extends AbstractQuestionFinder {
             choices.remove(actor);
 
             for (String variable : variables) {
-                IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
-                Hint hint = Hint.fromKey(getName());
-                hint.setParameter(Hint.HINT_VARIABLE, variable);
-                hint.setParameter(Hint.ANSWER, actor);
-                hint.setParameter(Hint.CHOICES, getChoices());
-                addIssue(builder.withHint(hint));
+                QuestionBuilder builder = prepareQuestionBuilder()
+                        .withQuestionText("variable=" + variable)
+                        .withCorrectAnswers(actor)
+                        .withChoices(getChoicesList());
+                addQuestion(builder);
             }
         });
     }
@@ -82,5 +78,20 @@ public class VariableForActor extends AbstractQuestionFinder {
     @Override
     public String getName() {
         return "variable_for_actor";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.TEXT;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.MACRO;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

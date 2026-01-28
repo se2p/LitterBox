@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
@@ -44,18 +41,31 @@ public class IfElseStatementExecution extends AbstractQuestionFinder {
             String thenStmts = wrappedScratchBlocks(node.getThenStmts());
             String elseStmts = wrappedScratchBlocks(node.getElseStmts());
 
-            IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
-            Hint hint = Hint.fromKey(getName());
-            hint.setParameter(Hint.CONDITION, ScratchBlocksVisitor.of(condition));
-            hint.setParameter(Hint.HINT_VARIABLE, String.valueOf(conditionValue).toUpperCase());
-            hint.setParameter(Hint.ANSWER, conditionValue ? thenStmts : elseStmts);
-            hint.setParameter(Hint.CHOICES, conditionValue ? elseStmts : thenStmts);
-            addIssue(builder.withHint(hint));
+            QuestionBuilder builder = prepareQuestionBuilder(node)
+                    .withQuestionText(ScratchBlocksVisitor.of(condition) + " is " + String.valueOf(conditionValue).toUpperCase())
+                    .withCorrectAnswers(conditionValue ? thenStmts : elseStmts)
+                    .withChoices(conditionValue ? elseStmts : thenStmts);
+            addQuestion(builder);
         }
     }
 
     @Override
     public String getName() {
         return "if_else_statement_execution";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.EXECUTION;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.BLOCK;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

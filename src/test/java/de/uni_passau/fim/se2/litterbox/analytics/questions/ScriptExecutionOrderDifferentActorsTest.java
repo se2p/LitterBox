@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
@@ -55,15 +54,16 @@ class ScriptExecutionOrderDifferentActorsTest implements FinderTest, JsonTest {
     @Test
     public void testSameEventsDifferentSprites() throws IOException, ParsingException {
         Program prog = getAST("src/test/fixtures/questions/sameEventsInDifferentScripts.json");
-        Set<Issue> issues = runFinder(prog, new ScriptExecutionOrderDifferentActors(), false);
-        assertThat(issues.size()).isEqualTo(2);
+        Set<Question> questions = runFinder(prog, new ScriptExecutionOrderDifferentActors(), false);
+        assertThat(questions.size()).isEqualTo(2);
 
-        for (Issue issue : issues) {
-            if (issue.getHint().getHintText(translator).contains("Stage")) {
-                assertThat(issue.getHint().getHintText(translator)).contains("[solutions]The script belonging to Sprite1[/solutions]");
+        for (Question question : questions) {
+            String questionText = question.getQuestionText();
+            if (questionText.contains("Stage")) {
+                assertThat(question.getCorrectAnswers().get(0)).contains("Sprite1");
             }
             else {
-                assertThat(issue.getHint().getHintText(translator)).contains("Suppose");
+                assertThat(questionText).contains("Suppose");
             }
         }
     }

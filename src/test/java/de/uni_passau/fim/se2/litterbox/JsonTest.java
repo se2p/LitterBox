@@ -19,6 +19,8 @@
 package de.uni_passau.fim.se2.litterbox;
 
 import com.google.common.truth.Truth;
+import de.uni_passau.fim.se2.litterbox.analytics.Finder;
+import de.uni_passau.fim.se2.litterbox.analytics.Finding;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.extraction.NameExtraction;
@@ -112,6 +114,12 @@ public interface JsonTest {
         Assertions.assertEquals(expectedIssues, reports.size());
     }
 
+    default <T extends Finding> void assertThatFinderReports(int expectedFindings, Finder<T> finder, String filePath) throws ParsingException {
+        Program prog = getAST(filePath);
+        Set<T> reports = finder.check(prog);
+        Assertions.assertEquals(expectedFindings, reports.size());
+    }
+
     default void assertThatExtractionReports(List<String> expected, NameExtraction finder, String filePath) throws ParsingException {
         Program prog = getAST(filePath);
         List<String> reports = finder.extractNames(prog);
@@ -140,6 +148,12 @@ public interface JsonTest {
         issueFinder.setIgnoreLooseBlocks(ignoreLooseBlocks);
         issues.addAll(issueFinder.check(program));
         return issues;
+    }
+
+    default <T extends Finding> Set<T> runFinder(Program program, Finder<T> finder, boolean ignoreLooseBlocks) {
+        Preconditions.checkNotNull(program);
+        finder.setIgnoreLooseBlocks(ignoreLooseBlocks);
+        return new LinkedHashSet<>(finder.check(program));
     }
 
     default Set<Issue> runFinders(Program program, List<IssueFinder> issueFinders, boolean ignoreLooseBlocks) {

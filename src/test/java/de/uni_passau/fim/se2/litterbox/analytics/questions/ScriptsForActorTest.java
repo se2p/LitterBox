@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
@@ -35,48 +34,47 @@ class ScriptsForActorTest implements FinderTest, JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
         Program prog = getAST("src/test/fixtures/emptyProject.json");
-        Set<Issue> issues = runFinder(prog, new ScriptsForActor(), false);
-        assertThat(issues.size()).isEqualTo(2);
+        Set<Question> questions = runFinder(prog, new ScriptsForActor(), false);
+        assertThat(questions.size()).isEqualTo(2);
 
-        for (Issue issue : issues) {
-            assertThat(issue.getHint().getHintText(translator)).containsMatch("\\[a-n]0\\[/a-n]");
+        for (Question question : questions) {
+            assertThat(question.getCorrectAnswers()).contains("0");
         }
     }
 
     @Test
     public void testOneSpriteWithOneScript() throws IOException, ParsingException {
         Program prog = getAST("src/test/fixtures/questions/onlyStageOneScript.json");
-        Set<Issue> issues = runFinder(prog, new ScriptsForActor(), false);
-        assertThat(issues.size()).isEqualTo(1);
+        Set<Question> questions = runFinder(prog, new ScriptsForActor(), false);
+        assertThat(questions.size()).isEqualTo(1);
 
-        for (Issue issue : issues) {
-            assertThat(issue.getHint().getHintText(translator)).containsMatch("\\[a-n]1\\[/a-n]");
+        for (Question question : questions) {
+            assertThat(question.getCorrectAnswers()).contains("1");
         }
     }
 
     @Test
     public void testOneSpriteWithTwoScripts() throws IOException, ParsingException {
         Program prog = getAST("src/test/fixtures/questions/onlyStageTwoScripts.json");
-        Set<Issue> issues = runFinder(prog, new ScriptsForActor(), false);
-        assertThat(issues.size()).isEqualTo(1);
+        Set<Question> questions = runFinder(prog, new ScriptsForActor(), false);
+        assertThat(questions.size()).isEqualTo(1);
 
-        for (Issue issue : issues) {
-            assertThat(issue.getHint().getHintText(translator)).containsMatch("\\[a-n]2\\[/a-n]");
+        for (Question question : questions) {
+            assertThat(question.getCorrectAnswers()).contains("2");
         }
     }
 
     @Test
     public void testMultipleScriptsInDifferentActors() throws IOException, ParsingException {
         Program prog = getAST("src/test/fixtures/questions/eventsTriggeredByStatements.json");
-        Set<Issue> issues = runFinder(prog, new ScriptsForActor(), false);
-        assertThat(issues.size()).isEqualTo(2);
+        Set<Question> questions = runFinder(prog, new ScriptsForActor(), false);
+        assertThat(questions.size()).isEqualTo(2);
 
-        for (Issue issue : issues) {
-            String hint = issue.getHint().getHintText(translator);
-            if (hint.contains("Sprite1"))
-                assertThat(hint).containsMatch("\\[a-n]6\\[/a-n]");
+        for (Question question : questions) {
+            if (question.getActorName().equals("Sprite1"))
+                assertThat(question.getCorrectAnswers()).contains("6");
             else
-                assertThat(hint).containsMatch("\\[a-n]2\\[/a-n]");
+                assertThat(question.getCorrectAnswers()).contains("2");
         }
     }
 }

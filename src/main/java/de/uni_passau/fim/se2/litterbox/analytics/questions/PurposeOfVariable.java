@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
@@ -47,10 +44,9 @@ public class PurposeOfVariable extends AbstractQuestionFinder {
         currentProcedure = null;
 
         for (String variable : variables) {
-            IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
-            Hint hint = Hint.fromKey(getName());
-            hint.setParameter(Hint.HINT_VARIABLE, variable);
-            addIssue(builder.withHint(hint));
+            QuestionBuilder builder = prepareQuestionBuilder()
+                    .withQuestionText(variable);
+            addQuestion(builder);
         }
     }
 
@@ -71,5 +67,20 @@ public class PurposeOfVariable extends AbstractQuestionFinder {
     @Override
     public String getName() {
         return "purpose_of_variable";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.PURPOSE;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.ATOM;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.FREE_TEXT;
     }
 }

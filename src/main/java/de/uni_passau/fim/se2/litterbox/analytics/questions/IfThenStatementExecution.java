@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -45,18 +42,30 @@ public class IfThenStatementExecution extends AbstractQuestionFinder {
                     thenStmts.getStatement(Randomness.nextInt(thenStmts.getNumberOfStatements()))
             );
 
-            IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
-            Hint hint = Hint.fromKey(getName());
-            hint.setParameter(Hint.STATEMENT, ScratchBlocksVisitor.of(statement));
-            hint.setParameter(Hint.CONDITION, ScratchBlocksVisitor.of(condition));
-            hint.setParameter(Hint.HINT_VARIABLE, String.valueOf(conditionValue).toUpperCase());
-            hint.setParameter(Hint.ANSWER, conditionValue ? YES : NO);
-            addIssue(builder.withHint(hint));
+            QuestionBuilder builder = prepareQuestionBuilder(node)
+                    .withQuestionText(ScratchBlocksVisitor.of(statement) + " when " + ScratchBlocksVisitor.of(condition) + " is " + String.valueOf(conditionValue).toUpperCase())
+                    .withCorrectAnswers(conditionValue ? "yes" : "no");
+            addQuestion(builder);
         }
     }
 
     @Override
     public String getName() {
         return "if_then_statement_execution";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.EXECUTION;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.BLOCK;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.YES_NO;
     }
 }

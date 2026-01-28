@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
@@ -39,7 +36,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 public class IfBlockCondition extends AbstractQuestionFinder {
 
     private boolean ifStmtFound;
-    private IssueBuilder builder;
+    private QuestionBuilder builder;
 
     @Override
     public void visit(Script node) {
@@ -50,10 +47,8 @@ public class IfBlockCondition extends AbstractQuestionFinder {
         super.visit(node);
 
         if (ifStmtFound && !choices.isEmpty()) {
-            Hint hint = Hint.fromKey(getName());
-            hint.setParameter(Hint.CHOICES, getChoices());
-            hint.setParameter(Hint.ANSWER, getAnswers());
-            addIssue(builder.withHint(hint));
+            builder.withChoices(getChoicesList()).withCorrectAnswers(getAnswersList());
+            addQuestion(builder);
         }
     }
 
@@ -62,7 +57,7 @@ public class IfBlockCondition extends AbstractQuestionFinder {
         if (!ifStmtFound) {
             ifStmtFound = true;
             answers.add(wrappedScratchBlocks(node.getBoolExpr()));
-            builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
+            builder = prepareQuestionBuilder(node);
         } else {
             visit(node.getBoolExpr());
         }
@@ -75,7 +70,7 @@ public class IfBlockCondition extends AbstractQuestionFinder {
         if (!ifStmtFound) {
             ifStmtFound = true;
             answers.add(wrappedScratchBlocks(node.getBoolExpr()));
-            builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
+            builder = prepareQuestionBuilder(node);
         } else {
             visit(node.getBoolExpr());
         }
@@ -110,5 +105,20 @@ public class IfBlockCondition extends AbstractQuestionFinder {
     @Override
     public String getName() {
         return "if_block_condition";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.TEXT;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.BLOCK;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

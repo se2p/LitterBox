@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
@@ -40,24 +37,23 @@ import static java.util.Objects.isNull;
  */
 public class ScriptToSetVariable extends AbstractQuestionFinder {
     private String variable;
-    private Map<String, String> answers;
+    private Map<String, String> variableAnswers;
 
     @Override
     public void visit(Program node) {
-        answers = new HashMap<>();
+        variableAnswers = new HashMap<>();
         super.visit(node);
 
         currentScript = null;
         currentProcedure = null;
 
-        if (!choices.isEmpty() && !answers.isEmpty()) {
-            answers.forEach((variable, answer) -> {
-                IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
-                Hint hint = Hint.fromKey(getName());
-                hint.setParameter(Hint.HINT_VARIABLE, variable);
-                hint.setParameter(Hint.ANSWER, answer);
-                hint.setParameter(Hint.CHOICES, getChoices());
-                addIssue(builder.withHint(hint));
+        if (!choices.isEmpty() && !variableAnswers.isEmpty()) {
+            variableAnswers.forEach((variable, answer) -> {
+                QuestionBuilder builder = prepareQuestionBuilder()
+                        .withQuestionText("variable=" + variable)
+                        .withCorrectAnswers(answer)
+                        .withChoices(getChoicesList());
+                addQuestion(builder);
             });
         }
     }
@@ -67,7 +63,7 @@ public class ScriptToSetVariable extends AbstractQuestionFinder {
         variable = null;
         super.visit(node);
         if (!isNull(variable)) {
-            answers.putIfAbsent(variable, wrappedScratchBlocks(node));
+            variableAnswers.putIfAbsent(variable, wrappedScratchBlocks(node));
         } else {
             choices.add(wrappedScratchBlocks(node));
         }
@@ -81,5 +77,20 @@ public class ScriptToSetVariable extends AbstractQuestionFinder {
     @Override
     public String getName() {
         return "script_to_set_variable";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.TEXT;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.RELATION;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

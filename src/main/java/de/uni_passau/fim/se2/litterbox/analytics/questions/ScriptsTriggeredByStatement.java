@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -76,11 +73,10 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
                 currentScript = scriptForStmt.get(stmt);
                 currentActor = actorForStmt.get(stmt);
 
-                IssueBuilder builder = prepareIssueBuilder(stmt).withSeverity(IssueSeverity.LOW);
-                Hint hint = Hint.fromKey(getName());
-                hint.setParameter(Hint.CHOICES, getChoices());
-                hint.setParameter(Hint.ANSWER, getAnswers());
-                addIssue(builder.withHint(hint));
+                QuestionBuilder builder = prepareQuestionBuilder(stmt)
+                        .withChoices(getChoicesList())
+                        .withCorrectAnswers(getAnswersList());
+                addQuestion(builder);
             }
         });
     }
@@ -143,5 +139,20 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
     @Override
     public String getName() {
         return "scripts_triggered_by_statement";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.EXECUTION;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.RELATION;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

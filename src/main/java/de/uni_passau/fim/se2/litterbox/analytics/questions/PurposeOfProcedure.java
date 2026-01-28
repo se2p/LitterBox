@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 /**
@@ -33,16 +30,29 @@ public class PurposeOfProcedure extends AbstractQuestionFinder {
     @Override
     public void visit(ProcedureDefinition node) {
         currentProcedure = node;
-        IssueBuilder builder = prepareIssueBuilder(node)
+        QuestionBuilder builder = prepareQuestionBuilder(node)
                 .withMetadata(node.getMetadata().getDefinition())
-                .withSeverity(IssueSeverity.LOW);
-        builder.withProcedure(node);
-        Hint hint = Hint.fromKey(getName());
-        addIssue(builder.withHint(hint));
+                .withProcedure(node);
+        addQuestion(builder);
     }
 
     @Override
     public String getName() {
         return "purpose_of_procedure";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.PURPOSE;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.BLOCK;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.FREE_TEXT;
     }
 }

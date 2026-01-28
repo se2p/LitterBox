@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
@@ -53,11 +50,10 @@ public class SetVariable extends AbstractQuestionFinder {
             Expression expression = node.getExpr();
 
             if (expression instanceof NumberLiteral || expression instanceof StringLiteral) {
-                IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
-                Hint hint = Hint.fromKey(getName());
-                hint.setParameter(Hint.HINT_VARIABLE, ScratchBlocksVisitor.of(identifier));
-                hint.setParameter(Hint.ANSWER, getExpressionValue(expression));
-                addIssue(builder.withHint(hint));
+                QuestionBuilder builder = prepareQuestionBuilder(node)
+                        .withQuestionText("variable=" + ScratchBlocksVisitor.of(identifier))
+                        .withCorrectAnswers(getExpressionValue(expression));
+                addQuestion(builder);
             }
         }
     }
@@ -76,5 +72,20 @@ public class SetVariable extends AbstractQuestionFinder {
     @Override
     public String getName() {
         return "set_variable";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.TEXT;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.ATOM;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.FREE_TEXT;
     }
 }

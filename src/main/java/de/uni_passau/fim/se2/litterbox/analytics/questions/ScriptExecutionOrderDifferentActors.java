@@ -18,13 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
@@ -53,13 +48,11 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
             String event = entry.getKey();
             Map<String, List<Script>> actorsWithEvent = entry.getValue();
             if (actorsWithEvent.size() > 1) {
-                List<ScriptEntity> scriptEntities = new ArrayList<>();
-                List<ASTNode> nodes = new ArrayList<>();
-                Hint hint = Hint.fromKey(getName());
                 String actor1;
                 String actor2;
                 Script script1;
                 Script script2;
+                String condition;
 
                 List<String> actors = new ArrayList<>(actorsWithEvent.keySet());
                 String stage = "Stage";
@@ -69,37 +62,23 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
                     actor2 = actors.getFirst();
                     script1 = actorsWithEvent.get(actor1).getFirst();
                     script2 = actorsWithEvent.get(actor2).getFirst();
-                    hint.setParameter(Hint.CONDITION, "");
+                    condition = "";
                 } else {
                     actor1 = actors.get(0);
                     actor2 = actors.get(1);
                     script1 = actorsWithEvent.get(actor1).getFirst();
                     script2 = actorsWithEvent.get(actor2).getFirst();
-                    hint.setParameter(Hint.CONDITION, " Suppose " + actor2 + " is in front of " + actor1 + ".");
+                    condition = " Suppose " + actor2 + " is in front of " + actor1 + ".";
                 }
 
-                hint.setParameter(Hint.HINT_VARIABLE1, actor1);
-                hint.setParameter(Hint.HINT_VARIABLE2, actor2);
-                hint.setParameter(Hint.EVENT, event);
-                hint.setParameter(Hint.CHOICES, actor1);
-                hint.setParameter(Hint.ANSWER, actor2);
+                // Use script1's event as the primary node
+                QuestionBuilder builder = prepareQuestionBuilder(script1.getEvent())
+                        .withScript(script1)
+                        .withChoices(List.of(actor1))
+                        .withCorrectAnswers(actor2)
+                        .withQuestionText("actor1=" + actor1 + "|actor2=" + actor2 + "|event=" + event + "|condition=" + condition);
 
-                scriptEntities.add(script1);
-                scriptEntities.add(script2);
-                nodes.add(script1.getEvent());
-                nodes.add(script2.getEvent());
-
-                MultiBlockIssue issue = new MultiBlockIssue(
-                        this,
-                        IssueSeverity.LOW,
-                        program,
-                        currentActor,
-                        scriptEntities,
-                        nodes,
-                        node.getMetadata(),
-                        hint);
-
-                addIssue(issue);
+                addQuestion(builder);
             }
         }
     }
@@ -117,5 +96,20 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
     @Override
     public String getName() {
         return "script_execution_order_different_actors";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.EXECUTION;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.RELATION;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

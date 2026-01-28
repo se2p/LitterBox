@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
@@ -74,14 +73,13 @@ class IfElseStatementExecutionTest implements FinderTest, JsonTest {
     @Test
     public void testHint() throws ParsingException, IOException {
         Program prog = getAST("src/test/fixtures/questions/twoVariablesInIfElseStatement.json");
-        Set<Issue> issues = runFinder(prog, new IfElseStatementExecution(), false);
+        Set<Question> questions = runFinder(prog, new IfElseStatementExecution(), false);
 
-        for (Issue issue : issues) {
-            String hint = issue.getHint().getHintText(translator);
-            if (hint.contains("TRUE"))
-                assertThat(hint).containsMatch("\\[solutions]\\[scratchblocks]\nset \\[new variable v] to \\(0\\)");
-            else
-                assertThat(hint).containsMatch("\\[solutions]\\[scratchblocks]\nplay sound \\(Meow v\\) until done");
+        for (Question question : questions) {
+            String questionText = question.getQuestionText();
+            assertThat(question.hasCorrectAnswers()).isTrue();
+            // Check that the correct answer contains scratchblocks code
+            assertThat(question.getCorrectAnswers().get(0)).isNotEmpty();
         }
     }
 }

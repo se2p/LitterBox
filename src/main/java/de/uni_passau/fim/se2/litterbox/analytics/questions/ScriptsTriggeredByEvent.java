@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
@@ -50,11 +47,10 @@ public class ScriptsTriggeredByEvent extends AbstractQuestionFinder {
 
         triggeredScripts.forEach((event, scripts) -> {
             if (!(event instanceof Never)) {
-                IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
-                Hint hint = Hint.fromKey(getName());
-                hint.setParameter(Hint.EVENT, ScratchBlocksVisitor.of(event));
-                hint.setParameter(Hint.ANSWER, Integer.toString(scripts.size()));
-                addIssue(builder.withHint(hint));
+                QuestionBuilder builder = prepareQuestionBuilder()
+                        .withQuestionText(ScratchBlocksVisitor.of(event))
+                        .withCorrectAnswers(Integer.toString(scripts.size()));
+                addQuestion(builder);
             }
         });
     }
@@ -70,5 +66,20 @@ public class ScriptsTriggeredByEvent extends AbstractQuestionFinder {
     @Override
     public String getName() {
         return "scripts_triggered_by_event";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.EXECUTION;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.RELATION;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.NUMBER;
     }
 }

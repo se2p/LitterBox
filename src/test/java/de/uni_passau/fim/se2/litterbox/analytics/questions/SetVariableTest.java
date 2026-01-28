@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
@@ -40,22 +39,22 @@ class SetVariableTest implements FinderTest, JsonTest {
     @Test
     public void testSetVariableToNumber() throws IOException, ParsingException {
         Program prog = getAST("src/test/fixtures/questions/setVariableToNumberLiteral.json");
-        Set<Issue> issues = runFinder(prog, new SetVariable(), false);
-        assertThat(issues.size()).isEqualTo(1);
+        Set<Question> questions = runFinder(prog, new SetVariable(), false);
+        assertThat(questions.size()).isEqualTo(1);
 
-        for (Issue issue : issues) {
-            assertThat(issue.getHint().getHintText(translator)).containsMatch("\\[a-s]0\\[/a-s]");
+        for (Question question : questions) {
+            assertThat(question.getCorrectAnswers()).contains("0");
         }
     }
 
     @Test
     public void testSetVariableToString() throws IOException, ParsingException {
         Program prog = getAST("src/test/fixtures/questions/setVariableToStringLiteral.json");
-        Set<Issue> issues = runFinder(prog, new SetVariable(), false);
-        assertThat(issues.size()).isEqualTo(1);
+        Set<Question> questions = runFinder(prog, new SetVariable(), false);
+        assertThat(questions.size()).isEqualTo(1);
 
-        for (Issue issue : issues) {
-            assertThat(issue.getHint().getHintText(translator)).containsMatch("\\[a-s]Hello\\[/a-s]");
+        for (Question question : questions) {
+            assertThat(question.getCorrectAnswers()).contains("Hello");
         }
     }
 

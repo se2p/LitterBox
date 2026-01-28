@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
@@ -74,14 +73,14 @@ class IfThenStatementExecutionTest implements FinderTest, JsonTest {
     @Test
     public void testHint() throws ParsingException, IOException {
         Program prog = getAST("src/test/fixtures/questions/twoScriptsWithBothIfStmts.json");
-        Set<Issue> issues = runFinder(prog, new IfThenStatementExecution(), false);
+        Set<Question> questions = runFinder(prog, new IfThenStatementExecution(), false);
 
-        for (Issue issue : issues) {
-            String hint = issue.getHint().getHintText(translator);
-            if (hint.contains("FALSE"))
-                assertThat(hint).containsMatch("\\[a-y]no\\[/a-y]");
+        for (Question question : questions) {
+            String questionText = question.getQuestionText();
+            if (questionText.contains("FALSE"))
+                assertThat(question.getCorrectAnswers()).contains("no");
             else
-                assertThat(hint).containsMatch("\\[a-y]yes\\[/a-y]");
+                assertThat(question.getCorrectAnswers()).contains("yes");
         }
     }
 }

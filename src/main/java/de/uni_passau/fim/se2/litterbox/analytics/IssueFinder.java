@@ -18,37 +18,52 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-
-import java.util.Collection;
-import java.util.Set;
-
 /**
- * Interface for all IssueFinders.
+ * Interface for finders that identify issues (bugs, smells, perfumes) in Scratch programs.
+ * Extends the generic {@link Finder} interface with issue-specific methods.
  */
-public interface IssueFinder {
+public interface IssueFinder extends Finder<Issue> {
 
+    /**
+     * Returns the type of issue this finder identifies (BUG, SMELL, PERFUME, etc.).
+     *
+     * @return the issue type
+     */
     IssueType getIssueType();
 
     /**
-     * Checks the given program for a specific issue.
+     * Checks if the first issue is a duplicate of the other issue.
      *
-     * @param program The project to check
-     * @return a IssueReport object
+     * @param first the first issue
+     * @param other the other issue
+     * @return true if first is a duplicate of other
      */
-    Set<Issue> check(Program program);
-
-    String getName();
-
-    Collection<String> getHintKeys();
-
-    void setIgnoreLooseBlocks(boolean value);
-
     boolean isDuplicateOf(Issue first, Issue other);
 
+    /**
+     * Calculates the distance between two issues.
+     *
+     * @param first the first issue
+     * @param other the other issue
+     * @return the distance value
+     */
     int getDistanceTo(Issue first, Issue other);
 
+    /**
+     * Checks if the first issue is subsumed by the other issue.
+     *
+     * @param first the first issue
+     * @param other the other issue
+     * @return true if first is subsumed by other
+     */
     boolean isSubsumedBy(Issue first, Issue other);
 
+    /**
+     * Checks if two issues are coupled.
+     *
+     * @param first the first issue
+     * @param other the other issue
+     * @return true if the issues are coupled
+     */
     boolean areCoupled(Issue first, Issue other);
 }

@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
@@ -61,11 +58,11 @@ public class StatementsInIfStatement extends AbstractQuestionFinder {
             } else {
                 topBlockCurrent = node.getStmtList().getStmts().getFirst();
             }
-            IssueBuilder builder = prepareIssueBuilder(topBlockCurrent).withSeverity(IssueSeverity.LOW);
-            Hint hint = Hint.fromKey(getName());
-            hint.setParameter(Hint.CHOICES, getChoices());
-            hint.setParameter(Hint.ANSWER, getAnswers());
-            addIssue(builder.withHint(hint));
+            QuestionBuilder builder = prepareQuestionBuilder(topBlockCurrent)
+                    .withScript(node)
+                    .withChoices(getChoicesList())
+                    .withCorrectAnswers(getAnswersList());
+            addQuestion(builder);
         }
     }
 
@@ -103,5 +100,20 @@ public class StatementsInIfStatement extends AbstractQuestionFinder {
     @Override
     public String getName() {
         return "statements_in_if_statement";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.TEXT;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.BLOCK;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

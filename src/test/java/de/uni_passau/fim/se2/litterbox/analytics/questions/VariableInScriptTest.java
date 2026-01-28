@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
@@ -71,12 +70,11 @@ public class VariableInScriptTest implements FinderTest, JsonTest {
     @Test
     public void testHint() throws IOException, ParsingException {
         Program prog = getAST("src/test/fixtures/questions/twoVariablesInIfElseStatement.json");
-        Set<Issue> issues = runFinder(prog, new VariableInScript(), false);
+        Set<Question> questions = runFinder(prog, new VariableInScript(), false);
 
-        for (Issue issue : issues) {
-            String hint = issue.getHint().getHintText(translator);
-            assertThat(hint).contains("my variable");
-            assertThat(hint).contains("new variable");
+        for (Question question : questions) {
+            assertThat(question.getCorrectAnswers()).contains("my variable");
+            assertThat(question.getCorrectAnswers()).contains("new variable");
         }
     }
 }

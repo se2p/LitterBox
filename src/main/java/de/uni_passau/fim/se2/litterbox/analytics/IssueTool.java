@@ -170,7 +170,7 @@ public class IssueTool {
         Map<String, IssueFinder> allFinders = new LinkedHashMap<>(generateBugFinders());
         allFinders.putAll(generateSmellFinders());
         allFinders.putAll(generatePerfumeFinders());
-        allFinders.putAll(generateQuestionFinders());
+        // Questions are excluded - use the dedicated 'questions' subcommand instead
 
         return allFinders;
     }
@@ -294,8 +294,13 @@ public class IssueTool {
         return perfumeFinders;
     }
 
-    public static Map<String, IssueFinder> generateQuestionFinders() {
-        Map<String, IssueFinder> questionFinders = new LinkedHashMap<>();
+    /**
+     * Generates question finders that produce Question objects.
+     *
+     * @return map of finder name to QuestionFinder
+     */
+    public static Map<String, QuestionFinder> generateQuestionFinders() {
+        Map<String, QuestionFinder> questionFinders = new LinkedHashMap<>();
 
         if (LOAD_GENERAL) {
             registerQuestionFinder(new BlockControllingLoop(), questionFinders);
@@ -333,6 +338,14 @@ public class IssueTool {
         return questionFinders;
     }
 
+    /**
+     * Deprecated - use {@link #generateQuestionFinders()} instead.
+     */
+    @Deprecated(forRemoval = true)
+    public static Map<String, QuestionFinder> generateNewStyleQuestionFinders() {
+        return generateQuestionFinders();
+    }
+
     public static List<IssueFinder> getFinders(final FinderGroup finderGroup) {
         final Collection<IssueFinder> finders = switch (finderGroup) {
             case ALL -> generateAllFinders().values();
@@ -340,7 +353,8 @@ public class IssueTool {
             case BUGS -> generateBugFinders().values();
             case BUGS_SCRIPTS -> generateScriptsBugFinders().values();
             case PERFUMES -> generatePerfumeFinders().values();
-            case QUESTIONS -> generateQuestionFinders().values();
+            case QUESTIONS -> throw new IllegalArgumentException(
+                    "Questions are not Issues. Use IssueTool.generateQuestionFinders() instead.");
             case DEFAULT -> generateAllFinders().values().stream()
                     .filter(f -> !f.getName().toLowerCase().endsWith("strict"))
                     .toList();
@@ -466,17 +480,12 @@ public class IssueTool {
         if (finder.getIssueType() != IssueType.PERFUME) {
             throw new RuntimeException("Cannot register IssueFinder of Type "
                     + finder.getIssueType()
-                    + " as Solution IssueFinder");
+                    + " as Perfume IssueFinder");
         }
         perfumeFinders.put(finder.getName(), finder);
     }
 
-    static void registerQuestionFinder(IssueFinder finder, Map<String, IssueFinder> questionFinders) {
-        if (finder.getIssueType() != IssueType.QUESTION) {
-            throw new RuntimeException("Cannot register IssueFinder of Type "
-                    + finder.getIssueType()
-                    + " as Solution IssueFinder");
-        }
+    static void registerQuestionFinder(QuestionFinder finder, Map<String, QuestionFinder> questionFinders) {
         questionFinders.put(finder.getName(), finder);
     }
 }

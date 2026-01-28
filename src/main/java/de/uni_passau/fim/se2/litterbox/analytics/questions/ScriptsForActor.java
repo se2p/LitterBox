@@ -18,10 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
@@ -35,22 +31,31 @@ public class ScriptsForActor extends AbstractQuestionFinder {
     @Override
     public void visit(ActorDefinition node) {
         currentActor = node;
-        IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
-        Hint hint = Hint.fromKey(getName());
         String actor = ScratchBlocksVisitor.of(node.getIdent());
-        final HintPlaceholder placeholder;
-        if ("Stage".equals(actor)) {
-            placeholder = new HintPlaceholder.Translatable("stage");
-        } else {
-            placeholder = new HintPlaceholder.Value(actor);
-        }
-        hint.setParameter(Hint.ACTOR, placeholder);
-        hint.setParameter(Hint.ANSWER, Integer.toString(node.getScripts().getSize()));
-        addIssue(builder.withHint(hint));
+        String actorText = "Stage".equals(actor) ? "Stage" : actor;
+        QuestionBuilder builder = prepareQuestionBuilder()
+                .withQuestionText(actorText)
+                .withCorrectAnswers(Integer.toString(node.getScripts().getSize()));
+        addQuestion(builder);
     }
 
     @Override
     public String getName() {
         return "scripts_for_actor";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.TEXT;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.MACRO;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.NUMBER;
     }
 }

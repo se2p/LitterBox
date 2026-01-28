@@ -1,0 +1,443 @@
+/*
+ * Copyright (C) 2019-2026 LitterBox contributors
+ *
+ * This file is part of LitterBox.
+ *
+ * LitterBox is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version.
+ *
+ * LitterBox is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
+ */
+package de.uni_passau.fim.se2.litterbox.report;
+
+import de.uni_passau.fim.se2.litterbox.analytics.questions.ProgramDimension;
+import de.uni_passau.fim.se2.litterbox.analytics.questions.QuestionType;
+import de.uni_passau.fim.se2.litterbox.analytics.questions.ScopeOfFocus;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import gg.jte.ContentType;
+import gg.jte.TemplateEngine;
+import gg.jte.TemplateOutput;
+import gg.jte.output.PrintWriterOutput;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.logging.Logger;
+
+/**
+ * Outputs questions as a rich HTML report using JTE templates.
+ * Features interactive answer checking and block model navigation.
+ */
+public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
+
+    private static final Logger log = Logger.getLogger(HTMLJTEQuestionResultHandler.class.getName());
+
+    private static final TemplateEngine templateEngine = TemplateEngine.createPrecompiled(ContentType.Html);
+
+    private static final String PATH_SCRATCHBLOCKS_JS = "/js/scratchblocks.min.js";
+    private static final String PATH_TRANSLATIONS_JS = "/js/translations-all.js";
+    private static final String LOGO_PATH = "/litterbox.svg";
+    private static final String FAVICON_PATH = "/favicon.ico";
+
+    private final IssueTranslator translator;
+    private final Path output;
+    private final boolean showAnswers;
+    private final boolean teacherMode;
+    private final List<ProjectQuestions> allProjects = new ArrayList<>();
+
+    public HTMLJTEQuestionResultHandler(IssueTranslator translator, Path output, boolean showAnswers) {
+        this(translator, output, showAnswers, false);
+    }
+
+    public HTMLJTEQuestionResultHandler(IssueTranslator translator, Path output, boolean showAnswers, boolean teacherMode) {
+        this.translator = translator;
+        this.output = output;
+        this.showAnswers = showAnswers;
+        this.teacherMode = teacherMode;
+    }
+
+    @Override
+    public void begin() {
+        // Nothing to do
+    }
+
+    @Override
+    public void handleResult(Path projectFile, Program program, List<QuestionDTO> questions) {
+        String projectName = projectFile.getFileName().toString();
+        String projectId = "project-" + projectName.replaceAll("[^a-zA-Z0-9]", "-");
+
+        List<RenderedQuestion> rendered = questions.stream()
+                .map(this::renderQuestion)
+                .toList();
+
+        Map<String, Integer> coverage = computeCoverage(questions);
+        
+        // Collect unique sprites for filtering
+        Set<String> sprites = questions.stream()
+                .map(QuestionDTO::sprite)
+                .filter(s -> s != null && !s.isEmpty())
+                .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
+        
+        // Generate scratchblocks code for each sprite
+        Map<String, String> spriteCode = generateSpriteCode(program);
+        
+        // Generate sprite data (variables, lists) for each sprite
+        Map<String, SpriteData> spriteData = generateSpriteData(program);
+
+        allProjects.add(new ProjectQuestions(projectId, projectName, rendered, coverage, sprites, spriteCode, spriteData));
+    }
+    
+    private Map<String, String> generateSpriteCode(Program program) {
+        Map<String, String> spriteCode = new LinkedHashMap<>();
+        if (program == null) return spriteCode;
+        
+        for (var actor : program.getActorDefinitionList().getDefinitions()) {
+            String spriteName = actor.getIdent().getName();
+            
+            // Generate scratchblocks code for scripts only (no declarations)
+            de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor visitor = 
+                    new de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor(false, true);
+            actor.accept(visitor);
+            String code = visitor.getScratchBlocks();
+            if (code != null && !code.trim().isEmpty()) {
+                // Clean up the scratchblocks markers for display
+                code = code.replace("[scratchblocks]", "").replace("[/scratchblocks]", "").trim();
+                spriteCode.put(spriteName, code);
+            } else {
+                // Include sprite even if it has no code (might have variables)
+                // This ensures Stage and other sprites with only variables are shown
+                spriteCode.put(spriteName, "");
+            }
+        }
+        return spriteCode;
+    }
+    
+    private Map<String, SpriteData> generateSpriteData(Program program) {
+        Map<String, SpriteData> spriteData = new LinkedHashMap<>();
+        if (program == null) return spriteData;
+        
+        for (var actor : program.getActorDefinitionList().getDefinitions()) {
+            String spriteName = actor.getIdent().getName();
+            var decls = actor.getDecls().getDeclarationStmts();
+            
+            List<String> variables = new ArrayList<>();
+            List<String> lists = new ArrayList<>();
+            
+            for (var decl : decls) {
+                if (decl instanceof de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationIdentAsTypeStmt identDecl) {
+                    var ident = identDecl.getIdent();
+                    
+                    if (ident instanceof de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable var) {
+                        variables.add(var.getName().getName());
+                    } else if (ident instanceof de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList list) {
+                        lists.add(list.getName().getName());
+                    }
+                }
+            }
+            
+            spriteData.put(spriteName, new SpriteData(variables, lists));
+        }
+        return spriteData;
+    }
+
+    @Override
+    public void finish() throws IOException {
+        if (output.getParent() != null) {
+            Files.createDirectories(output.getParent());
+        }
+
+        String scratchblocksJs = loadResource(PATH_SCRATCHBLOCKS_JS);
+        String translationsJs = loadResource(PATH_TRANSLATIONS_JS);
+        String logo = loadResource(LOGO_PATH);
+        String faviconBase64 = loadFaviconBase64();
+
+        Scripts scripts = new Scripts(scratchblocksJs, translationsJs);
+
+        QuestionsTemplateModel model = new QuestionsTemplateModel(
+                translator.getLocale().getLanguage(),
+                faviconBase64,
+                logo,
+                scripts,
+                translator,
+                showAnswers,
+                teacherMode,
+                allProjects
+        );
+
+        try (PrintWriter pw = new PrintWriter(Files.newBufferedWriter(output))) {
+            TemplateOutput templateOutput = new PrintWriterOutput(pw);
+            templateEngine.render("questions_report_template.jte", model, templateOutput);
+        }
+
+        log.info("Questions report written to: " + output);
+    }
+
+    private RenderedQuestion renderQuestion(QuestionDTO q) {
+        String scratchBlocks = null;
+        if (q.scratchBlocksCode() != null && !q.scratchBlocksCode().isEmpty()) {
+            scratchBlocks = q.scratchBlocksCode()
+                    .replace("[scratchblocks]", "")
+                    .replace("[/scratchblocks]", "")
+                    .trim();
+        }
+
+        // Clean the question text (remove choice/solution markers)
+        String questionText = cleanQuestionText(q.questionText());
+
+        // Build complete choices list: combine distractors (choices) with correct answers
+        // The question finders generate distractors, so we need to add the correct answer
+        List<String> allChoices = new ArrayList<>();
+        if (q.choices() != null) {
+            allChoices.addAll(q.choices());
+        }
+        if (q.correctAnswers() != null) {
+            for (String ans : q.correctAnswers()) {
+                if (!allChoices.contains(ans)) {
+                    allChoices.add(ans);
+                }
+            }
+        }
+        // Shuffle choices so correct answer isn't always last
+        Collections.shuffle(allChoices);
+
+        // Format choices for display (with scratchblocks rendering) and normalized for data attributes
+        List<String> displayChoices = null;
+        List<String> normalizedChoices = null;
+        if (!allChoices.isEmpty()) {
+            displayChoices = allChoices.stream()
+                    .map(this::formatScratchBlocksNotation)
+                    .toList();
+            // Normalized choices: cleaned, lowercase, no newlines - for data-value attribute matching
+            normalizedChoices = allChoices.stream()
+                    .map(c -> cleanScratchBlocksNotation(c).toLowerCase().trim())
+                    .toList();
+        }
+
+        // Build answer set for checking (normalized)
+        Set<String> answerSet = new HashSet<>();
+        if (q.correctAnswers() != null) {
+            for (String ans : q.correctAnswers()) {
+                answerSet.add(cleanScratchBlocksNotation(ans).toLowerCase().trim());
+            }
+        }
+
+        // Format correct answers for display (with scratchblocks rendering)
+        String formattedAnswers = null;
+        if (q.correctAnswers() != null && !q.correctAnswers().isEmpty()) {
+            formattedAnswers = q.correctAnswers().stream()
+                    .map(this::formatScratchBlocksNotation)
+                    .collect(java.util.stream.Collectors.joining(", "));
+        }
+
+        // Determine if this question can be auto-checked
+        boolean canCheck = canCheckAnswer(q.questionType(), q.correctAnswers());
+
+        return new RenderedQuestion(
+                q.id(),
+                q.finder(),
+                translator.getName(q.finder()),
+                q.questionType(),
+                q.programDimension(),
+                q.scopeOfFocus(),
+                q.getBlockModelCell(),
+                q.sprite(),
+                questionText,
+                scratchBlocks,
+                normalizedChoices,
+                displayChoices,
+                q.correctAnswers(),
+                formattedAnswers,
+                answerSet,
+                q.hint(),
+                canCheck
+        );
+    }
+
+    private boolean canCheckAnswer(QuestionType type, List<String> correctAnswers) {
+        // Can only check if there are known correct answers
+        boolean hasAnswers = correctAnswers != null && !correctAnswers.isEmpty();
+        
+        if (type == QuestionType.MULTIPLE_CHOICE
+                || type == QuestionType.NUMBER
+                || type == QuestionType.YES_NO
+                || type == QuestionType.FREE_TEXT) {
+            return hasAnswers;
+        }
+        return false;
+    }
+
+    private Map<String, Integer> computeCoverage(List<QuestionDTO> questions) {
+        Map<String, Integer> coverage = new LinkedHashMap<>();
+        for (QuestionDTO q : questions) {
+            coverage.merge(q.getBlockModelCell(), 1, Integer::sum);
+        }
+        return coverage;
+    }
+
+    private String cleanQuestionText(String text) {
+        if (text == null) return "";
+        // Remove embedded choice/answer markers and numeric answer patterns (use DOTALL for multiline)
+        String cleaned = text
+                .replaceAll("(?s)\\[a-c\\].*?\\[/a-c\\]", "")
+                .replaceAll("(?s)\\[a-n\\].*?\\[/a-n\\]", "")
+                .replaceAll("(?s)\\[a-y\\].*?\\[/a-y\\]", "")  // Yes/no answers
+                .replaceAll("(?s)\\[a-s\\].*?\\[/a-s\\]", "")  // Single-answer markers
+                .replaceAll("(?s)\\[a-c\\]\\[choices\\].*", "")  // Handle unclosed choice blocks at end
+                .replaceAll("\\[a-f\\].*", "")
+                .replaceAll("\\[a-f\\]", "")
+                .replaceAll("(?s)\\[choices\\].*?\\[/choices\\]", "")
+                .replaceAll("(?s)\\[solutions\\].*?\\[/solutions\\]", "");
+        // Convert scratchblocks notation to HTML for inline rendering
+        return formatScratchBlocksNotation(cleaned);
+    }
+
+    /**
+     * Converts scratchblocks notation markers to HTML code elements for inline rendering.
+     * Similar to HTMLReportGenerator.formatHint().
+     */
+    private String formatScratchBlocksNotation(String text) {
+        if (text == null) return "";
+        
+        // First escape HTML entities in the entire text, then wrap scratchblocks markers
+        // We need to handle this carefully because the content might contain < > characters
+        String escaped = escapeHtml(text);
+        
+        // Convert inline scratchblocks notation to HTML ((?s) enables DOTALL mode for multiline)
+        String formatted = escaped
+                .replaceAll("(?s)\\[sbi](.*?)\\[/sbi]", "<code class=\"scratchblocks\">$1</code>")
+                .replaceAll("(?s)\\[var](.*?)\\[/var]", "<code class=\"scratchblocks\">($1 :: variables)</code>")
+                .replaceAll("(?s)\\[list](.*?)\\[/list]", "<code class=\"scratchblocks\">($1 :: list)</code>")
+                // Handle block-level scratchblocks (multiline scripts)
+                .replaceAll("(?s)\\[scratchblocks]\\s*(.*?)\\s*\\[/scratchblocks]", "<pre class=\"blocks\">$1</pre>");
+        // Replace keyword tokens with translated text in styled code elements
+        formatted = replaceKeywordToken(formatted, "[IF]", "if () then");
+        formatted = replaceKeywordToken(formatted, "[ELSE]", "else");
+        // TRUE/FALSE should show as readable text, not as diamond blocks
+        formatted = replaceTranslatedToken(formatted, "[TRUE]", "true");
+        formatted = replaceTranslatedToken(formatted, "[FALSE]", "false");
+        return formatted.trim();
+    }
+
+    private String escapeHtml(String text) {
+        if (text == null) return "";
+        return text.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;");
+    }
+
+    private String replaceKeywordToken(String text, String token, String scratchblock) {
+        if (text.contains(token)) {
+            return text.replace(token, "<code class=\"scratchblocks\">" + scratchblock + "</code>");
+        }
+        return text;
+    }
+
+    private String replaceTranslatedToken(String text, String token, String key) {
+        if (text.contains(token)) {
+            String translated = translator.getInfo(key);
+            return text.replace(token, "<strong>" + escapeHtml(translated).toUpperCase() + "</strong>");
+        }
+        return text;
+    }
+
+    private String cleanScratchBlocksNotation(String text) {
+        if (text == null) return "";
+        return text.replace("[sbi]", "")
+                .replace("[/sbi]", "")
+                .replace("[var]", "")
+                .replace("[/var]", "")
+                .replace("[scratchblocks]", "")
+                .replace("[/scratchblocks]", "")
+                .trim();
+    }
+
+    private String loadResource(String path) throws IOException {
+        try (InputStream is = getClass().getResourceAsStream(path)) {
+            if (is == null) {
+                if (path.equals(LOGO_PATH)) {
+                    return "";
+                }
+                throw new IOException("Resource not found: " + path);
+            }
+            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        }
+    }
+
+    private String loadFaviconBase64() {
+        try (InputStream is = getClass().getResourceAsStream(FAVICON_PATH)) {
+            if (is != null) {
+                return "data:image/x-icon;base64," + Base64.getEncoder().encodeToString(is.readAllBytes());
+            }
+        } catch (IOException e) {
+            // Ignore
+        }
+        return "";
+    }
+
+    // Records for template model
+
+    public record QuestionsTemplateModel(
+            String language,
+            String favicon,
+            String logo,
+            Scripts scripts,
+            IssueTranslator translator,
+            boolean showAnswers,
+            boolean teacherMode,
+            List<ProjectQuestions> projects
+    ) {}
+
+    public record Scripts(
+            String scratchBlocks,
+            String scratchBlocksTranslations
+    ) {}
+
+    public record ProjectQuestions(
+            String id,
+            String name,
+            List<RenderedQuestion> questions,
+            Map<String, Integer> coverage,
+            Set<String> sprites,
+            Map<String, String> spriteCode,
+            Map<String, SpriteData> spriteData
+    ) {}
+    
+    public record SpriteData(
+            List<String> variables,
+            List<String> lists
+    ) {}
+
+    public record RenderedQuestion(
+            int id,
+            String finder,
+            String translatedName,
+            QuestionType questionType,
+            ProgramDimension programDimension,
+            ScopeOfFocus scopeOfFocus,
+            String blockModelCell,
+            String sprite,
+            String questionText,
+            String scratchBlocks,
+            List<String> normalizedChoices,
+            List<String> displayChoices,
+            List<String> correctAnswers,
+            String formattedCorrectAnswers,
+            Set<String> normalizedAnswers,
+            String hint,
+            boolean canCheck
+    ) {}
+}

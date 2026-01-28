@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
@@ -48,9 +45,8 @@ public class PurposeOfBroadcast extends AbstractQuestionFinder {
     public void visit(Broadcast node) {
         String message = ScratchBlocksVisitor.of(node.getMessage());
         if (!broadcastMessages.contains(message)) {
-            IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
-            Hint hint = Hint.fromKey(getName());
-            addIssue(builder.withHint(hint));
+            QuestionBuilder builder = prepareQuestionBuilder(node);
+            addQuestion(builder);
 
             broadcastMessages.add(message);
         }
@@ -60,9 +56,8 @@ public class PurposeOfBroadcast extends AbstractQuestionFinder {
     public void visit(BroadcastAndWait node) {
         String message = ScratchBlocksVisitor.of(node.getMessage());
         if (!broadcastMessages.contains(message)) {
-            IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
-            Hint hint = Hint.fromKey(getName());
-            addIssue(builder.withHint(hint));
+            QuestionBuilder builder = prepareQuestionBuilder(node);
+            addQuestion(builder);
 
             broadcastMessages.add(message);
         }
@@ -71,5 +66,20 @@ public class PurposeOfBroadcast extends AbstractQuestionFinder {
     @Override
     public String getName() {
         return "purpose_of_broadcast";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.PURPOSE;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.RELATION;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.FREE_TEXT;
     }
 }

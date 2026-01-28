@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -74,11 +71,10 @@ public class DefinitionOfProcedure extends AbstractQuestionFinder {
                 currentScript = scriptForCall.get(stmt);
                 currentActor = actorForCall.get(stmt);
 
-                IssueBuilder builder = prepareIssueBuilder(stmt).withSeverity(IssueSeverity.LOW);
-                Hint hint = Hint.fromKey(getName());
-                hint.setParameter(Hint.CHOICES, getChoices());
-                hint.setParameter(Hint.ANSWER, wrappedScratchBlocks(procedures.get(ident)));
-                addIssue(builder.withHint(hint));
+                QuestionBuilder builder = prepareQuestionBuilder(stmt)
+                        .withChoices(getChoicesList())
+                        .withCorrectAnswers(wrappedScratchBlocks(procedures.get(ident)));
+                addQuestion(builder);
             }
         });
     }
@@ -106,5 +102,20 @@ public class DefinitionOfProcedure extends AbstractQuestionFinder {
     @Override
     public String getName() {
         return "definition_of_procedure";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.TEXT;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.RELATION;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

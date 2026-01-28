@@ -18,13 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
@@ -44,6 +39,7 @@ public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
 
     @Override
     public void visit(ActorDefinition node) {
+        currentActor = node;
         scriptsWithEvent = new HashMap<>();
         visit(node.getScripts());
         for (Map.Entry<String, List<Script>> entry : scriptsWithEvent.entrySet()) {
@@ -51,32 +47,15 @@ public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
             List<Script> scripts = entry.getValue();
 
             if (scripts.size() > 1) {
-                List<ScriptEntity> scriptEntities = new ArrayList<>();
-                List<ASTNode> nodes = new ArrayList<>();
-
                 Script script1 = scripts.get(0);
-                Script script2 = scripts.get(1);
 
-                scriptEntities.add(script1);
-                scriptEntities.add(script2);
-                nodes.add(script1.getEvent());
-                nodes.add(script2.getEvent());
+                // Use script1's event as the primary node
+                QuestionBuilder builder = prepareQuestionBuilder(script1.getEvent())
+                        .withScript(script1)
+                        .withCorrectAnswers("no")
+                        .withQuestionText("event=" + event);
 
-                Hint hint = Hint.fromKey(getName());
-                hint.setParameter(Hint.EVENT, event);
-                hint.setParameter(Hint.ANSWER, NO);
-
-                MultiBlockIssue issue = new MultiBlockIssue(
-                        new ScriptExecutionOrderSameActor(),
-                        IssueSeverity.LOW,
-                        program,
-                        node,
-                        scriptEntities,
-                        nodes,
-                        node.getMetadata(),
-                        hint);
-
-                addIssue(issue);
+                addQuestion(builder);
                 break;
             }
         }
@@ -93,5 +72,20 @@ public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
     @Override
     public String getName() {
         return "script_execution_order_same_actor";
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.EXECUTION;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.RELATION;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.YES_NO;
     }
 }
