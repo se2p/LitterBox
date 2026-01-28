@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
@@ -204,6 +205,11 @@ public class ScriptJSONCreator {
                     jsonString.append(stmtListJson);
                 } else {
                     log.warning("Obtained empty JSON for non-empty statement list. Event ID: " + blockId);
+                    String stmtListBlocks = script.getStmtList().getStmts()
+                            .stream()
+                            .map(stmt -> stmt.getClass().getSimpleName())
+                            .collect(Collectors.joining(", "));
+                    log.warning("Statement list contains blocks: " + stmtListBlocks);
                 }
             }
         }
