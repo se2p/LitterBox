@@ -72,6 +72,7 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
@@ -98,19 +99,12 @@ public class ExpressionJSONCreator
         fixedExprCreator = new FixedExpressionJSONCreator();
         expression.accept(this);
 
-        StringBuilder jsonString = new StringBuilder();
         // Filter out empty/null strings to prevent double-comma JSON corruption
-        List<String> validJsonStrings = finishedJSONStrings.stream()
-                .filter(s -> s != null && !s.isEmpty())
-                .toList();
+        String jsonString = finishedJSONStrings.stream()
+                .filter(s -> s != null && !s.isBlank())
+                .collect(Collectors.joining(","));
 
-        for (int i = 0; i < validJsonStrings.size() - 1; i++) {
-            jsonString.append(validJsonStrings.get(i)).append(",");
-        }
-        if (!validJsonStrings.isEmpty()) {
-            jsonString.append(validJsonStrings.getLast());
-        }
-        return new IdJsonStringTuple(topExpressionId, jsonString.toString());
+        return new IdJsonStringTuple(topExpressionId, jsonString);
     }
 
     @Override

@@ -40,12 +40,15 @@ import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Logger;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.JSONStringCreator.createField;
 
 public class ScriptJSONCreator {
+
+    private static final Logger log = Logger.getLogger(ScriptJSONCreator.class.getName());
 
     private static final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
 
@@ -196,9 +199,11 @@ public class ScriptJSONCreator {
                 assert blockId != null;
                 stmtListJSONCreator = new StmtListJSONCreator(blockId, stmtList, symbol);
                 String stmtListJson = stmtListJSONCreator.createStmtListJSONString();
-                if (!stmtListJson.isEmpty()) {
+                if (!stmtListJson.isBlank()) {
                     jsonString.append(",");
                     jsonString.append(stmtListJson);
+                } else {
+                    log.warning("Obtained empty JSON for non-empty statement list. Event ID: " + blockId);
                 }
             }
         }
