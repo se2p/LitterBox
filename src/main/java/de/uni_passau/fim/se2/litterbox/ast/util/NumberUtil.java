@@ -63,6 +63,12 @@ public final class NumberUtil {
         if (text == null) {
             return false;
         }
-        return ALLOWED_CHARS.matcher(text.trim()).matches();
+        try {
+            Double.parseDouble(text);
+            // parsing as double works, so definitely a number
+            return true;
+        } catch (NumberFormatException e) {
+            return ALLOWED_CHARS.matcher(text.trim()).matches();
+        }
     }
 }

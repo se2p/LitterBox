@@ -42,6 +42,11 @@ public final class BlockJsonCreatorHelper {
     }
 
     public static String formatNumberLiteral(final NumberLiteral numberLiteral) {
+        // the formatter would turn it into +-∞ instead
+        if (Double.isInfinite(numberLiteral.getValue())) {
+            return Double.toString(numberLiteral.getValue());
+        }
+
         final NumberFormat format = NumberFormat.getInstance(Locale.ROOT);
         format.setGroupingUsed(false);
         // format x.0 as whole integer
