@@ -174,7 +174,8 @@ public class AnswerChecker {
             if (numericTolerance > 0) {
                 correct = Math.abs(studentValue - expectedValue) <= Math.abs(expectedValue * numericTolerance);
             } else {
-                correct = studentValue == expectedValue;
+                // Use Double.compare for exact comparison to avoid floating-point precision issues
+                correct = Double.compare(studentValue, expectedValue) == 0;
             }
 
             String feedback = correct

@@ -164,4 +164,22 @@ public final class ScratchBlocksFormatUtil {
             default -> stmt;
         };
     }
+
+    /**
+     * Strips outer parentheses from a scratchblocks value string.
+     * ScratchBlocks notation wraps number and string values in parentheses (e.g., "(10)" or "(hello)").
+     * This method removes those outer parentheses to get the raw value.
+     *
+     * @param value the scratchblocks value string, possibly wrapped in parentheses
+     * @return the value with outer parentheses stripped, or the original value if not wrapped
+     */
+    public static String stripParentheses(String value) {
+        if (value == null) {
+            return null;
+        }
+        if (value.startsWith("(") && value.endsWith(")")) {
+            return value.substring(1, value.length() - 1);
+        }
+        return value;
+    }
 }

@@ -26,9 +26,11 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
 /**
- * @QuestionType Yes or No
- * @Highlighted IfThen Statement
- * @Context Single script
+ * Generates yes/no questions about whether an if-then statement's body will execute
+ * given a specific condition value.
+ *
+ * <p>Example question: "If the condition [x &gt; 5] is TRUE, will the statement
+ * [move 10 steps] be executed?"
  */
 public class IfThenStatementExecution extends AbstractQuestionFinder {
 
@@ -46,8 +48,8 @@ public class IfThenStatementExecution extends AbstractQuestionFinder {
                     .withQuestionText(QuestionText.fromKey(getName()))
                     .withQuestionParameter(QuestionText.STATEMENT, ScratchBlocksVisitor.of(statement))
                     .withQuestionParameter(QuestionText.CONDITION, ScratchBlocksVisitor.of(condition))
-                    .withQuestionParameter(QuestionText.VALUE, QuestionText.fromKey(conditionValue ? "true_value" : "false_value"))
-                    .withCorrectAnswers(conditionValue ? "yes_term" : "no_term");
+                    .withQuestionParameter(QuestionText.VALUE, QuestionText.fromKey(conditionValue ? QuestionText.TRUE_VALUE : QuestionText.FALSE_VALUE))
+                    .withCorrectAnswers(conditionValue ? QuestionText.YES_TERM : QuestionText.NO_TERM);
             addQuestion(builder);
         }
     }

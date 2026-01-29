@@ -56,10 +56,10 @@ public class WaitUntilStatementExecution extends AbstractQuestionFinder {
         // Next statement description
         String nextBlockText = wrappedScratchBlocks(getSingleStmt(nextStmt));
         boolean conditionValue = Randomness.nextBoolean();
-        String valueText = conditionValue ? "true_value" : "false_value";
+        String valueText = conditionValue ? QuestionText.TRUE_VALUE : QuestionText.FALSE_VALUE;
 
-        String correctAnswer = conditionValue ? "yes_term" : "no_term";
-        String wrongAnswer = conditionValue ? "no_term" : "yes_term";
+        String correctAnswer = conditionValue ? QuestionText.YES_TERM : QuestionText.NO_TERM;
+        String wrongAnswer = conditionValue ? QuestionText.NO_TERM : QuestionText.YES_TERM;
 
         QuestionBuilder builder = prepareQuestionBuilder(waitUntil)
                 .withQuestionText(QuestionText.fromKey(getName()))

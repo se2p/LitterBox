@@ -118,11 +118,11 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
      * @param key   the parameter name (e.g., "VARIABLE")
      * @param value the parameter value
      * @return this builder
+     * @throws IllegalStateException if question text has not been set
      */
     public QuestionBuilder withQuestionParameter(String key, String value) {
-        if (questionText != null) {
-            questionText.setParameter(key, value);
-        }
+        checkQuestionTextSet();
+        questionText.setParameter(key, value);
         return self();
     }
 
@@ -132,11 +132,11 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
      * @param key   the parameter name
      * @param value the placeholder value
      * @return this builder
+     * @throws IllegalStateException if question text has not been set
      */
     public QuestionBuilder withQuestionParameter(String key, HintPlaceholder value) {
-        if (questionText != null) {
-            questionText.setParameter(key, value);
-        }
+        checkQuestionTextSet();
+        questionText.setParameter(key, value);
         return self();
     }
 
@@ -146,12 +146,19 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
      * @param key   the parameter name
      * @param value the translatable parameter value
      * @return this builder
+     * @throws IllegalStateException if question text has not been set
      */
     public QuestionBuilder withQuestionParameter(String key, TranslatableText value) {
-        if (questionText != null) {
-            questionText.setParameter(key, value);
-        }
+        checkQuestionTextSet();
+        questionText.setParameter(key, value);
         return self();
+    }
+
+    private void checkQuestionTextSet() {
+        if (questionText == null) {
+            throw new IllegalStateException("Cannot set parameter before question text is set. "
+                    + "Call withQuestionText() first.");
+        }
     }
 
     /**

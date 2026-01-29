@@ -24,6 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.ScratchBlocksFormatUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,11 +42,11 @@ public class VariableChangeResult extends AbstractQuestionFinder {
     @Override
     public void visit(SetVariableTo node) {
         String varName = getVariableName(node.getIdentifier());
-        String value = cleanValue(ScratchBlocksVisitor.of(node.getExpr()));
+        String value = ScratchBlocksFormatUtil.stripParentheses(ScratchBlocksVisitor.of(node.getExpr()));
         if ("true".equalsIgnoreCase(value)) {
-            value = "true_value";
+            value = QuestionText.TRUE_VALUE;
         } else if ("false".equalsIgnoreCase(value)) {
-            value = "false_value";
+            value = QuestionText.FALSE_VALUE;
         }
 
         List<TranslatableText> distractors = generateDistractorsForValue(value);
@@ -63,7 +64,7 @@ public class VariableChangeResult extends AbstractQuestionFinder {
     @Override
     public void visit(ChangeVariableBy node) {
         String varName = getVariableName(node.getIdentifier());
-        String value = cleanValue(ScratchBlocksVisitor.of(node.getExpr()));
+        String value = ScratchBlocksFormatUtil.stripParentheses(ScratchBlocksVisitor.of(node.getExpr()));
         // ...
 
         TranslatableText changeDesc;
@@ -112,10 +113,10 @@ public class VariableChangeResult extends AbstractQuestionFinder {
             distractors.add(QuestionText.fromText(String.valueOf(-num)));
         } catch (NumberFormatException e) {
             // Not a number
-            if ("true_value".equals(value)) {
-                distractors.add(QuestionText.fromKey("false_value"));
-            } else if ("false_value".equals(value)) {
-                distractors.add(QuestionText.fromKey("true_value"));
+            if (QuestionText.TRUE_VALUE.equals(value)) {
+                distractors.add(QuestionText.fromKey(QuestionText.FALSE_VALUE));
+            } else if (QuestionText.FALSE_VALUE.equals(value)) {
+                distractors.add(QuestionText.fromKey(QuestionText.TRUE_VALUE));
             } else {
                 distractors.add(QuestionText.fromText("0"));
                 distractors.add(QuestionText.fromText("1"));
@@ -124,13 +125,6 @@ public class VariableChangeResult extends AbstractQuestionFinder {
             }
         }
         return distractors;
-    }
-
-    private String cleanValue(String val) {
-        if (val.startsWith("(") && val.endsWith(")")) {
-            return val.substring(1, val.length() - 1);
-        }
-        return val;
     }
 
     @Override

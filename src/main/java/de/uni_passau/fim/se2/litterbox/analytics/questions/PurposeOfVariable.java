@@ -27,14 +27,21 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * @QuestionType Free Text
- * @Highlighted Nothing
- * @Context Whole program
+ * Generates free-text questions asking about the purpose of a variable in the program.
+ *
+ * <p>Example question: "What is the purpose of the variable [score]?"
  */
 public class PurposeOfVariable extends AbstractQuestionFinder {
 
     private boolean inScript;
     private Set<String> variables;
+
+    @Override
+    protected void resetState() {
+        super.resetState();
+        this.inScript = false;
+        this.variables = null;
+    }
 
     @Override
     public void visit(Program node) {

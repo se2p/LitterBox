@@ -68,7 +68,7 @@ public class RepeatUntilStatementExecution extends AbstractQuestionFinder {
         }
 
         boolean conditionValue = de.uni_passau.fim.se2.litterbox.utils.Randomness.nextBoolean();
-        String valueText = conditionValue ? "true_value" : "false_value";
+        String valueText = conditionValue ? QuestionText.TRUE_VALUE : QuestionText.FALSE_VALUE;
 
         TranslatableText correct;
         List<TranslatableText> distractors = new ArrayList<>();

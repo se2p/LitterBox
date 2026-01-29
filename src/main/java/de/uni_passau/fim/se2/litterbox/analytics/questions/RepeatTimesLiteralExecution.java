@@ -26,14 +26,22 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.Terminati
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 /**
- * @QuestionType Number
- * @Highlighted Statement
- * @Context Single script
+ * Generates questions asking how many times a statement inside a repeat loop will execute.
+ * Only applies to repeat loops with literal (numeric) iteration counts.
+ *
+ * <p>Example question: "How many times will [move 10 steps] be executed?"
  */
 public class RepeatTimesLiteralExecution extends AbstractQuestionFinder {
 
     private boolean hasStop;
     private int inLoop;
+
+    @Override
+    protected void resetState() {
+        super.resetState();
+        this.hasStop = false;
+        this.inLoop = 0;
+    }
 
     @Override
     public void visit(LoopStmt node) {

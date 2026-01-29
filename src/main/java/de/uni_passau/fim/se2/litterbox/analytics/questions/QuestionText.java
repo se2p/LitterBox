@@ -63,6 +63,12 @@ public class QuestionText extends TranslatableText {
     public static final String SUBJECT = "SUBJECT";
     public static final String BLOCK = "BLOCK";
 
+    // Translation keys for common answer terms
+    public static final String YES_TERM = "yes_term";
+    public static final String NO_TERM = "no_term";
+    public static final String TRUE_VALUE = "true_value";
+    public static final String FALSE_VALUE = "false_value";
+
     private QuestionText(String key, String text) {
         super(key, text);
     }

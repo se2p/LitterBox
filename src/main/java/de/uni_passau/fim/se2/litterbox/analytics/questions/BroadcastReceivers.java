@@ -31,17 +31,23 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers {@link AbstractQuestionFinder#maxChoices}
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Script
- * @Context Whole program
+ * Generates multiple-choice questions asking which sprites receive a specific broadcast message.
+ *
+ * <p>Example question: "Which sprite(s) will receive the message 'game over'?"
  */
 public class BroadcastReceivers extends AbstractQuestionFinder {
 
     private Map<String, Set<String>> receiversForMessage;
     private Set<String> allBroadcasts;
     private boolean collectingReceivers;
+
+    @Override
+    protected void resetState() {
+        super.resetState();
+        this.receiversForMessage = null;
+        this.allBroadcasts = null;
+        this.collectingReceivers = false;
+    }
 
     @Override
     public void visit(Program node) {

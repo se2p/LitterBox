@@ -20,6 +20,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitSeconds;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.NumberFormatUtil;
+import de.uni_passau.fim.se2.litterbox.utils.ScratchBlocksFormatUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +38,7 @@ public class WaitStatementExecution extends AbstractQuestionFinder {
 
     @Override
     public void visit(WaitSeconds node) {
-        String seconds = cleanValue(ScratchBlocksVisitor.of(node.getSeconds()));
+        String seconds = ScratchBlocksFormatUtil.stripParentheses(ScratchBlocksVisitor.of(node.getSeconds()));
 
         List<String> distractors = generateDistractorsForValue(seconds);
         List<String> options = generateMultipleChoiceOptions(Collections.singletonList(seconds), distractors);
@@ -46,13 +48,6 @@ public class WaitStatementExecution extends AbstractQuestionFinder {
                 .withChoices(options)
                 .withCorrectAnswers(Collections.singletonList(seconds));
         addQuestion(builder);
-    }
-
-    private String cleanValue(String val) {
-        if (val.startsWith("(") && val.endsWith(")")) {
-            return val.substring(1, val.length() - 1);
-        }
-        return val;
     }
 
     private List<String> generateDistractorsForValue(String value) {
@@ -70,17 +65,6 @@ public class WaitStatementExecution extends AbstractQuestionFinder {
             distractors.add("10");
         }
         return distractors;
-    }
-
-    // Simple helper to avoid .0 for integers
-    private static class NumberFormatUtil {
-        static String format(double d) {
-            if (d == (long) d) {
-                return String.format("%d", (long) d);
-            } else {
-                return String.format("%s", d);
-            }
-        }
     }
 
     @Override

@@ -25,6 +25,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYB
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetYTo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.utils.ScratchBlocksFormatUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,33 +42,26 @@ public class MotionStatementExecution extends AbstractQuestionFinder {
 
     @Override
     public void visit(ChangeXBy node) {
-        String value = cleanValue(ScratchBlocksVisitor.of(node.getNum()));
+        String value = ScratchBlocksFormatUtil.stripParentheses(ScratchBlocksVisitor.of(node.getNum()));
         generateChangeQuestion("x_position_attr", value, node);
     }
 
     @Override
     public void visit(ChangeYBy node) {
-        String value = cleanValue(ScratchBlocksVisitor.of(node.getNum()));
+        String value = ScratchBlocksFormatUtil.stripParentheses(ScratchBlocksVisitor.of(node.getNum()));
         generateChangeQuestion("y_position_attr", value, node);
     }
 
     @Override
     public void visit(SetXTo node) {
-        String value = cleanValue(ScratchBlocksVisitor.of(node.getNum()));
+        String value = ScratchBlocksFormatUtil.stripParentheses(ScratchBlocksVisitor.of(node.getNum()));
         generateSetQuestion("x_position_attr", value, node);
     }
 
     @Override
     public void visit(SetYTo node) {
-        String value = cleanValue(ScratchBlocksVisitor.of(node.getNum()));
+        String value = ScratchBlocksFormatUtil.stripParentheses(ScratchBlocksVisitor.of(node.getNum()));
         generateSetQuestion("y_position_attr", value, node);
-    }
-
-    private String cleanValue(String val) {
-        if (val.startsWith("(") && val.endsWith(")")) {
-            return val.substring(1, val.length() - 1);
-        }
-        return val;
     }
 
     private void generateChangeQuestion(String attributeKey, String value, de.uni_passau.fim.se2.litterbox.ast.model.ASTNode node) {

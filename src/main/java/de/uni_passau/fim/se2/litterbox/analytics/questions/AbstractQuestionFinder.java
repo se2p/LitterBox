@@ -52,6 +52,21 @@ import java.util.*;
  *
  * <p>To generate questions, subclasses override visitor methods and call
  * {@link #prepareQuestionBuilder(ASTNode)} followed by {@link #addQuestion(QuestionBuilder)}.
+ *
+ * <h2>Naming Conventions</h2>
+ * <p>Question finder class names should follow these patterns:
+ * <ul>
+ *   <li><b>Purpose questions:</b> {@code PurposeOf<Subject>} - e.g., {@code PurposeOfVariable}</li>
+ *   <li><b>Execution questions:</b> {@code <Subject>Execution} - e.g., {@code IfThenStatementExecution}</li>
+ *   <li><b>Counting questions:</b> {@code <Subject>In<Context>} or {@code <Subject>For<Context>}</li>
+ *   <li><b>Relation questions:</b> Descriptive phrases - e.g., {@code BroadcastReceivers}</li>
+ *   <li><b>Element presence:</b> {@code ElementIn<Location>} - e.g., {@code ElementInLoopBody}</li>
+ * </ul>
+ *
+ * <h2>State Management</h2>
+ * <p>Subclasses with mutable instance fields should override {@link #resetState()} to reset
+ * their state, calling {@code super.resetState()} first. This ensures proper behavior when
+ * a finder instance is reused across multiple {@link #check(Program)} calls.
  */
 public abstract class AbstractQuestionFinder implements QuestionFinder, ScratchVisitor {
 
@@ -104,12 +119,28 @@ public abstract class AbstractQuestionFinder implements QuestionFinder, ScratchV
     @Override
     public Set<Question> check(Program program) {
         Preconditions.checkNotNull(program);
+        resetState();
         this.program = program;
         this.questions = new LinkedHashSet<>();
         this.choices = new LinkedHashSet<>();
         this.answers = new LinkedHashSet<>();
         program.accept(this);
         return Collections.unmodifiableSet(questions);
+    }
+
+    /**
+     * Resets all mutable state before a new check.
+     * Subclasses with their own mutable state should override this method
+     * and call {@code super.resetState()} first.
+     */
+    protected void resetState() {
+        this.currentActor = null;
+        this.currentScript = null;
+        this.currentProcedure = null;
+        this.procMap = null;
+        this.inLookStmt = false;
+        this.inSoundStmt = false;
+        this.inBroadcastStmt = false;
     }
 
     @Override
@@ -240,34 +271,7 @@ public abstract class AbstractQuestionFinder implements QuestionFinder, ScratchV
      * @return shuffled list of options
      */
     protected List<String> generateMultipleChoiceOptions(Collection<String> correctAnswers, Collection<String> distractors) {
-        Set<String> finalChoices = new LinkedHashSet<>();
-
-        // Add correct answers first (up to max)
-        List<String> correctList = new ArrayList<>(correctAnswers);
-        if (correctList.size() > maxChoices) {
-            Randomness.shuffle(correctList);
-            correctList = correctList.subList(0, maxChoices);
-        }
-        finalChoices.addAll(correctList);
-
-        // Fill remaining slots with distractors
-        if (finalChoices.size() < maxChoices) {
-            List<String> distractorList = new ArrayList<>(distractors);
-            distractorList.removeAll(finalChoices); // Don't duplicate correct answers
-            Randomness.shuffle(distractorList);
-
-            for (String d : distractorList) {
-                if (finalChoices.size() >= maxChoices) {
-                    break;
-                }
-                finalChoices.add(d);
-            }
-        }
-
-        // Final shuffle for display order
-        List<String> result = new ArrayList<>(finalChoices);
-        Randomness.shuffle(result);
-        return result;
+        return generateOptionsInternal(correctAnswers, distractors);
     }
 
     /**
@@ -282,10 +286,24 @@ public abstract class AbstractQuestionFinder implements QuestionFinder, ScratchV
     protected List<TranslatableText> generateTranslatableMultipleChoiceOptions(
             Collection<? extends TranslatableText> correctAnswers,
             Collection<? extends TranslatableText> distractors) {
-        Set<TranslatableText> finalChoices = new LinkedHashSet<>();
+        return generateOptionsInternal(correctAnswers, distractors);
+    }
+
+    /**
+     * Generic implementation for generating multiple choice options.
+     * Ensures all correct answers are included (up to maxChoices) and fills the rest with distractors.
+     * The final list is shuffled.
+     *
+     * @param <T>            the type of options
+     * @param correctAnswers the correct answers
+     * @param distractors    potential distractors (pool)
+     * @return shuffled list of options
+     */
+    private <T> List<T> generateOptionsInternal(Collection<? extends T> correctAnswers, Collection<? extends T> distractors) {
+        Set<T> finalChoices = new LinkedHashSet<>();
 
         // Add correct answers first (up to max)
-        List<TranslatableText> correctList = new ArrayList<>(correctAnswers);
+        List<T> correctList = new ArrayList<>(correctAnswers);
         if (correctList.size() > maxChoices) {
             Randomness.shuffle(correctList);
             correctList = correctList.subList(0, maxChoices);
@@ -294,11 +312,11 @@ public abstract class AbstractQuestionFinder implements QuestionFinder, ScratchV
 
         // Fill remaining slots with distractors
         if (finalChoices.size() < maxChoices) {
-            List<TranslatableText> distractorList = new ArrayList<>(distractors);
+            List<T> distractorList = new ArrayList<>(distractors);
             distractorList.removeAll(finalChoices); // Don't duplicate correct answers
             Randomness.shuffle(distractorList);
 
-            for (TranslatableText d : distractorList) {
+            for (T d : distractorList) {
                 if (finalChoices.size() >= maxChoices) {
                     break;
                 }
@@ -307,7 +325,7 @@ public abstract class AbstractQuestionFinder implements QuestionFinder, ScratchV
         }
 
         // Final shuffle for display order
-        List<TranslatableText> result = new ArrayList<>(finalChoices);
+        List<T> result = new ArrayList<>(finalChoices);
         Randomness.shuffle(result);
         return result;
     }
