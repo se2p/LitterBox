@@ -34,9 +34,11 @@ public class PurposeOfRepeatUntilLoop extends AbstractQuestionFinder {
         super.visit(node);
     }
 
+    public static final String FINDER_NAME = "purpose_of_repeat_until_loop";
+
     @Override
     public String getName() {
-        return "purpose_of_repeat_until_loop";
+        return FINDER_NAME;
     }
 
     @Override

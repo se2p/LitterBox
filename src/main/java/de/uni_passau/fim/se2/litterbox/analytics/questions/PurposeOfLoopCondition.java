@@ -34,9 +34,11 @@ public class PurposeOfLoopCondition extends AbstractQuestionFinder {
         super.visit(node);
     }
 
+    public static final String FINDER_NAME = "purpose_of_loop_condition";
+
     @Override
     public String getName() {
-        return "purpose_of_loop_condition";
+        return FINDER_NAME;
     }
 
     @Override

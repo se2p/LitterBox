@@ -208,9 +208,11 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
         }
     }
 
+    public static final String FINDER_NAME = "statement_triggers_event";
+
     @Override
     public String getName() {
-        return "statement_triggers_event";
+        return FINDER_NAME;
     }
 
     @Override

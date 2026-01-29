@@ -92,9 +92,11 @@ public class StatementsInIfStatement extends AbstractQuestionFinder {
         }
     }
 
+    public static final String FINDER_NAME = "statements_in_if_statement";
+
     @Override
     public String getName() {
-        return "statements_in_if_statement";
+        return FINDER_NAME;
     }
 
     @Override

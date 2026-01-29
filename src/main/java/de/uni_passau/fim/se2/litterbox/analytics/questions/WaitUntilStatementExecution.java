@@ -70,9 +70,11 @@ public class WaitUntilStatementExecution extends AbstractQuestionFinder {
         addQuestion(builder);
     }
 
+    public static final String FINDER_NAME = "wait_until_statement_execution";
+
     @Override
     public String getName() {
-        return "wait_until_statement_execution";
+        return FINDER_NAME;
     }
 
     @Override

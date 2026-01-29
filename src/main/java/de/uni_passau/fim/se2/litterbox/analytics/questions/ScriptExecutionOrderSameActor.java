@@ -71,9 +71,11 @@ public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
         }
     }
 
+    public static final String FINDER_NAME = "script_execution_order_same_actor";
+
     @Override
     public String getName() {
-        return "script_execution_order_same_actor";
+        return FINDER_NAME;
     }
 
     @Override

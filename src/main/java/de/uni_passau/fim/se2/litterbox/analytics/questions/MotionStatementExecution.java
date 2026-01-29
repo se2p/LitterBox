@@ -138,9 +138,11 @@ public class MotionStatementExecution extends AbstractQuestionFinder {
         }
     }
 
+    public static final String FINDER_NAME = "motion_statement_execution";
+
     @Override
     public String getName() {
-        return "motion_statement_execution";
+        return FINDER_NAME;
     }
 
     @Override

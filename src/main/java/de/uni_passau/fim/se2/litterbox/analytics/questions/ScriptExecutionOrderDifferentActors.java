@@ -24,7 +24,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,11 +34,14 @@ import java.util.Map;
  */
 public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "script_execution_order_different_actors";
+    private static final String STAGE_NAME = "Stage";
+
     Map<String, Map<String, List<Script>>> scriptsWithEvent;
 
     @Override
     public void visit(Program node) {
-        scriptsWithEvent = new HashMap<>();
+        scriptsWithEvent = new LinkedHashMap<>();
         super.visit(node);
 
         for (Map.Entry<String, Map<String, List<Script>>> entry : scriptsWithEvent.entrySet()) {
@@ -52,10 +55,9 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
                 String condition;
 
                 List<String> actors = new ArrayList<>(actorsWithEvent.keySet());
-                String stage = "Stage";
-                if (actorsWithEvent.containsKey(stage)) {
-                    actor1 = stage;
-                    actors.remove(stage);
+                if (actorsWithEvent.containsKey(STAGE_NAME)) {
+                    actor1 = STAGE_NAME;
+                    actors.remove(STAGE_NAME);
                     actor2 = actors.getFirst();
                     script1 = actorsWithEvent.get(actor1).getFirst();
                     script2 = actorsWithEvent.get(actor2).getFirst();
@@ -89,7 +91,7 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
     public void visit(Script node) {
         if (!(node.getEvent() instanceof Never)) {
             scriptsWithEvent
-                    .computeIfAbsent(ScratchBlocksVisitor.of(node.getEvent()), k -> new HashMap<>())
+                    .computeIfAbsent(ScratchBlocksVisitor.of(node.getEvent()), k -> new LinkedHashMap<>())
                     .computeIfAbsent(ScratchBlocksVisitor.of(currentActor.getIdent()), k -> new ArrayList<>())
                     .add(node);
         }
@@ -97,7 +99,7 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
 
     @Override
     public String getName() {
-        return "script_execution_order_different_actors";
+        return FINDER_NAME;
     }
 
     @Override

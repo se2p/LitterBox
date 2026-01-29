@@ -120,29 +120,6 @@ public class Question extends Finding {
     }
 
     /**
-     * Returns the raw question text for backward compatibility.
-     * This returns the raw parameters string if using key-based text,
-     * or the literal text if using direct text.
-     *
-     * @return the raw question text or parameters string
-     * @deprecated Use {@link #getQuestionText(IssueTranslator)} for full translation support
-     */
-    @Deprecated
-    public String getQuestionText() {
-        if (questionText == null) {
-            return "";
-        }
-        // Return text content if available (direct text), otherwise empty
-        // The key-based approach uses getQuestionText(translator) instead
-        if (questionText.getTextContent() != null) {
-            return questionText.getTextContent();
-        }
-        // For key-based question text, return an empty string
-        // Callers should use getQuestionText(translator) for proper rendering
-        return "";
-    }
-
-    /**
      * Returns the available choices for multiple choice questions.
      *
      * @return unmodifiable list of choices, or empty list if not applicable

@@ -72,9 +72,11 @@ public class PurposeOfVariable extends AbstractQuestionFinder {
         }
     }
 
+    public static final String FINDER_NAME = "purpose_of_variable";
+
     @Override
     public String getName() {
-        return "purpose_of_variable";
+        return FINDER_NAME;
     }
 
     @Override

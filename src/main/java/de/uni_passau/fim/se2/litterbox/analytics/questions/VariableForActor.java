@@ -73,9 +73,11 @@ public class VariableForActor extends AbstractQuestionFinder {
         variables.add(ScratchBlocksVisitor.of(node.getName()));
     }
 
+    public static final String FINDER_NAME = "variable_for_actor";
+
     @Override
     public String getName() {
-        return "variable_for_actor";
+        return FINDER_NAME;
     }
 
     @Override

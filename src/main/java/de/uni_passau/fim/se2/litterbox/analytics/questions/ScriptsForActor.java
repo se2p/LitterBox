@@ -39,9 +39,11 @@ public class ScriptsForActor extends AbstractQuestionFinder {
         addQuestion(builder);
     }
 
+    public static final String FINDER_NAME = "scripts_for_actor";
+
     @Override
     public String getName() {
-        return "scripts_for_actor";
+        return FINDER_NAME;
     }
 
     @Override

@@ -64,9 +64,11 @@ public class WaitStatementExecution extends AbstractQuestionFinder {
         return distractors;
     }
 
+    public static final String FINDER_NAME = "wait_statement_execution";
+
     @Override
     public String getName() {
-        return "wait_statement_execution";
+        return FINDER_NAME;
     }
 
     @Override

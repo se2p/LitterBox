@@ -99,9 +99,11 @@ public class RepeatUntilStatementExecution extends AbstractQuestionFinder {
         addQuestion(builder);
     }
 
+    public static final String FINDER_NAME = "repeat_until_statement_execution";
+
     @Override
     public String getName() {
-        return "repeat_until_statement_execution";
+        return FINDER_NAME;
     }
 
     @Override

@@ -191,9 +191,11 @@ public class ElementInLoopCondition extends AbstractQuestionFinder {
         // Don't include keys as elements
     }
 
+    public static final String FINDER_NAME = "element_in_loop_condition";
+
     @Override
     public String getName() {
-        return "element_in_loop_condition";
+        return FINDER_NAME;
     }
 
     @Override

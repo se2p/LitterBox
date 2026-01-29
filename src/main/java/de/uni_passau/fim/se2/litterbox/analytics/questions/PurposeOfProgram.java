@@ -36,9 +36,11 @@ public class PurposeOfProgram extends AbstractQuestionFinder {
         addQuestion(builder);
     }
 
+    public static final String FINDER_NAME = "purpose_of_program";
+
     @Override
     public String getName() {
-        return "purpose_of_program";
+        return FINDER_NAME;
     }
 
     @Override

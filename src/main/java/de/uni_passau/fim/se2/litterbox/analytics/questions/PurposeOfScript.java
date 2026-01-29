@@ -41,9 +41,11 @@ public class PurposeOfScript extends AbstractQuestionFinder {
         addQuestion(builder);
     }
 
+    public static final String FINDER_NAME = "purpose_of_script";
+
     @Override
     public String getName() {
-        return "purpose_of_script";
+        return FINDER_NAME;
     }
 
     @Override

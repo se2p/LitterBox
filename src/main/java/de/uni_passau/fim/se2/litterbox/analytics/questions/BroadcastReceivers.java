@@ -128,9 +128,11 @@ public class BroadcastReceivers extends AbstractQuestionFinder {
         addQuestion(builder);
     }
 
+    public static final String FINDER_NAME = "broadcast_receivers";
+
     @Override
     public String getName() {
-        return "broadcast_receivers";
+        return FINDER_NAME;
     }
 
     @Override

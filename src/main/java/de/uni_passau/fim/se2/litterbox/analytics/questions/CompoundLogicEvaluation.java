@@ -87,9 +87,11 @@ public class CompoundLogicEvaluation extends AbstractQuestionFinder {
         }
     }
 
+    public static final String FINDER_NAME = "compound_logic_evaluation";
+
     @Override
     public String getName() {
-        return "compound_logic_evaluation";
+        return FINDER_NAME;
     }
 
     @Override

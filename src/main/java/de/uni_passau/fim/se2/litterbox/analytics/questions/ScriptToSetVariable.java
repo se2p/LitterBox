@@ -73,9 +73,11 @@ public class ScriptToSetVariable extends AbstractQuestionFinder {
         variable = ScratchBlocksVisitor.of(node.getIdentifier());
     }
 
+    public static final String FINDER_NAME = "script_to_set_variable";
+
     @Override
     public String getName() {
-        return "script_to_set_variable";
+        return FINDER_NAME;
     }
 
     @Override

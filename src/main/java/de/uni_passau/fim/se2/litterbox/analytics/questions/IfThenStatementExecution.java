@@ -55,9 +55,11 @@ public class IfThenStatementExecution extends AbstractQuestionFinder {
         }
     }
 
+    public static final String FINDER_NAME = "if_then_statement_execution";
+
     @Override
     public String getName() {
-        return "if_then_statement_execution";
+        return FINDER_NAME;
     }
 
     @Override

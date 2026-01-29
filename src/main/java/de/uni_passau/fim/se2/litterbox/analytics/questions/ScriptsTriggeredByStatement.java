@@ -130,9 +130,11 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
         }
     }
 
+    public static final String FINDER_NAME = "scripts_triggered_by_statement";
+
     @Override
     public String getName() {
-        return "scripts_triggered_by_statement";
+        return FINDER_NAME;
     }
 
     @Override

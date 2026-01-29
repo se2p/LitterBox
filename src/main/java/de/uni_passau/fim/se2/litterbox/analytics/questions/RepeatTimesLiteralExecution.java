@@ -82,9 +82,11 @@ public class RepeatTimesLiteralExecution extends AbstractQuestionFinder {
         hasStop = true;
     }
 
+    public static final String FINDER_NAME = "repeat_times_literal_execution";
+
     @Override
     public String getName() {
-        return "repeat_times_literal_execution";
+        return FINDER_NAME;
     }
 
     @Override

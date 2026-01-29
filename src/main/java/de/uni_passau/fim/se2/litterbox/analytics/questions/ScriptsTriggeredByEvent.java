@@ -63,9 +63,11 @@ public class ScriptsTriggeredByEvent extends AbstractQuestionFinder {
         triggeredScripts.put(event, list);
     }
 
+    public static final String FINDER_NAME = "scripts_triggered_by_event";
+
     @Override
     public String getName() {
-        return "scripts_triggered_by_event";
+        return FINDER_NAME;
     }
 
     @Override

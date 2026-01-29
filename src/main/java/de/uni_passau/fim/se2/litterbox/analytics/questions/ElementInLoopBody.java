@@ -198,9 +198,11 @@ public class ElementInLoopBody extends AbstractQuestionFinder {
         // Don't include keys as elements
     }
 
+    public static final String FINDER_NAME = "element_in_loop_body";
+
     @Override
     public String getName() {
-        return "element_in_loop_body";
+        return FINDER_NAME;
     }
 
     @Override

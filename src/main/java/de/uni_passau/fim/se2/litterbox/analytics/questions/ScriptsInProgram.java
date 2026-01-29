@@ -27,6 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
  */
 public class ScriptsInProgram extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "scripts_in_program";
+
     private int scriptsInProgram;
 
     @Override
@@ -47,7 +49,7 @@ public class ScriptsInProgram extends AbstractQuestionFinder {
 
     @Override
     public String getName() {
-        return "scripts_in_program";
+        return FINDER_NAME;
     }
 
     @Override

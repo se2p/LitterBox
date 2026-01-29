@@ -84,9 +84,11 @@ public class CloneCreators extends AbstractQuestionFinder {
                 .collect(Collectors.toList());
     }
 
+    public static final String FINDER_NAME = "clone_creators";
+
     @Override
     public String getName() {
-        return "clone_creators";
+        return FINDER_NAME;
     }
 
     @Override

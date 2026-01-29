@@ -100,9 +100,11 @@ public class IfBlockCondition extends AbstractQuestionFinder {
         choices.add(wrappedScratchBlocks(node));
     }
 
+    public static final String FINDER_NAME = "if_block_condition";
+
     @Override
     public String getName() {
-        return "if_block_condition";
+        return FINDER_NAME;
     }
 
     @Override

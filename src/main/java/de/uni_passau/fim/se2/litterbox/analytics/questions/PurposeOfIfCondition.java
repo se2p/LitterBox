@@ -34,9 +34,11 @@ public class PurposeOfIfCondition extends AbstractQuestionFinder {
         super.visit(node);
     }
 
+    public static final String FINDER_NAME = "purpose_of_if_condition";
+
     @Override
     public String getName() {
-        return "purpose_of_if_condition";
+        return FINDER_NAME;
     }
 
     @Override

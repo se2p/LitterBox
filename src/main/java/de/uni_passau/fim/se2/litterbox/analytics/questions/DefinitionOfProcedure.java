@@ -97,9 +97,11 @@ public class DefinitionOfProcedure extends AbstractQuestionFinder {
         scripts.add(node);
     }
 
+    public static final String FINDER_NAME = "definition_of_procedure";
+
     @Override
     public String getName() {
-        return "definition_of_procedure";
+        return FINDER_NAME;
     }
 
     @Override

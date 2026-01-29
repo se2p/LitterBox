@@ -119,9 +119,11 @@ public class BlockControllingLoop extends AbstractQuestionFinder {
         // Don't include Termination statements as options
     }
 
+    public static final String FINDER_NAME = "block_controlling_loop";
+
     @Override
     public String getName() {
-        return "block_controlling_loop";
+        return FINDER_NAME;
     }
 
     @Override

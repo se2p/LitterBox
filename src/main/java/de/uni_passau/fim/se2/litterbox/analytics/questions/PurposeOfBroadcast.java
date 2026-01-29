@@ -62,9 +62,11 @@ public class PurposeOfBroadcast extends AbstractQuestionFinder {
         }
     }
 
+    public static final String FINDER_NAME = "purpose_of_broadcast";
+
     @Override
     public String getName() {
-        return "purpose_of_broadcast";
+        return FINDER_NAME;
     }
 
     @Override

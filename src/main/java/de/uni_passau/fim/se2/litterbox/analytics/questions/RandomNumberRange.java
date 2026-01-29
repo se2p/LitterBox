@@ -96,9 +96,11 @@ public class RandomNumberRange extends AbstractQuestionFinder {
         return String.valueOf(d);
     }
 
+    public static final String FINDER_NAME = "random_number_range";
+
     @Override
     public String getName() {
-        return "random_number_range";
+        return FINDER_NAME;
     }
 
     @Override

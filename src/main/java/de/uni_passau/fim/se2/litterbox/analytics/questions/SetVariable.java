@@ -73,9 +73,11 @@ public class SetVariable extends AbstractQuestionFinder {
         return value;
     }
 
+    public static final String FINDER_NAME = "set_variable";
+
     @Override
     public String getName() {
-        return "set_variable";
+        return FINDER_NAME;
     }
 
     @Override

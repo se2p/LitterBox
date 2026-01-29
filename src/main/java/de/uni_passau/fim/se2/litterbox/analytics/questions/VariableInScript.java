@@ -29,6 +29,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
  */
 public class VariableInScript extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "variable_in_script";
+
     @Override
     public void visit(Script node) {
         answers.clear();
@@ -58,7 +60,7 @@ public class VariableInScript extends AbstractQuestionFinder {
 
     @Override
     public String getName() {
-        return "variable_in_script";
+        return FINDER_NAME;
     }
 
     @Override

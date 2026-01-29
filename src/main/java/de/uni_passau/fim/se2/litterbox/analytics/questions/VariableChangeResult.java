@@ -127,9 +127,11 @@ public class VariableChangeResult extends AbstractQuestionFinder {
         return distractors;
     }
 
+    public static final String FINDER_NAME = "variable_change_result";
+
     @Override
     public String getName() {
-        return "variable_change_result";
+        return FINDER_NAME;
     }
 
     @Override

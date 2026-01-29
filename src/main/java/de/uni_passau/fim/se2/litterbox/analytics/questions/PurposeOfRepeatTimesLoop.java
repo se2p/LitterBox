@@ -32,9 +32,11 @@ public class PurposeOfRepeatTimesLoop extends AbstractQuestionFinder {
         addQuestion(builder);
     }
 
+    public static final String FINDER_NAME = "purpose_of_repeat_times_loop";
+
     @Override
     public String getName() {
-        return "purpose_of_repeat_times_loop";
+        return FINDER_NAME;
     }
 
     @Override
