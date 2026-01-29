@@ -27,9 +27,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * @QuestionType Free Text
- * @Highlighted Statement
- * @Context Whole program
+ * Generates a question asking for the purpose of a broadcast message.
+ *
  */
 public class PurposeOfBroadcast extends AbstractQuestionFinder {
 

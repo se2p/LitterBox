@@ -30,11 +30,8 @@ import java.util.Map;
 import static java.util.Objects.isNull;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers 1
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Nothing
- * @Context Whole program
+ * Generates a question asking which script sets a variable to a specific value.
+ *
  */
 public class ScriptToSetVariable extends AbstractQuestionFinder {
     private String variable;

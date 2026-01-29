@@ -48,7 +48,7 @@ public class Question extends Finding {
      */
     public Question(QuestionBuilder builder) {
         super(builder.getProgram(), builder.getActor(), builder.getScript(),
-              builder.getCurrentNode(), builder.getMetadata(), builder.getId());
+                builder.getCurrentNode(), builder.getMetadata(), builder.getId());
         this.finder = builder.getFinder();
         this.questionType = builder.getQuestionType();
         this.programDimension = builder.getProgramDimension();
@@ -104,15 +104,6 @@ public class Question extends Finding {
      */
     public ScopeOfFocus getScopeOfFocus() {
         return scopeOfFocus;
-    }
-
-    /**
-     * Returns the QuestionText object containing the translatable question text.
-     *
-     * @return the question text object
-     */
-    public QuestionText getQuestionTextObject() {
-        return questionText;
     }
 
     /**
@@ -185,15 +176,6 @@ public class Question extends Finding {
      */
     public boolean hasCorrectAnswers() {
         return !correctAnswers.isEmpty();
-    }
-
-    /**
-     * Returns the block model cell identifier (e.g., "TEXT/BLOCK").
-     *
-     * @return the block model cell key
-     */
-    public String getBlockModelCell() {
-        return programDimension.name() + "/" + scopeOfFocus.name();
     }
 
     /**

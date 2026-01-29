@@ -27,10 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 /**
- * @QuestionType Strings
- * @NumAnswers 1
- * @Highlighted Statement
- * @Context Single script
+ * Generates a question asking for the value a variable is set to.
+ *
  */
 public class SetVariable extends AbstractQuestionFinder {
 

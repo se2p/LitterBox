@@ -48,7 +48,8 @@ public class IfThenStatementExecution extends AbstractQuestionFinder {
                     .withQuestionText(QuestionText.fromKey(getName()))
                     .withQuestionParameter(QuestionText.STATEMENT, ScratchBlocksVisitor.of(statement))
                     .withQuestionParameter(QuestionText.CONDITION, ScratchBlocksVisitor.of(condition))
-                    .withQuestionParameter(QuestionText.VALUE, QuestionText.fromKey(conditionValue ? QuestionText.TRUE_VALUE : QuestionText.FALSE_VALUE))
+                    .withQuestionParameter(QuestionText.VALUE,
+                            QuestionText.fromKey(conditionValue ? QuestionText.TRUE_VALUE : QuestionText.FALSE_VALUE))
                     .withCorrectAnswers(conditionValue ? QuestionText.YES_TERM : QuestionText.NO_TERM);
             addQuestion(builder);
         }

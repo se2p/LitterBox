@@ -29,11 +29,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers 1
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Statement
- * @Context Single actor
+ * Generates a question asking for the definition (body) of a called procedure.
+ *
  */
 public class DefinitionOfProcedure extends AbstractQuestionFinder {
 

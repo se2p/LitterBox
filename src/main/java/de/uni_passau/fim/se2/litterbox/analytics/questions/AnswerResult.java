@@ -21,14 +21,14 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 /**
  * Result of checking a single answer.
  *
- * @param questionId      The ID of the question
- * @param questionType    The type of question
- * @param correct         Whether the answer was correct
- * @param providedAnswer  The answer provided by the student
- * @param expectedAnswer  The expected correct answer(s)
- * @param partialCredit   Partial credit score (0.0 to 1.0)
- * @param feedback        Optional feedback message
- * @param llmEvaluation   LLM evaluation result for free text questions (null if not applicable)
+ * @param questionId     The ID of the question
+ * @param questionType   The type of question
+ * @param correct        Whether the answer was correct
+ * @param providedAnswer The answer provided by the student
+ * @param expectedAnswer The expected correct answer(s)
+ * @param partialCredit  Partial credit score (0.0 to 1.0)
+ * @param feedback       Optional feedback message
+ * @param llmEvaluation  LLM evaluation result for free text questions (null if not applicable)
  */
 public record AnswerResult(
         int questionId,

@@ -27,11 +27,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers {@link AbstractQuestionFinder#maxChoices}
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Block
- * @Context Block
+ * Generates a question asking for a valid number within a random range (pick random X to Y).
+ *
  */
 public class RandomNumberRange extends AbstractQuestionFinder {
 

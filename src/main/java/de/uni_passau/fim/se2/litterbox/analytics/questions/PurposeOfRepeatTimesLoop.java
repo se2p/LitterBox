@@ -21,9 +21,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 
 /**
- * @QuestionType Free Text
- * @Highlighted Loop
- * @Context Single script
+ * Generates a question asking for the purpose of a repeat-times loop (e.g., repeat 10).
+ *
  */
 public class PurposeOfRepeatTimesLoop extends AbstractQuestionFinder {
 

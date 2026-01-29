@@ -28,11 +28,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers {@link AbstractQuestionFinder#maxChoices}
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Block
- * @Context Atom
+ * Generates a question asking about the execution time of a wait statement.
+ *
  */
 public class WaitStatementExecution extends AbstractQuestionFinder {
 

@@ -21,9 +21,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
 
 /**
- * @QuestionType Free Text
- * @Highlighted If Statement
- * @Context Single script
+ * Generates a question asking for the purpose of an if-statement.
+ *
  */
 public class PurposeOfIfCondition extends AbstractQuestionFinder {
 

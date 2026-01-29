@@ -29,11 +29,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers {@link AbstractQuestionFinder#maxChoices}
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Block
- * @Context Block
+ * Generates a question asking about the execution flow of a repeat-until loop.
+ *
  */
 public class RepeatUntilStatementExecution extends AbstractQuestionFinder {
 
@@ -75,17 +72,22 @@ public class RepeatUntilStatementExecution extends AbstractQuestionFinder {
 
         if (conditionValue) {
             // If condition is TRUE, loop terminates
-            correct = QuestionText.fromKey("subject_executes").withQuestionParameter("SUBJECT", nextStmtTranslatableText);
-            distractors.add(QuestionText.fromKey("subject_executes").withQuestionParameter("SUBJECT", loopBody));
-            distractors.add(QuestionText.fromKey("subject_repeats").withQuestionParameter("SUBJECT", QuestionText.fromKey("the_loop")));
+            correct = QuestionText.fromKey("subject_executes")
+                    .withQuestionParameter("SUBJECT", nextStmtTranslatableText);
+            distractors.add(QuestionText.fromKey("subject_executes")
+                    .withQuestionParameter("SUBJECT", loopBody));
+            distractors.add(QuestionText.fromKey("subject_repeats")
+                    .withQuestionParameter("SUBJECT", QuestionText.fromKey("the_loop")));
         } else {
             // If condition is FALSE, loop executes
             correct = QuestionText.fromKey("subject_executes").withQuestionParameter("SUBJECT", loopBody);
-            distractors.add(QuestionText.fromKey("subject_executes").withQuestionParameter("SUBJECT", nextStmtTranslatableText));
+            distractors.add(QuestionText.fromKey("subject_executes")
+                    .withQuestionParameter("SUBJECT", nextStmtTranslatableText));
             distractors.add(QuestionText.fromKey("script_stops"));
         }
 
-        List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(Collections.singletonList(correct), distractors);
+        List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(
+                Collections.singletonList(correct), distractors);
 
         QuestionBuilder builder = prepareQuestionBuilder(untilStmt)
                 .withQuestionText(QuestionText.fromKey(getName()))

@@ -26,11 +26,8 @@ import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 import java.util.Collections;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers 1
- * @NumChoices 1
- * @Highlighted IfElse Statement
- * @Context Single script
+ * Generates a question asking for the execution path of an if-else statement given a condition value.
+ *
  */
 public class IfElseStatementExecution extends AbstractQuestionFinder {
 
@@ -49,7 +46,8 @@ public class IfElseStatementExecution extends AbstractQuestionFinder {
             QuestionBuilder builder = prepareQuestionBuilder(node)
                     .withQuestionText(QuestionText.fromKey(getName()))
                     .withQuestionParameter(QuestionText.CONDITION, ScratchBlocksVisitor.of(condition))
-                    .withQuestionParameter(QuestionText.VALUE, QuestionText.fromKey(conditionValue ? QuestionText.TRUE_VALUE : QuestionText.FALSE_VALUE))
+                    .withQuestionParameter(QuestionText.VALUE, QuestionText.fromKey(
+                            conditionValue ? QuestionText.TRUE_VALUE : QuestionText.FALSE_VALUE))
                     .withCorrectAnswers(correct)
                     .withChoices(generateMultipleChoiceOptions(
                             Collections.singletonList(correct),

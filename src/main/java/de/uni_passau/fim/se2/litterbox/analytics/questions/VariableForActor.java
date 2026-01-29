@@ -26,11 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import java.util.*;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers 1
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Nothing
- * @Context Whole program
+ * Generates a question asking which actor a variable belongs to.
+ *
  */
 public class VariableForActor extends AbstractQuestionFinder {
 

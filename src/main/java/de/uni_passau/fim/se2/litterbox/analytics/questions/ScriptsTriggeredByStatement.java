@@ -38,11 +38,8 @@ import java.util.*;
 import static java.util.Objects.isNull;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers {@link AbstractQuestionFinder#maxChoices}
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Statement
- * @Context Whole program
+ * Generates a question asking which scripts are triggered by a specific statement (broadcast or backdrop switch).
+ *
  */
 public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
 

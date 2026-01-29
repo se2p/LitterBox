@@ -31,11 +31,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers {@link AbstractQuestionFinder#maxChoices}
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Block
- * @Context Relation
+ * Generates a question asking which actor creates a clone of another actor.
+ *
  */
 public class CloneCreators extends AbstractQuestionFinder {
 

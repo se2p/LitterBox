@@ -29,9 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @QuestionType Yes or No
- * @Highlighted Two scripts
- * @Context Single actor
+ * Generates a question asking about the execution order of two scripts within the same actor.
+ *
  */
 public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
 

@@ -168,7 +168,8 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
      * @return this builder
      */
     public QuestionBuilder withChoices(List<String> choices) {
-        this.choices = choices != null ? choices.stream().map(QuestionText::fromText).map(it -> (TranslatableText) it).toList() : null;
+        this.choices = choices != null ? choices.stream().map(QuestionText::fromText)
+                .map(it -> (TranslatableText) it).toList() : null;
         return self();
     }
 
@@ -190,7 +191,8 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
      * @return this builder
      */
     public QuestionBuilder withChoices(String... choices) {
-        this.choices = choices != null ? Arrays.stream(choices).map(QuestionText::fromText).map(it -> (TranslatableText) it).toList() : null;
+        this.choices = choices != null ? Arrays.stream(choices).map(QuestionText::fromText)
+                .map(it -> (TranslatableText) it).toList() : null;
         return self();
     }
 
@@ -229,7 +231,8 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
      * @return this builder
      */
     public QuestionBuilder withCorrectAnswers(List<String> answers) {
-        this.correctAnswers = answers != null ? answers.stream().map(QuestionText::fromText).map(it -> (TranslatableText) it).toList() : null;
+        this.correctAnswers = answers != null ? answers.stream().map(QuestionText::fromText)
+                .map(it -> (TranslatableText) it).toList() : null;
         return self();
     }
 
@@ -251,7 +254,8 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
      * @return this builder
      */
     public QuestionBuilder withCorrectAnswers(String... answers) {
-        this.correctAnswers = answers != null ? Arrays.stream(answers).map(QuestionText::fromText).map(it -> (TranslatableText) it).toList() : null;
+        this.correctAnswers = answers != null ? Arrays.stream(answers).map(QuestionText::fromText)
+                .map(it -> (TranslatableText) it).toList() : null;
         return self();
     }
 

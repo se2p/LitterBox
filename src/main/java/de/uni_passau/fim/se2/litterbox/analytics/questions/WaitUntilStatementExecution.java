@@ -19,7 +19,6 @@
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
-import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.WaitUntil;
@@ -28,11 +27,8 @@ import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 import java.util.Collections;
 
 /**
- * @QuestionType YES/NO
- * @NumAnswers 1
- * @NumChoices 2
- * @Highlighted Block
- * @Context Block
+ * Generates a question asking if the execution will proceed past a wait-until block given a condition.
+ *
  */
 public class WaitUntilStatementExecution extends AbstractQuestionFinder {
 
@@ -51,7 +47,7 @@ public class WaitUntilStatementExecution extends AbstractQuestionFinder {
 
     private void generateQuestion(WaitUntil waitUntil, Stmt nextStmt) {
         BoolExpr condition = waitUntil.getUntil();
-        String conditionText = wrappedScratchBlocks((Expression) condition);
+        String conditionText = wrappedScratchBlocks(condition);
 
         // Next statement description
         String nextBlockText = wrappedScratchBlocks(getSingleStmt(nextStmt));

@@ -29,11 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers 1
- * @NumChoices 1
- * @Highlighted Two scripts
- * @Context Whole program
+ * Generates a question asking about the execution order of scripts in different actors.
+ *
  */
 public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder {
 

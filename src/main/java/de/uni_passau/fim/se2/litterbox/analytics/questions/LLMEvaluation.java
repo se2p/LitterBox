@@ -21,9 +21,9 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 /**
  * Result of LLM-based evaluation for free text answers.
  *
- * @param correct      Whether the answer is considered correct
- * @param confidence   Confidence level of the evaluation (0.0 to 1.0)
- * @param feedback     Feedback for the student
+ * @param correct       Whether the answer is considered correct
+ * @param confidence    Confidence level of the evaluation (0.0 to 1.0)
+ * @param feedback      Feedback for the student
  * @param partialCredit Partial credit score (0.0 to 1.0)
  */
 public record LLMEvaluation(

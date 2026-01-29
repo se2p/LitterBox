@@ -27,11 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers 1
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted If Statement
- * @Context Single script
+ * Generates a multiple choice question asking for the condition of an if-statement.
+ *
  */
 public class IfBlockCondition extends AbstractQuestionFinder {
 

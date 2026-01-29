@@ -23,9 +23,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 
 /**
- * @QuestionType Free Text
- * @Highlighted Script
- * @Context Single script
+ * Generates a question asking for the purpose of a script.
+ *
  */
 public class PurposeOfScript extends AbstractQuestionFinder {
 

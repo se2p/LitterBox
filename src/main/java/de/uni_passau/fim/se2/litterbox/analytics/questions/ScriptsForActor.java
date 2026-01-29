@@ -22,9 +22,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
 /**
- * @QuestionType Number
- * @Highlighted Nothing
- * @Context Single actor
+ * Generates a question asking for the number of scripts belonging to a specific actor.
+ *
  */
 public class ScriptsForActor extends AbstractQuestionFinder {
 

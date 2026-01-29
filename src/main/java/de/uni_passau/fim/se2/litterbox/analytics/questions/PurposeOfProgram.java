@@ -21,9 +21,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 /**
- * @QuestionType Free Text
- * @Highlighted Nothing
- * @Context Whole program
+ * Generates a question asking for the overall purpose of the program.
+ *
  */
 public class PurposeOfProgram extends AbstractQuestionFinder {
 

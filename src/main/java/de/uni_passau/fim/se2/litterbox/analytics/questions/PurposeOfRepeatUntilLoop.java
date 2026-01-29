@@ -21,9 +21,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 
 /**
- * @QuestionType Free Text
- * @Highlighted Loop
- * @Context Single script
+ * Generates a question asking for the purpose of a repeat-until loop.
+ *
  */
 public class PurposeOfRepeatUntilLoop extends AbstractQuestionFinder {
 

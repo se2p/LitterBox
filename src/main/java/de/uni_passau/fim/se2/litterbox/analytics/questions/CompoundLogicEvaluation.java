@@ -33,11 +33,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers {@link AbstractQuestionFinder#maxChoices}
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Block
- * @Context Block
+ * Generates a question asking to evaluate a compound logic expression (AND/OR).
+ *
  */
 public class CompoundLogicEvaluation extends AbstractQuestionFinder {
 
@@ -78,7 +75,8 @@ public class CompoundLogicEvaluation extends AbstractQuestionFinder {
                     .withQuestionParameter("OPERATOR", QuestionText.fromKey(wrongOpKey))
                     .withQuestionParameter("OP2", op2));
 
-            List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(Collections.singletonList(correct), distractors);
+            List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(
+                    Collections.singletonList(correct), distractors);
 
             QuestionBuilder builder = prepareQuestionBuilder(node)
                     .withQuestionText(QuestionText.fromKey(getName()))

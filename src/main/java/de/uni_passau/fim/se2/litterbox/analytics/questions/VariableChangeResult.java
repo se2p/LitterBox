@@ -31,11 +31,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers {@link AbstractQuestionFinder#maxChoices}
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Block
- * @Context Atom
+ * Generates a question asking for the result of a variable change (set or change by).
+ *
  */
 public class VariableChangeResult extends AbstractQuestionFinder {
 
@@ -75,17 +72,20 @@ public class VariableChangeResult extends AbstractQuestionFinder {
             changeDesc = QuestionText.fromKey("it_decreases_by").withQuestionParameter("VALUE", absVal);
             distractors.add(QuestionText.fromKey("it_increases_by").withQuestionParameter("VALUE", absVal));
             distractors.add(QuestionText.fromKey("it_sets_the_value_to").withQuestionParameter("VALUE", value));
-            distractors.add(QuestionText.fromKey("it_sets_the_value_to").withQuestionParameter("VALUE", absVal));
+            distractors.add(QuestionText.fromKey("it_sets_the_value_to")
+                    .withQuestionParameter("VALUE", absVal));
         } else {
             changeDesc = QuestionText.fromKey("it_increases_by").withQuestionParameter("VALUE", value);
             distractors.add(QuestionText.fromKey("it_decreases_by").withQuestionParameter("VALUE", value));
             distractors.add(QuestionText.fromKey("it_sets_the_value_to").withQuestionParameter("VALUE", value));
-            distractors.add(QuestionText.fromKey("it_sets_the_value_to").withQuestionParameter("VALUE", "-" + value));
+            distractors.add(QuestionText.fromKey("it_sets_the_value_to")
+                    .withQuestionParameter("VALUE", "-" + value));
         }
 
         distractors.add(QuestionText.fromKey("it_does_not_change"));
 
-        List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(Collections.singletonList(changeDesc), distractors);
+        List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(
+                Collections.singletonList(changeDesc), distractors);
 
         QuestionBuilder builder = prepareQuestionBuilder(node)
                 .withQuestionText(QuestionText.fromKey(getName()))

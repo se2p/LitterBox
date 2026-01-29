@@ -24,10 +24,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 /**
- * @QuestionType Strings
- * @NumAnswers {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Script
- * @Context Single script
+ * Generates a question asking to identify a variable used in a specific script.
+ *
  */
 public class VariableInScript extends AbstractQuestionFinder {
 

@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
 import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
@@ -32,11 +33,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers {@link AbstractQuestionFinder#maxChoices}
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Block
- * @Context Atom
+ * Generates a question asking about the effect of a motion statement (e.g., change x by 10).
+ *
  */
 public class MotionStatementExecution extends AbstractQuestionFinder {
 
@@ -64,7 +62,7 @@ public class MotionStatementExecution extends AbstractQuestionFinder {
         generateSetQuestion("y_position_attr", value, node);
     }
 
-    private void generateChangeQuestion(String attributeKey, String value, de.uni_passau.fim.se2.litterbox.ast.model.ASTNode node) {
+    private void generateChangeQuestion(String attributeKey, String value, ASTNode node) {
         TranslatableText changeDesc;
         List<TranslatableText> distractors = new ArrayList<>();
 
@@ -72,18 +70,23 @@ public class MotionStatementExecution extends AbstractQuestionFinder {
             String absVal = value.substring(1);
             changeDesc = QuestionText.fromKey("it_decreases_by").withQuestionParameter("VALUE", absVal);
             distractors.add(QuestionText.fromKey("it_increases_by").withQuestionParameter("VALUE", absVal));
-            distractors.add(QuestionText.fromKey("it_sets_the_attribute_to").withQuestionParameter("ATTRIBUTE", attributeKey).withQuestionParameter("VALUE", value));
-            distractors.add(QuestionText.fromKey("it_sets_the_attribute_to").withQuestionParameter("ATTRIBUTE", attributeKey).withQuestionParameter("VALUE", absVal));
+            distractors.add(QuestionText.fromKey("it_sets_the_attribute_to")
+                    .withQuestionParameter("ATTRIBUTE", attributeKey).withQuestionParameter("VALUE", value));
+            distractors.add(QuestionText.fromKey("it_sets_the_attribute_to")
+                    .withQuestionParameter("ATTRIBUTE", attributeKey).withQuestionParameter("VALUE", absVal));
         } else {
             changeDesc = QuestionText.fromKey("it_increases_by").withQuestionParameter("VALUE", value);
             distractors.add(QuestionText.fromKey("it_decreases_by").withQuestionParameter("VALUE", value));
-            distractors.add(QuestionText.fromKey("it_sets_the_attribute_to").withQuestionParameter("ATTRIBUTE", attributeKey).withQuestionParameter("VALUE", value));
-            distractors.add(QuestionText.fromKey("it_sets_the_attribute_to").withQuestionParameter("ATTRIBUTE", attributeKey).withQuestionParameter("VALUE", "-" + value));
+            distractors.add(QuestionText.fromKey("it_sets_the_attribute_to")
+                    .withQuestionParameter("ATTRIBUTE", attributeKey).withQuestionParameter("VALUE", value));
+            distractors.add(QuestionText.fromKey("it_sets_the_attribute_to")
+                    .withQuestionParameter("ATTRIBUTE", attributeKey).withQuestionParameter("VALUE", "-" + value));
         }
 
         distractors.add(QuestionText.fromKey("it_does_not_change"));
 
-        List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(Collections.singletonList(changeDesc), distractors);
+        List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(
+                Collections.singletonList(changeDesc), distractors);
 
         QuestionBuilder builder = prepareQuestionBuilder(node)
                 .withQuestionText(QuestionText.fromKey(getName()))
@@ -94,7 +97,7 @@ public class MotionStatementExecution extends AbstractQuestionFinder {
         addQuestion(builder);
     }
 
-    private void generateSetQuestion(String attribute, String value, de.uni_passau.fim.se2.litterbox.ast.model.ASTNode node) {
+    private void generateSetQuestion(String attribute, String value, ASTNode node) {
         List<TranslatableText> distractors = generateDistractorsForValue(value);
         List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(
                 Collections.singletonList(QuestionText.fromText(value)), distractors);
@@ -111,7 +114,8 @@ public class MotionStatementExecution extends AbstractQuestionFinder {
         List<TranslatableText> distractors = new ArrayList<>();
         try {
             double num = Double.parseDouble(value);
-            distractors.add(QuestionText.fromText(NumberFormatUtil.format(num + 10))); // Motion usually involves larger steps
+            distractors.add(QuestionText.fromText(NumberFormatUtil.format(num + 10)));
+            // Motion usually involves larger steps
             distractors.add(QuestionText.fromText(NumberFormatUtil.format(num - 10)));
             distractors.add(QuestionText.fromText(NumberFormatUtil.format(num * 2)));
             distractors.add(QuestionText.fromText("0"));

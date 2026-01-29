@@ -30,11 +30,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers 1
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Loop
- * @Context Single script
+ * Generates a question asking which block controls the loop (e.g. the repeat count or condition).
+ *
  */
 public class BlockControllingLoop extends AbstractQuestionFinder {
 

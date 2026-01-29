@@ -80,7 +80,8 @@ public class BroadcastReceivers extends AbstractQuestionFinder {
             StringExpr msgExpr = node.getMsg().getMessage();
             if (msgExpr instanceof StringLiteral literal) {
                 String msg = literal.getText();
-                receiversForMessage.computeIfAbsent(msg, k -> new LinkedHashSet<>()).add(currentActor.getIdent().getName());
+                receiversForMessage.computeIfAbsent(msg, k -> new LinkedHashSet<>())
+                        .add(currentActor.getIdent().getName());
             }
         }
     }

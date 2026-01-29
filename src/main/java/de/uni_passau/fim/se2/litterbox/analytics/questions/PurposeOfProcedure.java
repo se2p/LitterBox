@@ -21,9 +21,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 
 /**
- * @QuestionType Free Text
- * @Highlighted Procedure
- * @Context Single procedure
+ * Generates a question asking for the purpose of a procedure (custom block).
+ *
  */
 public class PurposeOfProcedure extends AbstractQuestionFinder {
 

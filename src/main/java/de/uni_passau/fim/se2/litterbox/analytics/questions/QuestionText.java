@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
 import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
@@ -122,7 +123,7 @@ public class QuestionText extends TranslatableText {
      * @param value the translatable parameter value
      * @return this instance
      */
-    public QuestionText withQuestionParameter(String key, de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder value) {
+    public QuestionText withQuestionParameter(String key, HintPlaceholder value) {
         setParameter(key, value);
         return this;
     }
@@ -135,7 +136,7 @@ public class QuestionText extends TranslatableText {
      * @return this instance
      */
     public QuestionText withQuestionParameter(String key, TranslatableText value) {
-        setParameter(key, new de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder.Translatable(value.getKey()));
+        setParameter(key, new HintPlaceholder.Translatable(value.getKey()));
         return this;
     }
 
@@ -160,10 +161,11 @@ public class QuestionText extends TranslatableText {
             if (identifier instanceof LocalIdentifier local) {
                 return local.getName();
             } else if (identifier instanceof Qualified qualified) {
-                return qualified.getFirst().getName() + "." + qualified.getSecond().getName().getName();
+                return qualified.getFirst().getName() + "."
+                        + qualified.getSecond().getName().getName();
             }
         }
-        
+
         return def.toString();
     }
 }

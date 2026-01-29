@@ -71,8 +71,8 @@ public class AnswerChecker {
     /**
      * Checks all answers against the questions.
      *
-     * @param questions       The list of questions
-     * @param studentAnswers  Map of question ID to student's answer
+     * @param questions      The list of questions
+     * @param studentAnswers Map of question ID to student's answer
      * @return Complete check result with block model breakdown
      */
     public AnswerCheckResult checkAnswers(
@@ -314,7 +314,9 @@ public class AnswerChecker {
     }
 
     private String normalizeAnswer(String answer) {
-        if (answer == null) return "";
+        if (answer == null) {
+            return "";
+        }
         String normalized = answer
                 .replace("[sbi]", "")
                 .replace("[/sbi]", "")
@@ -340,7 +342,9 @@ public class AnswerChecker {
     }
 
     private String formatExpectedAnswers(List<String> answers) {
-        if (answers == null || answers.isEmpty()) return null;
+        if (answers == null || answers.isEmpty()) {
+            return null;
+        }
         return String.join(" | ", answers);
     }
 }

@@ -30,9 +30,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @QuestionType Number
- * @Highlighted Nothing
- * @Context Whole program
+ * Generates a question asking for the number of scripts triggered by a specific event.
+ *
  */
 public class ScriptsTriggeredByEvent extends AbstractQuestionFinder {
 

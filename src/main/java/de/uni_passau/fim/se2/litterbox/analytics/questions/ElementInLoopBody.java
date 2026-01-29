@@ -40,11 +40,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLook
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers {@link AbstractQuestionFinder#maxChoices}
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Script
- * @Context Single script
+ * Generates a question asking to identify an element (variable or literal) used inside a loop body.
+ *
  */
 public class ElementInLoopBody extends AbstractQuestionFinder {
 

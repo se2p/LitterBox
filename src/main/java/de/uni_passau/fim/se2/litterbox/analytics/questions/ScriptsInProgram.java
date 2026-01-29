@@ -22,9 +22,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 
 /**
- * @QuestionType Number
- * @Highlighted Nothing
- * @Context Whole program
+ * Generates a question asking for the total number of scripts in the program.
+ *
  */
 public class ScriptsInProgram extends AbstractQuestionFinder {
 

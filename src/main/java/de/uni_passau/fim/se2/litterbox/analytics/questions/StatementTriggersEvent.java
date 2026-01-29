@@ -43,11 +43,8 @@ import java.util.*;
 import static java.util.Objects.isNull;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers {@link AbstractQuestionFinder#maxChoices}
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Script
- * @Context Single script
+ * Generates a question asking which statement triggers a specific event (message or backdrop switch).
+ *
  */
 public class StatementTriggersEvent extends AbstractQuestionFinder {
 
