@@ -40,8 +40,11 @@ public class VariableInScript extends AbstractQuestionFinder {
             ASTNode topBlockCurrent;
             if (!(node.getEvent() instanceof Never)) {
                 topBlockCurrent = node.getEvent();
-            } else {
+            } else if (!node.getStmtList().getStmts().isEmpty()) {
                 topBlockCurrent = node.getStmtList().getStmts().getFirst();
+            } else {
+                // Empty script with no hat block - nothing to highlight meaningfully or use as context anchor
+                return;
             }
             QuestionBuilder builder = prepareQuestionBuilder(topBlockCurrent)
                     .withScript(node)

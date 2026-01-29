@@ -22,9 +22,12 @@ import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -72,9 +75,10 @@ public class VariableInScriptTest implements FinderTest, JsonTest {
         Program prog = getAST("src/test/fixtures/questions/twoVariablesInIfElseStatement.json");
         Set<Question> questions = runFinder(prog, new VariableInScript(), false);
 
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
         for (Question question : questions) {
-            assertThat(question.getCorrectAnswers()).contains("my variable");
-            assertThat(question.getCorrectAnswers()).contains("new variable");
+            assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("my variable");
+            assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("new variable");
         }
     }
 }

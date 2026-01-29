@@ -65,7 +65,7 @@ public class ElementInLoopBody extends AbstractQuestionFinder {
                 topBlockCurrent = node.getStmtList().getStmts().getFirst();
             }
             QuestionBuilder builder = prepareQuestionBuilder(topBlockCurrent)
-                    .withChoices(getChoicesList())
+                    .withChoices(generateMultipleChoiceOptions(answers, choices))
                     .withCorrectAnswers(getAnswersList());
             addQuestion(builder);
         }

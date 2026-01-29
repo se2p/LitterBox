@@ -19,7 +19,10 @@
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
-import de.uni_passau.fim.se2.litterbox.cfg.Defineable;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 /**
@@ -54,6 +57,11 @@ public class QuestionText extends TranslatableText {
     public static final String MESSAGE = "MESSAGE";
     public static final String VALUE = "VALUE";
     public static final String NEXT_BLOCK = "NEXT_BLOCK";
+    public static final String OPERATOR = "OPERATOR";
+    public static final String OP1 = "OP1";
+    public static final String OP2 = "OP2";
+    public static final String SUBJECT = "SUBJECT";
+    public static final String BLOCK = "BLOCK";
 
     private QuestionText(String key, String text) {
         super(key, text);
@@ -89,10 +97,67 @@ public class QuestionText extends TranslatableText {
         return resolveText(translator, translator::getQuestionText);
     }
 
+    /**
+     * Sets a parameter on this question text and returns this instance.
+     *
+     * @param key   the parameter name
+     * @param value the parameter value
+     * @return this instance
+     */
+    public QuestionText withQuestionParameter(String key, String value) {
+        setParameter(key, value);
+        return this;
+    }
+
+    /**
+     * Sets a translatable parameter on this question text and returns this instance.
+     *
+     * @param key   the parameter name
+     * @param value the translatable parameter value
+     * @return this instance
+     */
+    public QuestionText withQuestionParameter(String key, de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder value) {
+        setParameter(key, value);
+        return this;
+    }
+
+    /**
+     * Sets a translatable key parameter on this question text and returns this instance.
+     *
+     * @param key   the parameter name
+     * @param value the translatable text containing the key
+     * @return this instance
+     */
+    public QuestionText withQuestionParameter(String key, TranslatableText value) {
+        setParameter(key, new de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder.Translatable(value.getKey()));
+        return this;
+    }
+
     @Override
     protected String getDefineableName(final IssueTranslator translator, final Defineable def) {
-        // QuestionText can share the same Defineable formatting as Hint
-        // For simplicity, use a basic representation; can be enhanced later if needed
+        Identifier identifier = null;
+        if (def instanceof Variable) {
+            identifier = ((Variable) def).getIdentifier();
+        } else if (def instanceof ListVariable) {
+            identifier = ((ListVariable) def).getIdentifier();
+        } else if (def instanceof Parameter) {
+            identifier = ((Parameter) def).getIdentifier();
+        } else if (def instanceof Attribute attr) {
+            String attrName = attr.getAttributeType().name().toLowerCase().replace("_", " ");
+            if (attr.getParameter() != null) {
+                return attrName + " (" + attr.getParameter() + ")";
+            }
+            return attrName;
+        }
+
+        if (identifier != null) {
+            if (identifier instanceof LocalIdentifier local) {
+                return local.getName();
+            } else if (identifier instanceof Qualified qualified) {
+                return qualified.getFirst().getName() + "." + qualified.getSecond().getName().getName();
+            }
+        }
+        
         return def.toString();
     }
 }

@@ -47,7 +47,8 @@ public class IfBlockCondition extends AbstractQuestionFinder {
         super.visit(node);
 
         if (ifStmtFound && !choices.isEmpty()) {
-            builder.withChoices(getChoicesList()).withCorrectAnswers(getAnswersList());
+            builder.withChoices(generateMultipleChoiceOptions(answers, choices))
+                    .withCorrectAnswers(getAnswersList());
             addQuestion(builder);
         }
     }

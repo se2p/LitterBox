@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
@@ -207,30 +208,6 @@ public abstract class AbstractQuestionFinder implements QuestionFinder, ScratchV
     // Choice/answer management
 
     /**
-     * Returns the choices, limited to maxChoices if there are more.
-     * Shuffles if there are more than maxChoices.
-     *
-     * @return list of choices
-     */
-    protected List<String> getChoicesList() {
-        ArrayList<String> list = new ArrayList<>(choices);
-        if (choices.size() > maxChoices) {
-            Randomness.shuffle(list);
-            return list.subList(0, maxChoices);
-        }
-        return list;
-    }
-
-    /**
-     * Returns the choices as a pipe-separated string.
-     *
-     * @return choices string
-     */
-    protected String getChoicesString() {
-        return String.join("|", getChoicesList());
-    }
-
-    /**
      * Returns the answers, limited to maxChoices if there are more.
      *
      * @return list of answers
@@ -289,6 +266,48 @@ public abstract class AbstractQuestionFinder implements QuestionFinder, ScratchV
 
         // Final shuffle for display order
         List<String> result = new ArrayList<>(finalChoices);
+        Randomness.shuffle(result);
+        return result;
+    }
+
+    /**
+     * Generates a robust list of multiple choice options for translatable text.
+     * Ensures all correct answers are included (up to maxChoices) and fills the rest with distractors.
+     * The final list is shuffled.
+     *
+     * @param correctAnswers the correct answers
+     * @param distractors    potential distractors (pool)
+     * @return shuffled list of options
+     */
+    protected List<TranslatableText> generateTranslatableMultipleChoiceOptions(
+            Collection<? extends TranslatableText> correctAnswers,
+            Collection<? extends TranslatableText> distractors) {
+        Set<TranslatableText> finalChoices = new LinkedHashSet<>();
+
+        // Add correct answers first (up to max)
+        List<TranslatableText> correctList = new ArrayList<>(correctAnswers);
+        if (correctList.size() > maxChoices) {
+            Randomness.shuffle(correctList);
+            correctList = correctList.subList(0, maxChoices);
+        }
+        finalChoices.addAll(correctList);
+
+        // Fill remaining slots with distractors
+        if (finalChoices.size() < maxChoices) {
+            List<TranslatableText> distractorList = new ArrayList<>(distractors);
+            distractorList.removeAll(finalChoices); // Don't duplicate correct answers
+            Randomness.shuffle(distractorList);
+
+            for (TranslatableText d : distractorList) {
+                if (finalChoices.size() >= maxChoices) {
+                    break;
+                }
+                finalChoices.add(d);
+            }
+        }
+
+        // Final shuffle for display order
+        List<TranslatableText> result = new ArrayList<>(finalChoices);
         Randomness.shuffle(result);
         return result;
     }

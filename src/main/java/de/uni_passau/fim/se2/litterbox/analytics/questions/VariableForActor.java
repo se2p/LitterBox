@@ -54,7 +54,7 @@ public class VariableForActor extends AbstractQuestionFinder {
                         .withQuestionText(QuestionText.fromKey(getName()))
                         .withQuestionParameter("VARIABLE", variable)
                         .withCorrectAnswers(actor)
-                        .withChoices(getChoicesList());
+                        .withChoices(generateMultipleChoiceOptions(Set.of(actor), choices));
                 addQuestion(builder);
             }
         });

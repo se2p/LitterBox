@@ -136,13 +136,25 @@ public abstract class TranslatableText {
     }
 
     /**
+     * Sets a translatable parameter value.
+     *
+     * @param key   the parameter name (without % prefix)
+     * @param value the translatable value to substitute
+     */
+    public void setParameter(final String key, final TranslatableText value) {
+        requireNonNull(key, "Parameter key must not be null");
+        requireNonNull(value, "Parameter value must not be null");
+        parameters.put(key, new HintPlaceholder.Translatable(value.getKey()));
+    }
+
+    /**
      * Resolves the text by looking up the key and substituting parameters.
      *
      * @param translator the translator for looking up keys and translating placeholders
      * @param keyLookup  function to look up the key from the appropriate properties file
      * @return the resolved, translated text with parameters substituted
      */
-    protected String resolveText(final IssueTranslator translator,
+    public String resolveText(final IssueTranslator translator,
                                  java.util.function.Function<String, String> keyLookup) {
         if (textContent != null) {
             return textContent;

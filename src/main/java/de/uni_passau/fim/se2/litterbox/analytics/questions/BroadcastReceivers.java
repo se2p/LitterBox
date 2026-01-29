@@ -45,8 +45,8 @@ public class BroadcastReceivers extends AbstractQuestionFinder {
 
     @Override
     public void visit(Program node) {
-        allBroadcasts = new HashSet<>();
-        receiversForMessage = new HashMap<>();
+        allBroadcasts = new LinkedHashSet<>();
+        receiversForMessage = new LinkedHashMap<>();
 
         // First pass: collect all receivers
         collectingReceivers = true;
@@ -74,7 +74,7 @@ public class BroadcastReceivers extends AbstractQuestionFinder {
             StringExpr msgExpr = node.getMsg().getMessage();
             if (msgExpr instanceof StringLiteral literal) {
                 String msg = literal.getText();
-                receiversForMessage.computeIfAbsent(msg, k -> new HashSet<>()).add(currentActor.getIdent().getName());
+                receiversForMessage.computeIfAbsent(msg, k -> new LinkedHashSet<>()).add(currentActor.getIdent().getName());
             }
         }
     }

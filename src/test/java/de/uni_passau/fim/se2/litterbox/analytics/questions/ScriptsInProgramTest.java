@@ -22,9 +22,12 @@ import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -37,9 +40,11 @@ class ScriptsInProgramTest implements FinderTest, JsonTest {
         Set<Question> questions = runFinder(prog, new ScriptsInProgram(), false);
         assertThat(questions.size()).isEqualTo(1);
 
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
         for (Question question : questions) {
-            assertThat(question.getCorrectAnswers()).contains("0");
-        }    }
+            assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("0");
+        }
+    }
 
     @Test
     public void testOneScript() throws IOException, ParsingException {
@@ -47,8 +52,9 @@ class ScriptsInProgramTest implements FinderTest, JsonTest {
         Set<Question> questions = runFinder(prog, new ScriptsInProgram(), false);
         assertThat(questions.size()).isEqualTo(1);
 
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
         for (Question question : questions) {
-            assertThat(question.getCorrectAnswers()).contains("1");
+            assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("1");
         }
     }
 
@@ -58,8 +64,9 @@ class ScriptsInProgramTest implements FinderTest, JsonTest {
         Set<Question> questions = runFinder(prog, new ScriptsInProgram(), false);
         assertThat(questions.size()).isEqualTo(1);
 
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
         for (Question question : questions) {
-            assertThat(question.getCorrectAnswers()).contains("2");
+            assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("2");
         }
     }
 
@@ -69,8 +76,9 @@ class ScriptsInProgramTest implements FinderTest, JsonTest {
         Set<Question> questions = runFinder(prog, new ScriptsInProgram(), false);
         assertThat(questions.size()).isEqualTo(1);
 
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
         for (Question question : questions) {
-            assertThat(question.getCorrectAnswers()).contains("8");
+            assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("8");
         }
     }
 }

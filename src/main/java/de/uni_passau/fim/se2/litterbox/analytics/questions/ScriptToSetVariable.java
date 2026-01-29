@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,7 +54,7 @@ public class ScriptToSetVariable extends AbstractQuestionFinder {
                         .withQuestionText(QuestionText.fromKey(getName()))
                         .withQuestionParameter("VARIABLE", variable)
                         .withCorrectAnswers(answer)
-                        .withChoices(getChoicesList());
+                        .withChoices(generateMultipleChoiceOptions(Collections.singletonList(answer), choices));
                 addQuestion(builder);
             });
         }

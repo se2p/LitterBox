@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Finding;
+import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
@@ -36,8 +37,8 @@ public class Question extends Finding {
     private final ProgramDimension programDimension;
     private final ScopeOfFocus scopeOfFocus;
     private final QuestionText questionText;
-    private final List<String> choices;
-    private final List<String> correctAnswers;
+    private final List<TranslatableText> choices;
+    private final List<TranslatableText> correctAnswers;
     private final List<ScriptEntity> additionalScripts;
 
     /**
@@ -155,7 +156,7 @@ public class Question extends Finding {
      *
      * @return unmodifiable list of choices, or empty list if not applicable
      */
-    public List<String> getChoices() {
+    public List<TranslatableText> getChoices() {
         return choices;
     }
 
@@ -164,7 +165,7 @@ public class Question extends Finding {
      *
      * @return unmodifiable list of correct answers, or empty list if unknown
      */
-    public List<String> getCorrectAnswers() {
+    public List<TranslatableText> getCorrectAnswers() {
         return correctAnswers;
     }
 

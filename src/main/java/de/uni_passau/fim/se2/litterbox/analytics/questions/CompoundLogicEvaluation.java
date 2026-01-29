@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.BinaryExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
@@ -58,27 +59,31 @@ public class CompoundLogicEvaluation extends AbstractQuestionFinder {
             String op1 = wrappedScratchBlocks((Expression) bin.getOperand1());
             String op2 = wrappedScratchBlocks((Expression) bin.getOperand2());
 
-            String operator = (cond instanceof And) ? "AND" : "OR";
-            String correct = String.format("%s %s %s", op1, operator, op2);
+            String operatorKey = (cond instanceof And) ? "and_operator" : "or_operator";
+            QuestionText correct = QuestionText.fromKey("binary_expression")
+                    .withQuestionParameter("OP1", op1)
+                    .withQuestionParameter("OPERATOR", QuestionText.fromKey(operatorKey))
+                    .withQuestionParameter("OP2", op2);
 
             // Distractors
-            List<String> distractors = new ArrayList<>();
+            List<TranslatableText> distractors = new ArrayList<>();
             // Distractor 1: Just first operand
-            distractors.add(op1);
-            // Distractor 2: Just second operand
-            distractors.add(op2);
+            distractors.add(QuestionText.fromText(op1));
+            // Distractor v2: Just second operand
+            distractors.add(QuestionText.fromText(op2));
             // Distractor 3: Wrong operator
-            String wrongOp = (cond instanceof And) ? "OR" : "AND";
-            distractors.add(String.format("%s %s %s", op1, wrongOp, op2));
+            String wrongOpKey = (cond instanceof And) ? "or_operator" : "and_operator";
+            distractors.add(QuestionText.fromKey("binary_expression")
+                    .withQuestionParameter("OP1", op1)
+                    .withQuestionParameter("OPERATOR", QuestionText.fromKey(wrongOpKey))
+                    .withQuestionParameter("OP2", op2));
 
-            choices.clear();
-            choices.add(correct);
-            choices.addAll(distractors);
+            List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(Collections.singletonList(correct), distractors);
 
             QuestionBuilder builder = prepareQuestionBuilder(node)
                     .withQuestionText(QuestionText.fromKey(getName()))
-                    .withCorrectAnswers(Collections.singletonList(correct))
-                    .withChoices(new ArrayList<>(choices));
+                    .withTranslatableCorrectAnswers(Collections.singletonList(correct))
+                    .withTranslatableChoices(options);
 
             addQuestion(builder);
         }

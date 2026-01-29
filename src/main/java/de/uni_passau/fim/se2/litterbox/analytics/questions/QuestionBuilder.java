@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.analytics.FindingBuilder;
 import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
+import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 
 import java.util.ArrayList;
@@ -38,8 +39,8 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
     private ProgramDimension programDimension;
     private ScopeOfFocus scopeOfFocus;
     private QuestionText questionText;
-    private List<String> choices;
-    private List<String> correctAnswers;
+    private List<TranslatableText> choices;
+    private List<TranslatableText> correctAnswers;
     private List<ScriptEntity> additionalScripts;
 
     /**
@@ -140,12 +141,37 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
     }
 
     /**
+     * Sets a translatable parameter on the question text.
+     *
+     * @param key   the parameter name
+     * @param value the translatable parameter value
+     * @return this builder
+     */
+    public QuestionBuilder withQuestionParameter(String key, TranslatableText value) {
+        if (questionText != null) {
+            questionText.setParameter(key, value);
+        }
+        return self();
+    }
+
+    /**
      * Sets the choices for a multiple choice question.
      *
      * @param choices the list of choices
      * @return this builder
      */
     public QuestionBuilder withChoices(List<String> choices) {
+        this.choices = choices != null ? choices.stream().map(QuestionText::fromText).map(it -> (TranslatableText) it).toList() : null;
+        return self();
+    }
+
+    /**
+     * Sets the choices for a multiple choice question using TranslatableText.
+     *
+     * @param choices the list of translatable choices
+     * @return this builder
+     */
+    public QuestionBuilder withTranslatableChoices(List<? extends TranslatableText> choices) {
         this.choices = choices != null ? new ArrayList<>(choices) : null;
         return self();
     }
@@ -157,7 +183,7 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
      * @return this builder
      */
     public QuestionBuilder withChoices(String... choices) {
-        this.choices = choices != null ? new ArrayList<>(Arrays.asList(choices)) : null;
+        this.choices = choices != null ? Arrays.stream(choices).map(QuestionText::fromText).map(it -> (TranslatableText) it).toList() : null;
         return self();
     }
 
@@ -168,6 +194,20 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
      * @return this builder
      */
     public QuestionBuilder addChoice(String choice) {
+        if (this.choices == null) {
+            this.choices = new ArrayList<>();
+        }
+        this.choices.add(QuestionText.fromText(choice));
+        return self();
+    }
+
+    /**
+     * Adds a translatable choice to the list of choices.
+     *
+     * @param choice the translatable choice to add
+     * @return this builder
+     */
+    public QuestionBuilder addChoice(TranslatableText choice) {
         if (this.choices == null) {
             this.choices = new ArrayList<>();
         }
@@ -182,6 +222,17 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
      * @return this builder
      */
     public QuestionBuilder withCorrectAnswers(List<String> answers) {
+        this.correctAnswers = answers != null ? answers.stream().map(QuestionText::fromText).map(it -> (TranslatableText) it).toList() : null;
+        return self();
+    }
+
+    /**
+     * Sets the correct answers using TranslatableText.
+     *
+     * @param answers the list of translatable correct answers
+     * @return this builder
+     */
+    public QuestionBuilder withTranslatableCorrectAnswers(List<? extends TranslatableText> answers) {
         this.correctAnswers = answers != null ? new ArrayList<>(answers) : null;
         return self();
     }
@@ -193,7 +244,7 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
      * @return this builder
      */
     public QuestionBuilder withCorrectAnswers(String... answers) {
-        this.correctAnswers = answers != null ? new ArrayList<>(Arrays.asList(answers)) : null;
+        this.correctAnswers = answers != null ? Arrays.stream(answers).map(QuestionText::fromText).map(it -> (TranslatableText) it).toList() : null;
         return self();
     }
 
@@ -204,6 +255,20 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
      * @return this builder
      */
     public QuestionBuilder addCorrectAnswer(String answer) {
+        if (this.correctAnswers == null) {
+            this.correctAnswers = new ArrayList<>();
+        }
+        this.correctAnswers.add(QuestionText.fromText(answer));
+        return self();
+    }
+
+    /**
+     * Adds a translatable correct answer.
+     *
+     * @param answer the translatable answer to add
+     * @return this builder
+     */
+    public QuestionBuilder addCorrectAnswer(TranslatableText answer) {
         if (this.correctAnswers == null) {
             this.correctAnswers = new ArrayList<>();
         }
@@ -269,11 +334,11 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
         return questionText;
     }
 
-    public List<String> getChoices() {
+    public List<TranslatableText> getChoices() {
         return choices;
     }
 
-    public List<String> getCorrectAnswers() {
+    public List<TranslatableText> getCorrectAnswers() {
         return correctAnswers;
     }
 

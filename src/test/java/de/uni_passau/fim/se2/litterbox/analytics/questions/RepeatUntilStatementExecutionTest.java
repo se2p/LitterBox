@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class RepeatUntilStatementExecutionTest implements JsonTest {
 
@@ -62,12 +63,15 @@ public class RepeatUntilStatementExecutionTest implements JsonTest {
         // Check question text includes condition (translated)
         Assertions.assertTrue(text.contains("condition"));
 
-        String correct = q.getCorrectAnswers().iterator().next();
-        Set<String> choices = new java.util.HashSet<>(q.getChoices());
+        String correct = q.getCorrectAnswers().iterator().next().resolveText(translator, translator::getInfo);
+        Set<String> choices = q.getChoices().stream()
+                .map(c -> c.resolveText(translator, translator::getInfo))
+                .collect(Collectors.toSet());
 
         // Should have choices and correct answer
         Assertions.assertFalse(choices.isEmpty());
         Assertions.assertNotNull(correct);
+        Assertions.assertTrue(correct.contains("executes") || correct.contains("terminates"));
     }
 }
 

@@ -25,9 +25,11 @@ import de.uni_passau.fim.se2.litterbox.report.QuestionDTO;
 import de.uni_passau.fim.se2.litterbox.report.QuestionResultHandler;
 import de.uni_passau.fim.se2.litterbox.report.QuizExportFormat;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -41,99 +43,32 @@ public class QuestionAnalyzer extends FileAnalyzer<List<QuestionDTO>> {
 
     private final QuestionResultHandler resultHandler;
 
-    public QuestionAnalyzer(
-            IssueTranslator translator,
-            Path output,
-            boolean delete,
-            List<String> questionFinders,
-            Set<ProgramDimension> dimensionFilter,
-            Set<ScopeOfFocus> scopeFilter,
-            int maxQuestions,
-            boolean balanced,
-            int perCell,
-            boolean shuffle,
-            Long seed,
-            boolean showAnswers
-    ) {
-        this(translator, output, delete, questionFinders, dimensionFilter, scopeFilter,
-                maxQuestions, balanced, perCell, shuffle, seed, showAnswers, false, null);
-    }
-
-    public QuestionAnalyzer(
-            IssueTranslator translator,
-            Path output,
-            boolean delete,
-            List<String> questionFinders,
-            Set<ProgramDimension> dimensionFilter,
-            Set<ScopeOfFocus> scopeFilter,
-            int maxQuestions,
-            boolean balanced,
-            int perCell,
-            boolean shuffle,
-            Long seed,
-            boolean showAnswers,
-            QuizExportFormat exportFormat
-    ) {
-        this(translator, output, delete, questionFinders, dimensionFilter, scopeFilter,
-                maxQuestions, balanced, perCell, shuffle, seed, showAnswers, false, exportFormat);
-    }
-
-    public QuestionAnalyzer(
-            IssueTranslator translator,
-            Path output,
-            boolean delete,
-            List<String> questionFinders,
-            Set<ProgramDimension> dimensionFilter,
-            Set<ScopeOfFocus> scopeFilter,
-            int maxQuestions,
-            boolean balanced,
-            int perCell,
-            boolean shuffle,
-            Long seed,
-            boolean showAnswers,
-            boolean teacherMode,
-            QuizExportFormat exportFormat
-    ) {
-        this(translator, output, delete, questionFinders, dimensionFilter, scopeFilter,
-                maxQuestions, balanced, perCell, shuffle, seed, showAnswers, teacherMode, false, null, false, exportFormat);
-    }
-
-    public QuestionAnalyzer(
-            IssueTranslator translator,
-            Path output,
-            boolean delete,
-            List<String> questionFinders,
-            Set<ProgramDimension> dimensionFilter,
-            Set<ScopeOfFocus> scopeFilter,
-            int maxQuestions,
-            boolean balanced,
-            int perCell,
-            boolean shuffle,
-            Long seed,
-            boolean showAnswers,
-            boolean teacherMode,
-            boolean exportMode,
-            Path evaluateFile,
-            boolean llmEval,
-            QuizExportFormat exportFormat
-    ) {
+    private QuestionAnalyzer(Builder builder) {
         super(
                 new ProgramQuestionAnalyzer(
-                        questionFinders,
-                        translator,
-                        dimensionFilter,
-                        scopeFilter,
-                        maxQuestions,
-                        balanced,
-                        perCell,
-                        shuffle,
-                        seed
+                        builder.questionFinders,
+                        builder.translator,
+                        builder.dimensionFilter,
+                        builder.scopeFilter,
+                        builder.maxQuestions,
+                        builder.balanced,
+                        builder.perCell,
+                        builder.shuffle,
+                        builder.seed
                 ),
-                output,
-                delete
+                builder.output,
+                builder.delete
         );
         this.resultHandler = QuestionResultHandler.create(
-                translator, output, showAnswers, teacherMode, exportMode, evaluateFile, llmEval, exportFormat);
+                builder.translator,
+                builder.output,
+                builder.showAnswers,
+                builder.teacherMode,
+                builder.exportMode,
+                builder.evaluateFile,
+                builder.llmEval,
+                builder.exportFormat
+        );
     }
 
     @Override
@@ -151,5 +86,117 @@ public class QuestionAnalyzer extends FileAnalyzer<List<QuestionDTO>> {
     @Override
     protected void writeResultToFile(Path projectFile, Program program, List<QuestionDTO> result) {
         resultHandler.handleResult(projectFile, program, result);
+    }
+
+    /**
+     * Builder for {@link QuestionAnalyzer}.
+     */
+    public static class Builder {
+        private final IssueTranslator translator;
+        private final Path output;
+
+        // Optional parameters with defaults
+        private boolean delete = false;
+        private List<String> questionFinders = Collections.emptyList();
+        private Set<ProgramDimension> dimensionFilter = Collections.emptySet();
+        private Set<ScopeOfFocus> scopeFilter = Collections.emptySet();
+        private int maxQuestions = -1;
+        private boolean balanced = false;
+        private int perCell = 0;
+        private boolean shuffle = false;
+        private Long seed = null;
+        private boolean showAnswers = false;
+        private boolean teacherMode = false;
+        private boolean exportMode = false;
+        private Path evaluateFile = null;
+        private boolean llmEval = false;
+        private QuizExportFormat exportFormat = null;
+
+        /**
+         * Creates a new builder with required parameters.
+         *
+         * @param translator The issue translator
+         * @param output     The output path
+         */
+        public Builder(IssueTranslator translator, Path output) {
+            Preconditions.checkNotNull(translator);
+            this.translator = translator;
+            this.output = output;
+        }
+
+        public Builder withDeleteProject(boolean delete) {
+            this.delete = delete;
+            return this;
+        }
+
+        public Builder withQuestionFinders(List<String> questionFinders) {
+            this.questionFinders = questionFinders != null ? questionFinders : Collections.emptyList();
+            return this;
+        }
+
+        public Builder withDimensionFilter(Set<ProgramDimension> dimensionFilter) {
+            this.dimensionFilter = dimensionFilter != null ? dimensionFilter : Collections.emptySet();
+            return this;
+        }
+
+        public Builder withScopeFilter(Set<ScopeOfFocus> scopeFilter) {
+            this.scopeFilter = scopeFilter != null ? scopeFilter : Collections.emptySet();
+            return this;
+        }
+
+        public Builder withMaxQuestions(int maxQuestions) {
+            this.maxQuestions = maxQuestions;
+            return this;
+        }
+
+        public Builder withBalanced(boolean balanced) {
+            this.balanced = balanced;
+            return this;
+        }
+
+        public Builder withPerCell(int perCell) {
+            this.perCell = perCell;
+            return this;
+        }
+
+        public Builder withShuffle(boolean shuffle) {
+            this.shuffle = shuffle;
+            return this;
+        }
+
+        public Builder withSeed(Long seed) {
+            this.seed = seed;
+            return this;
+        }
+
+        public Builder withShowAnswers(boolean showAnswers) {
+            this.showAnswers = showAnswers;
+            return this;
+        }
+
+        public Builder withTeacherMode(boolean teacherMode) {
+            this.teacherMode = teacherMode;
+            return this;
+        }
+
+        public Builder withExportMode(boolean exportMode) {
+            this.exportMode = exportMode;
+            return this;
+        }
+
+        public Builder withEvaluation(Path evaluateFile, boolean llmEval) {
+            this.evaluateFile = evaluateFile;
+            this.llmEval = llmEval;
+            return this;
+        }
+
+        public Builder withExportFormat(QuizExportFormat exportFormat) {
+            this.exportFormat = exportFormat;
+            return this;
+        }
+
+        public QuestionAnalyzer build() {
+            return new QuestionAnalyzer(this);
+        }
     }
 }

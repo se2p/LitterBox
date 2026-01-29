@@ -65,7 +65,8 @@ class ScriptExecutionOrderDifferentActorsTest implements FinderTest, JsonTest {
         for (Question question : questions) {
             String questionText = question.getQuestionText(translator);
             if (questionText.contains("Stage")) {
-                assertThat(question.getCorrectAnswers().get(0)).contains("Sprite1");
+                String correct = question.getCorrectAnswers().get(0).resolveText(translator, translator::getInfo);
+                assertThat(correct).contains("Sprite1");
             }
             else {
                 assertThat(questionText).contains("Suppose");

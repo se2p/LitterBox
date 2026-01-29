@@ -304,24 +304,12 @@ public class AnswerChecker {
 
     private String getFeedback(String key) {
         if (translator != null) {
-            return translator.getInfo(key);
+            String feedback = translator.getInfo(key);
+            if (feedback != null && !feedback.equals(key)) {
+                return feedback;
+            }
         }
-        // Default English fallback messages
-        return switch (key) {
-            case "evaluation_feedback_correct_choice" -> "Correct! You selected the right answer.";
-            case "evaluation_feedback_wrong_choice" ->
-                    "Incorrect. Review the code carefully and try to understand what each block does.";
-            case "evaluation_feedback_correct_number" -> "Correct! You calculated the right value.";
-            case "evaluation_feedback_wrong_number" ->
-                    "Incorrect. Trace through the code step by step to find the correct value.";
-            case "evaluation_feedback_invalid_number" -> "Invalid answer. Please enter a number.";
-            case "evaluation_feedback_correct_yesno" -> "Correct! Your understanding is right.";
-            case "evaluation_feedback_wrong_yesno" ->
-                    "Incorrect. Think about what the code actually does when executed.";
-            case "evaluation_feedback_freetext_review" -> "This answer requires manual review by a teacher.";
-            case "evaluation_no_expected_answer" -> "No expected answer defined for this question.";
-            default -> key;
-        };
+        return key;
     }
 
     private String normalizeAnswer(String answer) {

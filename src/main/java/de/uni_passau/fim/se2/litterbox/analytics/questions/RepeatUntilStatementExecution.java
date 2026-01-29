@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -54,40 +55,44 @@ public class RepeatUntilStatementExecution extends AbstractQuestionFinder {
         String conditionText = wrappedScratchBlocks(condition);
 
         // Next statement description (e.g. "Move (10) steps")
-        String nextStmtText = wrappedScratchBlocks(nextStmt);
+        TranslatableText nextStmtTranslatableText = QuestionText.fromKey("the_block_X_after_the_loop")
+                .withQuestionParameter("X", wrappedScratchBlocks(nextStmt));
 
         // Loop body description
-        String loopBodyText = "The blocks inside the loop";
+        TranslatableText loopBody;
         if (untilStmt.getStmtList().hasStatements()) {
-            loopBodyText = "The block '" + wrappedScratchBlocks(untilStmt.getStmtList().getStatement(0)) + "' inside the loop";
+            loopBody = QuestionText.fromKey("block_inside_loop")
+                    .withQuestionParameter("BLOCK", wrappedScratchBlocks(untilStmt.getStmtList().getStatement(0)));
+        } else {
+            loopBody = QuestionText.fromKey("blocks_inside_loop");
         }
 
         boolean conditionValue = de.uni_passau.fim.se2.litterbox.utils.Randomness.nextBoolean();
-        String valueText = conditionValue ? "TRUE" : "FALSE";
+        String valueText = conditionValue ? "true_value" : "false_value";
 
-        String correct;
-        List<String> distractors = new ArrayList<>();
+        TranslatableText correct;
+        List<TranslatableText> distractors = new ArrayList<>();
 
         if (conditionValue) {
             // If condition is TRUE, loop terminates
-            correct = "The block '" + nextStmtText + "' after the loop executes";
-            distractors.add(loopBodyText + " executes");
-            distractors.add("The loop repeats");
+            correct = QuestionText.fromKey("subject_executes").withQuestionParameter("SUBJECT", nextStmtTranslatableText);
+            distractors.add(QuestionText.fromKey("subject_executes").withQuestionParameter("SUBJECT", loopBody));
+            distractors.add(QuestionText.fromKey("subject_repeats").withQuestionParameter("SUBJECT", QuestionText.fromKey("the_loop")));
         } else {
             // If condition is FALSE, loop executes
-            correct = loopBodyText + " executes";
-            distractors.add("The block '" + nextStmtText + "' after the loop executes");
-            distractors.add("The script stops");
+            correct = QuestionText.fromKey("subject_executes").withQuestionParameter("SUBJECT", loopBody);
+            distractors.add(QuestionText.fromKey("subject_executes").withQuestionParameter("SUBJECT", nextStmtTranslatableText));
+            distractors.add(QuestionText.fromKey("script_stops"));
         }
 
-        List<String> options = generateMultipleChoiceOptions(Collections.singletonList(correct), distractors);
+        List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(Collections.singletonList(correct), distractors);
 
         QuestionBuilder builder = prepareQuestionBuilder(untilStmt)
                 .withQuestionText(QuestionText.fromKey(getName()))
                 .withQuestionParameter(QuestionText.CONDITION, conditionText)
-                .withQuestionParameter(QuestionText.VALUE, valueText)
-                .withCorrectAnswers(Collections.singletonList(correct))
-                .withChoices(options);
+                .withQuestionParameter(QuestionText.VALUE, QuestionText.fromKey(valueText))
+                .withTranslatableCorrectAnswers(Collections.singletonList(correct))
+                .withTranslatableChoices(options);
 
         addQuestion(builder);
     }

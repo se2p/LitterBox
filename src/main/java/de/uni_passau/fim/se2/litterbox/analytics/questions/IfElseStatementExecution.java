@@ -49,7 +49,7 @@ public class IfElseStatementExecution extends AbstractQuestionFinder {
             QuestionBuilder builder = prepareQuestionBuilder(node)
                     .withQuestionText(QuestionText.fromKey(getName()))
                     .withQuestionParameter(QuestionText.CONDITION, ScratchBlocksVisitor.of(condition))
-                    .withQuestionParameter(QuestionText.VARIABLE, String.valueOf(conditionValue).toUpperCase())
+                    .withQuestionParameter(QuestionText.VALUE, QuestionText.fromKey(conditionValue ? "true_value" : "false_value"))
                     .withCorrectAnswers(correct)
                     .withChoices(generateMultipleChoiceOptions(
                             Collections.singletonList(correct),

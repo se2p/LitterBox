@@ -48,7 +48,7 @@ class SetVariableTest implements FinderTest, JsonTest {
         IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
 
         for (Question question : questions) {
-            assertThat(question.getCorrectAnswers()).contains("0");
+            assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("0");
             assertThat(question.getQuestionText(translator)).contains("my variable");
         }
     }
@@ -59,8 +59,9 @@ class SetVariableTest implements FinderTest, JsonTest {
         Set<Question> questions = runFinder(prog, new SetVariable(), false);
         assertThat(questions.size()).isEqualTo(1);
 
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
         for (Question question : questions) {
-            assertThat(question.getCorrectAnswers()).contains("Hello");
+            assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("Hello");
         }
     }
 

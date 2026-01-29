@@ -60,7 +60,7 @@ public class StatementsInIfStatement extends AbstractQuestionFinder {
             }
             QuestionBuilder builder = prepareQuestionBuilder(topBlockCurrent)
                     .withScript(node)
-                    .withChoices(getChoicesList())
+                    .withChoices(generateMultipleChoiceOptions(answers, choices))
                     .withCorrectAnswers(getAnswersList());
             addQuestion(builder);
         }

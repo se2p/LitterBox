@@ -83,7 +83,7 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
                 answers = eventStatements.get(event);
                 QuestionBuilder builder = prepareQuestionBuilder(topBlockCurrent)
                         .withScript(currentScript)
-                        .withChoices(getChoicesList())
+                        .withChoices(generateMultipleChoiceOptions(answers, choices))
                         .withCorrectAnswers(getAnswersList());
                 addQuestion(builder);
             }

@@ -47,7 +47,7 @@ public class VariableChangeResultTest implements JsonTest {
 
         boolean found = questions.stream().anyMatch(q ->
                 q.getQuestionText(translator).contains("myVar") &&
-                        q.getCorrectAnswers().contains("(5)")
+                        q.getCorrectAnswers().stream().anyMatch(a -> a.resolveText(translator, translator::getInfo).contains("5"))
         );
 
         Assertions.assertTrue(found, "Expected question with answer (5) not found. Questions: " + questions);
@@ -66,9 +66,9 @@ public class VariableChangeResultTest implements JsonTest {
 
         boolean found = questions.stream().anyMatch(q ->
                 q.getQuestionText(translator).contains("myVar") &&
-                        q.getCorrectAnswers().contains("It increases by (1)")
+                        q.getCorrectAnswers().stream().anyMatch(a -> a.resolveText(translator, translator::getInfo).contains("increases by 1"))
         );
-        Assertions.assertTrue(found, "Expected question with answer 'It increases by (1)' not found. Questions: " + questions);
+        Assertions.assertTrue(found, "Expected question with answer 'it_increases_by|VALUE=1' not found. Questions: " + questions);
     }
 
     @Test
@@ -84,9 +84,9 @@ public class VariableChangeResultTest implements JsonTest {
 
         boolean found = questions.stream().anyMatch(q ->
                 q.getQuestionText(translator).contains("myVar") &&
-                        q.getCorrectAnswers().contains("It increases by (-1)")
+                        q.getCorrectAnswers().stream().anyMatch(a -> a.resolveText(translator, translator::getInfo).contains("decreases by 1"))
         );
-        Assertions.assertTrue(found, "Expected question with answer 'It increases by (-1)' not found. Questions: " + questions);
+        Assertions.assertTrue(found, "Expected question with answer 'it_decreases_by|VALUE=1' not found. Questions: " + questions);
     }
 }
 

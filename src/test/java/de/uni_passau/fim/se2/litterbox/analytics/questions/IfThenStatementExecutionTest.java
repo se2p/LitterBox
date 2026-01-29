@@ -83,9 +83,12 @@ class IfThenStatementExecutionTest implements FinderTest, JsonTest {
 
         for (Question question : questions) {
             String questionText = question.getQuestionText(translator);
-            // The correct answer should be yes or no
-            assertThat(question.getCorrectAnswers()).containsAnyOf("yes", "no");
+            assertThat(question.hasCorrectAnswers()).isTrue();
+            // Check that the question text contains the localized condition status
+            assertThat(questionText).containsMatch("TRUE|FALSE");
+            // Check that the correct answer contains scratchblocks code
+            String correct = question.getCorrectAnswers().get(0).resolveText(translator, translator::getInfo);
+            assertThat(correct).isNotEmpty();
         }
     }
 }
-

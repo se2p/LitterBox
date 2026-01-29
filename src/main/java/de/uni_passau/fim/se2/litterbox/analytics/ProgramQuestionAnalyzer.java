@@ -18,10 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.questions.ProgramDimension;
-import de.uni_passau.fim.se2.litterbox.analytics.questions.Question;
-import de.uni_passau.fim.se2.litterbox.analytics.questions.QuestionFinder;
-import de.uni_passau.fim.se2.litterbox.analytics.questions.ScopeOfFocus;
+import de.uni_passau.fim.se2.litterbox.analytics.questions.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.report.QuestionDTO;
@@ -31,7 +28,6 @@ import de.uni_passau.fim.se2.litterbox.utils.QuestionTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Analyzes a Scratch program to generate comprehension questions.
@@ -110,10 +106,9 @@ public class ProgramQuestionAnalyzer implements ProgramAnalyzer<List<QuestionDTO
         }
 
         // Convert questions to QuestionDTOs
-        AtomicInteger idCounter = new AtomicInteger(1);
         List<QuestionDTO> questionDTOs = new ArrayList<>();
         for (Question question : allQuestions) {
-            QuestionDTO dto = convertToDTO(question, idCounter.getAndIncrement());
+            QuestionDTO dto = convertToDTO(question, 0); // Temporary ID
             if (dto != null) {
                 questionDTOs.add(dto);
             }
@@ -122,7 +117,27 @@ public class ProgramQuestionAnalyzer implements ProgramAnalyzer<List<QuestionDTO
         // Apply selection strategy
         questionDTOs = applySelectionStrategy(questionDTOs);
 
-        return questionDTOs;
+        // Re-assign IDs to be sequential
+        List<QuestionDTO> finalQuestions = new ArrayList<>();
+        int id = 1;
+        for (QuestionDTO q : questionDTOs) {
+            finalQuestions.add(new QuestionDTO(
+                    id++,
+                    q.finder(),
+                    q.name(),
+                    q.questionType(),
+                    q.programDimension(),
+                    q.scopeOfFocus(),
+                    q.sprite(),
+                    q.questionText(),
+                    q.choices(),
+                    q.correctAnswers(),
+                    q.scratchBlocksCode(),
+                    q.hint()
+            ));
+        }
+
+        return finalQuestions;
     }
 
     private boolean matchesFilters(QuestionFinder finder) {
@@ -143,9 +158,9 @@ public class ProgramQuestionAnalyzer implements ProgramAnalyzer<List<QuestionDTO
         // Get translated question text with parameters substituted
         String questionText = question.getQuestionText(issueTranslator);
 
-        // Get choices and answers directly from the Question object
-        List<String> choices = question.getChoices().isEmpty() ? null : new ArrayList<>(question.getChoices());
-        List<String> answers = question.getCorrectAnswers().isEmpty() ? null : new ArrayList<>(question.getCorrectAnswers());
+        // Get choices and answers directly from the Question object, translating if needed
+        List<String> choices = translateChoices(question.getChoices(), issueTranslator);
+        List<String> answers = translateChoices(question.getCorrectAnswers(), issueTranslator);
 
         String sprite = question.getActor() != null ? question.getActor().getIdent().getName() : "Stage";
 
@@ -203,9 +218,6 @@ public class ProgramQuestionAnalyzer implements ProgramAnalyzer<List<QuestionDTO
                 String cell = dim.name() + "/" + scope.name();
                 List<QuestionDTO> cellQuestions = byCell.get(cell);
                 if (cellQuestions != null && !cellQuestions.isEmpty()) {
-                    if (shuffle) {
-                        Collections.shuffle(cellQuestions, random);
-                    }
                     int count = Math.min(questionsPerCell, cellQuestions.size());
                     selected.addAll(cellQuestions.subList(0, count));
                 }
@@ -213,6 +225,29 @@ public class ProgramQuestionAnalyzer implements ProgramAnalyzer<List<QuestionDTO
         }
 
         return selected;
+    }
+
+    private List<String> translateChoices(List<TranslatableText> rawChoices, IssueTranslator translator) {
+        if (rawChoices == null || rawChoices.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<String> translated = new ArrayList<>();
+        for (TranslatableText choice : rawChoices) {
+            translated.add(translateChoice(choice, translator));
+        }
+        return translated;
+    }
+
+    private String translateChoice(TranslatableText choice, IssueTranslator translator) {
+        if (choice == null) {
+            return "";
+        }
+
+        if (choice instanceof QuestionText questionText) {
+            return questionText.getQuestionText(translator);
+        }
+
+        return choice.resolveText(translator, translator::getInfo);
     }
 }
 

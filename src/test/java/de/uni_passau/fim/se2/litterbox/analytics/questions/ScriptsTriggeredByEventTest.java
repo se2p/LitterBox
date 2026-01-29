@@ -57,8 +57,9 @@ class ScriptsTriggeredByEventTest implements FinderTest, JsonTest {
         Set<Question> questions = runFinder(prog, new ScriptsTriggeredByEvent(), false);
         assertThat(questions.size()).isEqualTo(1);
 
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
         for (Question question : questions) {
-            assertThat(question.getCorrectAnswers()).contains("2");
+            assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("2");
         }
     }
 

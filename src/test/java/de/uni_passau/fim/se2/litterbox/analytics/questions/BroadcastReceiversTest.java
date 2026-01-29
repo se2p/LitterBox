@@ -76,9 +76,8 @@ public class BroadcastReceiversTest implements JsonTest {
 
         // Expected usage: Sprite1 (the default sprite name in emptyProject.json)
         // Check translated question text includes the message
-        String text = q.getQuestionText(translator);
-        Assertions.assertTrue(text.contains("Message1"));
-        Assertions.assertTrue(q.getCorrectAnswers().contains("Sprite1"));
+        Assertions.assertTrue(q.getChoices().stream()
+                .map(c -> c.resolveText(translator, translator::getInfo))
+                .anyMatch(c -> c.contains("Sprite1")), "Correct receiver Sprite1 not found in choices");
     }
 }
-

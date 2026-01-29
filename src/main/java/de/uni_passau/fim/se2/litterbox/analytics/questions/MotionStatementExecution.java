@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
+import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
@@ -40,25 +42,25 @@ public class MotionStatementExecution extends AbstractQuestionFinder {
     @Override
     public void visit(ChangeXBy node) {
         String value = cleanValue(ScratchBlocksVisitor.of(node.getNum()));
-        generateChangeQuestion("x position", value, node);
+        generateChangeQuestion("x_position_attr", value, node);
     }
 
     @Override
     public void visit(ChangeYBy node) {
         String value = cleanValue(ScratchBlocksVisitor.of(node.getNum()));
-        generateChangeQuestion("y position", value, node);
+        generateChangeQuestion("y_position_attr", value, node);
     }
 
     @Override
     public void visit(SetXTo node) {
         String value = cleanValue(ScratchBlocksVisitor.of(node.getNum()));
-        generateSetQuestion("x position", value, node);
+        generateSetQuestion("x_position_attr", value, node);
     }
 
     @Override
     public void visit(SetYTo node) {
         String value = cleanValue(ScratchBlocksVisitor.of(node.getNum()));
-        generateSetQuestion("y position", value, node);
+        generateSetQuestion("y_position_attr", value, node);
     }
 
     private String cleanValue(String val) {
@@ -68,60 +70,62 @@ public class MotionStatementExecution extends AbstractQuestionFinder {
         return val;
     }
 
-    private void generateChangeQuestion(String attribute, String value, de.uni_passau.fim.se2.litterbox.ast.model.ASTNode node) {
-        String changeDesc;
-        List<String> distractors = new ArrayList<>();
+    private void generateChangeQuestion(String attributeKey, String value, de.uni_passau.fim.se2.litterbox.ast.model.ASTNode node) {
+        TranslatableText changeDesc;
+        List<TranslatableText> distractors = new ArrayList<>();
 
         if (value.startsWith("-")) {
             String absVal = value.substring(1);
-            changeDesc = "It decreases by " + absVal;
-            distractors.add("It increases by " + absVal);
-            distractors.add("It sets the " + attribute + " to " + value);
-            distractors.add("It sets the " + attribute + " to " + absVal);
+            changeDesc = QuestionText.fromKey("it_decreases_by").withQuestionParameter("VALUE", absVal);
+            distractors.add(QuestionText.fromKey("it_increases_by").withQuestionParameter("VALUE", absVal));
+            distractors.add(QuestionText.fromKey("it_sets_the_attribute_to").withQuestionParameter("ATTRIBUTE", attributeKey).withQuestionParameter("VALUE", value));
+            distractors.add(QuestionText.fromKey("it_sets_the_attribute_to").withQuestionParameter("ATTRIBUTE", attributeKey).withQuestionParameter("VALUE", absVal));
         } else {
-            changeDesc = "It increases by " + value;
-            distractors.add("It decreases by " + value);
-            distractors.add("It sets the " + attribute + " to " + value);
-            distractors.add("It sets the " + attribute + " to -" + value);
+            changeDesc = QuestionText.fromKey("it_increases_by").withQuestionParameter("VALUE", value);
+            distractors.add(QuestionText.fromKey("it_decreases_by").withQuestionParameter("VALUE", value));
+            distractors.add(QuestionText.fromKey("it_sets_the_attribute_to").withQuestionParameter("ATTRIBUTE", attributeKey).withQuestionParameter("VALUE", value));
+            distractors.add(QuestionText.fromKey("it_sets_the_attribute_to").withQuestionParameter("ATTRIBUTE", attributeKey).withQuestionParameter("VALUE", "-" + value));
         }
 
-        distractors.add("It does not change");
+        distractors.add(QuestionText.fromKey("it_does_not_change"));
 
-        List<String> options = generateMultipleChoiceOptions(Collections.singletonList(changeDesc), distractors);
+        List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(Collections.singletonList(changeDesc), distractors);
 
         QuestionBuilder builder = prepareQuestionBuilder(node)
                 .withQuestionText(QuestionText.fromKey(getName()))
-                .withQuestionParameter(QuestionText.ATTRIBUTE, attribute)
-                .withChoices(options)
-                .withCorrectAnswers(Collections.singletonList(changeDesc));
+                .withQuestionType(QuestionType.MULTIPLE_CHOICE)
+                .withQuestionParameter("ATTRIBUTE", QuestionText.fromKey(attributeKey))
+                .withTranslatableChoices(options)
+                .withTranslatableCorrectAnswers(Collections.singletonList(changeDesc));
         addQuestion(builder);
     }
 
     private void generateSetQuestion(String attribute, String value, de.uni_passau.fim.se2.litterbox.ast.model.ASTNode node) {
-        List<String> distractors = generateDistractorsForValue(value);
-        List<String> options = generateMultipleChoiceOptions(Collections.singletonList(value), distractors);
+        List<TranslatableText> distractors = generateDistractorsForValue(value);
+        List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(
+                Collections.singletonList(QuestionText.fromText(value)), distractors);
 
         QuestionBuilder builder = prepareQuestionBuilder(node)
                 .withQuestionText(QuestionText.fromKey(getName()))
-                .withQuestionParameter(QuestionText.ATTRIBUTE, attribute)
-                .withChoices(options)
-                .withCorrectAnswers(Collections.singletonList(value));
+                .withQuestionParameter(QuestionText.ATTRIBUTE, new HintPlaceholder.Translatable(attribute))
+                .withTranslatableChoices(options)
+                .withTranslatableCorrectAnswers(Collections.singletonList(QuestionText.fromText(value)));
         addQuestion(builder);
     }
 
-    private List<String> generateDistractorsForValue(String value) {
-        List<String> distractors = new ArrayList<>();
+    private List<TranslatableText> generateDistractorsForValue(String value) {
+        List<TranslatableText> distractors = new ArrayList<>();
         try {
             double num = Double.parseDouble(value);
-            distractors.add(NumberFormatUtil.format(num + 10)); // Motion usually involves larger steps
-            distractors.add(NumberFormatUtil.format(num - 10));
-            distractors.add(NumberFormatUtil.format(num * 2));
-            distractors.add("0");
-            distractors.add(NumberFormatUtil.format(-num));
+            distractors.add(QuestionText.fromText(NumberFormatUtil.format(num + 10))); // Motion usually involves larger steps
+            distractors.add(QuestionText.fromText(NumberFormatUtil.format(num - 10)));
+            distractors.add(QuestionText.fromText(NumberFormatUtil.format(num * 2)));
+            distractors.add(QuestionText.fromText("0"));
+            distractors.add(QuestionText.fromText(NumberFormatUtil.format(-num)));
         } catch (NumberFormatException e) {
-            distractors.add("0");
-            distractors.add("100");
-            distractors.add("-100");
+            distractors.add(QuestionText.fromText("0"));
+            distractors.add(QuestionText.fromText("100"));
+            distractors.add(QuestionText.fromText("-100"));
         }
         return distractors;
     }

@@ -40,8 +40,9 @@ class ScriptsForActorTest implements FinderTest, JsonTest {
         Set<Question> questions = runFinder(prog, new ScriptsForActor(), false);
         assertThat(questions.size()).isEqualTo(2);
 
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
         for (Question question : questions) {
-            assertThat(question.getCorrectAnswers()).contains("0");
+            assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("0");
         }
     }
 
@@ -54,7 +55,7 @@ class ScriptsForActorTest implements FinderTest, JsonTest {
         IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
 
         for (Question question : questions) {
-            assertThat(question.getCorrectAnswers()).contains("1");
+            assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("1");
             assertThat(question.getQuestionText(translator)).contains("Stage");
         }
     }
@@ -65,8 +66,9 @@ class ScriptsForActorTest implements FinderTest, JsonTest {
         Set<Question> questions = runFinder(prog, new ScriptsForActor(), false);
         assertThat(questions.size()).isEqualTo(1);
 
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
         for (Question question : questions) {
-            assertThat(question.getCorrectAnswers()).contains("2");
+            assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("2");
         }
     }
 
@@ -76,11 +78,13 @@ class ScriptsForActorTest implements FinderTest, JsonTest {
         Set<Question> questions = runFinder(prog, new ScriptsForActor(), false);
         assertThat(questions.size()).isEqualTo(2);
 
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
         for (Question question : questions) {
-            if (question.getActorName().equals("Sprite1"))
-                assertThat(question.getCorrectAnswers()).contains("6");
-            else
-                assertThat(question.getCorrectAnswers()).contains("2");
+            if (question.getActorName().equals("Sprite1")) {
+                assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("6");
+            } else {
+                assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("2");
+            }
         }
     }
 }

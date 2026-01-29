@@ -50,7 +50,8 @@ public class BlockControllingLoop extends AbstractQuestionFinder {
         super.visit(node);
 
         if (loopFound && !choices.isEmpty()) {
-            builder.withChoices(getChoicesList()).withCorrectAnswers(getAnswersList());
+            builder.withChoices(generateMultipleChoiceOptions(answers, choices))
+                    .withCorrectAnswers(getAnswersList());
             addQuestion(builder);
         }
     }

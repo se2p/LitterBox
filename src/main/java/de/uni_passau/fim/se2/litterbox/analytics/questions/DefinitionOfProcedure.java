@@ -72,7 +72,8 @@ public class DefinitionOfProcedure extends AbstractQuestionFinder {
                 currentActor = actorForCall.get(stmt);
 
                 QuestionBuilder builder = prepareQuestionBuilder(stmt)
-                        .withChoices(getChoicesList())
+                        .withChoices(generateMultipleChoiceOptions(
+                                Set.of(wrappedScratchBlocks(procedures.get(ident))), choices))
                         .withCorrectAnswers(wrappedScratchBlocks(procedures.get(ident)));
                 addQuestion(builder);
             }

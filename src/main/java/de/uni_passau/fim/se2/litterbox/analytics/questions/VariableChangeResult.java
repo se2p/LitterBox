@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
@@ -40,49 +41,56 @@ public class VariableChangeResult extends AbstractQuestionFinder {
     @Override
     public void visit(SetVariableTo node) {
         String varName = getVariableName(node.getIdentifier());
-        String value = ScratchBlocksVisitor.of(node.getExpr());
+        String value = cleanValue(ScratchBlocksVisitor.of(node.getExpr()));
+        if ("true".equalsIgnoreCase(value)) {
+            value = "true_value";
+        } else if ("false".equalsIgnoreCase(value)) {
+            value = "false_value";
+        }
 
-        List<String> distractors = generateDistractorsForValue(value);
-        List<String> options = generateMultipleChoiceOptions(Collections.singletonList(value), distractors);
+        List<TranslatableText> distractors = generateDistractorsForValue(value);
+        List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(
+                Collections.singletonList(QuestionText.fromText(value)), distractors);
 
         QuestionBuilder builder = prepareQuestionBuilder(node)
                 .withQuestionText(QuestionText.fromKey(getName()))
                 .withQuestionParameter(QuestionText.VARIABLE, varName)
-                .withChoices(options)
-                .withCorrectAnswers(Collections.singletonList(value));
+                .withTranslatableChoices(options)
+                .withTranslatableCorrectAnswers(Collections.singletonList(QuestionText.fromText(value)));
         addQuestion(builder);
     }
 
     @Override
     public void visit(ChangeVariableBy node) {
         String varName = getVariableName(node.getIdentifier());
-        String value = ScratchBlocksVisitor.of(node.getExpr());
+        String value = cleanValue(ScratchBlocksVisitor.of(node.getExpr()));
+        // ...
 
-        String changeDesc;
-        List<String> distractors = new ArrayList<>();
+        TranslatableText changeDesc;
+        List<TranslatableText> distractors = new ArrayList<>();
 
         if (value.startsWith("-")) {
             String absVal = value.substring(1);
-            changeDesc = "It decreases by " + absVal;
-            distractors.add("It increases by " + absVal);
-            distractors.add("It sets the value to " + value);
-            distractors.add("It sets the value to " + absVal);
+            changeDesc = QuestionText.fromKey("it_decreases_by").withQuestionParameter("VALUE", absVal);
+            distractors.add(QuestionText.fromKey("it_increases_by").withQuestionParameter("VALUE", absVal));
+            distractors.add(QuestionText.fromKey("it_sets_the_value_to").withQuestionParameter("VALUE", value));
+            distractors.add(QuestionText.fromKey("it_sets_the_value_to").withQuestionParameter("VALUE", absVal));
         } else {
-            changeDesc = "It increases by " + value;
-            distractors.add("It decreases by " + value);
-            distractors.add("It sets the value to " + value);
-            distractors.add("It sets the value to -" + value);
+            changeDesc = QuestionText.fromKey("it_increases_by").withQuestionParameter("VALUE", value);
+            distractors.add(QuestionText.fromKey("it_decreases_by").withQuestionParameter("VALUE", value));
+            distractors.add(QuestionText.fromKey("it_sets_the_value_to").withQuestionParameter("VALUE", value));
+            distractors.add(QuestionText.fromKey("it_sets_the_value_to").withQuestionParameter("VALUE", "-" + value));
         }
 
-        distractors.add("It does not change");
+        distractors.add(QuestionText.fromKey("it_does_not_change"));
 
-        List<String> options = generateMultipleChoiceOptions(Collections.singletonList(changeDesc), distractors);
+        List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(Collections.singletonList(changeDesc), distractors);
 
         QuestionBuilder builder = prepareQuestionBuilder(node)
                 .withQuestionText(QuestionText.fromKey(getName()))
                 .withQuestionParameter(QuestionText.VARIABLE, varName)
-                .withChoices(options)
-                .withCorrectAnswers(Collections.singletonList(changeDesc));
+                .withTranslatableChoices(options)
+                .withTranslatableCorrectAnswers(Collections.singletonList(changeDesc));
         addQuestion(builder);
     }
 
@@ -93,29 +101,36 @@ public class VariableChangeResult extends AbstractQuestionFinder {
         return ScratchBlocksVisitor.of(id);
     }
 
-    private List<String> generateDistractorsForValue(String value) {
-        List<String> distractors = new ArrayList<>();
+    private List<TranslatableText> generateDistractorsForValue(String value) {
+        List<TranslatableText> distractors = new ArrayList<>();
         try {
             double num = Double.parseDouble(value);
-            distractors.add(String.valueOf(num + 1));
-            distractors.add(String.valueOf(num - 1));
-            distractors.add(String.valueOf(num * 2));
-            distractors.add("0");
-            distractors.add(String.valueOf(-num));
+            distractors.add(QuestionText.fromText(String.valueOf(num + 1)));
+            distractors.add(QuestionText.fromText(String.valueOf(num - 1)));
+            distractors.add(QuestionText.fromText(String.valueOf(num * 2)));
+            distractors.add(QuestionText.fromText("0"));
+            distractors.add(QuestionText.fromText(String.valueOf(-num)));
         } catch (NumberFormatException e) {
             // Not a number
-            if ("true".equalsIgnoreCase(value)) {
-                distractors.add("false");
-            } else if ("false".equalsIgnoreCase(value)) {
-                distractors.add("true");
+            if ("true_value".equals(value)) {
+                distractors.add(QuestionText.fromKey("false_value"));
+            } else if ("false_value".equals(value)) {
+                distractors.add(QuestionText.fromKey("true_value"));
             } else {
-                distractors.add("0");
-                distractors.add("1");
-                distractors.add("");
-                distractors.add(value + "1");
+                distractors.add(QuestionText.fromText("0"));
+                distractors.add(QuestionText.fromText("1"));
+                distractors.add(QuestionText.fromText(""));
+                distractors.add(QuestionText.fromText(value + "1"));
             }
         }
         return distractors;
+    }
+
+    private String cleanValue(String val) {
+        if (val.startsWith("(") && val.endsWith(")")) {
+            return val.substring(1, val.length() - 1);
+        }
+        return val;
     }
 
     @Override

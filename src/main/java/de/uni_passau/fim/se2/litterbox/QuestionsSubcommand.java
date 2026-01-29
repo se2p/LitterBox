@@ -179,24 +179,21 @@ public class QuestionsSubcommand extends Main.LitterBoxSubcommand {
             effectiveShowAnswers = teacherMode;
         }
 
-        return new QuestionAnalyzer(
-                translator,
-                commonOptions.outputPath,
-                commonOptions.deleteProject,
-                questionFinders,
-                programDimensions,
-                scopes,
-                maxQuestions,
-                effectiveBalanced,
-                perCell,
-                shuffle,
-                seed,
-                effectiveShowAnswers,
-                effectiveTeacherMode,
-                effectiveExportMode,
-                evaluateFile,
-                llmEval,
-                exportFormat
-        );
+        return new QuestionAnalyzer.Builder(translator, commonOptions.outputPath)
+                .withDeleteProject(commonOptions.deleteProject)
+                .withQuestionFinders(questionFinders)
+                .withDimensionFilter(programDimensions)
+                .withScopeFilter(scopes)
+                .withMaxQuestions(maxQuestions)
+                .withBalanced(effectiveBalanced)
+                .withPerCell(perCell)
+                .withShuffle(shuffle)
+                .withSeed(seed)
+                .withShowAnswers(effectiveShowAnswers)
+                .withTeacherMode(effectiveTeacherMode)
+                .withExportMode(effectiveExportMode)
+                .withEvaluation(evaluateFile, llmEval)
+                .withExportFormat(effectiveFormat)
+                .build();
     }
 }

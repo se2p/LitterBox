@@ -33,10 +33,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 
@@ -56,8 +53,8 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
 
     @Override
     public void visit(Program node) {
-        scriptsForEvent = new HashMap<>();
-        eventStatements = new HashMap<>();
+        scriptsForEvent = new LinkedHashMap<>();
+        eventStatements = new LinkedHashMap<>();
         scriptForStmt = new HashMap<>();
         actorForStmt = new HashMap<>();
 
@@ -74,7 +71,7 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
                 currentActor = actorForStmt.get(stmt);
 
                 QuestionBuilder builder = prepareQuestionBuilder(stmt)
-                        .withChoices(getChoicesList())
+                        .withChoices(generateMultipleChoiceOptions(answers, choices))
                         .withCorrectAnswers(getAnswersList());
                 addQuestion(builder);
             }
@@ -92,7 +89,7 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
             event = ScratchBlocksVisitor.of(node);
         }
         if (!(node instanceof Never)) {
-            scriptsForEvent.computeIfAbsent(event, k -> new HashSet<>()).add(wrappedScratchBlocks(currentScript));
+            scriptsForEvent.computeIfAbsent(event, k -> new LinkedHashSet<>()).add(wrappedScratchBlocks(currentScript));
         }
     }
 

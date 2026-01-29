@@ -23,7 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -38,7 +38,7 @@ public class PurposeOfVariable extends AbstractQuestionFinder {
 
     @Override
     public void visit(Program node) {
-        variables = new HashSet<>();
+        variables = new LinkedHashSet<>();
         super.visit(node);
         currentScript = null;
         currentProcedure = null;

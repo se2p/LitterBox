@@ -76,10 +76,12 @@ public class CloneCreatorsTest implements JsonTest {
         Assertions.assertEquals(1, questions.size());
         Question q = questions.iterator().next();
 
-        // If "myself" is resolved to the actor name, and parser assigns "Sprite1"
-        String correct = q.getCorrectAnswers().iterator().next();
-
         IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
+
+        // If "myself" is resolved to the actor name, and parser assigns "Sprite1"
+        // We need to resolve the TranslatableText choice
+        String correct = q.getCorrectAnswers().iterator().next().resolveText(translator, translator::getInfo);
+
         Assertions.assertTrue(q.getQuestionText(translator).contains("Which sprite creates clones of '" + correct + "'?"));
     }
 }

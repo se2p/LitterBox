@@ -22,14 +22,20 @@ import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
 class IfElseStatementExecutionTest implements FinderTest, JsonTest {
+
+    private final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
+
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
         assertThatFinderReports(0, new IfElseStatementExecution(), "./src/test/fixtures/emptyProject.json");
@@ -76,10 +82,13 @@ class IfElseStatementExecutionTest implements FinderTest, JsonTest {
         Set<Question> questions = runFinder(prog, new IfElseStatementExecution(), false);
 
         for (Question question : questions) {
-            String questionText = question.getQuestionText();
+            String questionText = question.getQuestionText(translator);
             assertThat(question.hasCorrectAnswers()).isTrue();
+            // Check that the question text contains the localized condition status
+            assertThat(questionText).containsMatch("TRUE|FALSE");
             // Check that the correct answer contains scratchblocks code
-            assertThat(question.getCorrectAnswers().get(0)).isNotEmpty();
+            String correct = question.getCorrectAnswers().get(0).resolveText(translator, translator::getInfo);
+            assertThat(correct).isNotEmpty();
         }
     }
 }

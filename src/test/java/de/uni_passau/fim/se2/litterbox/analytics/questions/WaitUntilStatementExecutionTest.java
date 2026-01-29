@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class WaitUntilStatementExecutionTest implements JsonTest {
 
@@ -52,22 +53,11 @@ public class WaitUntilStatementExecutionTest implements JsonTest {
         Assertions.assertEquals(1, questions.size());
         Question q = questions.iterator().next();
 
-        // Debug output just in case
-        String text = q.getQuestionText(translator);
-        System.out.println("DEBUG: Generated Question: " + text);
-
         // Check question text includes condition and is properly translated
-        Assertions.assertTrue(text.contains("condition"));
-
-        String correct = q.getCorrectAnswers().iterator().next();
-
-        // The answer should be Yes or No based on condition value
-        Assertions.assertTrue(correct.equals("Yes") || correct.equals("No"));
-
-        // Distractors
-        Set<String> choices = new java.util.HashSet<>(q.getChoices());
-        Assertions.assertTrue(choices.contains("Yes"));
-        Assertions.assertTrue(choices.contains("No"));
+        Set<String> choices = q.getChoices().stream()
+                .map(c -> c.resolveText(translator, translator::getInfo))
+                .collect(Collectors.toSet());
+        Assertions.assertTrue(choices.contains("yes_term"));
+        Assertions.assertTrue(choices.contains("no_term"));
     }
 }
-

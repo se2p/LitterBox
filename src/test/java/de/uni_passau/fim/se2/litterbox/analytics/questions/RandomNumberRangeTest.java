@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class RandomNumberRangeTest implements JsonTest {
 
@@ -50,13 +51,15 @@ public class RandomNumberRangeTest implements JsonTest {
 
         IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
         Assertions.assertTrue(q.getQuestionText(translator).startsWith("Which of these values could this block return?"));
-        String correctAnswer = q.getCorrectAnswers().iterator().next();
+        String correctAnswer = q.getCorrectAnswers().iterator().next().resolveText(translator, translator::getInfo);
 
         // Correct answer should be one of the bounds or inside. Finder uses max.
         Assertions.assertEquals("10", correctAnswer);
 
         // Distractors should include 11, 0, 0.5 (or decimal)
-        Set<String> choices = new java.util.HashSet<>(q.getChoices());
+        Set<String> choices = q.getChoices().stream()
+                .map(c -> c.resolveText(translator, translator::getInfo))
+                .collect(Collectors.toSet());
 
         Assertions.assertTrue(choices.contains("10"));
         Assertions.assertTrue(choices.contains("11"));

@@ -52,10 +52,9 @@ public class CompoundLogicEvaluationTest implements JsonTest {
 
         IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
         Assertions.assertTrue(q.getQuestionText(translator).contains("What must happen for the code inside the 'if' block to execute?"));
-        String correctAnswer = q.getCorrectAnswers().iterator().next();
+        String correctAnswer = q.getCorrectAnswers().iterator().next().resolveText(translator, translator::getInfo);
 
-        // Expected formatting: <key [space v] pressed?> AND <mouse down?>
-        // ScratchBlocksVisitor emits standard format.
+        // Expected formatting: binary_expression|OP1=<key [space v] pressed?>|OPERATOR=and_operator|OP2=<mouse down?>
         Assertions.assertTrue(correctAnswer.contains("AND"));
         Assertions.assertTrue(correctAnswer.contains("pressed?") && correctAnswer.contains("mouse down?"));
     }
@@ -76,10 +75,13 @@ public class CompoundLogicEvaluationTest implements JsonTest {
         Set<Question> questions = finder.check(program);
 
         Assertions.assertEquals(1, questions.size());
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
         Question q = questions.iterator().next();
 
-        String correctAnswer = q.getCorrectAnswers().iterator().next();
+        Assertions.assertTrue(q.getQuestionText(translator).contains("What must happen for the code inside the 'if' block to execute?"));
+        String correctAnswer = q.getCorrectAnswers().iterator().next().resolveText(translator, translator::getInfo);
+
         Assertions.assertTrue(correctAnswer.contains("OR"));
-        Assertions.assertTrue(correctAnswer.contains("=") && correctAnswer.contains("<"));
+        Assertions.assertTrue(correctAnswer.contains("score") && correctAnswer.contains("lives"));
     }
 }
