@@ -43,7 +43,10 @@ public class IfThenStatementExecution extends AbstractQuestionFinder {
             );
 
             QuestionBuilder builder = prepareQuestionBuilder(node)
-                    .withQuestionText(ScratchBlocksVisitor.of(statement) + " when " + ScratchBlocksVisitor.of(condition) + " is " + String.valueOf(conditionValue).toUpperCase())
+                    .withQuestionText(QuestionText.fromKey(getName()))
+                    .withQuestionParameter(QuestionText.STATEMENT, ScratchBlocksVisitor.of(statement))
+                    .withQuestionParameter(QuestionText.CONDITION, ScratchBlocksVisitor.of(condition))
+                    .withQuestionParameter(QuestionText.VARIABLE, String.valueOf(conditionValue).toUpperCase())
                     .withCorrectAnswers(conditionValue ? "yes" : "no");
             addQuestion(builder);
         }

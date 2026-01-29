@@ -31,6 +31,8 @@ public final class IssueTranslator {
     private final ResourceBundle hints;
     private final ResourceBundle names;
     private final ResourceBundle general;
+    private final ResourceBundle questionNames;
+    private final ResourceBundle questionTexts;
 
     public enum GeneralTerm {
         SIZE("size"),
@@ -76,6 +78,8 @@ public final class IssueTranslator {
         names = loadBundle("IssueNames", locale);
         hints = loadBundle("IssueHints", locale);
         general = loadBundle("GeneralTerms", locale);
+        questionNames = loadBundleOptional("QuestionNames", locale);
+        questionTexts = loadBundleOptional("QuestionTexts", locale);
     }
 
     private ResourceBundle loadBundle(final String bundleName, final Locale locale) {
@@ -95,6 +99,19 @@ public final class IssueTranslator {
                     + locale.toLanguageTag()
                     + ". Defaulting to English.");
             return ResourceBundle.getBundle(bundleName, Locale.ENGLISH);
+        }
+    }
+
+    private ResourceBundle loadBundleOptional(final String bundleName, final Locale locale) {
+        try {
+            final ResourceBundle bundle = ResourceBundle.getBundle(bundleName, locale);
+            if (bundle.getLocale().equals(locale)) {
+                return bundle;
+            } else {
+                return ResourceBundle.getBundle(bundleName, Locale.ENGLISH);
+            }
+        } catch (MissingResourceException e) {
+            return null;
         }
     }
 
@@ -119,13 +136,33 @@ public final class IssueTranslator {
     }
 
     /**
+     * Returns a translated version of the question text for a given finder.
+     *
+     * @param finderName for which a translated question text should be retrieved
+     * @return translated question text, or the finderName if not found
+     */
+    public String getQuestionText(String finderName) {
+        if (questionTexts != null && questionTexts.containsKey(finderName)) {
+            return questionTexts.getString(finderName);
+        }
+        return finderName;
+    }
+
+    /**
      * Returns a translated version of the name for a given finder.
+     * Falls back to QuestionNames if not found in IssueNames.
      *
      * @param finderName for which a translated name should be retrieved from the resource bundle
      * @return translated name
      */
     public String getName(String finderName) {
-        return names.getString(finderName);
+        if (names.containsKey(finderName)) {
+            return names.getString(finderName);
+        }
+        if (questionNames != null && questionNames.containsKey(finderName)) {
+            return questionNames.getString(finderName);
+        }
+        return finderName;
     }
 
     /**

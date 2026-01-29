@@ -19,22 +19,30 @@
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.report.QuestionDTO;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Checks student answers against expected answers for comprehension questions.
  */
 public class AnswerChecker {
 
+    private static final Logger log = Logger.getLogger(AnswerChecker.class.getName());
+
     private final LLMAnswerEvaluator llmEvaluator;
     private final double numericTolerance;
+    private final IssueTranslator translator;
 
     /**
      * Creates an AnswerChecker without LLM evaluation.
      */
     public AnswerChecker() {
-        this(null, 0.0);
+        this(null, 0.0, null);
     }
 
     /**
@@ -44,8 +52,20 @@ public class AnswerChecker {
      * @param numericTolerance Tolerance for numeric answers (e.g., 0.01 for 1% tolerance)
      */
     public AnswerChecker(LLMAnswerEvaluator llmEvaluator, double numericTolerance) {
+        this(llmEvaluator, numericTolerance, null);
+    }
+
+    /**
+     * Creates an AnswerChecker with optional LLM evaluation and localization.
+     *
+     * @param llmEvaluator     Optional LLM evaluator for free text questions
+     * @param numericTolerance Tolerance for numeric answers (e.g., 0.01 for 1% tolerance)
+     * @param translator       Optional translator for localized feedback messages
+     */
+    public AnswerChecker(LLMAnswerEvaluator llmEvaluator, double numericTolerance, IssueTranslator translator) {
         this.llmEvaluator = llmEvaluator;
         this.numericTolerance = numericTolerance;
+        this.translator = translator;
     }
 
     /**
@@ -70,13 +90,29 @@ public class AnswerChecker {
             String studentAnswer = studentAnswers.get(question.id());
             if (studentAnswer == null) {
                 // No answer provided
-                results.add(AnswerResult.simple(
-                        question.id(),
-                        question.questionType(),
-                        false,
-                        null,
-                        formatExpectedAnswers(question.correctAnswers())
-                ));
+                String feedback = null;
+                if (llmEvaluator != null) {
+                    feedback = llmEvaluator.generateHint(question);
+                }
+
+                if (feedback != null && !feedback.isEmpty()) {
+                    results.add(AnswerResult.withFeedback(
+                            question.id(),
+                            question.questionType(),
+                            false,
+                            null,
+                            formatExpectedAnswers(question.correctAnswers()),
+                            feedback
+                    ));
+                } else {
+                    results.add(AnswerResult.simple(
+                            question.id(),
+                            question.questionType(),
+                            false,
+                            null,
+                            formatExpectedAnswers(question.correctAnswers())
+                    ));
+                }
                 continue;
             }
 
@@ -101,33 +137,38 @@ public class AnswerChecker {
 
     private AnswerResult checkMultipleChoice(QuestionDTO question, String studentAnswer) {
         if (question.correctAnswers() == null || question.correctAnswers().isEmpty()) {
-            // No correct answer defined, can't check
-            return AnswerResult.simple(question.id(), question.questionType(), false, studentAnswer, null);
+            return AnswerResult.withFeedback(question.id(), question.questionType(), false, studentAnswer, null,
+                    getFeedback("evaluation_no_expected_answer"));
         }
 
-        // Normalize both student answer and correct answers for comparison
         String normalizedStudent = normalizeAnswer(studentAnswer);
         boolean correct = question.correctAnswers().stream()
                 .map(this::normalizeAnswer)
                 .anyMatch(expected -> expected.equals(normalizedStudent));
 
-        return AnswerResult.simple(
+        String feedback = correct
+                ? getFeedback("evaluation_feedback_correct_choice")
+                : getFeedback("evaluation_feedback_wrong_choice");
+
+        return AnswerResult.withFeedback(
                 question.id(),
                 question.questionType(),
                 correct,
                 studentAnswer,
-                formatExpectedAnswers(question.correctAnswers())
+                formatExpectedAnswers(question.correctAnswers()),
+                feedback
         );
     }
 
     private AnswerResult checkNumeric(QuestionDTO question, String studentAnswer) {
         if (question.correctAnswers() == null || question.correctAnswers().isEmpty()) {
-            return AnswerResult.simple(question.id(), question.questionType(), false, studentAnswer, null);
+            return AnswerResult.withFeedback(question.id(), question.questionType(), false, studentAnswer, null,
+                    getFeedback("evaluation_no_expected_answer"));
         }
 
         try {
             double studentValue = Double.parseDouble(studentAnswer.trim());
-            double expectedValue = Double.parseDouble(question.correctAnswers().get(0).trim());
+            double expectedValue = Double.parseDouble(question.correctAnswers().getFirst().trim());
 
             boolean correct;
             if (numericTolerance > 0) {
@@ -136,35 +177,41 @@ public class AnswerChecker {
                 correct = studentValue == expectedValue;
             }
 
-            return AnswerResult.simple(
+            String feedback = correct
+                    ? getFeedback("evaluation_feedback_correct_number")
+                    : getFeedback("evaluation_feedback_wrong_number");
+
+            return AnswerResult.withFeedback(
                     question.id(),
                     question.questionType(),
                     correct,
                     studentAnswer,
-                    question.correctAnswers().get(0)
+                    question.correctAnswers().getFirst(),
+                    feedback
             );
         } catch (NumberFormatException e) {
-            // Can't parse as number
-            return AnswerResult.simple(
+            return AnswerResult.withFeedback(
                     question.id(),
                     question.questionType(),
                     false,
                     studentAnswer,
-                    question.correctAnswers().get(0)
+                    question.correctAnswers().getFirst(),
+                    getFeedback("evaluation_feedback_invalid_number")
             );
         }
     }
 
     private AnswerResult checkYesNo(QuestionDTO question, String studentAnswer) {
         if (question.correctAnswers() == null || question.correctAnswers().isEmpty()) {
-            return AnswerResult.simple(question.id(), question.questionType(), false, studentAnswer, null);
+            return AnswerResult.withFeedback(question.id(), question.questionType(), false, studentAnswer, null,
+                    getFeedback("evaluation_no_expected_answer"));
         }
 
         String normalized = studentAnswer.trim().toLowerCase();
         boolean studentSaysYes = normalized.equals("yes") || normalized.equals("true") || normalized.equals("y");
         boolean studentSaysNo = normalized.equals("no") || normalized.equals("false") || normalized.equals("n");
 
-        String expectedAnswer = question.correctAnswers().get(0).toLowerCase();
+        String expectedAnswer = question.correctAnswers().getFirst().toLowerCase();
         boolean expectedYes = expectedAnswer.contains("yes") || expectedAnswer.equals("true");
 
         boolean correct;
@@ -176,37 +223,68 @@ public class AnswerChecker {
             correct = false;
         }
 
-        return AnswerResult.simple(
+        String feedback = correct
+                ? getFeedback("evaluation_feedback_correct_yesno")
+                : getFeedback("evaluation_feedback_wrong_yesno");
+
+        return AnswerResult.withFeedback(
                 question.id(),
                 question.questionType(),
                 correct,
                 studentAnswer,
-                question.correctAnswers().get(0)
+                question.correctAnswers().getFirst(),
+                feedback
         );
     }
 
     private AnswerResult checkFreeText(QuestionDTO question, String studentAnswer) {
-        // If we have an LLM evaluator, use it
+        // First try simple string matching if there are expected answers
+        // This handles cases like SetVariable where the answer is a simple value
+        if (question.correctAnswers() != null && !question.correctAnswers().isEmpty()) {
+            String normalizedStudent = normalizeAnswer(studentAnswer);
+            List<String> normalizedExpected = question.correctAnswers().stream()
+                    .map(this::normalizeAnswer)
+                    .toList();
+            boolean correct = normalizedExpected.stream()
+                    .anyMatch(expected -> normalizedStudent.equals(expected)
+                            || normalizedStudent.contains(expected)
+                            || expected.contains(normalizedStudent));
+
+            // If string matching found a match, return success
+            if (correct) {
+                return new AnswerResult(
+                        question.id(),
+                        question.questionType(),
+                        true,
+                        studentAnswer,
+                        formatExpectedAnswers(question.correctAnswers()),
+                        1.0,
+                        getFeedback("evaluation_feedback_correct"),
+                        null
+                );
+            }
+
+            // Debug logging for troubleshooting
+            log.fine("FREE_TEXT no exact match for question " + question.id() + " (" + question.finder() + "): "
+                    + "student='" + normalizedStudent + "', expected=" + normalizedExpected);
+        }
+
+        // If no exact match and we have an LLM evaluator, use it for semantic evaluation
         if (llmEvaluator != null) {
             LLMEvaluation evaluation = llmEvaluator.evaluate(question, studentAnswer);
             return AnswerResult.withLLM(question.id(), question.questionType(), studentAnswer, evaluation);
         }
 
-        // Without LLM, we can only do simple string matching if there are expected answers
+        // No match found and no LLM available - mark as incorrect with review note
         if (question.correctAnswers() != null && !question.correctAnswers().isEmpty()) {
-            String normalizedStudent = normalizeAnswer(studentAnswer);
-            boolean correct = question.correctAnswers().stream()
-                    .map(this::normalizeAnswer)
-                    .anyMatch(expected -> normalizedStudent.contains(expected) || expected.contains(normalizedStudent));
-
             return new AnswerResult(
                     question.id(),
                     question.questionType(),
-                    correct,
+                    false,
                     studentAnswer,
                     formatExpectedAnswers(question.correctAnswers()),
-                    correct ? 1.0 : 0.0,
-                    "Free text answer requires manual review.",
+                    0.0,
+                    getFeedback("evaluation_feedback_freetext_review"),
                     null
             );
         }
@@ -219,22 +297,57 @@ public class AnswerChecker {
                 studentAnswer,
                 null,
                 0.0,
-                "Free text answer requires manual review.",
+                getFeedback("evaluation_feedback_freetext_review"),
                 null
         );
     }
 
+    private String getFeedback(String key) {
+        if (translator != null) {
+            return translator.getInfo(key);
+        }
+        // Default English fallback messages
+        return switch (key) {
+            case "evaluation_feedback_correct_choice" -> "Correct! You selected the right answer.";
+            case "evaluation_feedback_wrong_choice" ->
+                    "Incorrect. Review the code carefully and try to understand what each block does.";
+            case "evaluation_feedback_correct_number" -> "Correct! You calculated the right value.";
+            case "evaluation_feedback_wrong_number" ->
+                    "Incorrect. Trace through the code step by step to find the correct value.";
+            case "evaluation_feedback_invalid_number" -> "Invalid answer. Please enter a number.";
+            case "evaluation_feedback_correct_yesno" -> "Correct! Your understanding is right.";
+            case "evaluation_feedback_wrong_yesno" ->
+                    "Incorrect. Think about what the code actually does when executed.";
+            case "evaluation_feedback_freetext_review" -> "This answer requires manual review by a teacher.";
+            case "evaluation_no_expected_answer" -> "No expected answer defined for this question.";
+            default -> key;
+        };
+    }
+
     private String normalizeAnswer(String answer) {
         if (answer == null) return "";
-        return answer.trim()
-                .toLowerCase()
+        String normalized = answer
                 .replace("[sbi]", "")
                 .replace("[/sbi]", "")
                 .replace("[var]", "")
                 .replace("[/var]", "")
                 .replace("[scratchblocks]", "")
                 .replace("[/scratchblocks]", "")
-                .replaceAll("\\s+", " ");
+                .replaceAll("\\s+", " ")
+                .trim()
+                .toLowerCase();
+
+        // Strip outer parentheses used by scratchblocks for number/string values
+        // e.g., "(0)" -> "0", "(hello)" -> "hello"
+        if (normalized.startsWith("(") && normalized.endsWith(")")) {
+            String inner = normalized.substring(1, normalized.length() - 1);
+            // Only strip if it's a simple value (no nested parentheses that would be unbalanced)
+            if (!inner.contains("(") && !inner.contains(")")) {
+                normalized = inner;
+            }
+        }
+
+        return normalized;
     }
 
     private String formatExpectedAnswers(List<String> answers) {

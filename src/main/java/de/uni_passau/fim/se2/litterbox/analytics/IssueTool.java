@@ -310,6 +310,7 @@ public class IssueTool {
             registerQuestionFinder(new IfBlockCondition(), questionFinders);
             registerQuestionFinder(new IfElseStatementExecution(), questionFinders);
             registerQuestionFinder(new IfThenStatementExecution(), questionFinders);
+            registerQuestionFinder(new MotionStatementExecution(), questionFinders);
             registerQuestionFinder(new PurposeOfBroadcast(), questionFinders);
             registerQuestionFinder(new PurposeOfForeverLoop(), questionFinders);
             registerQuestionFinder(new PurposeOfIfCondition(), questionFinders);
@@ -333,6 +334,7 @@ public class IssueTool {
             registerQuestionFinder(new StatementTriggersEvent(), questionFinders);
             registerQuestionFinder(new VariableForActor(), questionFinders);
             registerQuestionFinder(new VariableInScript(), questionFinders);
+            registerQuestionFinder(new WaitStatementExecution(), questionFinders);
         }
 
         return questionFinders;

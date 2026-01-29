@@ -55,7 +55,8 @@ public class RepeatTimesLiteralExecution extends AbstractQuestionFinder {
                     ASTNode stmt = getSingleStmt(node.getStmtList().getStmts().getFirst());
 
                     QuestionBuilder builder = prepareQuestionBuilder(stmt)
-                            .withQuestionText(ScratchBlocksVisitor.of(stmt))
+                            .withQuestionText(QuestionText.fromKey(getName()))
+                            .withQuestionParameter("STATEMENT", ScratchBlocksVisitor.of(stmt))
                             .withCorrectAnswers(String.valueOf(num.getValue()));
                     addQuestion(builder);
                 }

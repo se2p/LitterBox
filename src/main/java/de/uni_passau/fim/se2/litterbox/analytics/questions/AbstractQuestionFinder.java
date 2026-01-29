@@ -31,6 +31,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
+import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 import de.uni_passau.fim.se2.litterbox.utils.ScratchBlocksFormatUtil;
 
 import java.util.*;
@@ -214,7 +215,7 @@ public abstract class AbstractQuestionFinder implements QuestionFinder, ScratchV
     protected List<String> getChoicesList() {
         ArrayList<String> list = new ArrayList<>(choices);
         if (choices.size() > maxChoices) {
-            Collections.shuffle(list);
+            Randomness.shuffle(list);
             return list.subList(0, maxChoices);
         }
         return list;
@@ -237,7 +238,7 @@ public abstract class AbstractQuestionFinder implements QuestionFinder, ScratchV
     protected List<String> getAnswersList() {
         ArrayList<String> list = new ArrayList<>(answers);
         if (answers.size() > maxChoices) {
-            Collections.shuffle(list);
+            Randomness.shuffle(list);
             return list.subList(0, maxChoices);
         }
         return list;
@@ -250,6 +251,46 @@ public abstract class AbstractQuestionFinder implements QuestionFinder, ScratchV
      */
     protected String getAnswersString() {
         return String.join("|", getAnswersList());
+    }
+
+    /**
+     * Generates a robust list of multiple choice options.
+     * Ensures all correct answers are included (up to maxChoices) and fills the rest with distractors.
+     * The final list is shuffled.
+     *
+     * @param correctAnswers the correct answers
+     * @param distractors    potential distractors (pool)
+     * @return shuffled list of options
+     */
+    protected List<String> generateMultipleChoiceOptions(Collection<String> correctAnswers, Collection<String> distractors) {
+        Set<String> finalChoices = new LinkedHashSet<>();
+
+        // Add correct answers first (up to max)
+        List<String> correctList = new ArrayList<>(correctAnswers);
+        if (correctList.size() > maxChoices) {
+            Randomness.shuffle(correctList);
+            correctList = correctList.subList(0, maxChoices);
+        }
+        finalChoices.addAll(correctList);
+
+        // Fill remaining slots with distractors
+        if (finalChoices.size() < maxChoices) {
+            List<String> distractorList = new ArrayList<>(distractors);
+            distractorList.removeAll(finalChoices); // Don't duplicate correct answers
+            Randomness.shuffle(distractorList);
+
+            for (String d : distractorList) {
+                if (finalChoices.size() >= maxChoices) {
+                    break;
+                }
+                finalChoices.add(d);
+            }
+        }
+
+        // Final shuffle for display order
+        List<String> result = new ArrayList<>(finalChoices);
+        Randomness.shuffle(result);
+        return result;
     }
 
     // ScratchBlocks formatting helpers - delegate to utility class

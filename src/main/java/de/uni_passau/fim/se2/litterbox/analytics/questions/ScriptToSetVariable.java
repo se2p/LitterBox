@@ -50,7 +50,8 @@ public class ScriptToSetVariable extends AbstractQuestionFinder {
         if (!choices.isEmpty() && !variableAnswers.isEmpty()) {
             variableAnswers.forEach((variable, answer) -> {
                 QuestionBuilder builder = prepareQuestionBuilder()
-                        .withQuestionText("variable=" + variable)
+                        .withQuestionText(QuestionText.fromKey(getName()))
+                        .withQuestionParameter("VARIABLE", variable)
                         .withCorrectAnswers(answer)
                         .withChoices(getChoicesList());
                 addQuestion(builder);

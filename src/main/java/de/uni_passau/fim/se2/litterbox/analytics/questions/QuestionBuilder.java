@@ -19,9 +19,12 @@
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.analytics.FindingBuilder;
+import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
+import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,9 +37,10 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
     private QuestionType questionType;
     private ProgramDimension programDimension;
     private ScopeOfFocus scopeOfFocus;
-    private String questionText;
+    private QuestionText questionText;
     private List<String> choices;
     private List<String> correctAnswers;
+    private List<ScriptEntity> additionalScripts;
 
     /**
      * Sets the finder that is creating this question.
@@ -83,13 +87,55 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
     }
 
     /**
-     * Sets the question text.
+     * Sets the question text using a direct string.
+     * For full translation support, use {@link #withQuestionText(QuestionText)}.
      *
      * @param questionText the question text
      * @return this builder
      */
     public QuestionBuilder withQuestionText(String questionText) {
+        this.questionText = QuestionText.fromText(questionText);
+        return self();
+    }
+
+    /**
+     * Sets the question text using a QuestionText object.
+     * This enables key-based translation support with parameters.
+     *
+     * @param questionText the question text object
+     * @return this builder
+     */
+    public QuestionBuilder withQuestionText(QuestionText questionText) {
         this.questionText = questionText;
+        return self();
+    }
+
+    /**
+     * Sets a parameter on the question text.
+     * Only works if {@link #withQuestionText(QuestionText)} was called with a key-based QuestionText.
+     *
+     * @param key   the parameter name (e.g., "VARIABLE")
+     * @param value the parameter value
+     * @return this builder
+     */
+    public QuestionBuilder withQuestionParameter(String key, String value) {
+        if (questionText != null) {
+            questionText.setParameter(key, value);
+        }
+        return self();
+    }
+
+    /**
+     * Sets a parameter on the question text using a HintPlaceholder.
+     *
+     * @param key   the parameter name
+     * @param value the placeholder value
+     * @return this builder
+     */
+    public QuestionBuilder withQuestionParameter(String key, HintPlaceholder value) {
+        if (questionText != null) {
+            questionText.setParameter(key, value);
+        }
         return self();
     }
 
@@ -165,6 +211,21 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
         return self();
     }
 
+    /**
+     * Adds an additional script to be displayed with the question.
+     * Used when questions reference multiple scripts (e.g., comparing execution order).
+     *
+     * @param script the additional script
+     * @return this builder
+     */
+    public QuestionBuilder addAdditionalScript(ScriptEntity script) {
+        if (this.additionalScripts == null) {
+            this.additionalScripts = new ArrayList<>();
+        }
+        this.additionalScripts.add(script);
+        return self();
+    }
+
     private void validate() {
         if (finder == null) {
             throw new IllegalArgumentException("Finder not set.");
@@ -204,7 +265,7 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
         return scopeOfFocus;
     }
 
-    public String getQuestionText() {
+    public QuestionText getQuestionText() {
         return questionText;
     }
 
@@ -214,5 +275,9 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
 
     public List<String> getCorrectAnswers() {
         return correctAnswers;
+    }
+
+    public List<ScriptEntity> getAdditionalScripts() {
+        return additionalScripts != null ? additionalScripts : Collections.emptyList();
     }
 }

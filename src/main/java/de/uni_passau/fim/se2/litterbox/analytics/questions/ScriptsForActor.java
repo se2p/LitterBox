@@ -34,7 +34,8 @@ public class ScriptsForActor extends AbstractQuestionFinder {
         String actor = ScratchBlocksVisitor.of(node.getIdent());
         String actorText = "Stage".equals(actor) ? "Stage" : actor;
         QuestionBuilder builder = prepareQuestionBuilder()
-                .withQuestionText(actorText)
+                .withQuestionText(QuestionText.fromKey(getName()))
+                .withQuestionParameter("ACTOR", actorText)
                 .withCorrectAnswers(Integer.toString(node.getScripts().getSize()));
         addQuestion(builder);
     }

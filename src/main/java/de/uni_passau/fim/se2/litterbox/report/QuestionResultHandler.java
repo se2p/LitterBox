@@ -100,6 +100,37 @@ public interface QuestionResultHandler {
             boolean teacherMode,
             QuizExportFormat format
     ) {
+        return create(translator, output, showAnswers, teacherMode, false, null, false, format);
+    }
+
+    /**
+     * Factory method to create a handler with all options including evaluation mode.
+     *
+     * @param translator   The issue translator for localization
+     * @param output       The output path
+     * @param showAnswers  Whether to include answers in the output
+     * @param teacherMode  Whether to generate teacher version (highlighted answers vs interactive)
+     * @param exportMode   Whether to generate export-only quiz (no in-browser checking)
+     * @param evaluateFile Path to answers JSON file to evaluate (null for generation mode)
+     * @param llmEval      Whether to use LLM for evaluating free text answers
+     * @param format       The explicit export format (null to infer from filename)
+     * @return An appropriate QuestionResultHandler
+     */
+    static QuestionResultHandler create(
+            IssueTranslator translator,
+            Path output,
+            boolean showAnswers,
+            boolean teacherMode,
+            boolean exportMode,
+            Path evaluateFile,
+            boolean llmEval,
+            QuizExportFormat format
+    ) {
+        // Evaluation mode takes precedence
+        if (evaluateFile != null) {
+            return new EvaluationResultHandler(translator, output, evaluateFile, llmEval);
+        }
+
         // Determine format: explicit > inferred from filename > console
         QuizExportFormat effectiveFormat = format;
         if (effectiveFormat == null && output != null) {
@@ -111,7 +142,7 @@ public interface QuestionResultHandler {
 
         return switch (effectiveFormat) {
             case JSON -> new JSONQuestionResultHandler(output, showAnswers);
-            case HTML -> new HTMLJTEQuestionResultHandler(translator, output, showAnswers, teacherMode);
+            case HTML -> new HTMLJTEQuestionResultHandler(translator, output, showAnswers, teacherMode, exportMode);
             case CONSOLE -> new ConsoleQuestionResultHandler(translator, showAnswers);
         };
     }

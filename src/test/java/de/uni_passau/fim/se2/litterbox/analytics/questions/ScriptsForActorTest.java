@@ -22,9 +22,12 @@ import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -48,8 +51,11 @@ class ScriptsForActorTest implements FinderTest, JsonTest {
         Set<Question> questions = runFinder(prog, new ScriptsForActor(), false);
         assertThat(questions.size()).isEqualTo(1);
 
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
+
         for (Question question : questions) {
             assertThat(question.getCorrectAnswers()).contains("1");
+            assertThat(question.getQuestionText(translator)).contains("Stage");
         }
     }
 

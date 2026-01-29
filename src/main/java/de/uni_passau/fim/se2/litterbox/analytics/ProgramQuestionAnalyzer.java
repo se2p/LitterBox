@@ -18,13 +18,17 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.questions.*;
+import de.uni_passau.fim.se2.litterbox.analytics.questions.ProgramDimension;
+import de.uni_passau.fim.se2.litterbox.analytics.questions.Question;
+import de.uni_passau.fim.se2.litterbox.analytics.questions.QuestionFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.questions.ScopeOfFocus;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.report.QuestionDTO;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 import de.uni_passau.fim.se2.litterbox.utils.QuestionTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,6 +40,7 @@ public class ProgramQuestionAnalyzer implements ProgramAnalyzer<List<QuestionDTO
 
     private final List<QuestionFinder> questionFinders;
     private final QuestionTranslator questionTranslator;
+    private final IssueTranslator issueTranslator;
     private final Set<ProgramDimension> dimensionFilter;
     private final Set<ScopeOfFocus> scopeFilter;
     private final int maxQuestions;
@@ -56,6 +61,7 @@ public class ProgramQuestionAnalyzer implements ProgramAnalyzer<List<QuestionDTO
             Long seed
     ) {
         this.questionTranslator = new QuestionTranslator(translator.getLocale());
+        this.issueTranslator = translator;
         this.dimensionFilter = dimensionFilter;
         this.scopeFilter = scopeFilter;
         this.maxQuestions = maxQuestions;
@@ -82,6 +88,13 @@ public class ProgramQuestionAnalyzer implements ProgramAnalyzer<List<QuestionDTO
     @Override
     public List<QuestionDTO> analyze(Program program) {
         Preconditions.checkNotNull(program);
+
+        // Set the random seed for consistent question generation
+        // This ensures questions with random elements (like IfElseStatementExecution)
+        // are generated consistently when using the same seed
+        if (seed != null) {
+            Randomness.setSeed(seed);
+        }
 
         // Generate all questions from all finders
         List<Question> allQuestions = new ArrayList<>();
@@ -127,11 +140,8 @@ public class ProgramQuestionAnalyzer implements ProgramAnalyzer<List<QuestionDTO
     private QuestionDTO convertToDTO(Question question, int id) {
         QuestionFinder finder = question.getFinder();
 
-        // Get translated question text
-        String questionText = question.getQuestionText();
-        if (questionText == null || questionText.isEmpty()) {
-            questionText = questionTranslator.getText(finder.getName());
-        }
+        // Get translated question text with parameters substituted
+        String questionText = question.getQuestionText(issueTranslator);
 
         // Get choices and answers directly from the Question object
         List<String> choices = question.getChoices().isEmpty() ? null : new ArrayList<>(question.getChoices());
@@ -205,3 +215,4 @@ public class ProgramQuestionAnalyzer implements ProgramAnalyzer<List<QuestionDTO
         return selected;
     }
 }
+

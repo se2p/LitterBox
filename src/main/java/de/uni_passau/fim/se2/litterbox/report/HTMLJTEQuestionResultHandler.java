@@ -22,6 +22,10 @@ import de.uni_passau.fim.se2.litterbox.analytics.questions.ProgramDimension;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.QuestionType;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.ScopeOfFocus;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationIdentAsTypeStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
@@ -36,6 +40,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Outputs questions as a rich HTML report using JTE templates.
@@ -56,17 +61,23 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
     private final Path output;
     private final boolean showAnswers;
     private final boolean teacherMode;
+    private final boolean exportMode;
     private final List<ProjectQuestions> allProjects = new ArrayList<>();
 
     public HTMLJTEQuestionResultHandler(IssueTranslator translator, Path output, boolean showAnswers) {
-        this(translator, output, showAnswers, false);
+        this(translator, output, showAnswers, false, false);
     }
 
     public HTMLJTEQuestionResultHandler(IssueTranslator translator, Path output, boolean showAnswers, boolean teacherMode) {
+        this(translator, output, showAnswers, teacherMode, false);
+    }
+
+    public HTMLJTEQuestionResultHandler(IssueTranslator translator, Path output, boolean showAnswers, boolean teacherMode, boolean exportMode) {
         this.translator = translator;
         this.output = output;
         this.showAnswers = showAnswers;
         this.teacherMode = teacherMode;
+        this.exportMode = exportMode;
     }
 
     @Override
@@ -84,32 +95,31 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
                 .toList();
 
         Map<String, Integer> coverage = computeCoverage(questions);
-        
+
         // Collect unique sprites for filtering
         Set<String> sprites = questions.stream()
                 .map(QuestionDTO::sprite)
                 .filter(s -> s != null && !s.isEmpty())
                 .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
-        
+
         // Generate scratchblocks code for each sprite
         Map<String, String> spriteCode = generateSpriteCode(program);
-        
+
         // Generate sprite data (variables, lists) for each sprite
         Map<String, SpriteData> spriteData = generateSpriteData(program);
 
         allProjects.add(new ProjectQuestions(projectId, projectName, rendered, coverage, sprites, spriteCode, spriteData));
     }
-    
+
     private Map<String, String> generateSpriteCode(Program program) {
         Map<String, String> spriteCode = new LinkedHashMap<>();
         if (program == null) return spriteCode;
-        
+
         for (var actor : program.getActorDefinitionList().getDefinitions()) {
             String spriteName = actor.getIdent().getName();
-            
+
             // Generate scratchblocks code for scripts only (no declarations)
-            de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor visitor = 
-                    new de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor(false, true);
+            ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false, true);
             actor.accept(visitor);
             String code = visitor.getScratchBlocks();
             if (code != null && !code.trim().isEmpty()) {
@@ -124,30 +134,30 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
         }
         return spriteCode;
     }
-    
+
     private Map<String, SpriteData> generateSpriteData(Program program) {
         Map<String, SpriteData> spriteData = new LinkedHashMap<>();
         if (program == null) return spriteData;
-        
+
         for (var actor : program.getActorDefinitionList().getDefinitions()) {
             String spriteName = actor.getIdent().getName();
             var decls = actor.getDecls().getDeclarationStmts();
-            
+
             List<String> variables = new ArrayList<>();
             List<String> lists = new ArrayList<>();
-            
+
             for (var decl : decls) {
-                if (decl instanceof de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationIdentAsTypeStmt identDecl) {
+                if (decl instanceof DeclarationIdentAsTypeStmt identDecl) {
                     var ident = identDecl.getIdent();
-                    
-                    if (ident instanceof de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable var) {
+
+                    if (ident instanceof Variable var) {
                         variables.add(var.getName().getName());
-                    } else if (ident instanceof de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList list) {
+                    } else if (ident instanceof ScratchList list) {
                         lists.add(list.getName().getName());
                     }
                 }
             }
-            
+
             spriteData.put(spriteName, new SpriteData(variables, lists));
         }
         return spriteData;
@@ -174,6 +184,7 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
                 translator,
                 showAnswers,
                 teacherMode,
+                exportMode,
                 allProjects
         );
 
@@ -239,7 +250,7 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
         if (q.correctAnswers() != null && !q.correctAnswers().isEmpty()) {
             formattedAnswers = q.correctAnswers().stream()
                     .map(this::formatScratchBlocksNotation)
-                    .collect(java.util.stream.Collectors.joining(", "));
+                    .collect(Collectors.joining(", "));
         }
 
         // Determine if this question can be auto-checked
@@ -269,7 +280,7 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
     private boolean canCheckAnswer(QuestionType type, List<String> correctAnswers) {
         // Can only check if there are known correct answers
         boolean hasAnswers = correctAnswers != null && !correctAnswers.isEmpty();
-        
+
         if (type == QuestionType.MULTIPLE_CHOICE
                 || type == QuestionType.NUMBER
                 || type == QuestionType.YES_NO
@@ -310,11 +321,11 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
      */
     private String formatScratchBlocksNotation(String text) {
         if (text == null) return "";
-        
+
         // First escape HTML entities in the entire text, then wrap scratchblocks markers
         // We need to handle this carefully because the content might contain < > characters
         String escaped = escapeHtml(text);
-        
+
         // Convert inline scratchblocks notation to HTML ((?s) enables DOTALL mode for multiline)
         String formatted = escaped
                 .replaceAll("(?s)\\[sbi](.*?)\\[/sbi]", "<code class=\"scratchblocks\">$1</code>")
@@ -356,13 +367,26 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
 
     private String cleanScratchBlocksNotation(String text) {
         if (text == null) return "";
-        return text.replace("[sbi]", "")
+        String cleaned = text.replace("[sbi]", "")
                 .replace("[/sbi]", "")
                 .replace("[var]", "")
                 .replace("[/var]", "")
                 .replace("[scratchblocks]", "")
                 .replace("[/scratchblocks]", "")
+                .replaceAll("\\s+", " ")  // Collapse whitespace for consistent matching
                 .trim();
+
+        // Strip outer parentheses used by scratchblocks for number/string values
+        // e.g., "(0)" -> "0", "(hello)" -> "hello"
+        if (cleaned.startsWith("(") && cleaned.endsWith(")")) {
+            String inner = cleaned.substring(1, cleaned.length() - 1);
+            // Only strip if it's a simple value (no nested parentheses)
+            if (!inner.contains("(") && !inner.contains(")")) {
+                cleaned = inner;
+            }
+        }
+
+        return cleaned;
     }
 
     private String loadResource(String path) throws IOException {
@@ -398,6 +422,7 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
             IssueTranslator translator,
             boolean showAnswers,
             boolean teacherMode,
+            boolean exportMode,
             List<ProjectQuestions> projects
     ) {}
 
@@ -415,7 +440,7 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
             Map<String, String> spriteCode,
             Map<String, SpriteData> spriteData
     ) {}
-    
+
     public record SpriteData(
             List<String> variables,
             List<String> lists
@@ -439,5 +464,13 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
             Set<String> normalizedAnswers,
             String hint,
             boolean canCheck
-    ) {}
+    ) {
+        /**
+         * Returns true if this question expects multiple correct answers to be selected.
+         * Used to determine whether to render checkboxes (multi-select) or radio buttons (single-select).
+         */
+        public boolean isMultiSelect() {
+            return correctAnswers != null && correctAnswers.size() > 1;
+        }
+    }
 }

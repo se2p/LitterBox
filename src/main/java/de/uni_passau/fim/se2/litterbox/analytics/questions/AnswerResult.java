@@ -63,6 +63,29 @@ public record AnswerResult(
     }
 
     /**
+     * Creates a result with feedback but no LLM evaluation.
+     */
+    public static AnswerResult withFeedback(
+            int questionId,
+            QuestionType questionType,
+            boolean correct,
+            String providedAnswer,
+            String expectedAnswer,
+            String feedback
+    ) {
+        return new AnswerResult(
+                questionId,
+                questionType,
+                correct,
+                providedAnswer,
+                expectedAnswer,
+                correct ? 1.0 : 0.0,
+                feedback,
+                null
+        );
+    }
+
+    /**
      * Creates a result with LLM evaluation.
      */
     public static AnswerResult withLLM(

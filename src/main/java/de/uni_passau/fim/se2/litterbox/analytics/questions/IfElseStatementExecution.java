@@ -23,6 +23,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
+import java.util.Collections;
+
 /**
  * @QuestionType Multiple Choice
  * @NumAnswers 1
@@ -41,10 +43,17 @@ public class IfElseStatementExecution extends AbstractQuestionFinder {
             String thenStmts = wrappedScratchBlocks(node.getThenStmts());
             String elseStmts = wrappedScratchBlocks(node.getElseStmts());
 
+            String correct = conditionValue ? thenStmts : elseStmts;
+            String wrong = conditionValue ? elseStmts : thenStmts;
+
             QuestionBuilder builder = prepareQuestionBuilder(node)
-                    .withQuestionText(ScratchBlocksVisitor.of(condition) + " is " + String.valueOf(conditionValue).toUpperCase())
-                    .withCorrectAnswers(conditionValue ? thenStmts : elseStmts)
-                    .withChoices(conditionValue ? elseStmts : thenStmts);
+                    .withQuestionText(QuestionText.fromKey(getName()))
+                    .withQuestionParameter(QuestionText.CONDITION, ScratchBlocksVisitor.of(condition))
+                    .withQuestionParameter(QuestionText.VARIABLE, String.valueOf(conditionValue).toUpperCase())
+                    .withCorrectAnswers(correct)
+                    .withChoices(generateMultipleChoiceOptions(
+                            Collections.singletonList(correct),
+                            Collections.singletonList(wrong)));
             addQuestion(builder);
         }
     }

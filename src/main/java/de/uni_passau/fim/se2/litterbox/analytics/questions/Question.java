@@ -19,11 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Finding;
-import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
-import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
-import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,9 +35,10 @@ public class Question extends Finding {
     private final QuestionType questionType;
     private final ProgramDimension programDimension;
     private final ScopeOfFocus scopeOfFocus;
-    private final String questionText;
+    private final QuestionText questionText;
     private final List<String> choices;
     private final List<String> correctAnswers;
+    private final List<ScriptEntity> additionalScripts;
 
     /**
      * Creates a Question from a builder.
@@ -60,6 +58,9 @@ public class Question extends Finding {
                 : Collections.emptyList();
         this.correctAnswers = builder.getCorrectAnswers() != null
                 ? Collections.unmodifiableList(builder.getCorrectAnswers())
+                : Collections.emptyList();
+        this.additionalScripts = !builder.getAdditionalScripts().isEmpty()
+                ? Collections.unmodifiableList(builder.getAdditionalScripts())
                 : Collections.emptyList();
     }
 
@@ -105,12 +106,48 @@ public class Question extends Finding {
     }
 
     /**
-     * Returns the question text.
+     * Returns the QuestionText object containing the translatable question text.
      *
-     * @return the question text
+     * @return the question text object
      */
-    public String getQuestionText() {
+    public QuestionText getQuestionTextObject() {
         return questionText;
+    }
+
+    /**
+     * Returns the translated question text with parameters substituted.
+     *
+     * @param translator the translator for looking up text and params
+     * @return the translated question text
+     */
+    public String getQuestionText(final IssueTranslator translator) {
+        if (questionText == null) {
+            return "";
+        }
+        return questionText.getQuestionText(translator);
+    }
+
+    /**
+     * Returns the raw question text for backward compatibility.
+     * This returns the raw parameters string if using key-based text,
+     * or the literal text if using direct text.
+     *
+     * @return the raw question text or parameters string
+     * @deprecated Use {@link #getQuestionText(IssueTranslator)} for full translation support
+     */
+    @Deprecated
+    public String getQuestionText() {
+        if (questionText == null) {
+            return "";
+        }
+        // Return text content if available (direct text), otherwise empty
+        // The key-based approach uses getQuestionText(translator) instead
+        if (questionText.getTextContent() != null) {
+            return questionText.getTextContent();
+        }
+        // For key-based question text, return an empty string
+        // Callers should use getQuestionText(translator) for proper rendering
+        return "";
     }
 
     /**
@@ -156,5 +193,15 @@ public class Question extends Finding {
      */
     public String getBlockModelCell() {
         return programDimension.name() + "/" + scopeOfFocus.name();
+    }
+
+    /**
+     * Returns additional scripts to be displayed with this question.
+     * Used when questions reference multiple scripts (e.g., comparing execution order).
+     *
+     * @return unmodifiable list of additional scripts, or empty list if none
+     */
+    public List<ScriptEntity> getAdditionalScripts() {
+        return additionalScripts;
     }
 }

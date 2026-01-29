@@ -377,6 +377,21 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             font-size: 1.2em;
         }
 
+        /* Multi-select questions */
+        .multiselect-hint {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 0.5rem;
+            padding: 6px 10px;
+            background: #fff3cd;
+            border-radius: 4px;
+            border-left: 3px solid #ffc107;
+        }
+
+        .answer-options.multiselect .answer-option .option-letter {
+            border-radius: 4px;
+        }
+
         /* Free text input */
         .free-text-input {
             width: 100%;
@@ -601,11 +616,47 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             color: white;
         }
         .teacher-mode .answer-option.is-correct::after {
-            content: "✓ Correct";
+            content: "✓ ${model.translator().getInfo("filter_correct")}";
             margin-left: auto;
             color: #4caf50;
             font-weight: 600;
             font-size: 0.85em;
+        }
+
+        /* Export mode styling */
+        .export-mode .check-btn {
+            display: none;
+        }
+
+        .export-mode .show-answer-btn {
+            display: none;
+        }
+
+        .export-panel {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+        }
+
+        .export-btn {
+            width: 100%;
+            padding: 12px 16px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .export-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .export-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
         }
 
         /* Sprite filter - matching filter button style */
@@ -792,7 +843,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
     </style>
 </head>
 <body>
-<div class="container ${model.teacherMode() ? "teacher-mode" : ""}">
+<div class="container ${model.teacherMode() ? "teacher-mode" : ""} ${model.exportMode() ? "export-mode" : ""}">
     <header class="report-header boxed">
         <div class="logo">
             $unsafe{model.logo()}
@@ -800,6 +851,9 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
         <h1>${model.translator().getInfo("questions_title")} ${model.projects().isEmpty() ? "Scratch Project" : model.projects().get(0).name()}</h1>
         @if(model.teacherMode())
             <div style="margin-top: 0.5rem; color: #666; font-size: 0.9em;">📚 ${model.translator().getInfo("questions_teacher_mode")} - ${model.translator().getInfo("questions_correct_answer")}</div>
+        @elseif(model.exportMode())
+            <div style="margin-top: 0.5rem; color: #666; font-size: 0.9em;">
+                📝 ${model.translator().getInfo("questions_export_mode")}</div>
         @endif
     </header>
 
@@ -818,7 +872,18 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             </div>
             @endif
 
-            @if(!model.teacherMode())
+            @if(model.exportMode())
+                <div class="boxed export-panel">
+                    <h3>${model.translator().getInfo("questions_export_answers")}</h3>
+                    <p style="font-size: 0.9em; color: #666; margin-bottom: 1rem;">
+                        ${model.translator().getInfo("questions_export_instructions")}
+                    </p>
+                    <button class="export-btn" onclick="exportAnswers()">
+                        📥 ${model.translator().getInfo("questions_export_button")}
+                    </button>
+                    <div id="export-status" style="margin-top: 0.5rem; font-size: 0.85em;"></div>
+                </div>
+            @elseif(!model.teacherMode())
             <div class="boxed score-display">
                 <h3>${model.translator().getInfo("questions_your_score")}</h3>
                 <div class="score-value"><span id="score-correct">0</span>/<span id="score-total">0</span></div>
@@ -943,12 +1008,15 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                             !{int qNum = question.getIndex() + 1;}
                             <div class="question-card dim-${question.get().programDimension().name()}"
                                  id="question-${project.get().id()}-${question.get().id()}"
+                                 data-question-id="${question.get().id()}"
                                  data-dimension="${question.get().programDimension().name()}"
                                  data-scope="${question.get().scopeOfFocus().name()}"
                                  data-cell="${question.get().blockModelCell()}"
                                  data-type="${question.get().questionType().name()}"
                                  data-sprite="${question.get().sprite()}"
-                                 data-answers="${String.join("|", question.get().normalizedAnswers())}">
+                                 data-answers="${String.join("|", question.get().normalizedAnswers())}"
+                                 data-multiselect="${question.get().isMultiSelect()}"
+                                 data-expected-count="${question.get().correctAnswers() != null ? question.get().correctAnswers().size() : 0}">
 
                                 <div class="question-header">
                                     <span class="question-number">Q${qNum}</span>
@@ -970,7 +1038,13 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                                 @endif
 
                                 @if(question.get().questionType() == QuestionType.MULTIPLE_CHOICE && question.get().displayChoices() != null)
-                                    <div class="answer-options" id="options-${project.get().id()}-${question.get().id()}">
+                                    @if(question.get().isMultiSelect() && !model.teacherMode())
+                                        <div class="multiselect-hint">
+                                            &#9745; ${model.translator().getInfo("questions_select_multiple")}
+                                        </div>
+                                    @endif
+                                    <div class="answer-options ${question.get().isMultiSelect() ? "multiselect" : ""}"
+                                         id="options-${project.get().id()}-${question.get().id()}">
                                         @for(var choice : ForSupport.of(question.get().displayChoices()))
                                             !{char letter = (char)('A' + choice.getIndex());}
                                             !{String normalizedChoice = question.get().normalizedChoices().get(choice.getIndex());}
@@ -1077,7 +1151,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                                             <button class="check-btn" onclick="checkAnswer('${project.get().id()}', ${question.get().id()}, 'freetext')">
                                                 ${model.translator().getInfo("questions_check_answer")}
                                             </button>
-                                        @else
+                                        @elseif(!model.exportMode())
                                             <div class="feedback purpose-note">
                                                 &#128161; ${model.translator().getInfo("questions_freetext_note")}
                                             </div>
@@ -1375,11 +1449,20 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
 
     // Select option (for MC and Yes/No)
     function selectOption(element, projectId, questionId) {
+        const card = document.getElementById('question-' + projectId + '-' + questionId);
+        const isMultiSelect = card.dataset.multiselect === 'true';
         const container = element.parentElement;
-        container.querySelectorAll('.answer-option').forEach(opt => {
-            opt.classList.remove('selected');
-        });
-        element.classList.add('selected');
+
+        if (isMultiSelect) {
+            // Toggle selection for multi-select
+            element.classList.toggle('selected');
+        } else {
+            // Single selection - deselect others first
+            container.querySelectorAll('.answer-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
+        }
     }
 
     // Check answer
@@ -1388,20 +1471,33 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
         const feedback = document.getElementById('feedback-' + projectId + '-' + questionId);
         const answers = card.dataset.answers.split('|').filter(a => a);
         const qKey = projectId + '-' + questionId;
+        const isMultiSelect = card.dataset.multiselect === 'true';
+        const expectedCount = parseInt(card.dataset.expectedCount) || 1;
 
         let userAnswer;
         let isCorrect = false;
 
         if (type === 'mc' || type === 'yesno') {
-            const selected = card.querySelector('.answer-option.selected');
-            if (!selected) {
+            const selectedOptions = card.querySelectorAll('.answer-option.selected');
+            if (selectedOptions.length === 0) {
                 feedback.textContent = 'Please select an answer first.';
                 feedback.className = 'feedback show incorrect';
                 return;
             }
-            // data-value is already normalized (lowercase, cleaned)
-            userAnswer = selected.dataset.value;
-            isCorrect = answers.includes(userAnswer);
+
+            if (isMultiSelect) {
+                // Multi-select: check if all selected answers are correct and all correct answers are selected
+                const selectedValues = Array.from(selectedOptions).map(opt => opt.dataset.value);
+                const allSelectedCorrect = selectedValues.every(val => answers.includes(val));
+                const allCorrectSelected = answers.every(ans => selectedValues.includes(ans));
+                isCorrect = allSelectedCorrect && allCorrectSelected;
+                userAnswer = selectedValues.join(', ');
+            } else {
+                // Single select
+                const selected = selectedOptions[0];
+                userAnswer = selected.dataset.value;
+                isCorrect = answers.includes(userAnswer);
+            }
 
             // Mark options - data-value is already normalized
             card.querySelectorAll('.answer-option').forEach(opt => {
@@ -1487,16 +1583,16 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
         const overlay = document.getElementById('code-overlay-' + projectId);
         const panel = document.getElementById('code-panel-' + projectId);
         const nameEl = document.getElementById('code-sprite-name-' + projectId);
-        
+
         if (!panel || !overlay) {
             console.error('Code panel not found for project:', projectId);
             return;
         }
-        
+
         overlay.classList.add('show');
         panel.classList.add('show');
         if (nameEl) nameEl.textContent = spriteName;
-        
+
         showSpriteTab(projectId, spriteName);
     }
 
@@ -1514,26 +1610,26 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
         const panel = document.getElementById('code-panel-' + projectId);
         const nameEl = document.getElementById('code-sprite-name-' + projectId);
         const sanitizedName = spriteName.replace(/[^a-zA-Z0-9]/g, '-');
-        
+
         if (!tabs || !panel) return;
-        
+
         // Update sprite name in header
         if (nameEl) nameEl.textContent = spriteName;
-        
+
         // Update tab active state
         tabs.querySelectorAll('.sprite-tab').forEach(tab => {
             tab.classList.toggle('active', tab.dataset.sprite === spriteName);
         });
-        
+
         // Show correct code view
         panel.querySelectorAll('.sprite-code-view').forEach(view => {
             view.classList.add('hidden');
         });
-        
+
         const codeView = document.getElementById('code-' + projectId + '-' + sanitizedName);
         if (codeView) {
             codeView.classList.remove('hidden');
-            
+
             // Render scratchblocks if not already rendered
             const pre = codeView.querySelector('pre.sprite-code-blocks');
             if (pre && !pre.classList.contains('rendered')) {
@@ -1544,6 +1640,70 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                 });
                 pre.classList.add('rendered');
             }
+        }
+    }
+
+    // Export answers as JSON (for export mode)
+    function exportAnswers() {
+        const answers = [];
+        const projectName = '$unsafe{model.projects().isEmpty() ? "" : model.projects().get(0).name()}';
+
+        // Collect all answers from all question cards
+        document.querySelectorAll('.question-card').forEach(card => {
+            const questionId = parseInt(card.dataset.questionId);
+            const questionType = card.dataset.type;
+            // Get the correct answers from the data attribute (for evaluation)
+            const correctAnswers = card.dataset.answers ? card.dataset.answers.split('|').filter(a => a) : [];
+            let answer = null;
+
+            if (questionType === 'MULTIPLE_CHOICE') {
+                const selected = card.querySelector('.answer-option.selected');
+                if (selected) {
+                    answer = selected.dataset.value || selected.querySelector('.option-text')?.textContent?.trim();
+                }
+            } else if (questionType === 'YES_NO') {
+                const selected = card.querySelector('.answer-option.selected');
+                if (selected) {
+                    answer = selected.dataset.value;
+                }
+            } else if (questionType === 'NUMBER' || questionType === 'FREE_TEXT') {
+                const input = card.querySelector('input, textarea');
+                if (input && input.value.trim()) {
+                    answer = input.value.trim();
+                }
+            }
+
+            answers.push({
+                questionId: questionId,
+                questionType: questionType,
+                answer: answer,
+                expectedAnswers: correctAnswers
+            });
+        });
+
+        const exportData = {
+            projectFile: projectName,
+            exportedAt: new Date().toISOString(),
+            language: '${model.language()}',
+            answers: answers
+        };
+
+        // Download as JSON file
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = projectName.replace(/\.[^/.]+$/, '') + '_answers.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        // Update status
+        const statusEl = document.getElementById('export-status');
+        if (statusEl) {
+            statusEl.textContent = '✓ ' + answers.length + ' ${model.translator().getInfo("questions_answers_exported")}';
+            statusEl.style.color = '#16a34a';
         }
     }
 </script>

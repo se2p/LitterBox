@@ -144,7 +144,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
     public static final String BUG_NOTE = "⇦  \uD83D\uDC1B   ";
     public static final String PERFUME_NOTE = "⇦  \uD83D\uDC4D   ";
-    public static final String QUESTION_NOTE = "⇦   \u2753   ";
+    public static final String QUESTION_NOTE = "⇦  \u2753   ";
     public static final String SPRITE_MARKER = "//Sprite:";
     public static final String SCRIPT_ID_MARKER = "//Script:";
 
@@ -278,6 +278,13 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
             question.getScriptOrProcedureDefinition().accept(visitor);
         } else if (question.getCodeLocation() != null) {
             question.getCodeLocation().accept(visitor);
+        }
+
+        // Render additional scripts (e.g., for questions comparing multiple scripts)
+        for (var additionalScript : question.getAdditionalScripts()) {
+            visitor.newLine();
+            visitor.newLine();
+            additionalScript.accept(visitor);
         }
 
         return visitor.getScratchBlocks();

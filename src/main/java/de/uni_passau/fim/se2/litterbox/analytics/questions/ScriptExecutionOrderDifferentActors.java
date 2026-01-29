@@ -74,9 +74,14 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
                 // Use script1's event as the primary node
                 QuestionBuilder builder = prepareQuestionBuilder(script1.getEvent())
                         .withScript(script1)
+                        .addAdditionalScript(script2)
                         .withChoices(List.of(actor1))
                         .withCorrectAnswers(actor2)
-                        .withQuestionText("actor1=" + actor1 + "|actor2=" + actor2 + "|event=" + event + "|condition=" + condition);
+                        .withQuestionText(QuestionText.fromKey(getName()))
+                        .withQuestionParameter("ACTOR1", actor1)
+                        .withQuestionParameter("ACTOR2", actor2)
+                        .withQuestionParameter("EVENT", event)
+                        .withQuestionParameter("CONDITION", condition);
 
                 addQuestion(builder);
             }

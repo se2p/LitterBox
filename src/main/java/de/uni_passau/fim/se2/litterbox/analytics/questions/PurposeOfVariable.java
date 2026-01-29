@@ -45,7 +45,8 @@ public class PurposeOfVariable extends AbstractQuestionFinder {
 
         for (String variable : variables) {
             QuestionBuilder builder = prepareQuestionBuilder()
-                    .withQuestionText(variable);
+                    .withQuestionText(QuestionText.fromKey(getName()))
+                    .withQuestionParameter("VARIABLE", variable);
             addQuestion(builder);
         }
     }

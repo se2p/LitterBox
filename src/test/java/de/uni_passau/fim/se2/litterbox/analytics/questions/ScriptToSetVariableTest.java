@@ -22,9 +22,12 @@ import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -43,7 +46,14 @@ class ScriptToSetVariableTest implements FinderTest, JsonTest {
 
     @Test
     public void testOneSetVariableInOneScript() throws IOException, ParsingException {
-        assertThatFinderReports(1, new ScriptToSetVariable(), "./src/test/fixtures/questions/oneVariableAppearsInTwoSeparateScripts.json");
+        Program prog = getAST("./src/test/fixtures/questions/oneVariableAppearsInTwoSeparateScripts.json");
+        Set<Question> questions = runFinder(prog, new ScriptToSetVariable(), false);
+        assertThat(questions.size()).isEqualTo(1);
+
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
+        for (Question question : questions) {
+            assertThat(question.getQuestionText(translator)).contains("my variable");
+        }
     }
 
     @Test

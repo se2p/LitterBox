@@ -48,12 +48,15 @@ public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
 
             if (scripts.size() > 1) {
                 Script script1 = scripts.get(0);
+                Script script2 = scripts.get(1);
 
                 // Use script1's event as the primary node
                 QuestionBuilder builder = prepareQuestionBuilder(script1.getEvent())
                         .withScript(script1)
+                        .addAdditionalScript(script2)
                         .withCorrectAnswers("no")
-                        .withQuestionText("event=" + event);
+                        .withQuestionText(QuestionText.fromKey(getName()))
+                        .withQuestionParameter("EVENT", event);
 
                 addQuestion(builder);
                 break;

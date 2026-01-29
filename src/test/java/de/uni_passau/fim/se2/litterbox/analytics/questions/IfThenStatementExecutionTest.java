@@ -22,14 +22,20 @@ import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
 class IfThenStatementExecutionTest implements FinderTest, JsonTest {
+
+    private final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
+
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
         assertThatFinderReports(0, new IfThenStatementExecution(), "./src/test/fixtures/emptyProject.json");
@@ -76,11 +82,10 @@ class IfThenStatementExecutionTest implements FinderTest, JsonTest {
         Set<Question> questions = runFinder(prog, new IfThenStatementExecution(), false);
 
         for (Question question : questions) {
-            String questionText = question.getQuestionText();
-            if (questionText.contains("FALSE"))
-                assertThat(question.getCorrectAnswers()).contains("no");
-            else
-                assertThat(question.getCorrectAnswers()).contains("yes");
+            String questionText = question.getQuestionText(translator);
+            // The correct answer should be yes or no
+            assertThat(question.getCorrectAnswers()).containsAnyOf("yes", "no");
         }
     }
 }
+

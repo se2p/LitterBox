@@ -102,15 +102,11 @@ public class QuestionsSubcommand extends Main.LitterBoxSubcommand {
     )
     Long seed;
 
-    @CommandLine.Option(
-            names = {"--show-answers"},
-            description = "Include correct answers in output."
-    )
-    boolean showAnswers;
+
 
     @CommandLine.Option(
             names = {"--teacher-mode"},
-            description = "Generate teacher version with highlighted correct answers instead of interactive checking."
+            description = "Generate teacher version with highlighted correct answers instead of interactive checking (HTML output only)."
     )
     boolean teacherMode;
 
@@ -120,6 +116,24 @@ public class QuestionsSubcommand extends Main.LitterBoxSubcommand {
                     "If not specified, format is inferred from output file extension."
     )
     QuizExportFormat exportFormat;
+
+    @CommandLine.Option(
+            names = {"--export-mode"},
+            description = "Generate HTML quiz for answer export (HTML output only)."
+    )
+    boolean exportMode;
+
+    @CommandLine.Option(
+            names = {"--evaluate"},
+            description = "Evaluate answers from a JSON file exported from an HTML quiz."
+    )
+    java.nio.file.Path evaluateFile;
+
+    @CommandLine.Option(
+            names = {"--llm-eval"},
+            description = "Use LLM to evaluate free text answers (requires --evaluate)."
+    )
+    boolean llmEval;
 
     private IssueTranslator translator;
 
@@ -134,6 +148,37 @@ public class QuestionsSubcommand extends Main.LitterBoxSubcommand {
         // If perCell is set, enable balanced mode
         boolean effectiveBalanced = balanced || perCell > 0;
 
+        // Determine effective options based on format
+        QuizExportFormat effectiveFormat = exportFormat;
+        if (effectiveFormat == null && commonOptions.outputPath != null) {
+            effectiveFormat = QuizExportFormat.fromFilename(commonOptions.outputPath.getFileName().toString());
+        }
+        if (effectiveFormat == null) {
+            effectiveFormat = QuizExportFormat.CONSOLE;
+        }
+
+        // JSON export should always include answers.
+        // For HTML, teacherMode determines if answers are shown/highlighted.
+        // For Console, we effectively disable explicit answer showing since teacherMode is restricted to HTML.
+        boolean effectiveShowAnswers = effectiveFormat == QuizExportFormat.JSON;
+        boolean effectiveTeacherMode = teacherMode;
+        boolean effectiveExportMode = exportMode;
+
+        if (effectiveFormat != QuizExportFormat.HTML) {
+            // Restrict teacherMode and exportMode to HTML
+            if (teacherMode || exportMode) {
+                // User requested restricted options for non-HTML format.
+                // We ignore them as requested ("should not change anything") but log/warn if possible,
+                // or just silently enforce the restriction.
+                // Here we just ensure they don't affect the output logic.
+                effectiveTeacherMode = false;
+                effectiveExportMode = false;
+            }
+        } else {
+            // HTML format: teacherMode implies showing answers
+            effectiveShowAnswers = teacherMode;
+        }
+
         return new QuestionAnalyzer(
                 translator,
                 commonOptions.outputPath,
@@ -146,8 +191,11 @@ public class QuestionsSubcommand extends Main.LitterBoxSubcommand {
                 perCell,
                 shuffle,
                 seed,
-                showAnswers,
-                teacherMode,
+                effectiveShowAnswers,
+                effectiveTeacherMode,
+                effectiveExportMode,
+                evaluateFile,
+                llmEval,
                 exportFormat
         );
     }

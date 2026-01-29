@@ -51,7 +51,8 @@ public class SetVariable extends AbstractQuestionFinder {
 
             if (expression instanceof NumberLiteral || expression instanceof StringLiteral) {
                 QuestionBuilder builder = prepareQuestionBuilder(node)
-                        .withQuestionText("variable=" + ScratchBlocksVisitor.of(identifier))
+                        .withQuestionText(QuestionText.fromKey(getName()))
+                        .withQuestionParameter("VARIABLE", ScratchBlocksVisitor.of(identifier))
                         .withCorrectAnswers(getExpressionValue(expression));
                 addQuestion(builder);
             }
@@ -59,14 +60,19 @@ public class SetVariable extends AbstractQuestionFinder {
     }
 
     /**
-     * Returns expression value without open- and close-parentheses.
+     * Returns expression value without open- and close-parentheses/brackets.
      *
      * @param node Expression node
-     * @return expression value without parentheses
+     * @return expression value without wrapper characters
      */
     private String getExpressionValue(Expression node) {
-        String value = ScratchBlocksVisitor.of(node);
-        return value.substring(1, value.length() - 1);
+        String value = ScratchBlocksVisitor.of(node).trim();
+        // Strip outer parentheses (for numbers) or brackets (for strings)
+        if ((value.startsWith("(") && value.endsWith(")"))
+                || (value.startsWith("[") && value.endsWith("]"))) {
+            return value.substring(1, value.length() - 1);
+        }
+        return value;
     }
 
     @Override

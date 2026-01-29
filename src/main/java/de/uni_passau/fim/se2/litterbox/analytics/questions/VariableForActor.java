@@ -51,7 +51,8 @@ public class VariableForActor extends AbstractQuestionFinder {
 
             for (String variable : variables) {
                 QuestionBuilder builder = prepareQuestionBuilder()
-                        .withQuestionText("variable=" + variable)
+                        .withQuestionText(QuestionText.fromKey(getName()))
+                        .withQuestionParameter("VARIABLE", variable)
                         .withCorrectAnswers(actor)
                         .withChoices(getChoicesList());
                 addQuestion(builder);

@@ -94,6 +94,29 @@ public class QuestionAnalyzer extends FileAnalyzer<List<QuestionDTO>> {
             boolean teacherMode,
             QuizExportFormat exportFormat
     ) {
+        this(translator, output, delete, questionFinders, dimensionFilter, scopeFilter,
+                maxQuestions, balanced, perCell, shuffle, seed, showAnswers, teacherMode, false, null, false, exportFormat);
+    }
+
+    public QuestionAnalyzer(
+            IssueTranslator translator,
+            Path output,
+            boolean delete,
+            List<String> questionFinders,
+            Set<ProgramDimension> dimensionFilter,
+            Set<ScopeOfFocus> scopeFilter,
+            int maxQuestions,
+            boolean balanced,
+            int perCell,
+            boolean shuffle,
+            Long seed,
+            boolean showAnswers,
+            boolean teacherMode,
+            boolean exportMode,
+            Path evaluateFile,
+            boolean llmEval,
+            QuizExportFormat exportFormat
+    ) {
         super(
                 new ProgramQuestionAnalyzer(
                         questionFinders,
@@ -109,7 +132,8 @@ public class QuestionAnalyzer extends FileAnalyzer<List<QuestionDTO>> {
                 output,
                 delete
         );
-        this.resultHandler = QuestionResultHandler.create(translator, output, showAnswers, teacherMode, exportFormat);
+        this.resultHandler = QuestionResultHandler.create(
+                translator, output, showAnswers, teacherMode, exportMode, evaluateFile, llmEval, exportFormat);
     }
 
     @Override
