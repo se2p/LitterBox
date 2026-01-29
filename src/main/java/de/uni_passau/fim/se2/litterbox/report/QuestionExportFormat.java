@@ -21,7 +21,7 @@ package de.uni_passau.fim.se2.litterbox.report;
 /**
  * Export formats for quiz/questions output.
  */
-public enum QuizExportFormat {
+public enum QuestionExportFormat {
     /**
      * Console output (default when no output file specified).
      */
@@ -39,7 +39,7 @@ public enum QuizExportFormat {
 
     private final String description;
 
-    QuizExportFormat(String description) {
+    QuestionExportFormat(String description) {
         this.description = description;
     }
 
@@ -53,7 +53,7 @@ public enum QuizExportFormat {
      * @param filename The output filename
      * @return The inferred format, or null if unknown
      */
-    public static QuizExportFormat fromFilename(String filename) {
+    public static QuestionExportFormat fromFilename(String filename) {
         if (filename == null) {
             return CONSOLE;
         }

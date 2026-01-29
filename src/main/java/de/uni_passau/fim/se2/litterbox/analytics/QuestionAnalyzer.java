@@ -22,8 +22,8 @@ import de.uni_passau.fim.se2.litterbox.analytics.questions.ProgramDimension;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.ScopeOfFocus;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.report.QuestionDTO;
+import de.uni_passau.fim.se2.litterbox.report.QuestionExportFormat;
 import de.uni_passau.fim.se2.litterbox.report.QuestionResultHandler;
-import de.uni_passau.fim.se2.litterbox.report.QuizExportFormat;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -32,14 +32,11 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * File analyzer for generating comprehension questions from Scratch projects.
  */
 public class QuestionAnalyzer extends FileAnalyzer<List<QuestionDTO>> {
-
-    private static final Logger log = Logger.getLogger(QuestionAnalyzer.class.getName());
 
     private final QuestionResultHandler resultHandler;
 
@@ -110,7 +107,7 @@ public class QuestionAnalyzer extends FileAnalyzer<List<QuestionDTO>> {
         private boolean exportMode = false;
         private Path evaluateFile = null;
         private boolean llmEval = false;
-        private QuizExportFormat exportFormat = null;
+        private QuestionExportFormat exportFormat = null;
 
         /**
          * Creates a new builder with required parameters.
@@ -190,7 +187,7 @@ public class QuestionAnalyzer extends FileAnalyzer<List<QuestionDTO>> {
             return this;
         }
 
-        public Builder withExportFormat(QuizExportFormat exportFormat) {
+        public Builder withExportFormat(QuestionExportFormat exportFormat) {
             this.exportFormat = exportFormat;
             return this;
         }

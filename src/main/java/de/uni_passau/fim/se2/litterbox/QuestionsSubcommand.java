@@ -21,7 +21,7 @@ package de.uni_passau.fim.se2.litterbox;
 import de.uni_passau.fim.se2.litterbox.analytics.QuestionAnalyzer;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.ProgramDimension;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.ScopeOfFocus;
-import de.uni_passau.fim.se2.litterbox.report.QuizExportFormat;
+import de.uni_passau.fim.se2.litterbox.report.QuestionExportFormat;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import picocli.CommandLine;
@@ -114,7 +114,7 @@ public class QuestionsSubcommand extends Main.LitterBoxSubcommand {
             description = "Export format: CONSOLE, JSON, HTML. "
                     + "If not specified, format is inferred from output file extension."
     )
-    QuizExportFormat exportFormat;
+    QuestionExportFormat exportFormat;
 
     @CommandLine.Option(
             names = {"--export-mode"},
@@ -134,11 +134,9 @@ public class QuestionsSubcommand extends Main.LitterBoxSubcommand {
     )
     boolean llmEval;
 
-    private IssueTranslator translator;
-
     @Override
     protected QuestionAnalyzer getAnalyzer() throws IOException {
-        translator = IssueTranslatorFactory.getIssueTranslator(Locale.of(language));
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.of(language));
 
         if (projectInput.projectPath == null) {
             projectInput.projectPath = Files.createTempDirectory("litterbox-questions");
@@ -148,22 +146,22 @@ public class QuestionsSubcommand extends Main.LitterBoxSubcommand {
         boolean effectiveBalanced = balanced || perCell > 0;
 
         // Determine effective options based on format
-        QuizExportFormat effectiveFormat = exportFormat;
+        QuestionExportFormat effectiveFormat = exportFormat;
         if (effectiveFormat == null && commonOptions.outputPath != null) {
-            effectiveFormat = QuizExportFormat.fromFilename(commonOptions.outputPath.getFileName().toString());
+            effectiveFormat = QuestionExportFormat.fromFilename(commonOptions.outputPath.getFileName().toString());
         }
         if (effectiveFormat == null) {
-            effectiveFormat = QuizExportFormat.CONSOLE;
+            effectiveFormat = QuestionExportFormat.CONSOLE;
         }
 
         // JSON export should always include answers.
         // For HTML, teacherMode determines if answers are shown/highlighted.
         // For Console, we effectively disable explicit answer showing since teacherMode is restricted to HTML.
-        boolean effectiveShowAnswers = effectiveFormat == QuizExportFormat.JSON;
+        boolean effectiveShowAnswers = effectiveFormat == QuestionExportFormat.JSON;
         boolean effectiveTeacherMode = teacherMode;
         boolean effectiveExportMode = exportMode;
 
-        if (effectiveFormat != QuizExportFormat.HTML) {
+        if (effectiveFormat != QuestionExportFormat.HTML) {
             // Restrict teacherMode and exportMode to HTML
             if (teacherMode || exportMode) {
                 // User requested restricted options for non-HTML format.

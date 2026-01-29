@@ -78,7 +78,7 @@ public interface QuestionResultHandler {
             IssueTranslator translator,
             Path output,
             boolean showAnswers,
-            QuizExportFormat format
+            QuestionExportFormat format
     ) {
         return create(translator, output, showAnswers, false, format);
     }
@@ -98,7 +98,7 @@ public interface QuestionResultHandler {
             Path output,
             boolean showAnswers,
             boolean teacherMode,
-            QuizExportFormat format
+            QuestionExportFormat format
     ) {
         return create(translator, output, showAnswers, teacherMode, false, null, false, format);
     }
@@ -124,7 +124,7 @@ public interface QuestionResultHandler {
             boolean exportMode,
             Path evaluateFile,
             boolean llmEval,
-            QuizExportFormat format
+            QuestionExportFormat format
     ) {
         // Evaluation mode takes precedence
         if (evaluateFile != null) {
@@ -132,12 +132,12 @@ public interface QuestionResultHandler {
         }
 
         // Determine format: explicit > inferred from filename > console
-        QuizExportFormat effectiveFormat = format;
+        QuestionExportFormat effectiveFormat = format;
         if (effectiveFormat == null && output != null) {
-            effectiveFormat = QuizExportFormat.fromFilename(output.getFileName().toString());
+            effectiveFormat = QuestionExportFormat.fromFilename(output.getFileName().toString());
         }
         if (effectiveFormat == null) {
-            effectiveFormat = QuizExportFormat.CONSOLE;
+            effectiveFormat = QuestionExportFormat.CONSOLE;
         }
 
         return switch (effectiveFormat) {
