@@ -32,6 +32,8 @@ import java.util.Set;
  */
 public class PurposeOfBroadcast extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "purpose_of_broadcast";
+
     private Set<String> broadcastMessages;
 
     @Override
@@ -61,8 +63,6 @@ public class PurposeOfBroadcast extends AbstractQuestionFinder {
             broadcastMessages.add(message);
         }
     }
-
-    public static final String FINDER_NAME = "purpose_of_broadcast";
 
     @Override
     public String getName() {

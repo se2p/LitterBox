@@ -36,6 +36,8 @@ import java.util.stream.Collectors;
  */
 public class CloneCreators extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "clone_creators";
+
     @Override
     public void visit(CreateCloneOf node) {
         String targetName = resolveCloneTarget(node.getCloneChoice());
@@ -84,8 +86,6 @@ public class CloneCreators extends AbstractQuestionFinder {
                 .collect(Collectors.toList());
     }
 
-    public static final String FINDER_NAME = "clone_creators";
-
     @Override
     public String getName() {
         return FINDER_NAME;
@@ -93,8 +93,6 @@ public class CloneCreators extends AbstractQuestionFinder {
 
     @Override
     public ProgramDimension getProgramDimension() {
-        // Text because the answer is based on reading the block.
-        // Plan said "Text + Relation".
         return ProgramDimension.TEXT;
     }
 

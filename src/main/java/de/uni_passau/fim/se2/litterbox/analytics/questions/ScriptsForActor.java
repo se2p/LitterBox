@@ -27,6 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
  */
 public class ScriptsForActor extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "scripts_for_actor";
+
     @Override
     public void visit(ActorDefinition node) {
         currentActor = node;
@@ -38,8 +40,6 @@ public class ScriptsForActor extends AbstractQuestionFinder {
                 .withCorrectAnswers(Integer.toString(node.getScripts().getSize()));
         addQuestion(builder);
     }
-
-    public static final String FINDER_NAME = "scripts_for_actor";
 
     @Override
     public String getName() {

@@ -31,6 +31,8 @@ import java.util.*;
  */
 public class VariableForActor extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "variable_for_actor";
+
     private Set<String> variables;
     private Set<String> actors;
     private Map<String, List<String>> variablesForActor;
@@ -72,8 +74,6 @@ public class VariableForActor extends AbstractQuestionFinder {
     public void visit(Variable node) {
         variables.add(ScratchBlocksVisitor.of(node.getName()));
     }
-
-    public static final String FINDER_NAME = "variable_for_actor";
 
     @Override
     public String getName() {

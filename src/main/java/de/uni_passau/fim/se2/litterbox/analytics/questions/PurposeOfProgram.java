@@ -26,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
  */
 public class PurposeOfProgram extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "purpose_of_program";
+
     @Override
     public void visit(Program node) {
         super.visit(node);          // only needed so that an actor is set
@@ -35,8 +37,6 @@ public class PurposeOfProgram extends AbstractQuestionFinder {
         QuestionBuilder builder = prepareQuestionBuilder();
         addQuestion(builder);
     }
-
-    public static final String FINDER_NAME = "purpose_of_program";
 
     @Override
     public String getName() {

@@ -31,6 +31,8 @@ import java.util.Collections;
  */
 public class IfElseStatementExecution extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "if_else_statement_execution";
+
     @Override
     public void visit(IfElseStmt node) {
         if (node.getThenStmts().hasStatements() && node.getElseStmts().hasStatements()) {
@@ -55,8 +57,6 @@ public class IfElseStatementExecution extends AbstractQuestionFinder {
             addQuestion(builder);
         }
     }
-
-    public static final String FINDER_NAME = "if_else_statement_execution";
 
     @Override
     public String getName() {

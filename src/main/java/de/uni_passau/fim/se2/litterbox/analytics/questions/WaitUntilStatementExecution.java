@@ -32,6 +32,8 @@ import java.util.Collections;
  */
 public class WaitUntilStatementExecution extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "wait_until_statement_execution";
+
     @Override
     public void visit(StmtList node) {
         for (int i = 0; i < node.getNumberOfStatements() - 1; i++) {
@@ -69,8 +71,6 @@ public class WaitUntilStatementExecution extends AbstractQuestionFinder {
                         Collections.singletonList(wrongAnswer)));
         addQuestion(builder);
     }
-
-    public static final String FINDER_NAME = "wait_until_statement_execution";
 
     @Override
     public String getName() {

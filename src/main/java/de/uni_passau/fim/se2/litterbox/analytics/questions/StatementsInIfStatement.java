@@ -32,6 +32,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
  */
 public class StatementsInIfStatement extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "statements_in_if_statement";
+
     private int inIfStmt;
     private boolean visitingScript;
 
@@ -91,8 +93,6 @@ public class StatementsInIfStatement extends AbstractQuestionFinder {
             choices.add(wrappedScratchBlocks(node));
         }
     }
-
-    public static final String FINDER_NAME = "statements_in_if_statement";
 
     @Override
     public String getName() {

@@ -38,28 +38,39 @@ import java.util.List;
  */
 public class MotionStatementExecution extends AbstractQuestionFinder {
 
+    private static final String X_POSITION_ATTR = "x_position_attr";
+    private static final String Y_POSITION_ATTR = "y_position_attr";
+    private static final String IT_DECREASES_BY = "it_decreases_by";
+    private static final String IT_INCREASES_BY = "it_increases_by";
+    private static final String IT_SETS_THE_ATTRIBUTE_TO = "it_sets_the_attribute_to";
+    private static final String IT_DOES_NOT_CHANGE = "it_does_not_change";
+    private static final String VALUE_PARAM = "VALUE";
+    private static final String ATTRIBUTE_PARAM = "ATTRIBUTE";
+
+    public static final String FINDER_NAME = "motion_statement_execution";
+
     @Override
     public void visit(ChangeXBy node) {
         String value = ScratchBlocksFormatUtil.stripParentheses(ScratchBlocksVisitor.of(node.getNum()));
-        generateChangeQuestion("x_position_attr", value, node);
+        generateChangeQuestion(X_POSITION_ATTR, value, node);
     }
 
     @Override
     public void visit(ChangeYBy node) {
         String value = ScratchBlocksFormatUtil.stripParentheses(ScratchBlocksVisitor.of(node.getNum()));
-        generateChangeQuestion("y_position_attr", value, node);
+        generateChangeQuestion(Y_POSITION_ATTR, value, node);
     }
 
     @Override
     public void visit(SetXTo node) {
         String value = ScratchBlocksFormatUtil.stripParentheses(ScratchBlocksVisitor.of(node.getNum()));
-        generateSetQuestion("x_position_attr", value, node);
+        generateSetQuestion(X_POSITION_ATTR, value, node);
     }
 
     @Override
     public void visit(SetYTo node) {
         String value = ScratchBlocksFormatUtil.stripParentheses(ScratchBlocksVisitor.of(node.getNum()));
-        generateSetQuestion("y_position_attr", value, node);
+        generateSetQuestion(Y_POSITION_ATTR, value, node);
     }
 
     private void generateChangeQuestion(String attributeKey, String value, ASTNode node) {
@@ -68,22 +79,22 @@ public class MotionStatementExecution extends AbstractQuestionFinder {
 
         if (value.startsWith("-")) {
             String absVal = value.substring(1);
-            changeDesc = QuestionText.fromKey("it_decreases_by").withQuestionParameter("VALUE", absVal);
-            distractors.add(QuestionText.fromKey("it_increases_by").withQuestionParameter("VALUE", absVal));
-            distractors.add(QuestionText.fromKey("it_sets_the_attribute_to")
-                    .withQuestionParameter("ATTRIBUTE", attributeKey).withQuestionParameter("VALUE", value));
-            distractors.add(QuestionText.fromKey("it_sets_the_attribute_to")
-                    .withQuestionParameter("ATTRIBUTE", attributeKey).withQuestionParameter("VALUE", absVal));
+            changeDesc = QuestionText.fromKey(IT_DECREASES_BY).withQuestionParameter(VALUE_PARAM, absVal);
+            distractors.add(QuestionText.fromKey(IT_INCREASES_BY).withQuestionParameter(VALUE_PARAM, absVal));
+            distractors.add(QuestionText.fromKey(IT_SETS_THE_ATTRIBUTE_TO)
+                    .withQuestionParameter(ATTRIBUTE_PARAM, attributeKey).withQuestionParameter(VALUE_PARAM, value));
+            distractors.add(QuestionText.fromKey(IT_SETS_THE_ATTRIBUTE_TO)
+                    .withQuestionParameter(ATTRIBUTE_PARAM, attributeKey).withQuestionParameter(VALUE_PARAM, absVal));
         } else {
-            changeDesc = QuestionText.fromKey("it_increases_by").withQuestionParameter("VALUE", value);
-            distractors.add(QuestionText.fromKey("it_decreases_by").withQuestionParameter("VALUE", value));
-            distractors.add(QuestionText.fromKey("it_sets_the_attribute_to")
-                    .withQuestionParameter("ATTRIBUTE", attributeKey).withQuestionParameter("VALUE", value));
-            distractors.add(QuestionText.fromKey("it_sets_the_attribute_to")
-                    .withQuestionParameter("ATTRIBUTE", attributeKey).withQuestionParameter("VALUE", "-" + value));
+            changeDesc = QuestionText.fromKey(IT_INCREASES_BY).withQuestionParameter(VALUE_PARAM, value);
+            distractors.add(QuestionText.fromKey(IT_DECREASES_BY).withQuestionParameter(VALUE_PARAM, value));
+            distractors.add(QuestionText.fromKey(IT_SETS_THE_ATTRIBUTE_TO)
+                    .withQuestionParameter(ATTRIBUTE_PARAM, attributeKey).withQuestionParameter(VALUE_PARAM, value));
+            distractors.add(QuestionText.fromKey(IT_SETS_THE_ATTRIBUTE_TO)
+                    .withQuestionParameter(ATTRIBUTE_PARAM, attributeKey).withQuestionParameter(VALUE_PARAM, "-" + value));
         }
 
-        distractors.add(QuestionText.fromKey("it_does_not_change"));
+        distractors.add(QuestionText.fromKey(IT_DOES_NOT_CHANGE));
 
         List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(
                 Collections.singletonList(changeDesc), distractors);
@@ -91,7 +102,7 @@ public class MotionStatementExecution extends AbstractQuestionFinder {
         QuestionBuilder builder = prepareQuestionBuilder(node)
                 .withQuestionText(QuestionText.fromKey(getName()))
                 .withQuestionType(QuestionType.MULTIPLE_CHOICE)
-                .withQuestionParameter("ATTRIBUTE", QuestionText.fromKey(attributeKey))
+                .withQuestionParameter(ATTRIBUTE_PARAM, QuestionText.fromKey(attributeKey))
                 .withTranslatableChoices(options)
                 .withTranslatableCorrectAnswers(Collections.singletonList(changeDesc));
         addQuestion(builder);
@@ -137,8 +148,6 @@ public class MotionStatementExecution extends AbstractQuestionFinder {
             }
         }
     }
-
-    public static final String FINDER_NAME = "motion_statement_execution";
 
     @Override
     public String getName() {

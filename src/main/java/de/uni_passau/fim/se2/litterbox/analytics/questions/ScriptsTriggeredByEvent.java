@@ -35,6 +35,8 @@ import java.util.Map;
  */
 public class ScriptsTriggeredByEvent extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "scripts_triggered_by_event";
+
     private Map<Event, List<Script>> triggeredScripts;
 
     @Override
@@ -48,7 +50,7 @@ public class ScriptsTriggeredByEvent extends AbstractQuestionFinder {
             if (!(event instanceof Never)) {
                 QuestionBuilder builder = prepareQuestionBuilder()
                         .withQuestionText(QuestionText.fromKey(getName()))
-                        .withQuestionParameter("EVENT", ScratchBlocksVisitor.of(event))
+                        .withQuestionParameter(QuestionText.EVENT, ScratchBlocksVisitor.of(event))
                         .withCorrectAnswers(Integer.toString(scripts.size()));
                 addQuestion(builder);
             }
@@ -62,8 +64,6 @@ public class ScriptsTriggeredByEvent extends AbstractQuestionFinder {
         list.add(node);
         triggeredScripts.put(event, list);
     }
-
-    public static final String FINDER_NAME = "scripts_triggered_by_event";
 
     @Override
     public String getName() {

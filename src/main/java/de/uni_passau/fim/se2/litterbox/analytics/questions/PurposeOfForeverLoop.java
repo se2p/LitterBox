@@ -26,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForever
  */
 public class PurposeOfForeverLoop extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "purpose_of_forever_loop";
+
     @Override
     public void visit(RepeatForeverStmt node) {
         QuestionBuilder builder = prepareQuestionBuilder(node);
@@ -33,8 +35,6 @@ public class PurposeOfForeverLoop extends AbstractQuestionFinder {
 
         super.visit(node);
     }
-
-    public static final String FINDER_NAME = "purpose_of_forever_loop";
 
     @Override
     public String getName() {

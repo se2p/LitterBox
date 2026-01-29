@@ -33,6 +33,8 @@ import java.util.List;
  */
 public class WaitStatementExecution extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "wait_statement_execution";
+
     @Override
     public void visit(WaitSeconds node) {
         String seconds = ScratchBlocksFormatUtil.stripParentheses(ScratchBlocksVisitor.of(node.getSeconds()));
@@ -63,8 +65,6 @@ public class WaitStatementExecution extends AbstractQuestionFinder {
         }
         return distractors;
     }
-
-    public static final String FINDER_NAME = "wait_statement_execution";
 
     @Override
     public String getName() {

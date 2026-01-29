@@ -48,6 +48,8 @@ import static java.util.Objects.isNull;
  */
 public class StatementTriggersEvent extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "statement_triggers_event";
+
     private Map<String, List<Script>> scriptsForEvent;
     private Map<String, Set<String>> eventStatements;
     private Map<Script, ActorDefinition> actorForScript;
@@ -207,8 +209,6 @@ public class StatementTriggersEvent extends AbstractQuestionFinder {
             choices.add(wrappedScratchBlocks(node));
         }
     }
-
-    public static final String FINDER_NAME = "statement_triggers_event";
 
     @Override
     public String getName() {

@@ -43,6 +43,8 @@ import static java.util.Objects.isNull;
  */
 public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "scripts_triggered_by_statement";
+
     private Map<String, Set<String>> scriptsForEvent;
     private Map<String, Stmt> eventStatements;
     private Map<Stmt, Script> scriptForStmt;
@@ -129,8 +131,6 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
             actorForStmt.putIfAbsent(node, currentActor);
         }
     }
-
-    public static final String FINDER_NAME = "scripts_triggered_by_statement";
 
     @Override
     public String getName() {

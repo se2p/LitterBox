@@ -32,6 +32,8 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
  */
 public class SetVariable extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "set_variable";
+
     private boolean inScript;
 
     @Override
@@ -72,8 +74,6 @@ public class SetVariable extends AbstractQuestionFinder {
         }
         return value;
     }
-
-    public static final String FINDER_NAME = "set_variable";
 
     @Override
     public String getName() {

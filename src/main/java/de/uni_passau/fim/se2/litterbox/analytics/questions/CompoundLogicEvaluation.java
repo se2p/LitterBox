@@ -38,6 +38,15 @@ import java.util.List;
  */
 public class CompoundLogicEvaluation extends AbstractQuestionFinder {
 
+    private static final String AND_OPERATOR_KEY = "and_operator";
+    private static final String OR_OPERATOR_KEY = "or_operator";
+    private static final String BINARY_EXPRESSION_KEY = "binary_expression";
+    private static final String OP1_PARAM = "OP1";
+    private static final String OP2_PARAM = "OP2";
+    private static final String OPERATOR_PARAM = "OPERATOR";
+
+    public static final String FINDER_NAME = "compound_logic_evaluation";
+
     @Override
     public void visit(IfThenStmt node) {
         checkCondition(node.getBoolExpr(), node);
@@ -56,11 +65,11 @@ public class CompoundLogicEvaluation extends AbstractQuestionFinder {
             String op1 = wrappedScratchBlocks((Expression) bin.getOperand1());
             String op2 = wrappedScratchBlocks((Expression) bin.getOperand2());
 
-            String operatorKey = (cond instanceof And) ? "and_operator" : "or_operator";
-            QuestionText correct = QuestionText.fromKey("binary_expression")
-                    .withQuestionParameter("OP1", op1)
-                    .withQuestionParameter("OPERATOR", QuestionText.fromKey(operatorKey))
-                    .withQuestionParameter("OP2", op2);
+            String operatorKey = (cond instanceof And) ? AND_OPERATOR_KEY : OR_OPERATOR_KEY;
+            QuestionText correct = QuestionText.fromKey(BINARY_EXPRESSION_KEY)
+                    .withQuestionParameter(OP1_PARAM, op1)
+                    .withQuestionParameter(OPERATOR_PARAM, QuestionText.fromKey(operatorKey))
+                    .withQuestionParameter(OP2_PARAM, op2);
 
             // Distractors
             List<TranslatableText> distractors = new ArrayList<>();
@@ -69,11 +78,11 @@ public class CompoundLogicEvaluation extends AbstractQuestionFinder {
             // Distractor v2: Just second operand
             distractors.add(QuestionText.fromText(op2));
             // Distractor 3: Wrong operator
-            String wrongOpKey = (cond instanceof And) ? "or_operator" : "and_operator";
-            distractors.add(QuestionText.fromKey("binary_expression")
-                    .withQuestionParameter("OP1", op1)
-                    .withQuestionParameter("OPERATOR", QuestionText.fromKey(wrongOpKey))
-                    .withQuestionParameter("OP2", op2));
+            String wrongOpKey = (cond instanceof And) ? OR_OPERATOR_KEY : AND_OPERATOR_KEY;
+            distractors.add(QuestionText.fromKey(BINARY_EXPRESSION_KEY)
+                    .withQuestionParameter(OP1_PARAM, op1)
+                    .withQuestionParameter(OPERATOR_PARAM, QuestionText.fromKey(wrongOpKey))
+                    .withQuestionParameter(OP2_PARAM, op2));
 
             List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(
                     Collections.singletonList(correct), distractors);
@@ -86,8 +95,6 @@ public class CompoundLogicEvaluation extends AbstractQuestionFinder {
             addQuestion(builder);
         }
     }
-
-    public static final String FINDER_NAME = "compound_logic_evaluation";
 
     @Override
     public String getName() {

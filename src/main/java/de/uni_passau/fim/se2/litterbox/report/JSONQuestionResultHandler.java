@@ -29,7 +29,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**

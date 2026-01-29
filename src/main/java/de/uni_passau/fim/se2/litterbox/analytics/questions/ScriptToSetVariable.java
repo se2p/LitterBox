@@ -34,6 +34,9 @@ import static java.util.Objects.isNull;
  *
  */
 public class ScriptToSetVariable extends AbstractQuestionFinder {
+
+    public static final String FINDER_NAME = "script_to_set_variable";
+
     private String variable;
     private Map<String, String> variableAnswers;
 
@@ -72,8 +75,6 @@ public class ScriptToSetVariable extends AbstractQuestionFinder {
     public void visit(SetVariableTo node) {
         variable = ScratchBlocksVisitor.of(node.getIdentifier());
     }
-
-    public static final String FINDER_NAME = "script_to_set_variable";
 
     @Override
     public String getName() {

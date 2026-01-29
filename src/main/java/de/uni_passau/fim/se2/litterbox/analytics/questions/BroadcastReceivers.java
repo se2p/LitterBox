@@ -37,6 +37,8 @@ import java.util.stream.Collectors;
  */
 public class BroadcastReceivers extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "broadcast_receivers";
+
     private Map<String, Set<String>> receiversForMessage;
     private Set<String> allBroadcasts;
     private boolean collectingReceivers;
@@ -127,8 +129,6 @@ public class BroadcastReceivers extends AbstractQuestionFinder {
                 .withCorrectAnswers(new ArrayList<>(receivers));
         addQuestion(builder);
     }
-
-    public static final String FINDER_NAME = "broadcast_receivers";
 
     @Override
     public String getName() {

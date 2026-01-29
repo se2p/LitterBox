@@ -26,13 +26,13 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesSt
  */
 public class PurposeOfRepeatTimesLoop extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "purpose_of_repeat_times_loop";
+
     @Override
     public void visit(RepeatTimesStmt node) {
         QuestionBuilder builder = prepareQuestionBuilder(node);
         addQuestion(builder);
     }
-
-    public static final String FINDER_NAME = "purpose_of_repeat_times_loop";
 
     @Override
     public String getName() {

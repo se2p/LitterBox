@@ -34,6 +34,19 @@ import java.util.List;
  */
 public class RepeatUntilStatementExecution extends AbstractQuestionFinder {
 
+    private static final String THE_BLOCK_X_AFTER_THE_LOOP = "the_block_X_after_the_loop";
+    private static final String BLOCK_INSIDE_LOOP = "block_inside_loop";
+    private static final String BLOCKS_INSIDE_LOOP = "blocks_inside_loop";
+    private static final String SUBJECT_EXECUTES = "subject_executes";
+    private static final String SUBJECT_REPEATS = "subject_repeats";
+    private static final String THE_LOOP = "the_loop";
+    private static final String SCRIPT_STOPS = "script_stops";
+    private static final String X_PARAM = "X";
+    private static final String BLOCK_PARAM = "BLOCK";
+    private static final String SUBJECT_PARAM = "SUBJECT";
+
+    public static final String FINDER_NAME = "repeat_until_statement_execution";
+
     @Override
     public void visit(StmtList node) {
         for (int i = 0; i < node.getNumberOfStatements() - 1; i++) {
@@ -52,16 +65,16 @@ public class RepeatUntilStatementExecution extends AbstractQuestionFinder {
         String conditionText = wrappedScratchBlocks(condition);
 
         // Next statement description (e.g. "Move (10) steps")
-        TranslatableText nextStmtTranslatableText = QuestionText.fromKey("the_block_X_after_the_loop")
-                .withQuestionParameter("X", wrappedScratchBlocks(nextStmt));
+        TranslatableText nextStmtTranslatableText = QuestionText.fromKey(THE_BLOCK_X_AFTER_THE_LOOP)
+                .withQuestionParameter(X_PARAM, wrappedScratchBlocks(nextStmt));
 
         // Loop body description
         TranslatableText loopBody;
         if (untilStmt.getStmtList().hasStatements()) {
-            loopBody = QuestionText.fromKey("block_inside_loop")
-                    .withQuestionParameter("BLOCK", wrappedScratchBlocks(untilStmt.getStmtList().getStatement(0)));
+            loopBody = QuestionText.fromKey(BLOCK_INSIDE_LOOP)
+                    .withQuestionParameter(BLOCK_PARAM, wrappedScratchBlocks(untilStmt.getStmtList().getStatement(0)));
         } else {
-            loopBody = QuestionText.fromKey("blocks_inside_loop");
+            loopBody = QuestionText.fromKey(BLOCKS_INSIDE_LOOP);
         }
 
         boolean conditionValue = de.uni_passau.fim.se2.litterbox.utils.Randomness.nextBoolean();
@@ -72,18 +85,18 @@ public class RepeatUntilStatementExecution extends AbstractQuestionFinder {
 
         if (conditionValue) {
             // If condition is TRUE, loop terminates
-            correct = QuestionText.fromKey("subject_executes")
-                    .withQuestionParameter("SUBJECT", nextStmtTranslatableText);
-            distractors.add(QuestionText.fromKey("subject_executes")
-                    .withQuestionParameter("SUBJECT", loopBody));
-            distractors.add(QuestionText.fromKey("subject_repeats")
-                    .withQuestionParameter("SUBJECT", QuestionText.fromKey("the_loop")));
+            correct = QuestionText.fromKey(SUBJECT_EXECUTES)
+                    .withQuestionParameter(SUBJECT_PARAM, nextStmtTranslatableText);
+            distractors.add(QuestionText.fromKey(SUBJECT_EXECUTES)
+                    .withQuestionParameter(SUBJECT_PARAM, loopBody));
+            distractors.add(QuestionText.fromKey(SUBJECT_REPEATS)
+                    .withQuestionParameter(SUBJECT_PARAM, QuestionText.fromKey(THE_LOOP)));
         } else {
             // If condition is FALSE, loop executes
-            correct = QuestionText.fromKey("subject_executes").withQuestionParameter("SUBJECT", loopBody);
-            distractors.add(QuestionText.fromKey("subject_executes")
-                    .withQuestionParameter("SUBJECT", nextStmtTranslatableText));
-            distractors.add(QuestionText.fromKey("script_stops"));
+            correct = QuestionText.fromKey(SUBJECT_EXECUTES).withQuestionParameter(SUBJECT_PARAM, loopBody);
+            distractors.add(QuestionText.fromKey(SUBJECT_EXECUTES)
+                    .withQuestionParameter(SUBJECT_PARAM, nextStmtTranslatableText));
+            distractors.add(QuestionText.fromKey(SCRIPT_STOPS));
         }
 
         List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(
@@ -98,8 +111,6 @@ public class RepeatUntilStatementExecution extends AbstractQuestionFinder {
 
         addQuestion(builder);
     }
-
-    public static final String FINDER_NAME = "repeat_until_statement_execution";
 
     @Override
     public String getName() {

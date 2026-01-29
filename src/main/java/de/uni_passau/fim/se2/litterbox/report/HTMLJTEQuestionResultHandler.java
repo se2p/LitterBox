@@ -64,15 +64,18 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
     private final boolean exportMode;
     private final List<ProjectQuestions> allProjects = new ArrayList<>();
 
-    public HTMLJTEQuestionResultHandler(IssueTranslator translator, Path output, boolean showAnswers) {
+    public HTMLJTEQuestionResultHandler(IssueTranslator translator, Path output,
+                                        boolean showAnswers) {
         this(translator, output, showAnswers, false, false);
     }
 
-    public HTMLJTEQuestionResultHandler(IssueTranslator translator, Path output, boolean showAnswers, boolean teacherMode) {
+    public HTMLJTEQuestionResultHandler(IssueTranslator translator, Path output,
+                                        boolean showAnswers, boolean teacherMode) {
         this(translator, output, showAnswers, teacherMode, false);
     }
 
-    public HTMLJTEQuestionResultHandler(IssueTranslator translator, Path output, boolean showAnswers, boolean teacherMode, boolean exportMode) {
+    public HTMLJTEQuestionResultHandler(IssueTranslator translator, Path output,
+                                        boolean showAnswers, boolean teacherMode, boolean exportMode) {
         this.translator = translator;
         this.output = output;
         this.showAnswers = showAnswers;
@@ -108,12 +111,15 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
         // Generate sprite data (variables, lists) for each sprite
         Map<String, SpriteData> spriteData = generateSpriteData(program);
 
-        allProjects.add(new ProjectQuestions(projectId, projectName, rendered, coverage, sprites, spriteCode, spriteData));
+        allProjects.add(new ProjectQuestions(projectId, projectName,
+                rendered, coverage, sprites, spriteCode, spriteData));
     }
 
     private Map<String, String> generateSpriteCode(Program program) {
         Map<String, String> spriteCode = new LinkedHashMap<>();
-        if (program == null) return spriteCode;
+        if (program == null) {
+            return spriteCode;
+        }
 
         for (var actor : program.getActorDefinitionList().getDefinitions()) {
             String spriteName = actor.getIdent().getName();
@@ -137,7 +143,9 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
 
     private Map<String, SpriteData> generateSpriteData(Program program) {
         Map<String, SpriteData> spriteData = new LinkedHashMap<>();
-        if (program == null) return spriteData;
+        if (program == null) {
+            return spriteData;
+        }
 
         for (var actor : program.getActorDefinitionList().getDefinitions()) {
             String spriteName = actor.getIdent().getName();
@@ -299,7 +307,9 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
     }
 
     private String cleanQuestionText(String text) {
-        if (text == null) return "";
+        if (text == null) {
+            return "";
+        }
         // Remove embedded choice/answer markers and numeric answer patterns (use DOTALL for multiline)
         String cleaned = text
                 .replaceAll("(?s)\\[a-c\\].*?\\[/a-c\\]", "")
@@ -320,7 +330,9 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
      * Similar to HTMLReportGenerator.formatHint().
      */
     private String formatScratchBlocksNotation(String text) {
-        if (text == null) return "";
+        if (text == null) {
+            return "";
+        }
 
         // First escape HTML entities in the entire text, then wrap scratchblocks markers
         // We need to handle this carefully because the content might contain < > characters
@@ -343,7 +355,9 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
     }
 
     private String escapeHtml(String text) {
-        if (text == null) return "";
+        if (text == null) {
+            return "";
+        }
         return text.replace("&", "&amp;")
                 .replace("<", "&lt;")
                 .replace(">", "&gt;")
@@ -366,7 +380,9 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
     }
 
     private String cleanScratchBlocksNotation(String text) {
-        if (text == null) return "";
+        if (text == null) {
+            return "";
+        }
         String cleaned = text.replace("[sbi]", "")
                 .replace("[/sbi]", "")
                 .replace("[var]", "")

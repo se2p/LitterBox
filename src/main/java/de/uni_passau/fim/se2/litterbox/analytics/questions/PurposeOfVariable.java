@@ -33,6 +33,8 @@ import java.util.Set;
  */
 public class PurposeOfVariable extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "purpose_of_variable";
+
     private boolean inScript;
     private Set<String> variables;
 
@@ -71,8 +73,6 @@ public class PurposeOfVariable extends AbstractQuestionFinder {
             variables.add(ScratchBlocksVisitor.of(node));
         }
     }
-
-    public static final String FINDER_NAME = "purpose_of_variable";
 
     @Override
     public String getName() {

@@ -28,6 +28,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
  */
 public class PurposeOfScript extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "purpose_of_script";
+
     @Override
     public void visit(Script node) {
         ASTNode topBlockCurrent;
@@ -40,8 +42,6 @@ public class PurposeOfScript extends AbstractQuestionFinder {
                 .withScript(node);
         addQuestion(builder);
     }
-
-    public static final String FINDER_NAME = "purpose_of_script";
 
     @Override
     public String getName() {

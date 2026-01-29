@@ -34,6 +34,8 @@ import de.uni_passau.fim.se2.litterbox.utils.Randomness;
  */
 public class IfThenStatementExecution extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "if_then_statement_execution";
+
     @Override
     public void visit(IfThenStmt node) {
         if (node.getThenStmts().hasStatements()) {
@@ -54,8 +56,6 @@ public class IfThenStatementExecution extends AbstractQuestionFinder {
             addQuestion(builder);
         }
     }
-
-    public static final String FINDER_NAME = "if_then_statement_execution";
 
     @Override
     public String getName() {

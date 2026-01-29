@@ -45,6 +45,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
  */
 public class ElementInLoopBody extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "element_in_loop_body";
+
     private int insideLoop;
 
     @Override
@@ -197,8 +199,6 @@ public class ElementInLoopBody extends AbstractQuestionFinder {
     public void visit(KeyPressed node) {
         // Don't include keys as elements
     }
-
-    public static final String FINDER_NAME = "element_in_loop_body";
 
     @Override
     public String getName() {

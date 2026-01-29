@@ -34,6 +34,8 @@ import java.util.Set;
  */
 public class DefinitionOfProcedure extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "definition_of_procedure";
+
     private Map<String, ProcedureDefinition> procedures;
     private Map<String, CallStmt> procedureCalls;
     private Map<CallStmt, Script> scriptForCall;
@@ -96,8 +98,6 @@ public class DefinitionOfProcedure extends AbstractQuestionFinder {
         super.visit(node);
         scripts.add(node);
     }
-
-    public static final String FINDER_NAME = "definition_of_procedure";
 
     @Override
     public String getName() {

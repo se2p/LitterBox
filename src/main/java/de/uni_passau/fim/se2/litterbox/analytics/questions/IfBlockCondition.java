@@ -32,6 +32,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
  */
 public class IfBlockCondition extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "if_block_condition";
+
     private boolean ifStmtFound;
     private QuestionBuilder builder;
 
@@ -99,8 +101,6 @@ public class IfBlockCondition extends AbstractQuestionFinder {
     public void visit(BoolExpr node) {
         choices.add(wrappedScratchBlocks(node));
     }
-
-    public static final String FINDER_NAME = "if_block_condition";
 
     @Override
     public String getName() {

@@ -26,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
  */
 public class PurposeOfRepeatUntilLoop extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "purpose_of_repeat_until_loop";
+
     @Override
     public void visit(UntilStmt node) {
         QuestionBuilder builder = prepareQuestionBuilder(node);
@@ -33,8 +35,6 @@ public class PurposeOfRepeatUntilLoop extends AbstractQuestionFinder {
 
         super.visit(node);
     }
-
-    public static final String FINDER_NAME = "purpose_of_repeat_until_loop";
 
     @Override
     public String getName() {

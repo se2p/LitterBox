@@ -44,6 +44,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
  */
 public class ElementInLoopCondition extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "element_in_loop_condition";
+
     private boolean insideCondition;
 
     @Override
@@ -190,8 +192,6 @@ public class ElementInLoopCondition extends AbstractQuestionFinder {
     public void visit(KeyPressed node) {
         // Don't include keys as elements
     }
-
-    public static final String FINDER_NAME = "element_in_loop_condition";
 
     @Override
     public String getName() {

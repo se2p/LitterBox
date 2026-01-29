@@ -26,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfStmt;
  */
 public class PurposeOfIfCondition extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "purpose_of_if_condition";
+
     @Override
     public void visit(IfStmt node) {
         QuestionBuilder builder = prepareQuestionBuilder((node).getBoolExpr());
@@ -33,8 +35,6 @@ public class PurposeOfIfCondition extends AbstractQuestionFinder {
 
         super.visit(node);
     }
-
-    public static final String FINDER_NAME = "purpose_of_if_condition";
 
     @Override
     public String getName() {

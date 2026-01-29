@@ -102,18 +102,17 @@ public class QuestionsSubcommand extends Main.LitterBoxSubcommand {
     )
     Long seed;
 
-
-
     @CommandLine.Option(
             names = {"--teacher-mode"},
-            description = "Generate teacher version with highlighted correct answers instead of interactive checking (HTML output only)."
+            description = "Generate teacher version with highlighted correct answers "
+                    + "instead of interactive checking (HTML output only)."
     )
     boolean teacherMode;
 
     @CommandLine.Option(
             names = {"--export-format", "-f"},
-            description = "Export format: CONSOLE, JSON, HTML. " +
-                    "If not specified, format is inferred from output file extension."
+            description = "Export format: CONSOLE, JSON, HTML. "
+                    + "If not specified, format is inferred from output file extension."
     )
     QuizExportFormat exportFormat;
 

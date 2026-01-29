@@ -32,6 +32,8 @@ import java.util.List;
  */
 public class RandomNumberRange extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "random_number_range";
+
     @Override
     public void visit(PickRandom node) {
         NumExpr fromExpr = node.getOperand1();
@@ -95,8 +97,6 @@ public class RandomNumberRange extends AbstractQuestionFinder {
         }
         return String.valueOf(d);
     }
-
-    public static final String FINDER_NAME = "random_number_range";
 
     @Override
     public String getName() {

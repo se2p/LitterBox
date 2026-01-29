@@ -36,6 +36,14 @@ import java.util.List;
  */
 public class VariableChangeResult extends AbstractQuestionFinder {
 
+    private static final String IT_DECREASES_BY = "it_decreases_by";
+    private static final String IT_INCREASES_BY = "it_increases_by";
+    private static final String IT_SETS_THE_VALUE_TO = "it_sets_the_value_to";
+    private static final String IT_DOES_NOT_CHANGE = "it_does_not_change";
+    private static final String VALUE_PARAM = "VALUE";
+
+    public static final String FINDER_NAME = "variable_change_result";
+
     @Override
     public void visit(SetVariableTo node) {
         String varName = getVariableName(node.getIdentifier());
@@ -69,20 +77,20 @@ public class VariableChangeResult extends AbstractQuestionFinder {
 
         if (value.startsWith("-")) {
             String absVal = value.substring(1);
-            changeDesc = QuestionText.fromKey("it_decreases_by").withQuestionParameter("VALUE", absVal);
-            distractors.add(QuestionText.fromKey("it_increases_by").withQuestionParameter("VALUE", absVal));
-            distractors.add(QuestionText.fromKey("it_sets_the_value_to").withQuestionParameter("VALUE", value));
-            distractors.add(QuestionText.fromKey("it_sets_the_value_to")
-                    .withQuestionParameter("VALUE", absVal));
+            changeDesc = QuestionText.fromKey(IT_DECREASES_BY).withQuestionParameter(VALUE_PARAM, absVal);
+            distractors.add(QuestionText.fromKey(IT_INCREASES_BY).withQuestionParameter(VALUE_PARAM, absVal));
+            distractors.add(QuestionText.fromKey(IT_SETS_THE_VALUE_TO).withQuestionParameter(VALUE_PARAM, value));
+            distractors.add(QuestionText.fromKey(IT_SETS_THE_VALUE_TO)
+                    .withQuestionParameter(VALUE_PARAM, absVal));
         } else {
-            changeDesc = QuestionText.fromKey("it_increases_by").withQuestionParameter("VALUE", value);
-            distractors.add(QuestionText.fromKey("it_decreases_by").withQuestionParameter("VALUE", value));
-            distractors.add(QuestionText.fromKey("it_sets_the_value_to").withQuestionParameter("VALUE", value));
-            distractors.add(QuestionText.fromKey("it_sets_the_value_to")
-                    .withQuestionParameter("VALUE", "-" + value));
+            changeDesc = QuestionText.fromKey(IT_INCREASES_BY).withQuestionParameter(VALUE_PARAM, value);
+            distractors.add(QuestionText.fromKey(IT_DECREASES_BY).withQuestionParameter(VALUE_PARAM, value));
+            distractors.add(QuestionText.fromKey(IT_SETS_THE_VALUE_TO).withQuestionParameter(VALUE_PARAM, value));
+            distractors.add(QuestionText.fromKey(IT_SETS_THE_VALUE_TO)
+                    .withQuestionParameter(VALUE_PARAM, "-" + value));
         }
 
-        distractors.add(QuestionText.fromKey("it_does_not_change"));
+        distractors.add(QuestionText.fromKey(IT_DOES_NOT_CHANGE));
 
         List<TranslatableText> options = generateTranslatableMultipleChoiceOptions(
                 Collections.singletonList(changeDesc), distractors);
@@ -126,8 +134,6 @@ public class VariableChangeResult extends AbstractQuestionFinder {
         }
         return distractors;
     }
-
-    public static final String FINDER_NAME = "variable_change_result";
 
     @Override
     public String getName() {

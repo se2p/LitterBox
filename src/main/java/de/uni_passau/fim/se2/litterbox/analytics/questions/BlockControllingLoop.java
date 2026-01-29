@@ -35,6 +35,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.Terminati
  */
 public class BlockControllingLoop extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "block_controlling_loop";
+
     private boolean loopFound;
     private QuestionBuilder builder;
 
@@ -118,8 +120,6 @@ public class BlockControllingLoop extends AbstractQuestionFinder {
     public void visit(TerminationStmt node) {
         // Don't include Termination statements as options
     }
-
-    public static final String FINDER_NAME = "block_controlling_loop";
 
     @Override
     public String getName() {

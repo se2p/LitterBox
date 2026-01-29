@@ -34,6 +34,8 @@ import java.util.Map;
  */
 public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "script_execution_order_same_actor";
+
     Map<String, List<Script>> scriptsWithEvent;
 
     @Override
@@ -70,8 +72,6 @@ public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
                     k -> new ArrayList<>()).add(node);
         }
     }
-
-    public static final String FINDER_NAME = "script_execution_order_same_actor";
 
     @Override
     public String getName() {

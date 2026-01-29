@@ -36,6 +36,8 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
 
     public static final String FINDER_NAME = "script_execution_order_different_actors";
     private static final String STAGE_NAME = "Stage";
+    private static final String ACTOR1_PARAM = "ACTOR1";
+    private static final String ACTOR2_PARAM = "ACTOR2";
 
     Map<String, Map<String, List<Script>>> scriptsWithEvent;
 
@@ -77,10 +79,10 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
                         .withChoices(List.of(actor1))
                         .withCorrectAnswers(actor2)
                         .withQuestionText(QuestionText.fromKey(getName()))
-                        .withQuestionParameter("ACTOR1", actor1)
-                        .withQuestionParameter("ACTOR2", actor2)
-                        .withQuestionParameter("EVENT", event)
-                        .withQuestionParameter("CONDITION", condition);
+                        .withQuestionParameter(ACTOR1_PARAM, actor1)
+                        .withQuestionParameter(ACTOR2_PARAM, actor2)
+                        .withQuestionParameter(QuestionText.EVENT, event)
+                        .withQuestionParameter(QuestionText.CONDITION, condition);
 
                 addQuestion(builder);
             }

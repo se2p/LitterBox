@@ -26,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
  */
 public class PurposeOfProcedure extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "purpose_of_procedure";
+
     @Override
     public void visit(ProcedureDefinition node) {
         currentProcedure = node;
@@ -34,8 +36,6 @@ public class PurposeOfProcedure extends AbstractQuestionFinder {
                 .withProcedure(node);
         addQuestion(builder);
     }
-
-    public static final String FINDER_NAME = "purpose_of_procedure";
 
     @Override
     public String getName() {

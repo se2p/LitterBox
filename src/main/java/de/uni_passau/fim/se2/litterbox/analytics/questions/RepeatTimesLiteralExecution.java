@@ -33,6 +33,8 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
  */
 public class RepeatTimesLiteralExecution extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "repeat_times_literal_execution";
+
     private boolean hasStop;
     private int inLoop;
 
@@ -64,7 +66,7 @@ public class RepeatTimesLiteralExecution extends AbstractQuestionFinder {
 
                     QuestionBuilder builder = prepareQuestionBuilder(stmt)
                             .withQuestionText(QuestionText.fromKey(getName()))
-                            .withQuestionParameter("STATEMENT", ScratchBlocksVisitor.of(stmt))
+                            .withQuestionParameter(QuestionText.STATEMENT, ScratchBlocksVisitor.of(stmt))
                             .withCorrectAnswers(String.valueOf(num.getValue()));
                     addQuestion(builder);
                 }
@@ -81,8 +83,6 @@ public class RepeatTimesLiteralExecution extends AbstractQuestionFinder {
     public void visit(TerminationStmt node) {
         hasStop = true;
     }
-
-    public static final String FINDER_NAME = "repeat_times_literal_execution";
 
     @Override
     public String getName() {
