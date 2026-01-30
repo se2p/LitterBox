@@ -39,6 +39,16 @@ public class InvalidActorBlocksTest implements JsonTest {
         return program;
     }
 
+    @Test
+    public void testSpriteExclusive() throws ParsingException {
+        assertThatFinderReports(48, new InvalidActorBlocks(), "./src/test/fixtures/smells/allSpriteExclusiveBlocksInStage.json");
+    }
+
+    @Test
+    public void testStageExclusive() throws ParsingException {
+        assertThatFinderReports(1, new InvalidActorBlocks(), "./src/test/fixtures/smells/allStageExclusiveBlocksInSprite.json");
+    }
+
     // Tests for sprite-only blocks on Stage
 
     @Test
@@ -147,7 +157,7 @@ public class InvalidActorBlocksTest implements JsonTest {
     }
 
     @Test
-    public void testCreateCloneOnStage() throws ParsingException {
+    public void testCreateCloneOfMyselfOnStage() throws ParsingException {
         String script = """
                 when green flag clicked
                 create clone of (myself v)""";
@@ -156,7 +166,20 @@ public class InvalidActorBlocksTest implements JsonTest {
         InvalidActorBlocks finder = new InvalidActorBlocks();
         Set<Issue> issues = finder.check(program);
 
-        Assertions.assertEquals(1, issues.size(), "Should report create clone block on stage");
+        Assertions.assertEquals(1, issues.size(), "Should report create clone of myself on stage");
+    }
+
+    @Test
+    public void testCreateCloneOfSpriteOnStage() throws ParsingException {
+        String script = """
+                when green flag clicked
+                create clone of [Sprite1 v]""";
+
+        Program program = parseScratchBlocksOnStage(script);
+        InvalidActorBlocks finder = new InvalidActorBlocks();
+        Set<Issue> issues = finder.check(program);
+
+        Assertions.assertEquals(0, issues.size(), "Should NOT report create clone of Sprite1 on stage");
     }
 
     @Test
@@ -209,6 +232,43 @@ public class InvalidActorBlocksTest implements JsonTest {
         Set<Issue> issues = finder.check(program);
 
         Assertions.assertEquals(1, issues.size(), "Should report drag mode block on stage");
+    }
+
+    @Test
+    public void testPenOnStage() throws ParsingException {
+        String script = """
+                when green flag clicked
+                pen down
+                pen up
+                stamp
+                set pen color to [#ff0000]
+                set pen size to (1)
+                change pen size by (1)
+                set pen (brightness v) to (50)
+                change pen (brightness v) by (10)""";
+
+        Program program = parseScratchBlocksOnStage(script);
+        InvalidActorBlocks finder = new InvalidActorBlocks();
+        Set<Issue> issues = finder.check(program);
+
+        Assertions.assertEquals(8, issues.size(), "Should report all pen blocks on stage");
+    }
+
+    @Test
+    public void testReportersOnStage() throws ParsingException {
+        String script = """
+                when green flag clicked
+                wait (x position) seconds
+                wait (y position) seconds
+                wait (direction) seconds
+                wait (size) seconds
+                wait (costume [number v]) seconds""";
+
+        Program program = parseScratchBlocksOnStage(script);
+        InvalidActorBlocks finder = new InvalidActorBlocks();
+        Set<Issue> issues = finder.check(program);
+
+        Assertions.assertEquals(5, issues.size(), "Should report sprite-specific reporters on stage");
     }
 
     // Tests for stage-only blocks on Sprite

@@ -23,16 +23,23 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugs.InvalidActorBlocks;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.SpriteClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StageClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.injection.AbstractBugInjector;
 
@@ -130,8 +137,9 @@ public class InvalidActorBlocksInjector extends AbstractBugInjector {
     }
 
     private boolean hasSpriteOnlyBlocks(Script script) {
-        boolean[] found = {false};
-        script.accept(new ScratchVisitor() {
+        final boolean[] found = {false};
+
+        class SpriteBlockVisitor implements ScratchVisitor, PenExtensionVisitor {
             @Override
             public void visit(SpriteMotionStmt node) {
                 found[0] = true;
@@ -139,11 +147,6 @@ public class InvalidActorBlocksInjector extends AbstractBugInjector {
 
             @Override
             public void visit(SpriteLookStmt node) {
-                found[0] = true;
-            }
-
-            @Override
-            public void visit(CreateCloneOf node) {
                 found[0] = true;
             }
 
@@ -161,12 +164,105 @@ public class InvalidActorBlocksInjector extends AbstractBugInjector {
             public void visit(StartedAsClone node) {
                 found[0] = true;
             }
-        });
+
+            @Override
+            public void visit(Myself node) {
+                found[0] = true;
+            }
+
+            @Override
+            public void visit(PositionX node) {
+                found[0] = true;
+            }
+
+            @Override
+            public void visit(PositionY node) {
+                found[0] = true;
+            }
+
+            @Override
+            public void visit(Direction node) {
+                found[0] = true;
+            }
+
+            @Override
+            public void visit(Costume node) {
+                found[0] = true;
+            }
+
+            @Override
+            public void visit(Size node) {
+                found[0] = true;
+            }
+
+            @Override
+            public void visit(Touching node) {
+                found[0] = true;
+            }
+
+            @Override
+            public void visit(SpriteTouchingColor node) {
+                found[0] = true;
+            }
+
+            @Override
+            public void visit(ColorTouchingColor node) {
+                found[0] = true;
+            }
+
+            @Override
+            public void visit(DistanceTo node) {
+                found[0] = true;
+            }
+
+            // Pen
+            @Override
+            public void visit(PenDownStmt node) {
+                found[0] = true;
+            }
+
+            @Override
+            public void visit(PenUpStmt node) {
+                found[0] = true;
+            }
+
+            @Override
+            public void visit(PenStampStmt node) {
+                found[0] = true;
+            }
+
+            @Override
+            public void visit(SetPenColorParamTo node) {
+                found[0] = true;
+            }
+
+            @Override
+            public void visit(SetPenColorToColorStmt node) {
+                found[0] = true;
+            }
+
+            @Override
+            public void visit(SetPenSizeTo node) {
+                found[0] = true;
+            }
+
+            @Override
+            public void visit(ChangePenColorParamBy node) {
+                found[0] = true;
+            }
+
+            @Override
+            public void visit(ChangePenSizeBy node) {
+                found[0] = true;
+            }
+        }
+
+        script.accept(new SpriteBlockVisitor());
         return found[0];
     }
 
     private boolean hasStageOnlyBlocks(Script script) {
-        boolean[] found = {false};
+        final boolean[] found = {false};
         script.accept(new ScratchVisitor() {
             @Override
             public void visit(StageClicked node) {

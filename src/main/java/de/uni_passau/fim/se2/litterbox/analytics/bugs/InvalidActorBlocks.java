@@ -22,14 +22,21 @@ import de.uni_passau.fim.se2.litterbox.analytics.AbstractIssueFinder;
 import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.SpriteClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StageClicked;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.ColorTouchingColor;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.SpriteTouchingColor;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.Touching;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.Costume;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.SwitchBackdropAndWait;
-import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SpriteMotionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,7 +54,7 @@ import java.util.Collection;
  * users can drag scripts between sprites and the stage, resulting in code that will never
  * execute as intended.
  */
-public class InvalidActorBlocks extends AbstractIssueFinder {
+public class InvalidActorBlocks extends AbstractIssueFinder implements PenExtensionVisitor {
     public static final String NAME = "invalid_actor_blocks";
     private static final String HINT_SPRITE = "invalid_actor_blocks_sprite";
     private static final String HINT_STAGE = "invalid_actor_blocks_stage";
@@ -84,7 +91,21 @@ public class InvalidActorBlocks extends AbstractIssueFinder {
     }
 
     @Override
-    public void visit(CreateCloneOf node) {
+    public void visit(DeleteClone node) {
+        if (currentActor.isStage()) {
+            addIssueWithHint(node, HINT_SPRITE);
+        }
+    }
+
+    @Override
+    public void visit(Myself node) {
+        if (currentActor.isStage()) {
+            addIssueWithHint(node.getParentNode(), HINT_SPRITE);
+        }
+    }
+
+    @Override
+    public void visit(PositionX node) {
         if (currentActor.isStage()) {
             addIssueWithHint(node, HINT_SPRITE);
         }
@@ -92,10 +113,132 @@ public class InvalidActorBlocks extends AbstractIssueFinder {
     }
 
     @Override
-    public void visit(DeleteClone node) {
+    public void visit(PositionY node) {
         if (currentActor.isStage()) {
             addIssueWithHint(node, HINT_SPRITE);
         }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(Direction node) {
+        if (currentActor.isStage()) {
+            addIssueWithHint(node, HINT_SPRITE);
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(Costume node) {
+        if (currentActor.isStage()) {
+            addIssueWithHint(node, HINT_SPRITE);
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(Size node) {
+        if (currentActor.isStage()) {
+            addIssueWithHint(node, HINT_SPRITE);
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(Touching node) {
+        if (currentActor.isStage()) {
+            addIssueWithHint(node, HINT_SPRITE);
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(SpriteTouchingColor node) {
+        if (currentActor.isStage()) {
+            addIssueWithHint(node, HINT_SPRITE);
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(ColorTouchingColor node) {
+        if (currentActor.isStage()) {
+            addIssueWithHint(node, HINT_SPRITE);
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(DistanceTo node) {
+        if (currentActor.isStage()) {
+            addIssueWithHint(node, HINT_SPRITE);
+        }
+        visitChildren(node);
+    }
+
+    // Pen blocks - Sprite only
+    @Override
+    public void visit(PenDownStmt node) {
+        if (currentActor.isStage()) {
+            addIssueWithHint(node, HINT_SPRITE);
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(PenUpStmt node) {
+        if (currentActor.isStage()) {
+            addIssueWithHint(node, HINT_SPRITE);
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(PenStampStmt node) {
+        if (currentActor.isStage()) {
+            addIssueWithHint(node, HINT_SPRITE);
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(SetPenColorParamTo node) {
+        if (currentActor.isStage()) {
+            addIssueWithHint(node, HINT_SPRITE);
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(SetPenColorToColorStmt node) {
+        if (currentActor.isStage()) {
+            addIssueWithHint(node, HINT_SPRITE);
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(SetPenSizeTo node) {
+        if (currentActor.isStage()) {
+            addIssueWithHint(node, HINT_SPRITE);
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(ChangePenColorParamBy node) {
+        if (currentActor.isStage()) {
+            addIssueWithHint(node, HINT_SPRITE);
+        }
+        visitChildren(node);
+    }
+
+    @Override
+    public void visit(ChangePenSizeBy node) {
+        if (currentActor.isStage()) {
+            addIssueWithHint(node, HINT_SPRITE);
+        }
+        visitChildren(node);
     }
 
     // Stage-only blocks used on sprite

@@ -223,7 +223,7 @@ public class IssueTool {
             registerSmellFinder(new UnusedCustomBlock(), smellFinders);
             registerSmellFinder(new UnusedParameter(), smellFinders);
             registerSmellFinder(new UnusedVariable(), smellFinders);
-            registerSmellFinder(new UselessBlocks(), smellFinders);
+
             registerSmellFinder(new UselessWait(), smellFinders);
             registerSmellFinder(new VariableInitializationRace(), smellFinders);
         }
