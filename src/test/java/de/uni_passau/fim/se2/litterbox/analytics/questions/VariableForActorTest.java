@@ -20,13 +20,13 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.Set;
 
@@ -35,12 +35,12 @@ import static com.google.common.truth.Truth.assertThat;
 class VariableForActorTest implements FinderTest, JsonTest {
 
     @Test
-    public void testNoVariables() throws IOException, ParsingException {
+    public void testNoVariables() throws ParsingException {
         assertThatFinderReports(0, new VariableForActor(), "./src/test/fixtures/questions/noVariablesInProgram.json");
     }
 
     @Test
-    public void testLocalAndGlobalVariables() throws IOException, ParsingException {
+    public void testLocalAndGlobalVariables() throws ParsingException {
         Program prog = getAST("./src/test/fixtures/questions/localAndGlobalVariable.json");
         Set<Question> questions = runFinder(prog, new VariableForActor(), false);
         assertThat(questions.size()).isEqualTo(2);
@@ -48,11 +48,25 @@ class VariableForActorTest implements FinderTest, JsonTest {
         IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
         for (Question question : questions) {
             assertThat(question.getQuestionText(translator)).contains("Which sprite does");
+
+            String qText = question.getQuestionText(translator);
+            if (qText.contains("my variable")) {
+                // Global variable -> All sprites
+                assertThat(question.getCorrectAnswers()).hasSize(1);
+                TranslatableText answer = question.getCorrectAnswers().getFirst();
+                assertThat(answer.getKey()).isEqualTo(QuestionText.ALL_SPRITES);
+                assertThat(answer.resolveText(translator, translator::getQuestionText)).isEqualTo("All sprites");
+            } else if (qText.contains("local")) {
+                // Local variable -> Sprite1
+                assertThat(question.getCorrectAnswers()).hasSize(1);
+                TranslatableText answer = question.getCorrectAnswers().getFirst();
+                assertThat(answer.getTextContent()).isEqualTo("Sprite1");
+            }
         }
     }
 
     @Test
-    public void twoGlobalVariables() throws IOException, ParsingException {
+    public void twoGlobalVariables() throws ParsingException {
         assertThatFinderReports(2, new VariableForActor(), "src/test/fixtures/questions/twoVariablesInIfElseStatement.json");
     }
 }

@@ -54,9 +54,10 @@ public class QuestionText extends TranslatableText {
     public static final String NEXT_BLOCK = "NEXT_BLOCK";
     public static final String OPERATOR = "OPERATOR";
     public static final String OP1 = "OP1";
-    public static final String OP2 = "OP2";
     public static final String SUBJECT = "SUBJECT";
     public static final String BLOCK = "BLOCK";
+    public static final String ALL_SPRITES = "all_sprites";
+    public static final String STAGE = "stage";
 
     // Translation keys for common answer terms
     public static final String YES_TERM = "yes_term";

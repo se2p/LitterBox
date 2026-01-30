@@ -91,7 +91,8 @@ public class EvaluationResultHandler implements QuestionResultHandler {
         if (answersNode != null && answersNode.isArray()) {
             for (JsonNode answer : answersNode) {
                 int questionId = answer.get("questionId").asInt();
-                String answerText = answer.get("answer").asText();
+                JsonNode answerNode = answer.get("answer");
+                String answerText = (answerNode != null && !answerNode.isNull()) ? answerNode.asText() : null;
                 studentAnswers.put(questionId, answerText);
 
                 // Load expected answers if present (for consistent evaluation)

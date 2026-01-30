@@ -54,7 +54,7 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
                 String actor2;
                 Script script1;
                 Script script2;
-                String condition;
+                QuestionText condition;
 
                 List<String> actors = new ArrayList<>(actorsWithEvent.keySet());
                 if (actorsWithEvent.containsKey(STAGE_NAME)) {
@@ -63,13 +63,15 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
                     actor2 = actors.getFirst();
                     script1 = actorsWithEvent.get(actor1).getFirst();
                     script2 = actorsWithEvent.get(actor2).getFirst();
-                    condition = "";
+                    condition = QuestionText.fromText("");
                 } else {
                     actor1 = actors.get(0);
                     actor2 = actors.get(1);
                     script1 = actorsWithEvent.get(actor1).getFirst();
                     script2 = actorsWithEvent.get(actor2).getFirst();
-                    condition = " Suppose " + actor2 + " is in front of " + actor1 + ".";
+                    condition = QuestionText.fromKey("suppose_actor_front")
+                            .withQuestionParameter(ACTOR1_PARAM, actor1)
+                            .withQuestionParameter(ACTOR2_PARAM, actor2);
                 }
 
                 // Use script1's event as the primary node
@@ -78,10 +80,10 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
                         .addAdditionalScript(script2)
                         .withChoices(List.of(actor1))
                         .withCorrectAnswers(actor2)
+                        .withQuestionParameter(QuestionText.CONDITION, condition)
                         .withQuestionParameter(ACTOR1_PARAM, actor1)
                         .withQuestionParameter(ACTOR2_PARAM, actor2)
-                        .withQuestionParameter(QuestionText.EVENT, event)
-                        .withQuestionParameter(QuestionText.CONDITION, condition);
+                        .withQuestionParameter(QuestionText.EVENT, event);
 
                 addQuestion(builder);
             }

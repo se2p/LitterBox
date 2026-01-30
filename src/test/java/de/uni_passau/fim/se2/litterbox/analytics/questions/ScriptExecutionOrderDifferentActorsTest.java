@@ -40,22 +40,22 @@ class ScriptExecutionOrderDifferentActorsTest implements FinderTest, JsonTest {
     }
 
     @Test
-    public void testOneScript() throws IOException, ParsingException {
+    public void testOneScript() throws ParsingException {
         assertThatFinderReports(0, new ScriptExecutionOrderDifferentActors(), "./src/test/fixtures/questions/noVariables.json");
     }
 
     @Test
-    public void testTwoScriptsSameEventSameActor() throws IOException, ParsingException {
+    public void testTwoScriptsSameEventSameActor() throws ParsingException {
         assertThatFinderReports(0, new ScriptExecutionOrderDifferentActors(), "./src/test/fixtures/questions/twoScriptsWithConditionalLoops.json");
     }
 
     @Test
-    public void testTwoScriptsDifferentEventIn2Sprites() throws IOException, ParsingException {
+    public void testTwoScriptsDifferentEventIn2Sprites() throws ParsingException {
         assertThatFinderReports(0, new ScriptExecutionOrderDifferentActors(), "./src/test/fixtures/questions/scriptsWithDifferentEventIn2Sprites.json");
     }
 
     @Test
-    public void testSameEventsDifferentSprites() throws IOException, ParsingException {
+    public void testSameEventsDifferentSprites() throws ParsingException {
         Program prog = getAST("src/test/fixtures/questions/sameEventsInDifferentScripts.json");
         Set<Question> questions = runFinder(prog, new ScriptExecutionOrderDifferentActors(), false);
         assertThat(questions.size()).isEqualTo(2);
@@ -65,11 +65,12 @@ class ScriptExecutionOrderDifferentActorsTest implements FinderTest, JsonTest {
         for (Question question : questions) {
             String questionText = question.getQuestionText(translator);
             if (questionText.contains("Stage")) {
-                String correct = question.getCorrectAnswers().get(0).resolveText(translator, translator::getInfo);
+                String correct = question.getCorrectAnswers().getFirst().resolveText(translator, translator::getInfo);
                 assertThat(correct).contains("Sprite1");
             }
             else {
                 assertThat(questionText).contains("Suppose");
+                assertThat(questionText).doesNotContain("%ACTOR");
             }
         }
     }

@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
@@ -35,7 +36,12 @@ public class ScriptsForActor extends AbstractQuestionFinder {
     public void visit(ActorDefinition node) {
         currentActor = node;
         String actor = ScratchBlocksVisitor.of(node.getIdent());
-        String actorText = STAGE_NAME.equals(actor) ? STAGE_NAME : actor;
+        TranslatableText actorText;
+        if (STAGE_NAME.equals(actor)) {
+            actorText = QuestionText.fromKey(QuestionText.STAGE);
+        } else {
+            actorText = QuestionText.fromText(actor);
+        }
         QuestionBuilder builder = prepareQuestionBuilder()
                 .withQuestionParameter(ACTOR_PARAM, actorText)
                 .withCorrectAnswers(Integer.toString(node.getScripts().getSize()));

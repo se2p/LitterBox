@@ -71,7 +71,7 @@ class EvaluationResultHandlerTest {
         List<EvaluatedProject> projects = (List<EvaluatedProject>) field.get(handler);
 
         assertFalse(projects.isEmpty());
-        EvaluatedProject project = projects.get(0);
+        EvaluatedProject project = projects.getFirst();
 
         // This assertion verifies the fix: Unanswered questions (not in export) are excluded
         assertEquals(1, project.questions().size(), "Should have 1 question, excluding the unasked one");
@@ -115,8 +115,46 @@ class EvaluationResultHandlerTest {
         field.setAccessible(true);
         List<EvaluatedProject> projects = (List<EvaluatedProject>) field.get(handler);
 
-        EvaluatedQuestion eq = projects.get(0).questions().get(0);
+        EvaluatedQuestion eq = projects.getFirst().questions().getFirst();
         assertTrue(eq.correct());
         assertNotEquals("evaluation_feedback_correct", eq.feedback(), "Feedback should be a human readable string, not the key");
+    }
+
+    @Test
+    void testNullAnswerInJsonIsHandledAsNull() throws Exception {
+        // Setup
+        Path answersFile = tempDir.resolve("answers_null.json");
+        Files.writeString(answersFile, """
+                {
+                  "projectFile": "testProject.sb3",
+                  "answers": [
+                    {
+                      "questionId": 1,
+                      "answer": null
+                    }
+                  ]
+                }
+                """);
+
+        IssueTranslator translator = Mockito.mock(IssueTranslator.class);
+        when(translator.getLocale()).thenReturn(Locale.ENGLISH);
+        when(translator.getInfo(anyString())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(translator.getName(anyString())).thenReturn("FinderName");
+
+        EvaluationResultHandler handler = new EvaluationResultHandler(translator, null, answersFile, false);
+        handler.begin();
+
+        QuestionDTO q1 = new QuestionDTO(1, "finder", "name", QuestionType.FREE_TEXT, ProgramDimension.PURPOSE, ScopeOfFocus.ATOM, null, "Q1", null, List.of("Expected"), null, null);
+
+        handler.handleResult(Path.of("testProject.sb3"), null, List.of(q1));
+
+        java.lang.reflect.Field field = EvaluationResultHandler.class.getDeclaredField("evaluatedProjects");
+        field.setAccessible(true);
+        List<EvaluatedProject> projects = (List<EvaluatedProject>) field.get(handler);
+
+        EvaluatedQuestion eq = projects.getFirst().questions().getFirst();
+
+        // This is the check: should be null, not "null"
+        assertNull(eq.providedAnswer(), "Provided answer should be null, not string 'null'");
     }
 }

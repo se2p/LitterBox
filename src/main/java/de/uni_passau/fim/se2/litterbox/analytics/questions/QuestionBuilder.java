@@ -36,7 +36,7 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
     private ProgramDimension programDimension;
     private ScopeOfFocus scopeOfFocus;
     private QuestionText questionText;
-    private final Map<String, Object> pendingParameters = new HashMap<>();
+    private final Map<String, Object> pendingParameters = new LinkedHashMap<>();
     private List<TranslatableText> choices;
     private List<TranslatableText> correctAnswers;
     private List<ScriptEntity> additionalScripts;
@@ -203,20 +203,6 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
             return self();
         }
         return withChoices(Arrays.asList(choices));
-    }
-
-    /**
-     * Adds a translatable choice to the list of choices.
-     *
-     * @param choice the translatable choice to add
-     * @return this builder
-     */
-    public QuestionBuilder addChoice(TranslatableText choice) {
-        if (this.choices == null) {
-            this.choices = new ArrayList<>();
-        }
-        this.choices.add(choice);
-        return self();
     }
 
     /**

@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
+import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
@@ -47,7 +48,7 @@ class ScriptsForActorTest implements FinderTest, JsonTest {
     }
 
     @Test
-    public void testOneSpriteWithOneScript() throws IOException, ParsingException {
+    public void testOneSpriteWithOneScript() throws ParsingException {
         Program prog = getAST("src/test/fixtures/questions/onlyStageOneScript.json");
         Set<Question> questions = runFinder(prog, new ScriptsForActor(), false);
         assertThat(questions.size()).isEqualTo(1);
@@ -57,11 +58,17 @@ class ScriptsForActorTest implements FinderTest, JsonTest {
         for (Question question : questions) {
             assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("1");
             assertThat(question.getQuestionText(translator)).contains("Stage");
+
+            // Verify ACTOR parameter uses translation key
+            QuestionText qt = question.getQuestionTextObject();
+            HintPlaceholder actorParam = qt.getParameters().get("ACTOR");
+            assertThat(actorParam).isInstanceOf(HintPlaceholder.Translatable.class);
+            assertThat(((HintPlaceholder.Translatable) actorParam).translationKey()).isEqualTo(QuestionText.STAGE);
         }
     }
 
     @Test
-    public void testOneSpriteWithTwoScripts() throws IOException, ParsingException {
+    public void testOneSpriteWithTwoScripts() throws ParsingException {
         Program prog = getAST("src/test/fixtures/questions/onlyStageTwoScripts.json");
         Set<Question> questions = runFinder(prog, new ScriptsForActor(), false);
         assertThat(questions.size()).isEqualTo(1);
@@ -73,7 +80,7 @@ class ScriptsForActorTest implements FinderTest, JsonTest {
     }
 
     @Test
-    public void testMultipleScriptsInDifferentActors() throws IOException, ParsingException {
+    public void testMultipleScriptsInDifferentActors() throws ParsingException {
         Program prog = getAST("src/test/fixtures/questions/eventsTriggeredByStatements.json");
         Set<Question> questions = runFinder(prog, new ScriptsForActor(), false);
         assertThat(questions.size()).isEqualTo(2);

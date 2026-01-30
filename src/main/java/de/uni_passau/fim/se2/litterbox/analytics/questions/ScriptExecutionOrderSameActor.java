@@ -36,7 +36,7 @@ public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
 
     public static final String FINDER_NAME = "script_execution_order_same_actor";
     private static final String EVENT_PARAM = "EVENT";
-    private static final String NO_ANSWER = "no";
+
 
     Map<String, List<Script>> scriptsWithEvent;
 
@@ -57,7 +57,7 @@ public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
                 QuestionBuilder builder = prepareQuestionBuilder(script1.getEvent())
                         .withScript(script1)
                         .addAdditionalScript(script2)
-                        .withCorrectAnswers(NO_ANSWER)
+                        .addCorrectAnswer(QuestionText.fromKey(QuestionText.NO_TERM))
                         .withQuestionParameter(EVENT_PARAM, event);
 
                 addQuestion(builder);

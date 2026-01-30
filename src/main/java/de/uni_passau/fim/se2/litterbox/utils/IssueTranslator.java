@@ -176,6 +176,8 @@ public final class IssueTranslator {
     public String getInfo(String keyword) {
         if (general.containsKey(keyword)) {
             return general.getString(keyword);
+        } else if (questionTexts != null && questionTexts.containsKey(keyword)) {
+            return questionTexts.getString(keyword);
         } else {
             return keyword;
         }

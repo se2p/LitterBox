@@ -45,6 +45,9 @@ public sealed interface HintPlaceholder {
     record ValueWithTranslatableElements(String value) implements HintPlaceholder {
     }
 
+    record NestedTranslatable(TranslatableText text) implements HintPlaceholder {
+    }
+
     record Defineable(de.uni_passau.fim.se2.litterbox.cfg.Defineable defineable) implements HintPlaceholder {
     }
 }

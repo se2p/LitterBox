@@ -18,6 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
@@ -33,11 +34,10 @@ public class VariableForActor extends AbstractQuestionFinder {
 
     public static final String FINDER_NAME = "variable_for_actor";
     private static final String VARIABLE_PARAM = "VARIABLE";
-    private static final String ALL_SPRITES = "All sprites";
 
     private Set<String> variables;
-    private Set<String> actors;
-    private Map<String, List<String>> variablesForActor;
+    private Set<TranslatableText> actors;
+    private Map<TranslatableText, List<String>> variablesForActor;
 
     @Override
     public void visit(Program node) {
@@ -47,14 +47,14 @@ public class VariableForActor extends AbstractQuestionFinder {
         super.visit(node);
 
         variablesForActor.forEach((actor, variables) -> {
-            choices.addAll(actors);
-            choices.remove(actor);
+            Set<TranslatableText> distractors = new LinkedHashSet<>(actors);
+            distractors.remove(actor);
 
             for (String variable : variables) {
                 QuestionBuilder builder = prepareQuestionBuilder()
                         .withQuestionParameter(VARIABLE_PARAM, variable)
-                        .withCorrectAnswers(actor)
-                        .withChoices(generateMultipleChoiceOptions(Set.of(actor), choices));
+                        .addCorrectAnswer(actor)
+                        .withTranslatableChoices(generateTranslatableMultipleChoiceOptions(Set.of(actor), distractors));
                 addQuestion(builder);
             }
         });
@@ -62,7 +62,12 @@ public class VariableForActor extends AbstractQuestionFinder {
 
     @Override
     public void visit(ActorDefinition node) {
-        String actor = node.isSprite() ? node.getIdent().getName() : ALL_SPRITES;
+        TranslatableText actor;
+        if (node.isSprite()) {
+            actor = QuestionText.fromText(node.getIdent().getName());
+        } else {
+            actor = QuestionText.fromKey(QuestionText.ALL_SPRITES);
+        }
         actors.add(actor);
 
         variables.clear();

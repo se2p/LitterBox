@@ -120,6 +120,15 @@ public class Question extends Finding {
     }
 
     /**
+     * Returns the raw QuestionText object.
+     *
+     * @return the question text object
+     */
+    public QuestionText getQuestionTextObject() {
+        return questionText;
+    }
+
+    /**
      * Returns the available choices for multiple choice questions.
      *
      * @return unmodifiable list of choices, or empty list if not applicable

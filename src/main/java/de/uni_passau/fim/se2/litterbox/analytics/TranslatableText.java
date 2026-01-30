@@ -25,7 +25,7 @@ import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -76,7 +76,7 @@ public abstract class TranslatableText {
      * Parameters to substitute into the text template.
      * Keys are placeholder names (without the % prefix), values are the replacements.
      */
-    protected final Map<String, HintPlaceholder> parameters = new HashMap<>();
+    protected final Map<String, HintPlaceholder> parameters = new LinkedHashMap<>();
 
     /**
      * Constructs a TranslatableText with the given key and content.
@@ -149,7 +149,11 @@ public abstract class TranslatableText {
     public void setParameter(final String key, final TranslatableText value) {
         requireNonNull(key, "Parameter key must not be null");
         requireNonNull(value, "Parameter value must not be null");
-        parameters.put(key, new HintPlaceholder.Translatable(value.getKey()));
+        if (value.getKey() != null && value.getParameters().isEmpty()) {
+            parameters.put(key, new HintPlaceholder.Translatable(value.getKey()));
+        } else {
+            parameters.put(key, new HintPlaceholder.NestedTranslatable(value));
+        }
     }
 
     /**
@@ -170,7 +174,7 @@ public abstract class TranslatableText {
         for (final var entry : parameters.entrySet()) {
             final String key = entry.getKey();
             final HintPlaceholder placeholder = entry.getValue();
-            final String value = translatePlaceholder(translator, placeholder);
+            final String value = translatePlaceholder(translator, placeholder, keyLookup);
 
             text = text.replace(ESCAPE_CHARACTER + key, value);
         }
@@ -183,13 +187,16 @@ public abstract class TranslatableText {
      *
      * @param translator  the translator for i18n lookups
      * @param placeholder the placeholder to translate
+     * @param keyLookup   the function to look up keys for nested translations
      * @return the translated string value
      */
     protected String translatePlaceholder(final IssueTranslator translator,
-                                          final HintPlaceholder placeholder) {
+                                          final HintPlaceholder placeholder,
+                                          Function<String, String> keyLookup) {
         return switch (placeholder) {
             case HintPlaceholder.Value v -> v.value();
             case HintPlaceholder.Translatable key -> translator.getInfo(key.translationKey());
+            case HintPlaceholder.NestedTranslatable n -> n.text().resolveText(translator, keyLookup);
             case HintPlaceholder.Defineable d -> getDefineableName(translator, d.defineable());
             case HintPlaceholder.ValueWithTranslatableElements v -> {
                 final Matcher matcher = PLACEHOLDER_PATTERN.matcher(v.value());
@@ -292,5 +299,33 @@ public abstract class TranslatableText {
             case MOTOR_POWER -> IssueTranslator.GeneralTerm.MOTOR_POWER;
             case MATRIX -> IssueTranslator.GeneralTerm.MATRIX;
         };
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        TranslatableText that = (TranslatableText) o;
+
+        if (textKey != null ? !textKey.equals(that.textKey) : that.textKey != null) {
+            return false;
+        }
+        if (textContent != null ? !textContent.equals(that.textContent) : that.textContent != null) {
+            return false;
+        }
+        return parameters.equals(that.parameters);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = textKey != null ? textKey.hashCode() : 0;
+        result = 31 * result + (textContent != null ? textContent.hashCode() : 0);
+        result = 31 * result + parameters.hashCode();
+        return result;
     }
 }
