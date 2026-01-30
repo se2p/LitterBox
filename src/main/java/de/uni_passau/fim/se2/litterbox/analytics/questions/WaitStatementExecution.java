@@ -43,7 +43,6 @@ public class WaitStatementExecution extends AbstractQuestionFinder {
         List<String> options = generateMultipleChoiceOptions(Collections.singletonList(seconds), distractors);
 
         QuestionBuilder builder = prepareQuestionBuilder(node)
-                .withQuestionText(QuestionText.fromKey(getName()))
                 .withChoices(options)
                 .withCorrectAnswers(Collections.singletonList(seconds));
         addQuestion(builder);

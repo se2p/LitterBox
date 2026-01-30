@@ -23,10 +23,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
 import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Builder for creating {@link Question} instances.
@@ -39,6 +36,7 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
     private ProgramDimension programDimension;
     private ScopeOfFocus scopeOfFocus;
     private QuestionText questionText;
+    private final Map<String, Object> pendingParameters = new HashMap<>();
     private List<TranslatableText> choices;
     private List<TranslatableText> correctAnswers;
     private List<ScriptEntity> additionalScripts;
@@ -88,18 +86,6 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
     }
 
     /**
-     * Sets the question text using a direct string.
-     * For full translation support, use {@link #withQuestionText(QuestionText)}.
-     *
-     * @param questionText the question text
-     * @return this builder
-     */
-    public QuestionBuilder withQuestionText(String questionText) {
-        this.questionText = QuestionText.fromText(questionText);
-        return self();
-    }
-
-    /**
      * Sets the question text using a QuestionText object.
      * This enables key-based translation support with parameters.
      *
@@ -108,56 +94,75 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
      */
     public QuestionBuilder withQuestionText(QuestionText questionText) {
         this.questionText = questionText;
+        applyPendingParameters();
         return self();
     }
 
     /**
      * Sets a parameter on the question text.
-     * Only works if {@link #withQuestionText(QuestionText)} was called with a key-based QuestionText.
+     * If question text is not yet set, it is stored and applied later.
      *
      * @param key   the parameter name (e.g., "VARIABLE")
      * @param value the parameter value
      * @return this builder
-     * @throws IllegalStateException if question text has not been set
      */
     public QuestionBuilder withQuestionParameter(String key, String value) {
-        checkQuestionTextSet();
-        questionText.setParameter(key, value);
+        if (questionText != null) {
+            questionText.setParameter(key, value);
+        } else {
+            pendingParameters.put(key, value);
+        }
         return self();
     }
 
     /**
      * Sets a parameter on the question text using a HintPlaceholder.
+     * If question text is not yet set, it is stored and applied later.
      *
      * @param key   the parameter name
      * @param value the placeholder value
      * @return this builder
-     * @throws IllegalStateException if question text has not been set
      */
     public QuestionBuilder withQuestionParameter(String key, HintPlaceholder value) {
-        checkQuestionTextSet();
-        questionText.setParameter(key, value);
+        if (questionText != null) {
+            questionText.setParameter(key, value);
+        } else {
+            pendingParameters.put(key, value);
+        }
         return self();
     }
 
     /**
      * Sets a translatable parameter on the question text.
+     * If question text is not yet set, it is stored and applied later.
      *
      * @param key   the parameter name
      * @param value the translatable parameter value
      * @return this builder
-     * @throws IllegalStateException if question text has not been set
      */
     public QuestionBuilder withQuestionParameter(String key, TranslatableText value) {
-        checkQuestionTextSet();
-        questionText.setParameter(key, value);
+        if (questionText != null) {
+            questionText.setParameter(key, value);
+        } else {
+            pendingParameters.put(key, value);
+        }
         return self();
     }
 
-    private void checkQuestionTextSet() {
-        if (questionText == null) {
-            throw new IllegalStateException("Cannot set parameter before question text is set. "
-                    + "Call withQuestionText() first.");
+    private void applyPendingParameters() {
+        if (questionText != null && !pendingParameters.isEmpty()) {
+            for (Map.Entry<String, Object> entry : pendingParameters.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                switch (value) {
+                    case String s -> questionText.setParameter(key, s);
+                    case HintPlaceholder h -> questionText.setParameter(key, h);
+                    case TranslatableText t -> questionText.setParameter(key, t);
+                    default -> {
+                    }
+                }
+            }
+            pendingParameters.clear();
         }
     }
 
@@ -168,9 +173,11 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
      * @return this builder
      */
     public QuestionBuilder withChoices(List<String> choices) {
-        this.choices = choices != null ? choices.stream().map(QuestionText::fromText)
-                .map(it -> (TranslatableText) it).toList() : null;
-        return self();
+        if (choices == null) {
+            this.choices = null;
+            return self();
+        }
+        return withTranslatableChoices(choices.stream().map(QuestionText::fromText).toList());
     }
 
     /**
@@ -191,23 +198,11 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
      * @return this builder
      */
     public QuestionBuilder withChoices(String... choices) {
-        this.choices = choices != null ? Arrays.stream(choices).map(QuestionText::fromText)
-                .map(it -> (TranslatableText) it).toList() : null;
-        return self();
-    }
-
-    /**
-     * Adds a choice to the list of choices.
-     *
-     * @param choice the choice to add
-     * @return this builder
-     */
-    public QuestionBuilder addChoice(String choice) {
-        if (this.choices == null) {
-            this.choices = new ArrayList<>();
+        if (choices == null) {
+            this.choices = null;
+            return self();
         }
-        this.choices.add(QuestionText.fromText(choice));
-        return self();
+        return withChoices(Arrays.asList(choices));
     }
 
     /**
@@ -231,9 +226,11 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
      * @return this builder
      */
     public QuestionBuilder withCorrectAnswers(List<String> answers) {
-        this.correctAnswers = answers != null ? answers.stream().map(QuestionText::fromText)
-                .map(it -> (TranslatableText) it).toList() : null;
-        return self();
+        if (answers == null) {
+            this.correctAnswers = null;
+            return self();
+        }
+        return withTranslatableCorrectAnswers(answers.stream().map(QuestionText::fromText).toList());
     }
 
     /**
@@ -254,23 +251,11 @@ public class QuestionBuilder extends FindingBuilder<Question, QuestionBuilder> {
      * @return this builder
      */
     public QuestionBuilder withCorrectAnswers(String... answers) {
-        this.correctAnswers = answers != null ? Arrays.stream(answers).map(QuestionText::fromText)
-                .map(it -> (TranslatableText) it).toList() : null;
-        return self();
-    }
-
-    /**
-     * Adds a correct answer.
-     *
-     * @param answer the answer to add
-     * @return this builder
-     */
-    public QuestionBuilder addCorrectAnswer(String answer) {
-        if (this.correctAnswers == null) {
-            this.correctAnswers = new ArrayList<>();
+        if (answers == null) {
+            this.correctAnswers = null;
+            return self();
         }
-        this.correctAnswers.add(QuestionText.fromText(answer));
-        return self();
+        return withCorrectAnswers(Arrays.asList(answers));
     }
 
     /**

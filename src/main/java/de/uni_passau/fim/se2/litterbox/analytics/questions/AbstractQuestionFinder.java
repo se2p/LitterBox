@@ -144,11 +144,8 @@ public abstract class AbstractQuestionFinder implements QuestionFinder, ScratchV
     @Override
     public Set<Question> check(Program program) {
         Preconditions.checkNotNull(program);
-        resetState();
         this.program = program;
-        this.questions = new LinkedHashSet<>();
-        this.choices = new LinkedHashSet<>();
-        this.answers = new LinkedHashSet<>();
+        resetState();
         program.accept(this);
         return Collections.unmodifiableSet(questions);
     }
@@ -166,6 +163,9 @@ public abstract class AbstractQuestionFinder implements QuestionFinder, ScratchV
         this.inLookStmt = false;
         this.inSoundStmt = false;
         this.inBroadcastStmt = false;
+        this.questions = new LinkedHashSet<>();
+        this.choices = new LinkedHashSet<>();
+        this.answers = new LinkedHashSet<>();
     }
 
     @Override
@@ -216,7 +216,8 @@ public abstract class AbstractQuestionFinder implements QuestionFinder, ScratchV
                 .withScriptOrProcedure(getCurrentScriptEntity())
                 .withQuestionType(getQuestionType())
                 .withProgramDimension(getProgramDimension())
-                .withScopeOfFocus(getScopeOfFocus());
+                .withScopeOfFocus(getScopeOfFocus())
+                .withQuestionText(QuestionText.fromKey(getName()));
     }
 
     /**

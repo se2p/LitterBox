@@ -310,19 +310,8 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
         if (text == null) {
             return "";
         }
-        // Remove embedded choice/answer markers and numeric answer patterns (use DOTALL for multiline)
-        String cleaned = text
-                .replaceAll("(?s)\\[a-c\\].*?\\[/a-c\\]", "")
-                .replaceAll("(?s)\\[a-n\\].*?\\[/a-n\\]", "")
-                .replaceAll("(?s)\\[a-y\\].*?\\[/a-y\\]", "")  // Yes/no answers
-                .replaceAll("(?s)\\[a-s\\].*?\\[/a-s\\]", "")  // Single-answer markers
-                .replaceAll("(?s)\\[a-c\\]\\[choices\\].*", "")  // Handle unclosed choice blocks at end
-                .replaceAll("\\[a-f\\].*", "")
-                .replaceAll("\\[a-f\\]", "")
-                .replaceAll("(?s)\\[choices\\].*?\\[/choices\\]", "")
-                .replaceAll("(?s)\\[solutions\\].*?\\[/solutions\\]", "");
         // Convert scratchblocks notation to HTML for inline rendering
-        return formatScratchBlocksNotation(cleaned);
+        return formatScratchBlocksNotation(text);
     }
 
     /**

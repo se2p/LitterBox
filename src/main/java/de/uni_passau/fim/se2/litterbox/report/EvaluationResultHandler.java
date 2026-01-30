@@ -60,7 +60,6 @@ public class EvaluationResultHandler implements QuestionResultHandler {
     private Map<Integer, String> studentAnswers;
     private Map<Integer, List<String>> exportedExpectedAnswers;
     private String projectFileName;
-    private Instant exportedAt;
     private final List<EvaluatedProject> evaluatedProjects = new ArrayList<>();
 
     public EvaluationResultHandler(IssueTranslator translator, Path output, Path answersFile, boolean llmEval) {
@@ -85,7 +84,6 @@ public class EvaluationResultHandler implements QuestionResultHandler {
         JsonNode root = objectMapper.readTree(answersFile.toFile());
 
         projectFileName = root.has("projectFile") ? root.get("projectFile").asText() : null;
-        exportedAt = root.has("exportedAt") ? Instant.parse(root.get("exportedAt").asText()) : null;
 
         studentAnswers = new HashMap<>();
         exportedExpectedAnswers = new HashMap<>();
@@ -306,20 +304,8 @@ public class EvaluationResultHandler implements QuestionResultHandler {
         if (text == null) {
             return "";
         }
-        // First remove answer/choice markers, then escape HTML and convert scratchblocks
-        String cleaned = text
-                .replaceAll("(?s)\\[a-c\\].*?\\[/a-c\\]", "")
-                .replaceAll("(?s)\\[a-n\\].*?\\[/a-n\\]", "")
-                .replaceAll("(?s)\\[a-y\\].*?\\[/a-y\\]", "")
-                .replaceAll("(?s)\\[a-s\\].*?\\[/a-s\\]", "")
-                .replaceAll("(?s)\\[a-c\\]\\[choices\\].*", "")
-                .replaceAll("\\[a-f\\].*", "")
-                .replaceAll("\\[a-f\\]", "")
-                .replaceAll("(?s)\\[choices\\].*?\\[/choices\\]", "")
-                .replaceAll("(?s)\\[solutions\\].*?\\[/solutions\\]", "");
-
         // Escape HTML entities to preserve scratchblocks syntax like < >
-        String escaped = escapeHtml(cleaned);
+        String escaped = escapeHtml(text);
 
         // Convert scratchblocks markers to HTML elements
         return escaped

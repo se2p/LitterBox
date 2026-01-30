@@ -37,6 +37,9 @@ import java.util.stream.Collectors;
 public class CloneCreators extends AbstractQuestionFinder {
 
     public static final String FINDER_NAME = "clone_creators";
+    private static final String TARGET_PARAM = "TARGET";
+    private static final String MYSELF_KEY = "_myself_";
+    private static final String MYSELF_VAL = "myself";
 
     @Override
     public void visit(CreateCloneOf node) {
@@ -50,8 +53,7 @@ public class CloneCreators extends AbstractQuestionFinder {
         String creatorName = currentActor.getIdent().getName();
 
         QuestionBuilder builder = prepareQuestionBuilder(node)
-                .withQuestionText(QuestionText.fromKey(getName()))
-                .withQuestionParameter("TARGET", targetName)
+                .withQuestionParameter(TARGET_PARAM, targetName)
                 .withCorrectAnswers(Collections.singletonList(creatorName))
                 .withChoices(getAllActorNames());
 
@@ -66,7 +68,7 @@ public class CloneCreators extends AbstractQuestionFinder {
             if (expr instanceof StringLiteral str) {
                 String text = str.getText();
                 // Check if it's "myself" (case insensitive) just in case
-                if ("_myself_".equalsIgnoreCase(text) || "myself".equalsIgnoreCase(text)) {
+                if (MYSELF_KEY.equalsIgnoreCase(text) || MYSELF_VAL.equalsIgnoreCase(text)) {
                     return currentActor.getIdent().getName();
                 }
                 return text;

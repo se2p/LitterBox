@@ -88,7 +88,7 @@ public class AnswerChecker {
             questionScopes.put(question.id(), question.scopeOfFocus());
 
             String studentAnswer = studentAnswers.get(question.id());
-            if (studentAnswer == null) {
+            if (studentAnswer == null || studentAnswer.trim().isEmpty()) {
                 // No answer provided
                 String feedback = null;
                 if (llmEvaluator != null) {
@@ -137,8 +137,14 @@ public class AnswerChecker {
 
     private AnswerResult checkMultipleChoice(QuestionDTO question, String studentAnswer) {
         if (question.correctAnswers() == null || question.correctAnswers().isEmpty()) {
-            return AnswerResult.withFeedback(question.id(), question.questionType(), false, studentAnswer, null,
-                    getFeedback("evaluation_no_expected_answer"));
+            return AnswerResult.withFeedback(
+                    question.id(),
+                    question.questionType(),
+                    false,
+                    studentAnswer,
+                    null,
+                    getLocalizedText("evaluation_no_expected_answer")
+            );
         }
 
         String normalizedStudent = normalizeAnswer(studentAnswer);
@@ -147,8 +153,8 @@ public class AnswerChecker {
                 .anyMatch(expected -> expected.equals(normalizedStudent));
 
         String feedback = correct
-                ? getFeedback("evaluation_feedback_correct_choice")
-                : getFeedback("evaluation_feedback_wrong_choice");
+                ? getLocalizedText("evaluation_feedback_correct_choice")
+                : getLocalizedText("evaluation_feedback_wrong_choice");
 
         return AnswerResult.withFeedback(
                 question.id(),
@@ -163,7 +169,7 @@ public class AnswerChecker {
     private AnswerResult checkNumeric(QuestionDTO question, String studentAnswer) {
         if (question.correctAnswers() == null || question.correctAnswers().isEmpty()) {
             return AnswerResult.withFeedback(question.id(), question.questionType(), false, studentAnswer, null,
-                    getFeedback("evaluation_no_expected_answer"));
+                    getLocalizedText("evaluation_no_expected_answer"));
         }
 
         try {
@@ -172,15 +178,17 @@ public class AnswerChecker {
 
             boolean correct;
             if (numericTolerance > 0) {
-                correct = Math.abs(studentValue - expectedValue) <= Math.abs(expectedValue * numericTolerance);
+                // Use a combination of relative and absolute tolerance to handle zero values correctly
+                double absTol = Math.max(1e-9, Math.abs(expectedValue * numericTolerance));
+                correct = Math.abs(studentValue - expectedValue) <= absTol;
             } else {
                 // Use Double.compare for exact comparison to avoid floating-point precision issues
                 correct = Double.compare(studentValue, expectedValue) == 0;
             }
 
             String feedback = correct
-                    ? getFeedback("evaluation_feedback_correct_number")
-                    : getFeedback("evaluation_feedback_wrong_number");
+                    ? getLocalizedText("evaluation_feedback_correct_number")
+                    : getLocalizedText("evaluation_feedback_wrong_number");
 
             return AnswerResult.withFeedback(
                     question.id(),
@@ -197,7 +205,7 @@ public class AnswerChecker {
                     false,
                     studentAnswer,
                     question.correctAnswers().getFirst(),
-                    getFeedback("evaluation_feedback_invalid_number")
+                    getLocalizedText("evaluation_feedback_invalid_number")
             );
         }
     }
@@ -205,15 +213,25 @@ public class AnswerChecker {
     private AnswerResult checkYesNo(QuestionDTO question, String studentAnswer) {
         if (question.correctAnswers() == null || question.correctAnswers().isEmpty()) {
             return AnswerResult.withFeedback(question.id(), question.questionType(), false, studentAnswer, null,
-                    getFeedback("evaluation_no_expected_answer"));
+                    getLocalizedText("evaluation_no_expected_answer"));
         }
 
         String normalized = studentAnswer.trim().toLowerCase();
-        boolean studentSaysYes = normalized.equals("yes") || normalized.equals("true") || normalized.equals("y");
-        boolean studentSaysNo = normalized.equals("no") || normalized.equals("false") || normalized.equals("n");
+
+        // Use localized terms for comparison
+        String yesTerm = getLocalizedText(QuestionText.YES_TERM).toLowerCase();
+        String noTerm = getLocalizedText(QuestionText.NO_TERM).toLowerCase();
+        String trueVal = getLocalizedText(QuestionText.TRUE_VALUE).toLowerCase();
+        String falseVal = getLocalizedText(QuestionText.FALSE_VALUE).toLowerCase();
+
+        boolean studentSaysYes = normalized.equals("yes") || normalized.equals("true") || normalized.equals("y")
+                || normalized.equals(yesTerm) || normalized.equals(trueVal);
+        boolean studentSaysNo = normalized.equals("no") || normalized.equals("false") || normalized.equals("n")
+                || normalized.equals(noTerm) || normalized.equals(falseVal);
 
         String expectedAnswer = question.correctAnswers().getFirst().toLowerCase();
-        boolean expectedYes = expectedAnswer.contains("yes") || expectedAnswer.equals("true");
+        boolean expectedYes = expectedAnswer.contains("yes") || expectedAnswer.equals("true")
+                || expectedAnswer.equals(yesTerm) || expectedAnswer.equals(trueVal);
 
         boolean correct;
         if (studentSaysYes) {
@@ -225,8 +243,8 @@ public class AnswerChecker {
         }
 
         String feedback = correct
-                ? getFeedback("evaluation_feedback_correct_yesno")
-                : getFeedback("evaluation_feedback_wrong_yesno");
+                ? getLocalizedText("evaluation_feedback_correct_yesno")
+                : getLocalizedText("evaluation_feedback_wrong_yesno");
 
         return AnswerResult.withFeedback(
                 question.id(),
@@ -246,10 +264,25 @@ public class AnswerChecker {
             List<String> normalizedExpected = question.correctAnswers().stream()
                     .map(this::normalizeAnswer)
                     .toList();
+
+            // For free text, we allow the student's answer to CONTAIN the expected answer (e.g. "it is 10" vs "10")
+            // but we must be careful with short strings (like "1") to avoid false positives (e.g. student says "10")
             boolean correct = normalizedExpected.stream()
-                    .anyMatch(expected -> normalizedStudent.equals(expected)
-                            || normalizedStudent.contains(expected)
-                            || expected.contains(normalizedStudent));
+                    .anyMatch(expected -> {
+                        if (normalizedStudent.equals(expected)) {
+                            return true;
+                        }
+
+                        // For very short strings or numbers, we require a word boundary to avoid partial matches
+                        // like "10" containing "1"
+                        if (expected.length() <= 2 || expected.matches("-?\\d+(\\.\\d+)?")) {
+                            // Use a simple word boundary check
+                            String pattern = ".*\\b" + java.util.regex.Pattern.quote(expected) + "\\b.*";
+                            return normalizedStudent.matches(pattern);
+                        }
+
+                        return normalizedStudent.contains(expected);
+                    });
 
             // If string matching found a match, return success
             if (correct) {
@@ -260,7 +293,7 @@ public class AnswerChecker {
                         studentAnswer,
                         formatExpectedAnswers(question.correctAnswers()),
                         1.0,
-                        getFeedback("evaluation_feedback_correct"),
+                        getLocalizedText("evaluation_feedback_correct"),
                         null
                 );
             }
@@ -285,7 +318,7 @@ public class AnswerChecker {
                     studentAnswer,
                     formatExpectedAnswers(question.correctAnswers()),
                     0.0,
-                    getFeedback("evaluation_feedback_freetext_review"),
+                    getLocalizedText("evaluation_feedback_freetext_review"),
                     null
             );
         }
@@ -298,12 +331,12 @@ public class AnswerChecker {
                 studentAnswer,
                 null,
                 0.0,
-                getFeedback("evaluation_feedback_freetext_review"),
+                getLocalizedText("evaluation_feedback_freetext_review"),
                 null
         );
     }
 
-    private String getFeedback(String key) {
+    private String getLocalizedText(String key) {
         if (translator != null) {
             String feedback = translator.getInfo(key);
             if (feedback != null && !feedback.equals(key)) {

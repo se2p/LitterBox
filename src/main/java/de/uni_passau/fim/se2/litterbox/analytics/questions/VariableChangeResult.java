@@ -59,7 +59,6 @@ public class VariableChangeResult extends AbstractQuestionFinder {
                 Collections.singletonList(QuestionText.fromText(value)), distractors);
 
         QuestionBuilder builder = prepareQuestionBuilder(node)
-                .withQuestionText(QuestionText.fromKey(getName()))
                 .withQuestionParameter(QuestionText.VARIABLE, varName)
                 .withTranslatableChoices(options)
                 .withTranslatableCorrectAnswers(Collections.singletonList(QuestionText.fromText(value)));
@@ -96,7 +95,6 @@ public class VariableChangeResult extends AbstractQuestionFinder {
                 Collections.singletonList(changeDesc), distractors);
 
         QuestionBuilder builder = prepareQuestionBuilder(node)
-                .withQuestionText(QuestionText.fromKey(getName()))
                 .withQuestionParameter(QuestionText.VARIABLE, varName)
                 .withTranslatableChoices(options)
                 .withTranslatableCorrectAnswers(Collections.singletonList(changeDesc));

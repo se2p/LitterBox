@@ -36,6 +36,7 @@ import static java.util.Objects.isNull;
 public class ScriptToSetVariable extends AbstractQuestionFinder {
 
     public static final String FINDER_NAME = "script_to_set_variable";
+    private static final String VARIABLE_PARAM = "VARIABLE";
 
     private String variable;
     private Map<String, String> variableAnswers;
@@ -51,8 +52,7 @@ public class ScriptToSetVariable extends AbstractQuestionFinder {
         if (!choices.isEmpty() && !variableAnswers.isEmpty()) {
             variableAnswers.forEach((variable, answer) -> {
                 QuestionBuilder builder = prepareQuestionBuilder()
-                        .withQuestionText(QuestionText.fromKey(getName()))
-                        .withQuestionParameter("VARIABLE", variable)
+                        .withQuestionParameter(VARIABLE_PARAM, variable)
                         .withCorrectAnswers(answer)
                         .withChoices(generateMultipleChoiceOptions(Collections.singletonList(answer), choices));
                 addQuestion(builder);

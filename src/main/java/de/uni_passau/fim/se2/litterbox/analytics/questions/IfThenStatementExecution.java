@@ -47,7 +47,6 @@ public class IfThenStatementExecution extends AbstractQuestionFinder {
             );
 
             QuestionBuilder builder = prepareQuestionBuilder(node)
-                    .withQuestionText(QuestionText.fromKey(getName()))
                     .withQuestionParameter(QuestionText.STATEMENT, ScratchBlocksVisitor.of(statement))
                     .withQuestionParameter(QuestionText.CONDITION, ScratchBlocksVisitor.of(condition))
                     .withQuestionParameter(QuestionText.VALUE,

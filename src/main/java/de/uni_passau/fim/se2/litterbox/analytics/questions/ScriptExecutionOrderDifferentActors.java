@@ -78,7 +78,6 @@ public class ScriptExecutionOrderDifferentActors extends AbstractQuestionFinder 
                         .addAdditionalScript(script2)
                         .withChoices(List.of(actor1))
                         .withCorrectAnswers(actor2)
-                        .withQuestionText(QuestionText.fromKey(getName()))
                         .withQuestionParameter(ACTOR1_PARAM, actor1)
                         .withQuestionParameter(ACTOR2_PARAM, actor2)
                         .withQuestionParameter(QuestionText.EVENT, event)

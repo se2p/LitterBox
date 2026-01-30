@@ -20,10 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
 import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
-import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 /**
@@ -38,8 +34,8 @@ import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
  *   <li>{@code %CONDITION} - Condition expression</li>
  *   <li>{@code %STATEMENT} - Statement representation</li>
  *   <li>{@code %EVENT} - Event description</li>
- *   <li>{@code %CHOICES} - Multiple choice options</li>
- *   <li>{@code %ANSWER} - Correct answer(s)</li>
+ *   <li>{@code %VALUE} - A value (numeric or string)</li>
+ *   <li>{@code %ATTRIBUTE} - An attribute name (e.g., X position)</li>
  * </ul>
  *
  * @see TranslatableText
@@ -51,8 +47,6 @@ public class QuestionText extends TranslatableText {
     public static final String CONDITION = "CONDITION";
     public static final String STATEMENT = "STATEMENT";
     public static final String EVENT = "EVENT";
-    public static final String CHOICES = "CHOICES";
-    public static final String ANSWER = "ANSWER";
     public static final String ACTOR = "ACTOR";
     public static final String ATTRIBUTE = "ATTRIBUTE";
     public static final String MESSAGE = "MESSAGE";
@@ -138,34 +132,5 @@ public class QuestionText extends TranslatableText {
     public QuestionText withQuestionParameter(String key, TranslatableText value) {
         setParameter(key, new HintPlaceholder.Translatable(value.getKey()));
         return this;
-    }
-
-    @Override
-    protected String getDefineableName(final IssueTranslator translator, final Defineable def) {
-        Identifier identifier = null;
-        if (def instanceof Variable) {
-            identifier = ((Variable) def).getIdentifier();
-        } else if (def instanceof ListVariable) {
-            identifier = ((ListVariable) def).getIdentifier();
-        } else if (def instanceof Parameter) {
-            identifier = ((Parameter) def).getIdentifier();
-        } else if (def instanceof Attribute attr) {
-            String attrName = attr.getAttributeType().name().toLowerCase().replace("_", " ");
-            if (attr.getParameter() != null) {
-                return attrName + " (" + attr.getParameter() + ")";
-            }
-            return attrName;
-        }
-
-        if (identifier != null) {
-            if (identifier instanceof LocalIdentifier local) {
-                return local.getName();
-            } else if (identifier instanceof Qualified qualified) {
-                return qualified.getFirst().getName() + "."
-                        + qualified.getSecond().getName().getName();
-            }
-        }
-
-        return def.toString();
     }
 }

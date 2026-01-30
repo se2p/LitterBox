@@ -35,6 +35,8 @@ import java.util.Map;
 public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
 
     public static final String FINDER_NAME = "script_execution_order_same_actor";
+    private static final String EVENT_PARAM = "EVENT";
+    private static final String NO_ANSWER = "no";
 
     Map<String, List<Script>> scriptsWithEvent;
 
@@ -55,9 +57,8 @@ public class ScriptExecutionOrderSameActor extends AbstractQuestionFinder {
                 QuestionBuilder builder = prepareQuestionBuilder(script1.getEvent())
                         .withScript(script1)
                         .addAdditionalScript(script2)
-                        .withCorrectAnswers("no")
-                        .withQuestionText(QuestionText.fromKey(getName()))
-                        .withQuestionParameter("EVENT", event);
+                        .withCorrectAnswers(NO_ANSWER)
+                        .withQuestionParameter(EVENT_PARAM, event);
 
                 addQuestion(builder);
                 break;

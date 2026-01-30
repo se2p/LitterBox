@@ -33,6 +33,11 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 public class SetVariable extends AbstractQuestionFinder {
 
     public static final String FINDER_NAME = "set_variable";
+    private static final String VARIABLE_PARAM = "VARIABLE";
+    private static final String OPEN_PAREN = "(";
+    private static final String CLOSE_PAREN = ")";
+    private static final String OPEN_BRACKET = "[";
+    private static final String CLOSE_BRACKET = "]";
 
     private boolean inScript;
 
@@ -51,8 +56,7 @@ public class SetVariable extends AbstractQuestionFinder {
 
             if (expression instanceof NumberLiteral || expression instanceof StringLiteral) {
                 QuestionBuilder builder = prepareQuestionBuilder(node)
-                        .withQuestionText(QuestionText.fromKey(getName()))
-                        .withQuestionParameter("VARIABLE", ScratchBlocksVisitor.of(identifier))
+                        .withQuestionParameter(VARIABLE_PARAM, ScratchBlocksVisitor.of(identifier))
                         .withCorrectAnswers(getExpressionValue(expression));
                 addQuestion(builder);
             }
@@ -68,8 +72,8 @@ public class SetVariable extends AbstractQuestionFinder {
     private String getExpressionValue(Expression node) {
         String value = ScratchBlocksVisitor.of(node).trim();
         // Strip outer parentheses (for numbers) or brackets (for strings)
-        if ((value.startsWith("(") && value.endsWith(")"))
-                || (value.startsWith("[") && value.endsWith("]"))) {
+        if ((value.startsWith(OPEN_PAREN) && value.endsWith(CLOSE_PAREN))
+                || (value.startsWith(OPEN_BRACKET) && value.endsWith(CLOSE_BRACKET))) {
             return value.substring(1, value.length() - 1);
         }
         return value;

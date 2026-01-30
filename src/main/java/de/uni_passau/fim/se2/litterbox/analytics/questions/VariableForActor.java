@@ -32,6 +32,8 @@ import java.util.*;
 public class VariableForActor extends AbstractQuestionFinder {
 
     public static final String FINDER_NAME = "variable_for_actor";
+    private static final String VARIABLE_PARAM = "VARIABLE";
+    private static final String ALL_SPRITES = "All sprites";
 
     private Set<String> variables;
     private Set<String> actors;
@@ -50,8 +52,7 @@ public class VariableForActor extends AbstractQuestionFinder {
 
             for (String variable : variables) {
                 QuestionBuilder builder = prepareQuestionBuilder()
-                        .withQuestionText(QuestionText.fromKey(getName()))
-                        .withQuestionParameter("VARIABLE", variable)
+                        .withQuestionParameter(VARIABLE_PARAM, variable)
                         .withCorrectAnswers(actor)
                         .withChoices(generateMultipleChoiceOptions(Set.of(actor), choices));
                 addQuestion(builder);
@@ -61,7 +62,7 @@ public class VariableForActor extends AbstractQuestionFinder {
 
     @Override
     public void visit(ActorDefinition node) {
-        String actor = node.isSprite() ? node.getIdent().getName() : "All sprites";
+        String actor = node.isSprite() ? node.getIdent().getName() : ALL_SPRITES;
         actors.add(actor);
 
         variables.clear();

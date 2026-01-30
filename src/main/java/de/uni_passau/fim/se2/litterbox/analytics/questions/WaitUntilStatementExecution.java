@@ -60,7 +60,6 @@ public class WaitUntilStatementExecution extends AbstractQuestionFinder {
         String wrongAnswer = conditionValue ? QuestionText.NO_TERM : QuestionText.YES_TERM;
 
         QuestionBuilder builder = prepareQuestionBuilder(waitUntil)
-                .withQuestionText(QuestionText.fromKey(getName()))
                 .withQuestionParameter(QuestionText.CONDITION, conditionText)
                 .withQuestionParameter(QuestionText.VALUE, QuestionText.fromKey(valueText))
                 .withQuestionParameter(QuestionText.NEXT_BLOCK, nextBlockText)

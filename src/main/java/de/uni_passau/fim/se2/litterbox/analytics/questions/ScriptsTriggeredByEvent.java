@@ -49,7 +49,6 @@ public class ScriptsTriggeredByEvent extends AbstractQuestionFinder {
         triggeredScripts.forEach((event, scripts) -> {
             if (!(event instanceof Never)) {
                 QuestionBuilder builder = prepareQuestionBuilder()
-                        .withQuestionText(QuestionText.fromKey(getName()))
                         .withQuestionParameter(QuestionText.EVENT, ScratchBlocksVisitor.of(event))
                         .withCorrectAnswers(Integer.toString(scripts.size()));
                 addQuestion(builder);

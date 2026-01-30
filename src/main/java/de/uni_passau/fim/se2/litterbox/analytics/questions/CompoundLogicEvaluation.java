@@ -88,7 +88,6 @@ public class CompoundLogicEvaluation extends AbstractQuestionFinder {
                     Collections.singletonList(correct), distractors);
 
             QuestionBuilder builder = prepareQuestionBuilder(node)
-                    .withQuestionText(QuestionText.fromKey(getName()))
                     .withTranslatableCorrectAnswers(Collections.singletonList(correct))
                     .withTranslatableChoices(options);
 

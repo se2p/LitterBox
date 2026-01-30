@@ -79,7 +79,6 @@ public class RandomNumberRange extends AbstractQuestionFinder {
             choices.addAll(distractors);
 
             QuestionBuilder builder = prepareQuestionBuilder(node)
-                    .withQuestionText(QuestionText.fromKey(getName()))
                     .withCorrectAnswers(Collections.singletonList(correct))
                     .withChoices(new ArrayList<>(choices));
 

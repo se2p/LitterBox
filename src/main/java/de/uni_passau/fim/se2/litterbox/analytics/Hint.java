@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
-import de.uni_passau.fim.se2.litterbox.cfg.*;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 /**
@@ -94,75 +91,7 @@ public class Hint extends TranslatableText {
     }
 
     @Override
-    protected String getDefineableName(final IssueTranslator translator, final Defineable def) {
-        final StringBuilder builder = new StringBuilder();
-
-        if (def instanceof Variable variable) {
-            builder.append("[var]");
-            builder.append(translator.getInfo(IssueTranslator.GeneralTerm.VARIABLE));
-            builder.append(" \"");
-            if (variable.getIdentifier() instanceof LocalIdentifier localIdentifier) {
-                builder.append(localIdentifier.getName());
-            } else {
-                builder.append(((Qualified) variable.getIdentifier()).getSecond().getName().getName());
-            }
-            builder.append("\"");
-            builder.append("[/var]");
-        } else if (def instanceof ListVariable variable) {
-            builder.append("[list]");
-            builder.append(translator.getInfo(IssueTranslator.GeneralTerm.LIST));
-            builder.append(" \"");
-            if (variable.getIdentifier() instanceof LocalIdentifier localIdentifier) {
-                builder.append(localIdentifier.getName());
-            } else {
-                builder.append(((Qualified) variable.getIdentifier()).getSecond().getName().getName());
-            }
-            builder.append("\"");
-            builder.append("[/list]");
-        } else if (def instanceof Attribute attr) {
-            builder.append(translator.getInfo(IssueTranslator.GeneralTerm.ATTRIBUTE));
-            builder.append(" \"");
-            IssueTranslator.GeneralTerm attributeType = getTermFromAttributeType(attr.getAttributeType());
-            builder.append(translator.getInfo(attributeType));
-            builder.append("\"");
-        } else if (def instanceof RobotAttribute attr) {
-            builder.append(translator.getInfo(IssueTranslator.GeneralTerm.ATTRIBUTE));
-            builder.append(" \"");
-            IssueTranslator.GeneralTerm attributeType = getTermFromAttributeType(attr.getAttributeType());
-            builder.append(translator.getInfo(attributeType));
-            builder.append("\"");
-        }
-
-        return builder.toString();
-    }
-
-    private IssueTranslator.GeneralTerm getTermFromAttributeType(final Attribute.AttributeType attributeType) {
-        return switch (attributeType) {
-            case POSITION_X, POSITION_Y -> IssueTranslator.GeneralTerm.POSITION;
-            case ROTATION -> IssueTranslator.GeneralTerm.ROTATION;
-            case SIZE -> IssueTranslator.GeneralTerm.SIZE;
-            case VISIBILITY -> IssueTranslator.GeneralTerm.VISIBILITY;
-            case GRAPHIC_EFFECT -> IssueTranslator.GeneralTerm.GRAPHIC_EFFECT;
-            case SOUND_EFFECT -> IssueTranslator.GeneralTerm.SOUND_EFFECT;
-            case VOLUME -> IssueTranslator.GeneralTerm.VOLUME;
-            case LAYER -> IssueTranslator.GeneralTerm.LAYER;
-            case COSTUME -> IssueTranslator.GeneralTerm.COSTUME;
-            case BACKDROP -> IssueTranslator.GeneralTerm.BACKDROP;
-            case TIMER -> IssueTranslator.GeneralTerm.TIMER;
-            case ROTATION_STYLE -> IssueTranslator.GeneralTerm.ROTATION_STYLE;
-            case SOUND_STATE -> IssueTranslator.GeneralTerm.SOUND_STATE;
-            case DRAG_MODE -> IssueTranslator.GeneralTerm.DRAG_MODE;
-            case VIDEO_STATE -> IssueTranslator.GeneralTerm.VIDEO_STATE;
-            case VIDEO_TRANSPARENCY -> IssueTranslator.GeneralTerm.TRANSPARENCY;
-        };
-    }
-
-    private IssueTranslator.GeneralTerm getTermFromAttributeType(final RobotAttribute.AttributeType attributeType) {
-        return switch (attributeType) {
-            case LED -> IssueTranslator.GeneralTerm.LED;
-            case ROCKY_LIGHT -> IssueTranslator.GeneralTerm.ROCKY_LIGHT;
-            case MOTOR_POWER -> IssueTranslator.GeneralTerm.MOTOR_POWER;
-            case MATRIX -> IssueTranslator.GeneralTerm.MATRIX;
-        };
+    protected boolean useFormattingTags() {
+        return true;
     }
 }

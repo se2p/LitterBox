@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
 import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeXBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.ChangeYBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
@@ -51,24 +52,36 @@ public class MotionStatementExecution extends AbstractQuestionFinder {
 
     @Override
     public void visit(ChangeXBy node) {
+        if (!(node.getNum() instanceof NumberLiteral)) {
+            return;
+        }
         String value = ScratchBlocksFormatUtil.stripParentheses(ScratchBlocksVisitor.of(node.getNum()));
         generateChangeQuestion(X_POSITION_ATTR, value, node);
     }
 
     @Override
     public void visit(ChangeYBy node) {
+        if (!(node.getNum() instanceof NumberLiteral)) {
+            return;
+        }
         String value = ScratchBlocksFormatUtil.stripParentheses(ScratchBlocksVisitor.of(node.getNum()));
         generateChangeQuestion(Y_POSITION_ATTR, value, node);
     }
 
     @Override
     public void visit(SetXTo node) {
+        if (!(node.getNum() instanceof NumberLiteral)) {
+            return;
+        }
         String value = ScratchBlocksFormatUtil.stripParentheses(ScratchBlocksVisitor.of(node.getNum()));
         generateSetQuestion(X_POSITION_ATTR, value, node);
     }
 
     @Override
     public void visit(SetYTo node) {
+        if (!(node.getNum() instanceof NumberLiteral)) {
+            return;
+        }
         String value = ScratchBlocksFormatUtil.stripParentheses(ScratchBlocksVisitor.of(node.getNum()));
         generateSetQuestion(Y_POSITION_ATTR, value, node);
     }
@@ -82,16 +95,20 @@ public class MotionStatementExecution extends AbstractQuestionFinder {
             changeDesc = QuestionText.fromKey(IT_DECREASES_BY).withQuestionParameter(VALUE_PARAM, absVal);
             distractors.add(QuestionText.fromKey(IT_INCREASES_BY).withQuestionParameter(VALUE_PARAM, absVal));
             distractors.add(QuestionText.fromKey(IT_SETS_THE_ATTRIBUTE_TO)
-                    .withQuestionParameter(ATTRIBUTE_PARAM, attributeKey).withQuestionParameter(VALUE_PARAM, value));
+                    .withQuestionParameter(ATTRIBUTE_PARAM, QuestionText.fromKey(attributeKey))
+                    .withQuestionParameter(VALUE_PARAM, value));
             distractors.add(QuestionText.fromKey(IT_SETS_THE_ATTRIBUTE_TO)
-                    .withQuestionParameter(ATTRIBUTE_PARAM, attributeKey).withQuestionParameter(VALUE_PARAM, absVal));
+                    .withQuestionParameter(ATTRIBUTE_PARAM, QuestionText.fromKey(attributeKey))
+                    .withQuestionParameter(VALUE_PARAM, absVal));
         } else {
             changeDesc = QuestionText.fromKey(IT_INCREASES_BY).withQuestionParameter(VALUE_PARAM, value);
             distractors.add(QuestionText.fromKey(IT_DECREASES_BY).withQuestionParameter(VALUE_PARAM, value));
             distractors.add(QuestionText.fromKey(IT_SETS_THE_ATTRIBUTE_TO)
-                    .withQuestionParameter(ATTRIBUTE_PARAM, attributeKey).withQuestionParameter(VALUE_PARAM, value));
+                    .withQuestionParameter(ATTRIBUTE_PARAM, QuestionText.fromKey(attributeKey))
+                    .withQuestionParameter(VALUE_PARAM, value));
             distractors.add(QuestionText.fromKey(IT_SETS_THE_ATTRIBUTE_TO)
-                    .withQuestionParameter(ATTRIBUTE_PARAM, attributeKey).withQuestionParameter(VALUE_PARAM, "-" + value));
+                    .withQuestionParameter(ATTRIBUTE_PARAM, QuestionText.fromKey(attributeKey))
+                    .withQuestionParameter(VALUE_PARAM, "-" + value));
         }
 
         distractors.add(QuestionText.fromKey(IT_DOES_NOT_CHANGE));
@@ -100,7 +117,6 @@ public class MotionStatementExecution extends AbstractQuestionFinder {
                 Collections.singletonList(changeDesc), distractors);
 
         QuestionBuilder builder = prepareQuestionBuilder(node)
-                .withQuestionText(QuestionText.fromKey(getName()))
                 .withQuestionType(QuestionType.MULTIPLE_CHOICE)
                 .withQuestionParameter(ATTRIBUTE_PARAM, QuestionText.fromKey(attributeKey))
                 .withTranslatableChoices(options)
@@ -114,7 +130,6 @@ public class MotionStatementExecution extends AbstractQuestionFinder {
                 Collections.singletonList(QuestionText.fromText(value)), distractors);
 
         QuestionBuilder builder = prepareQuestionBuilder(node)
-                .withQuestionText(QuestionText.fromKey(getName()))
                 .withQuestionParameter(QuestionText.ATTRIBUTE, new HintPlaceholder.Translatable(attribute))
                 .withTranslatableChoices(options)
                 .withTranslatableCorrectAnswers(Collections.singletonList(QuestionText.fromText(value)));

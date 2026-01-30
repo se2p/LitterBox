@@ -103,7 +103,6 @@ public class RepeatUntilStatementExecution extends AbstractQuestionFinder {
                 Collections.singletonList(correct), distractors);
 
         QuestionBuilder builder = prepareQuestionBuilder(untilStmt)
-                .withQuestionText(QuestionText.fromKey(getName()))
                 .withQuestionParameter(QuestionText.CONDITION, conditionText)
                 .withQuestionParameter(QuestionText.VALUE, QuestionText.fromKey(valueText))
                 .withTranslatableCorrectAnswers(Collections.singletonList(correct))

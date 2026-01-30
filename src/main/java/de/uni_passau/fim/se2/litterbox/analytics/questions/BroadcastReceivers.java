@@ -123,7 +123,6 @@ public class BroadcastReceivers extends AbstractQuestionFinder {
         List<String> options = generateMultipleChoiceOptions(receivers, allActors);
 
         QuestionBuilder builder = prepareQuestionBuilder(node)
-                .withQuestionText(QuestionText.fromKey(getName()))
                 .withQuestionParameter(QuestionText.MESSAGE, message)
                 .withChoices(options)
                 .withCorrectAnswers(new ArrayList<>(receivers));

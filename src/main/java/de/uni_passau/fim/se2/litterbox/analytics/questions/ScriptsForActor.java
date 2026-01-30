@@ -28,15 +28,16 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 public class ScriptsForActor extends AbstractQuestionFinder {
 
     public static final String FINDER_NAME = "scripts_for_actor";
+    private static final String STAGE_NAME = "Stage";
+    private static final String ACTOR_PARAM = "ACTOR";
 
     @Override
     public void visit(ActorDefinition node) {
         currentActor = node;
         String actor = ScratchBlocksVisitor.of(node.getIdent());
-        String actorText = "Stage".equals(actor) ? "Stage" : actor;
+        String actorText = STAGE_NAME.equals(actor) ? STAGE_NAME : actor;
         QuestionBuilder builder = prepareQuestionBuilder()
-                .withQuestionText(QuestionText.fromKey(getName()))
-                .withQuestionParameter("ACTOR", actorText)
+                .withQuestionParameter(ACTOR_PARAM, actorText)
                 .withCorrectAnswers(Integer.toString(node.getScripts().getSize()));
         addQuestion(builder);
     }

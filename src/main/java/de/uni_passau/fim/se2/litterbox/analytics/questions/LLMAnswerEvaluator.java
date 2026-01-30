@@ -163,10 +163,12 @@ public class LLMAnswerEvaluator {
 
                 Guidelines:
                 - Tone: Warm, simple, and encouraging.
+                - Address the user directly: "You correctly identified..." NOT "The student..."
                 - Keep the hint concise (1-2 sentences).
                 - When referencing Scratch blocks, use [sbi]block text[/sbi] notation.
                 - For variables, use [var]variable name[/var] notation.
-                """.formatted(languageName);
+                - ALWAYS write feedback in %s.
+                """.formatted(languageName, languageName);
     }
 
     private String buildHintPrompt(QuestionDTO question) {
