@@ -45,6 +45,15 @@ import java.util.stream.Collectors;
 /**
  * Outputs questions as a rich HTML report using JTE templates.
  * Features interactive answer checking and block model navigation.
+ *
+ * <p>Supports two modes of operation:
+ * <ul>
+ *   <li><b>File mode:</b> When output is a file path (has .html extension), all projects
+ *       are accumulated and written to a single file in {@link #finish()}.</li>
+ *   <li><b>Directory mode:</b> When output is a directory (exists as directory or has no
+ *       recognized extension), each project is written immediately to a separate file
+ *       named {@code <projectname>_questions.html}.</li>
+ * </ul>
  */
 public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
 
@@ -63,6 +72,13 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
     private final boolean teacherMode;
     private final boolean exportMode;
     private final List<ProjectQuestions> allProjects = new ArrayList<>();
+    private final boolean directoryMode;
+
+    // Cached resources for directory mode (loaded lazily)
+    private String cachedScratchblocksJs;
+    private String cachedTranslationsJs;
+    private String cachedLogo;
+    private String cachedFaviconBase64;
 
     public HTMLJTEQuestionResultHandler(IssueTranslator translator, Path output,
                                         boolean showAnswers) {
@@ -81,6 +97,20 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
         this.showAnswers = showAnswers;
         this.teacherMode = teacherMode;
         this.exportMode = exportMode;
+        this.directoryMode = isDirectoryMode(output);
+    }
+
+    private static boolean isDirectoryMode(Path path) {
+        if (path == null) {
+            return false;
+        }
+        // If it already exists as a directory, use directory mode
+        if (Files.isDirectory(path)) {
+            return true;
+        }
+        // If the filename has no recognized extension, treat as directory
+        String filename = path.getFileName().toString();
+        return QuestionExportFormat.fromFilename(filename) == null;
     }
 
     @Override
@@ -111,8 +141,68 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
         // Generate sprite data (variables, lists) for each sprite
         Map<String, SpriteData> spriteData = generateSpriteData(program);
 
-        allProjects.add(new ProjectQuestions(projectId, projectName,
-                rendered, coverage, sprites, spriteCode, spriteData));
+        ProjectQuestions projectQuestions = new ProjectQuestions(projectId, projectName,
+                rendered, coverage, sprites, spriteCode, spriteData);
+
+        if (directoryMode) {
+            // Write immediately for this project
+            writeProjectToFile(projectFile, projectQuestions);
+        } else {
+            // Accumulate for single file output
+            allProjects.add(projectQuestions);
+        }
+    }
+
+    private void writeProjectToFile(Path projectFile, ProjectQuestions projectQuestions) {
+        try {
+            Files.createDirectories(output);
+            String projectBaseName = getProjectBaseName(projectFile);
+            Path outputPath = output.resolve(projectBaseName + "_questions.html");
+
+            // Load resources lazily (cached for subsequent projects)
+            ensureResourcesLoaded();
+
+            Scripts scripts = new Scripts(cachedScratchblocksJs, cachedTranslationsJs);
+
+            QuestionsTemplateModel model = new QuestionsTemplateModel(
+                    translator.getLocale().getLanguage(),
+                    cachedFaviconBase64,
+                    cachedLogo,
+                    scripts,
+                    translator,
+                    showAnswers,
+                    teacherMode,
+                    exportMode,
+                    List.of(projectQuestions)
+            );
+
+            try (PrintWriter pw = new PrintWriter(Files.newBufferedWriter(outputPath))) {
+                TemplateOutput templateOutput = new PrintWriterOutput(pw);
+                templateEngine.render("questions_report_template.jte", model, templateOutput);
+            }
+
+            log.info("Questions report written to: " + outputPath);
+        } catch (IOException e) {
+            log.severe("Failed to write HTML output for " + projectFile + ": " + e.getMessage());
+        }
+    }
+
+    private void ensureResourcesLoaded() throws IOException {
+        if (cachedScratchblocksJs == null) {
+            cachedScratchblocksJs = loadResource(PATH_SCRATCHBLOCKS_JS);
+            cachedTranslationsJs = loadResource(PATH_TRANSLATIONS_JS);
+            cachedLogo = loadResource(LOGO_PATH);
+            cachedFaviconBase64 = loadFaviconBase64();
+        }
+    }
+
+    private String getProjectBaseName(Path projectFile) {
+        String fileName = projectFile.getFileName().toString();
+        int lastDotIndex = fileName.lastIndexOf('.');
+        if (lastDotIndex > 0) {
+            return fileName.substring(0, lastDotIndex);
+        }
+        return fileName;
     }
 
     private Map<String, String> generateSpriteCode(Program program) {
@@ -126,6 +216,7 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
 
             // Generate scratchblocks code for scripts only (no declarations)
             ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(false, true);
+            visitor.setProgram(program);
             actor.accept(visitor);
             String code = visitor.getScratchBlocks();
             if (code != null && !code.trim().isEmpty()) {
@@ -173,6 +264,11 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
 
     @Override
     public void finish() throws IOException {
+        if (directoryMode) {
+            // In directory mode, files are written in handleResult()
+            return;
+        }
+
         if (output.getParent() != null) {
             Files.createDirectories(output.getParent());
         }

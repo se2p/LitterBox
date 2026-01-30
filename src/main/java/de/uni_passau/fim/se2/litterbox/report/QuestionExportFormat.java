@@ -48,6 +48,19 @@ public enum QuestionExportFormat {
     }
 
     /**
+     * Returns the file extension for this format, including the dot.
+     *
+     * @return The file extension (e.g., ".json", ".html"), or null for CONSOLE
+     */
+    public String getFileExtension() {
+        return switch (this) {
+            case JSON -> ".json";
+            case HTML -> ".html";
+            case CONSOLE -> null;
+        };
+    }
+
+    /**
      * Infers the export format from a file extension.
      *
      * @param filename The output filename

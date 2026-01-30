@@ -36,6 +36,15 @@ import java.util.logging.Logger;
 
 /**
  * Outputs questions as JSON with block model metadata.
+ *
+ * <p>Supports two modes of operation:
+ * <ul>
+ *   <li><b>File mode:</b> When output is a file path (has .json extension), all projects
+ *       are accumulated and written to a single file in {@link #finish()}.</li>
+ *   <li><b>Directory mode:</b> When output is a directory (exists as directory or has no
+ *       recognized extension), each project is written immediately to a separate file
+ *       named {@code <projectname>_questions.json}.</li>
+ * </ul>
  */
 public class JSONQuestionResultHandler implements QuestionResultHandler {
 
@@ -45,6 +54,7 @@ public class JSONQuestionResultHandler implements QuestionResultHandler {
     private final boolean showAnswers;
     private final ObjectMapper mapper;
     private final ArrayNode projectsArray;
+    private final boolean directoryMode;
 
     public JSONQuestionResultHandler(Path output, boolean showAnswers) {
         this.output = output;
@@ -52,6 +62,20 @@ public class JSONQuestionResultHandler implements QuestionResultHandler {
         this.mapper = new ObjectMapper();
         this.mapper.enable(SerializationFeature.INDENT_OUTPUT);
         this.projectsArray = mapper.createArrayNode();
+        this.directoryMode = isDirectoryMode(output);
+    }
+
+    private static boolean isDirectoryMode(Path path) {
+        if (path == null) {
+            return false;
+        }
+        // If it already exists as a directory, use directory mode
+        if (Files.isDirectory(path)) {
+            return true;
+        }
+        // If the filename has no recognized extension, treat as directory
+        String filename = path.getFileName().toString();
+        return QuestionExportFormat.fromFilename(filename) == null;
     }
 
     @Override
@@ -74,7 +98,40 @@ public class JSONQuestionResultHandler implements QuestionResultHandler {
         }
         projectNode.set("questions", questionsArray);
 
-        projectsArray.add(projectNode);
+        if (directoryMode) {
+            // Write immediately for this project
+            writeProjectToFile(projectFile, projectNode);
+        } else {
+            // Accumulate for single file output
+            projectsArray.add(projectNode);
+        }
+    }
+
+    private void writeProjectToFile(Path projectFile, ObjectNode projectNode) {
+        try {
+            Files.createDirectories(output);
+            String projectName = getProjectBaseName(projectFile);
+            Path outputPath = output.resolve(projectName + "_questions.json");
+
+            ObjectNode root = mapper.createObjectNode();
+            ArrayNode projects = mapper.createArrayNode();
+            projects.add(projectNode);
+            root.set("projects", projects);
+
+            mapper.writeValue(outputPath.toFile(), root);
+            log.info("Questions written to: " + outputPath);
+        } catch (IOException e) {
+            log.severe("Failed to write JSON output for " + projectFile + ": " + e.getMessage());
+        }
+    }
+
+    private String getProjectBaseName(Path projectFile) {
+        String fileName = projectFile.getFileName().toString();
+        int lastDotIndex = fileName.lastIndexOf('.');
+        if (lastDotIndex > 0) {
+            return fileName.substring(0, lastDotIndex);
+        }
+        return fileName;
     }
 
     private ObjectNode createCoverageNode(List<QuestionDTO> questions) {
@@ -140,6 +197,11 @@ public class JSONQuestionResultHandler implements QuestionResultHandler {
 
     @Override
     public void finish() throws IOException {
+        if (directoryMode) {
+            // In directory mode, files are written in handleResult()
+            return;
+        }
+
         ObjectNode root = mapper.createObjectNode();
         root.set("projects", projectsArray);
 
