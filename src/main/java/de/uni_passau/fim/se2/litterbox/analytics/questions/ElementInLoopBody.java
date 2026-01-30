@@ -38,6 +38,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesSt
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.SpriteLookStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.utils.Randomness;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Generates a question asking to identify an element (variable or literal) used inside a loop body.
@@ -63,9 +67,18 @@ public class ElementInLoopBody extends AbstractQuestionFinder {
             } else {
                 topBlockCurrent = node.getStmtList().getStmts().getFirst();
             }
+
+            // Select correct answers consistently
+            List<String> correctList = new ArrayList<>(answers);
+            if (correctList.size() > maxChoices) {
+                // Shuffle and pick a stable subset for this question
+                Randomness.shuffle(correctList);
+                correctList = correctList.subList(0, maxChoices);
+            }
+
             QuestionBuilder builder = prepareQuestionBuilder(topBlockCurrent)
-                    .withChoices(generateMultipleChoiceOptions(answers, choices))
-                    .withCorrectAnswers(getAnswersList());
+                    .withChoices(generateMultipleChoiceOptions(correctList, choices))
+                    .withCorrectAnswers(correctList);
             addQuestion(builder);
         }
     }
