@@ -45,6 +45,10 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             --color-text-light: #4d97ff22;
             --color-execution-light: #ff8c1a22;
             --color-purpose-light: #40bf4a22;
+            --color-correct: #22c55e;
+            --color-incorrect: #ef4444;
+            --color-partial: #f59e0b;
+            --color-unanswered: #9ca3af;
         }
 
         * {
@@ -848,9 +852,10 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
         <div class="logo">
             $unsafe{model.logo()}
         </div>
-        <h1>${model.translator().getInfo("questions_title")} ${model.projects().isEmpty() ? "Scratch Project" : model.projects().get(0).name()}</h1>
+        <h1>${model.translator().getInfo("questions_title")} ${model.projects().isEmpty() ? "Scratch Project" : model.projects().getFirst().name()}</h1>
         @if(model.teacherMode())
-            <div style="margin-top: 0.5rem; color: #666; font-size: 0.9em;">📚 ${model.translator().getInfo("questions_teacher_mode")} - ${model.translator().getInfo("questions_correct_answer")}</div>
+            <div style="margin-top: 0.5rem; color: #666; font-size: 0.9em;">
+                📚 ${model.translator().getInfo("questions_teacher_mode")}</div>
         @elseif(model.exportMode())
             <div style="margin-top: 0.5rem; color: #666; font-size: 0.9em;">
                 📝 ${model.translator().getInfo("questions_export_mode")}</div>
@@ -1072,6 +1077,18 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                                             ${model.translator().getInfo("questions_check_answer")}
                                         </button>
                                     @elseif(!model.teacherMode() && !question.get().canCheck())
+                                        <div style="display: flex; gap: 10px; margin-top: 1rem;">
+                                            <button class="check-btn"
+                                                    style="background: var(--color-correct); margin-top: 0;"
+                                                    onclick="markManual('${project.get().id()}', ${question.get().id()}, true)">
+                                                ${model.translator().getInfo("filter_correct")}
+                                            </button>
+                                            <button class="check-btn"
+                                                    style="background: var(--color-incorrect); margin-top: 0;"
+                                                    onclick="markManual('${project.get().id()}', ${question.get().id()}, false)">
+                                                ${model.translator().getInfo("filter_incorrect")}
+                                            </button>
+                                        </div>
                                         <div class="feedback purpose-note">
                                             &#128161; ${model.translator().getInfo("questions_teacher_verify")}
                                         </div>
@@ -1090,38 +1107,50 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                                                 ${model.translator().getInfo("questions_check_answer")}
                                             </button>
                                         @else
+                                            <div style="display: flex; gap: 10px; margin-top: 1rem;">
+                                                <button class="check-btn"
+                                                        style="background: var(--color-correct); margin-top: 0;"
+                                                        onclick="markManual('${project.get().id()}', ${question.get().id()}, true)">
+                                                    ${model.translator().getInfo("filter_correct")}
+                                                </button>
+                                                <button class="check-btn"
+                                                        style="background: var(--color-incorrect); margin-top: 0;"
+                                                        onclick="markManual('${project.get().id()}', ${question.get().id()}, false)">
+                                                    ${model.translator().getInfo("filter_incorrect")}
+                                                </button>
+                                            </div>
                                             <div class="feedback purpose-note">
                                                 &#128161; ${model.translator().getInfo("questions_teacher_verify")}
                                             </div>
                                         @endif
                                     @endif
                                 @elseif(question.get().questionType() == QuestionType.YES_NO)
-                                    !{boolean yesCorrect = question.get().normalizedAnswers().contains("yes");}
-                                    !{boolean noCorrect = question.get().normalizedAnswers().contains("no");}
+                                    !{boolean yesCorrect = question.get().normalizedAnswers().contains(model.translator().getInfo("yes_term").toLowerCase());}
+                                    !{boolean noCorrect = question.get().normalizedAnswers().contains(model.translator().getInfo("no_term").toLowerCase());}
                                     <div class="answer-options" id="options-${project.get().id()}-${question.get().id()}">
                                         @if(model.teacherMode())
                                         <div class="answer-option ${yesCorrect ? "is-correct" : ""}"
-                                             data-value="yes">
+                                             data-value="${model.translator().getInfo("yes_term").toLowerCase()}">
                                             <span class="option-letter">Y</span>
                                             <span class="option-text">${model.translator().getInfo("yes")}</span>
                                             <span class="result-icon"></span>
                                         </div>
                                         <div class="answer-option ${noCorrect ? "is-correct" : ""}"
-                                             data-value="no">
+                                             data-value="${model.translator().getInfo("no_term").toLowerCase()}">
                                             <span class="option-letter">N</span>
                                             <span class="option-text">${model.translator().getInfo("no")}</span>
                                             <span class="result-icon"></span>
                                         </div>
                                         @else
                                         <div class="answer-option"
-                                             data-value="yes"
+                                             data-value="${model.translator().getInfo("yes_term").toLowerCase()}"
                                              onclick="selectOption(this, '${project.get().id()}', ${question.get().id()})">
                                             <span class="option-letter">Y</span>
                                             <span class="option-text">${model.translator().getInfo("yes")}</span>
                                             <span class="result-icon"></span>
                                         </div>
                                         <div class="answer-option"
-                                             data-value="no"
+                                             data-value="${model.translator().getInfo("no_term").toLowerCase()}"
                                              onclick="selectOption(this, '${project.get().id()}', ${question.get().id()})">
                                             <span class="option-letter">N</span>
                                             <span class="option-text">${model.translator().getInfo("no")}</span>
@@ -1134,6 +1163,18 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                                             ${model.translator().getInfo("questions_check_answer")}
                                         </button>
                                     @elseif(!model.teacherMode() && !question.get().canCheck())
+                                        <div style="display: flex; gap: 10px; margin-top: 1rem;">
+                                            <button class="check-btn"
+                                                    style="background: var(--color-correct); margin-top: 0;"
+                                                    onclick="markManual('${project.get().id()}', ${question.get().id()}, true)">
+                                                ${model.translator().getInfo("filter_correct")}
+                                            </button>
+                                            <button class="check-btn"
+                                                    style="background: var(--color-incorrect); margin-top: 0;"
+                                                    onclick="markManual('${project.get().id()}', ${question.get().id()}, false)">
+                                                ${model.translator().getInfo("filter_incorrect")}
+                                            </button>
+                                        </div>
                                         <div class="feedback purpose-note">
                                             &#128161; ${model.translator().getInfo("questions_teacher_verify")}
                                         </div>
@@ -1152,6 +1193,18 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                                                 ${model.translator().getInfo("questions_check_answer")}
                                             </button>
                                         @elseif(!model.exportMode())
+                                            <div style="display: flex; gap: 10px; margin-top: 1rem;">
+                                                <button class="check-btn"
+                                                        style="background: var(--color-correct); margin-top: 0;"
+                                                        onclick="markManual('${project.get().id()}', ${question.get().id()}, true)">
+                                                    ${model.translator().getInfo("filter_correct")}
+                                                </button>
+                                                <button class="check-btn"
+                                                        style="background: var(--color-incorrect); margin-top: 0;"
+                                                        onclick="markManual('${project.get().id()}', ${question.get().id()}, false)">
+                                                    ${model.translator().getInfo("filter_incorrect")}
+                                                </button>
+                                            </div>
                                             <div class="feedback purpose-note">
                                                 &#128161; ${model.translator().getInfo("questions_freetext_note")}
                                             </div>
@@ -1161,7 +1214,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
 
                                 <div class="feedback" id="feedback-${project.get().id()}-${question.get().id()}"></div>
 
-                                @if(model.showAnswers() && question.get().correctAnswers() != null && !question.get().correctAnswers().isEmpty())
+                                @if(model.showAnswers() && !model.teacherMode() && question.get().correctAnswers() != null && !question.get().correctAnswers().isEmpty())
                                     <button class="show-answer-btn" onclick="toggleAnswer('${project.get().id()}', ${question.get().id()})">
                                         ${model.translator().getInfo("questions_correct_answer")}
                                     </button>
@@ -1243,19 +1296,69 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
         feedbackIncorrect: '✗ ${model.translator().getInfo("questions_feedback_incorrect")}'
     };
 
+    // Helper function to render scratchblocks with translation
+    const targetLang = '${model.language()}';
+
+    function renderAndTranslate(selector, options = {}) {
+        document.querySelectorAll(selector).forEach(el => {
+            const code = el.textContent;
+            if (!code.trim()) return;
+
+            // Parse the code (generated in English by ScratchBlocksVisitor)
+            const doc = scratchblocks.parse(code, {languages: ['en']});
+
+            // Translate to target language if not English
+            if (targetLang !== 'en' && scratchblocks.allLanguages[targetLang]) {
+                doc.translate(scratchblocks.allLanguages[targetLang]);
+            }
+
+            // Render to SVG
+            const view = scratchblocks.newView(doc, {
+                style: options.style || 'scratch3',
+                scale: options.scale || 0.7
+            });
+
+            // Replace content
+            el.innerHTML = '';
+            el.appendChild(view.render());
+        });
+    }
+
+    function renderInlineAndTranslate(selector, options = {}) {
+        document.querySelectorAll(selector).forEach(el => {
+            const code = el.textContent;
+            if (!code.trim()) return;
+
+            // Parse the code
+            const doc = scratchblocks.parse(code, {languages: ['en'], inline: true});
+
+            // Translate to target language if not English
+            if (targetLang !== 'en' && scratchblocks.allLanguages[targetLang]) {
+                doc.translate(scratchblocks.allLanguages[targetLang]);
+            }
+
+            // Render to SVG
+            const view = scratchblocks.newView(doc, {
+                style: options.style || 'scratch3',
+                scale: options.scale || 0.7
+            });
+
+            // Replace content
+            el.innerHTML = '';
+            el.appendChild(view.render());
+        });
+    }
+
     // Initialize
     document.addEventListener('DOMContentLoaded', function() {
-        scratchblocks.renderMatching('pre.blocks:not(.sprite-code-blocks)', {
+        renderAndTranslate('pre.blocks:not(.sprite-code-blocks)', {
             style: 'scratch3',
-            scale: 0.7,
-            languages: ['${model.language()}', 'en']
+            scale: 0.7
         });
         // Render inline scratchblocks in question text
-        scratchblocks.renderMatching('code.scratchblocks', {
+        renderInlineAndTranslate('code.scratchblocks', {
             style: 'scratch3',
-            inline: true,
-            scale: 0.7,
-            languages: ['${model.language()}', 'en']
+            scale: 0.7
         });
         updateCounts();
         updateScore();
@@ -1442,8 +1545,8 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             });
         });
 
-        // Count checkable questions
-        totalCheckable = typeCounts.MULTIPLE_CHOICE + typeCounts.NUMBER + typeCounts.YES_NO;
+        // Count all questions for total points
+        totalCheckable = cards.length;
         updateScore();
     }
 
@@ -1553,12 +1656,45 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
         }
 
         // Track score
-        if (!answeredQuestions[qKey]) {
+        if (answeredQuestions[qKey] === undefined) {
             answeredQuestions[qKey] = isCorrect;
             if (isCorrect) correctCount++;
-        } else if (!answeredQuestions[qKey] && isCorrect) {
-            answeredQuestions[qKey] = true;
-            correctCount++;
+        } else {
+            if (answeredQuestions[qKey] && !isCorrect) {
+                correctCount--;
+            } else if (!answeredQuestions[qKey] && isCorrect) {
+                correctCount++;
+            }
+            answeredQuestions[qKey] = isCorrect;
+        }
+
+        updateScore();
+    }
+
+    // Mark manual answer (for purpose questions)
+    function markManual(projectId, questionId, isCorrect) {
+        const feedback = document.getElementById('feedback-' + projectId + '-' + questionId);
+        const qKey = projectId + '-' + questionId;
+
+        if (isCorrect) {
+            feedback.textContent = i18n.feedbackCorrect;
+            feedback.className = 'feedback show correct';
+        } else {
+            feedback.textContent = i18n.feedbackIncorrect;
+            feedback.className = 'feedback show incorrect';
+        }
+
+        // Track score
+        if (answeredQuestions[qKey] === undefined) {
+            answeredQuestions[qKey] = isCorrect;
+            if (isCorrect) correctCount++;
+        } else {
+            if (answeredQuestions[qKey] && !isCorrect) {
+                correctCount--;
+            } else if (!answeredQuestions[qKey] && isCorrect) {
+                correctCount++;
+            }
+            answeredQuestions[qKey] = isCorrect;
         }
 
         updateScore();
@@ -1633,10 +1769,9 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             // Render scratchblocks if not already rendered
             const pre = codeView.querySelector('pre.sprite-code-blocks');
             if (pre && !pre.classList.contains('rendered')) {
-                scratchblocks.renderMatching('#code-' + projectId + '-' + sanitizedName + ' pre.blocks', {
+                renderAndTranslate('#code-' + projectId + '-' + sanitizedName + ' pre.blocks', {
                     style: 'scratch3',
-                    scale: 0.7,
-                    languages: ['${model.language()}', 'en']
+                    scale: 0.7
                 });
                 pre.classList.add('rendered');
             }
