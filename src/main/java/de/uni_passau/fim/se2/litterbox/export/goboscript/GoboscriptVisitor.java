@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.export.goboscript;
 
+import java.math.BigDecimal;
+
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
@@ -516,12 +518,13 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     /**
      * Formats a number for output, using integer format when appropriate.
+     * Uses BigDecimal.toPlainString() to avoid scientific notation.
      */
     private String formatNumber(double value) {
         if (value == Math.floor(value) && !Double.isInfinite(value)) {
             return String.valueOf((long) value);
         }
-        return String.valueOf(value);
+        return BigDecimal.valueOf(value).toPlainString();
     }
 
     @Override
@@ -1758,10 +1761,8 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
             }
         } else if (Double.isNaN(value)) {
             emitNoSpace("(0.0 / 0.0)");
-        } else if (value == Math.floor(value)) {
-            emitNoSpace(String.valueOf((long) value));
         } else {
-            emitNoSpace(String.valueOf(value));
+            emitNoSpace(formatNumber(value));
         }
     }
 
