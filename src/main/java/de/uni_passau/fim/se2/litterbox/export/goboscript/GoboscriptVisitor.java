@@ -320,7 +320,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
             if (procs.size() == 1) {
                 // No collision - use the base name
-                ProcedureDefinition proc = procs.get(0);
+                ProcedureDefinition proc = procs.getFirst();
                 procedureNameMapping.put(proc, baseName);
                 definedProcedures.add(baseName);
             } else {
@@ -1390,60 +1390,72 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(PenBlock node) {
-        if (node instanceof PenClearStmt) {
-            emitNoSpace("erase_all;");
-            newLine();
-        } else if (node instanceof PenStampStmt) {
-            emitNoSpace("stamp;");
-            newLine();
-        } else if (node instanceof PenDownStmt) {
-            emitNoSpace("pen_down;");
-            newLine();
-        } else if (node instanceof PenUpStmt) {
-            emitNoSpace("pen_up;");
-            newLine();
-        } else if (node instanceof SetPenColorToColorStmt stmt) {
-            emitNoSpace("set_pen_color(");
-            stmt.getColorExpr().accept(this);
-            emitNoSpace(");");
-            newLine();
-        } else if (node instanceof ChangePenSizeBy stmt) {
-            emitNoSpace("change_pen_size(");
-            stmt.getValue().accept(this);
-            emitNoSpace(");");
-            newLine();
-        } else if (node instanceof SetPenSizeTo stmt) {
-            emitNoSpace("set_pen_size(");
-            stmt.getValue().accept(this);
-            emitNoSpace(");");
-            newLine();
-        } else if (node instanceof ChangePenColorParamBy stmt) {
-            String param = "hue"; // Default
-            if (stmt.getParam() instanceof FixedColorParam fixed) {
-                param = fixed.getTypeName();
-                if ("color".equals(param)) {
-                    param = "hue";
-                }
+        switch (node) {
+            case PenClearStmt penClearStmt -> {
+                emitNoSpace("erase_all;");
+                newLine();
             }
-            emitNoSpace("change_pen_" + param + "(");
-            stmt.getValue().accept(this);
-            emitNoSpace(");");
-            newLine();
-        } else if (node instanceof SetPenColorParamTo stmt) {
-            String param = "hue"; // Default
-            if (stmt.getParam() instanceof FixedColorParam fixed) {
-                param = fixed.getTypeName();
-                if ("color".equals(param)) {
-                    param = "hue";
-                }
+            case PenStampStmt penStampStmt -> {
+                emitNoSpace("stamp;");
+                newLine();
             }
-            emitNoSpace("set_pen_" + param + "(");
-            stmt.getValue().accept(this);
-            emitNoSpace(");");
-            newLine();
-        } else {
-            // Fallback
-            visitChildren(node);
+            case PenDownStmt penDownStmt -> {
+                emitNoSpace("pen_down;");
+                newLine();
+            }
+            case PenUpStmt penUpStmt -> {
+                emitNoSpace("pen_up;");
+                newLine();
+            }
+            case SetPenColorToColorStmt stmt -> {
+                emitNoSpace("set_pen_color(");
+                stmt.getColorExpr().accept(this);
+                emitNoSpace(");");
+                newLine();
+            }
+            case ChangePenSizeBy stmt -> {
+                emitNoSpace("change_pen_size(");
+                stmt.getValue().accept(this);
+                emitNoSpace(");");
+                newLine();
+            }
+            case SetPenSizeTo stmt -> {
+                emitNoSpace("set_pen_size(");
+                stmt.getValue().accept(this);
+                emitNoSpace(");");
+                newLine();
+            }
+            case ChangePenColorParamBy stmt -> {
+                String param = "hue"; // Default
+
+                if (stmt.getParam() instanceof FixedColorParam fixed) {
+                    param = fixed.getTypeName();
+                    if ("color".equals(param)) {
+                        param = "hue";
+                    }
+                }
+                emitNoSpace("change_pen_" + param + "(");
+                stmt.getValue().accept(this);
+                emitNoSpace(");");
+                newLine();
+            }
+            case SetPenColorParamTo stmt -> {
+                String param = "hue"; // Default
+
+                if (stmt.getParam() instanceof FixedColorParam fixed) {
+                    param = fixed.getTypeName();
+                    if ("color".equals(param)) {
+                        param = "hue";
+                    }
+                }
+                emitNoSpace("set_pen_" + param + "(");
+                stmt.getValue().accept(this);
+                emitNoSpace(");");
+                newLine();
+            }
+            case null, default ->
+                // Fallback
+                    visitChildren(node);
         }
     }
 
@@ -1793,13 +1805,12 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(NumFunctOf node) {
         String func = node.getOperand1().getType().getFunction();
-        if ("10 ^".equals(func)) {
-            func = "pow10";
-        } else if ("e ^".equals(func)) {
-            func = "exp";
-        } else if ("ceiling".equals(func)) {
-            func = "ceil";
-        }
+        func = switch (func) {
+            case "10 ^" -> "pow10";
+            case "e ^" -> "exp";
+            case "ceiling" -> "ceil";
+            default -> func;
+        };
         emitNoSpace(func + "(");
         node.getOperand2().accept(this);
         emitNoSpace(")");

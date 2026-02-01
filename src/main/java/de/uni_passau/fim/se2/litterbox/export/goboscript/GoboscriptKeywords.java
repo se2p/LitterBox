@@ -70,10 +70,28 @@ public final class GoboscriptKeywords {
 
     /**
      * Set of Goboscript keywords that cannot be used as variable or list names.
+     * This includes language keywords, built-in functions, and operators.
      */
     public static final Set<String> KEYWORDS = Set.of(
-            "if", "else", "forever", "repeat", "until", "wait",
-            "onflag", "onkey", "onclick", "onbackdrop", "on", "onclone",
-            "proc", "var", "list", "costumes", "sounds", "local", "global"
+            // Control flow
+            "if", "else", "elif", "forever", "repeat", "until", "return",
+            // Event handlers
+            "on", "onflag", "onkey", "onclick", "onbackdrop", "onloudness", "ontimer", "onclone",
+            // Function/procedure definitions
+            "proc", "func", "var", "local", "nowarp",
+            // Type keywords
+            "list", "cloud", "enum", "struct",
+            // Boolean and logic
+            "true", "false", "not", "and", "or", "in",
+            // Mathematical functions
+            "length", "round", "abs", "floor", "ceil", "sqrt",
+            "sin", "cos", "tan", "asin", "acos", "atan",
+            "ln", "log", "antiln", "antilog",
+            // List operations
+            "add", "to", "delete", "insert", "at", "as",
+            // Display/audio keywords
+            "show", "hide", "costumes", "sounds",
+            // Legacy/compatibility (kept for safety)
+            "wait", "global"
     );
 }

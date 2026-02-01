@@ -101,10 +101,58 @@ public final class GoboscriptSanitizer {
      * @return A sanitized procedure identifier.
      */
     public static String escapeProcedureName(String name) {
-        String escaped = escapeIdentifier(name);
+        String escaped = escapeIdentifierWithoutKeywordCheck(name);
         if (GoboscriptKeywords.RESERVED_COMMANDS.contains(escaped.toLowerCase())) {
             return escaped + "_proc";
         }
+        // If not a reserved command, check if it's a keyword
+        if (GoboscriptKeywords.KEYWORDS.contains(escaped.toLowerCase())) {
+            return "_" + escaped;
+        }
         return escaped;
+    }
+
+    /**
+     * Sanitizes a string to be a valid Goboscript identifier, but does NOT check for keywords.
+     * This is used internally by escapeProcedureName to check reserved commands first.
+     */
+    private static String escapeIdentifierWithoutKeywordCheck(String name) {
+        // Replace German umlauts (these expand to two characters, so handle before stripAccents)
+        name = name.replace("ä", "ae")
+                .replace("ö", "oe")
+                .replace("ü", "ue")
+                .replace("Ä", "Ae")
+                .replace("Ö", "Oe")
+                .replace("Ü", "Ue")
+                .replace("ß", "ss");
+
+        // Strip accents from remaining characters (á→a, é→e, ñ→n, etc.)
+        name = StringUtils.stripAccents(name);
+
+        // Use a StringBuilder to construct the sanitized name
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            // Only allow ASCII letters, digits, and underscores (Goboscript doesn't support Unicode identifiers)
+            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_') {
+                sb.append(c);
+            } else {
+                sb.append('_');
+            }
+        }
+
+        String result = sb.toString();
+
+        // Ensure it doesn't start with a digit (Goboscript identifiers must start with letter or underscore)
+        if (!result.isEmpty() && Character.isDigit(result.charAt(0))) {
+            result = "_" + result;
+        }
+
+        // Fallback for empty or underscore-only strings (Goboscript requires at least one letter)
+        if (result.isEmpty() || result.chars().allMatch(c -> c == '_')) {
+            return "var_" + Math.abs(name.hashCode());
+        }
+
+        return result;
     }
 }
