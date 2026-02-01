@@ -62,7 +62,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Motion Blocks ====================
 
     @Test
-    public void testMotionBlocks() throws IOException, ParsingException {
+    public void testMotionBlocks() throws ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/motionblocks.json");
         String result = GoboscriptVisitor.of(program);
 
@@ -76,7 +76,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testGlideBlocks() throws IOException, ParsingException {
+    public void testGlideBlocks() throws ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/glideblocks.json");
         String result = GoboscriptVisitor.of(program);
 
@@ -85,7 +85,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testGlideToSprite() throws IOException, ParsingException {
+    public void testGlideToSprite() throws ParsingException {
         String code = """
                 when green flag clicked
                 glide (3) secs to (Ball v)
@@ -101,7 +101,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Control Blocks ====================
 
     @Test
-    public void testControlBlocks() throws IOException, ParsingException {
+    public void testControlBlocks() throws ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/controlblocks.json");
         String result = GoboscriptVisitor.of(program);
 
@@ -114,7 +114,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testWaitUntil() throws IOException, ParsingException {
+    public void testWaitUntil() throws ParsingException {
         String code = """
                 when green flag clicked
                 wait until <touching (Scheibe v)?>
@@ -128,7 +128,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Looks Blocks ====================
 
     @Test
-    public void testLooksBlocks() throws IOException, ParsingException {
+    public void testLooksBlocks() throws ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/lookblocks.json");
         String result = GoboscriptVisitor.of(program);
 
@@ -143,7 +143,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testSayForSecs() throws IOException, ParsingException {
+    public void testSayForSecs() throws ParsingException {
         String code = """
                 when green flag clicked
                 say [Hello] for (2) secs
@@ -159,7 +159,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Sound Blocks ====================
 
     @Test
-    public void testSoundBlocks() throws IOException, ParsingException {
+    public void testSoundBlocks() throws ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/soundblocks.json");
         String result = GoboscriptVisitor.of(program);
 
@@ -173,7 +173,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Variable Blocks ====================
 
     @Test
-    public void testVariableBlocks() throws IOException, ParsingException {
+    public void testVariableBlocks() throws ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/variableblocks.json");
         String result = GoboscriptVisitor.of(program);
 
@@ -184,7 +184,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testGlobalVariableAccess() throws IOException, ParsingException {
+    public void testGlobalVariableAccess() throws ParsingException {
         String code = """
                 when green flag clicked
                 change [Score v] by (1)
@@ -199,7 +199,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Arithmetic Expressions ====================
 
     @Test
-    public void testArithmeticExpressions() throws IOException, ParsingException {
+    public void testArithmeticExpressions() throws ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/arithmeticblocks.json");
         String result = GoboscriptVisitor.of(program);
 
@@ -212,7 +212,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testMathCeiling() throws IOException, ParsingException {
+    public void testMathCeiling() throws ParsingException {
         String code = """
                 when green flag clicked
                 set x to ([ceiling v] of (3.2))
@@ -224,7 +224,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testDaysSince2000() throws IOException, ParsingException {
+    public void testDaysSince2000() throws ParsingException {
         String code = """
                 when green flag clicked
                 set x to (days since 2000)
@@ -238,7 +238,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Boolean Expressions ====================
 
     @Test
-    public void testBooleanExpressions() throws IOException, ParsingException {
+    public void testBooleanExpressions() throws ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/booleanblocks.json");
         String result = GoboscriptVisitor.of(program);
 
@@ -251,7 +251,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testTouchingColor() throws IOException, ParsingException {
+    public void testTouchingColor() throws ParsingException {
         String code = """
                 when green flag clicked
                 wait until <touching color (#ff0000)?>
@@ -263,7 +263,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testColorIsTouchingColor() throws IOException, ParsingException {
+    public void testColorIsTouchingColor() throws ParsingException {
         String code = """
                 when green flag clicked
                 wait until <color (#ff0000) is touching (#00ff00)?>
@@ -275,7 +275,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testMouseDown() throws IOException, ParsingException {
+    public void testMouseDown() throws ParsingException {
         String code = """
                 when green flag clicked
                 wait until <mouse down?>
@@ -289,7 +289,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Clone Blocks ====================
 
     @Test
-    public void testCloneBlocks() throws IOException, ParsingException {
+    public void testCloneBlocks() throws ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/cloneblocks.json");
         String result = GoboscriptVisitor.of(program);
 
@@ -299,7 +299,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testCreateCloneOfMyself() throws IOException, ParsingException {
+    public void testCreateCloneOfMyself() throws ParsingException {
         String code = """
                 when green flag clicked
                 create clone of (myself v)
@@ -313,7 +313,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Message Blocks ====================
 
     @Test
-    public void testMessageBlocks() throws IOException, ParsingException {
+    public void testMessageBlocks() throws ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/messageblocks.json");
         String result = GoboscriptVisitor.of(program);
 
@@ -324,7 +324,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Custom Blocks ====================
 
     @Test
-    public void testCustomBlocks() throws IOException, ParsingException {
+    public void testCustomBlocks() throws ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/multicustomblocks.json");
         String result = GoboscriptVisitor.of(program);
 
@@ -336,7 +336,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Sensing Blocks ====================
 
     @Test
-    public void testSensingStatements() throws IOException, ParsingException {
+    public void testSensingStatements() throws ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/sensingblocks.json");
         String result = GoboscriptVisitor.of(program);
 
@@ -346,7 +346,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testSensingReporters() throws IOException, ParsingException {
+    public void testSensingReporters() throws ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/sensingreporters.json");
         String result = GoboscriptVisitor.of(program);
 
@@ -361,7 +361,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Custom Blocks and Procedures ====================
 
     @Test
-    public void testUndefinedProcedureCall() throws IOException, ParsingException {
+    public void testUndefinedProcedureCall() throws ParsingException {
         String code = """
                 when green flag clicked
                 undefined_block
@@ -374,7 +374,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testProcedureNameConflict() throws IOException, ParsingException {
+    public void testProcedureNameConflict() throws ParsingException {
         String code = """
                 define move
                 move 10 steps
@@ -391,7 +391,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testProcedureOverloading() throws IOException, ParsingException {
+    public void testProcedureOverloading() throws ParsingException {
         // Scratch allows procedure overloading (same name, different parameters)
         // Goboscript does not, so we disambiguate by appending a counter suffix
         String code = """
@@ -417,7 +417,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testProcedureOverloadingThreeVariants() throws IOException, ParsingException {
+    public void testProcedureOverloadingThreeVariants() throws ParsingException {
         // Test with 0, 1, and 2 parameters to verify suffix handles multiple overloads
         String code = """
                 define greet
@@ -450,7 +450,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testProcedureOverloadingIdenticalSignatures() throws IOException, ParsingException {
+    public void testProcedureOverloadingIdenticalSignatures() throws ParsingException {
         // Scratch allows multiple procedures with identical names AND identical parameter counts
         // Each should get a unique counter suffix
         String code = """
@@ -478,7 +478,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testProcedureNoOverloadingNoSuffix() throws IOException, ParsingException {
+    public void testProcedureNoOverloadingNoSuffix() throws ParsingException {
         // When there's no overloading, no suffix should be added
         String code = """
                 define my_proc (x) (y)
@@ -500,7 +500,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Qualified Access ====================
 
     @Test
-    public void testQualifiedVariableAccess() throws IOException, ParsingException {
+    public void testQualifiedVariableAccess() throws ParsingException {
         String code = """
                 when green flag clicked
                 say ([Score v] of (Stage v))
@@ -515,7 +515,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Other Sensing Repoters ====================
 
     @Test
-    public void testOtherSensingReporters() throws IOException, ParsingException {
+    public void testOtherSensingReporters() throws ParsingException {
         String code = """
                 when green flag clicked
                 set x to (mouse x)
@@ -537,7 +537,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== String Expressions ====================
 
     @Test
-    public void testJoin() throws IOException, ParsingException {
+    public void testJoin() throws ParsingException {
         String code = """
                 when green flag clicked
                 say (join [Hello ] [World])
@@ -549,7 +549,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testNestedJoin() throws IOException, ParsingException {
+    public void testNestedJoin() throws ParsingException {
         String code = """
                 when green flag clicked
                 say (join (join [A] [B]) [C])
@@ -561,7 +561,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testLetterOf() throws IOException, ParsingException {
+    public void testLetterOf() throws ParsingException {
         String code = """
                 when green flag clicked
                 say (letter (1) of [apple])
@@ -575,7 +575,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Backdrop Blocks ====================
 
     @Test
-    public void testBackdropSwitch() throws IOException, ParsingException {
+    public void testBackdropSwitch() throws ParsingException {
         String code = """
                 when green flag clicked
                 switch backdrop to (previous backdrop v)
@@ -591,7 +591,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testBackdropAndCostumeReporters() throws IOException, ParsingException {
+    public void testBackdropAndCostumeReporters() throws ParsingException {
         String code = """
                 when green flag clicked
                 say (backdrop [number v])
@@ -611,7 +611,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Graphic Effects ====================
 
     @Test
-    public void testGraphicEffects() throws IOException, ParsingException {
+    public void testGraphicEffects() throws ParsingException {
         String code = """
                 when green flag clicked
                 change [color v] effect by (25)
@@ -647,7 +647,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Attribute Of Blocks ====================
 
     @Test
-    public void testAttributeOfStage() throws IOException, ParsingException {
+    public void testAttributeOfStage() throws ParsingException {
         String code = """
                 when green flag clicked
                 say ([backdrop # v] of (Stage v))
@@ -684,7 +684,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Special Number Values ====================
 
     @Test
-    public void testSpecialNumberValues() throws IOException, ParsingException {
+    public void testSpecialNumberValues() throws ParsingException {
         String code = """
                 when green flag clicked
                 set [x v] to ((1) / (0))
@@ -719,7 +719,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== List Access ====================
 
     @Test
-    public void testListAccess() throws IOException, ParsingException {
+    public void testListAccess() throws ParsingException {
         String code = """
                 when green flag clicked
                 add [thing] to [my list v]
@@ -741,7 +741,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testUndeclaredVariableOrList() throws IOException, ParsingException {
+    public void testUndeclaredVariableOrList() throws ParsingException {
         String code = """
                 when green flag clicked
                 show variable [unknown var v]
@@ -759,7 +759,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testNonAsciiIdentifier() throws IOException, ParsingException {
+    public void testNonAsciiIdentifier() throws ParsingException {
         String code = """
                 when green flag clicked
                 change [Meine_Züge v] by (1)
@@ -774,7 +774,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Numeric Costume/Backdrop Handling ====================
 
     @Test
-    public void testSwitchCostumeNumericLiteral() throws IOException, ParsingException {
+    public void testSwitchCostumeNumericLiteral() throws ParsingException {
         String code = """
                 when green flag clicked
                 switch costume to (1)
@@ -788,7 +788,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testSwitchCostumeNumericLiteralWrapping() throws IOException, ParsingException {
+    public void testSwitchCostumeNumericLiteralWrapping() throws ParsingException {
         String code = """
                 when green flag clicked
                 switch costume to (3)
@@ -801,7 +801,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testSwitchCostumeNumericExpression() throws IOException, ParsingException {
+    public void testSwitchCostumeNumericExpression() throws ParsingException {
         String code = """
                 when green flag clicked
                 switch costume to ((0) - (1))
@@ -815,7 +815,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
-    public void testSwitchCostumeVariable() throws IOException, ParsingException {
+    public void testSwitchCostumeVariable() throws ParsingException {
         String code = """
                 when green flag clicked
                 switch costume to (my variable)
@@ -898,7 +898,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Costume and Sound Declarations ====================
 
     @Test
-    public void testCostumeAndSounds() throws IOException, ParsingException {
+    public void testCostumeAndSounds() throws ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/sensingblocks.json");
         String result = GoboscriptVisitor.of(program);
 
@@ -917,7 +917,7 @@ public class GoboscriptVisitorTest implements JsonTest {
     // ==================== Static of() Method ====================
 
     @Test
-    public void testStaticOf() throws IOException, ParsingException {
+    public void testStaticOf() throws ParsingException {
         Program program = getAST("src/test/fixtures/scratchblocks/motionblocks.json");
         String result = GoboscriptVisitor.of(program);
 
@@ -928,11 +928,11 @@ public class GoboscriptVisitorTest implements JsonTest {
 
     // ==================== Helper Methods ====================
 
-    private Program parseProgram(String code) throws IOException, ParsingException {
+    private Program parseProgram(String code) throws ParsingException {
         return parseProgram(code, "Sprite1");
     }
 
-    private Program parseProgram(String code, String targetName) throws IOException, ParsingException {
+    private Program parseProgram(String code, String targetName) throws ParsingException {
         Program baseProject = getAST("src/test/fixtures/emptyProject.json");
         ScratchBlocksParser parser = new ScratchBlocksParser();
         return parser.extendProject(baseProject, targetName, code);

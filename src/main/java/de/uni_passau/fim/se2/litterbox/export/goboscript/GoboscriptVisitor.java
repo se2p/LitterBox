@@ -1479,8 +1479,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
                 newLine();
             }
             case null, default ->
-                // Fallback
-                    visitChildren(node);
+                    visitChildren(node); // Fallback
         }
     }
 
