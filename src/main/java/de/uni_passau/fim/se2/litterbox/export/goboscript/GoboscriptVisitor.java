@@ -84,6 +84,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.export.AbstractExportVisitor;
 import de.uni_passau.fim.se2.litterbox.export.ScratchKeyCode;
 import de.uni_passau.fim.se2.litterbox.export.StringExprNameVisitor;
@@ -239,6 +240,23 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(Program program) {
+        class MathScanner implements ScratchVisitor {
+            boolean foundMath = false;
+
+            @Override
+            public void visit(NumFunctOf node) {
+                foundMath = true;
+            }
+        }
+
+        MathScanner scanner = new MathScanner();
+        program.accept(scanner);
+        if (scanner.foundMath) {
+            emitNoSpace("%include std/math");
+            newLine();
+            newLine();
+        }
+
         this.program = program;
         // Clear global variables/lists before processing any actors
         globalVariables.clear();
@@ -1829,12 +1847,23 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(NumFunctOf node) {
-        String func = node.getOperand1().getType().getFunction();
-        func = switch (func) {
-            case "10 ^" -> "pow10";
-            case "e ^" -> "exp";
-            case "ceiling" -> "ceil";
-            default -> func;
+        NumFunct.NumFunctType type = node.getOperand1().getType();
+        String func = switch (type) {
+            case ABS -> "abs";
+            case FLOOR -> "floor";
+            case CEILING -> "ceil";
+            case SQRT -> "sqrt";
+            case SIN -> "sin";
+            case COS -> "cos";
+            case TAN -> "tan";
+            case ASIN -> "asin";
+            case ACOS -> "acos";
+            case ATAN -> "atan";
+            case LN -> "ln";
+            case LOG -> "log";
+            case POWE -> "exp";
+            case POW10 -> "pow10";
+            default -> type.getFunction();
         };
         emitNoSpace(func + "(");
         node.getOperand2().accept(this);

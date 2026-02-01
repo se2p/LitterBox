@@ -211,6 +211,57 @@ public class GoboscriptVisitorTest implements JsonTest {
     }
 
     @Test
+    public void testMathFunctionsAndInclude() throws ParsingException {
+        String code = """
+                when green flag clicked
+                set x to ([abs v] of (-1))
+                set x to ([floor v] of (1.5))
+                set x to ([ceiling v] of (1.5))
+                set x to ([sqrt v] of (4))
+                set x to ([sin v] of (90))
+                set x to ([cos v] of (0))
+                set x to ([tan v] of (45))
+                set x to ([asin v] of (1))
+                set x to ([acos v] of (0))
+                set x to ([atan v] of (1))
+                set x to ([ln v] of (1))
+                set x to ([log v] of (10))
+                set x to ([e ^ v] of (1))
+                set x to ([10 ^ v] of (1))
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        assertThat(result).contains("%include std/math");
+        assertThat(result).contains("abs(-1)");
+        assertThat(result).contains("floor(1.5)");
+        assertThat(result).contains("ceil(1.5)");
+        assertThat(result).contains("sqrt(4)");
+        assertThat(result).contains("sin(90)");
+        assertThat(result).contains("cos(0)");
+        assertThat(result).contains("tan(45)");
+        assertThat(result).contains("asin(1)");
+        assertThat(result).contains("acos(0)");
+        assertThat(result).contains("atan(1)");
+        assertThat(result).contains("ln(1)");
+        assertThat(result).contains("log(10)");
+        assertThat(result).contains("exp(1)");
+        assertThat(result).contains("pow10(1)");
+    }
+
+    @Test
+    public void testNoMathInclude() throws ParsingException {
+        String code = """
+                when green flag clicked
+                move (10) steps
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        assertThat(result).doesNotContain("%include std/math");
+    }
+
+    @Test
     public void testMathCeiling() throws ParsingException {
         String code = """
                 when green flag clicked
