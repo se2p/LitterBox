@@ -390,6 +390,113 @@ public class GoboscriptVisitorTest implements JsonTest {
         assertThat(result).contains("move_proc;");
     }
 
+    @Test
+    public void testProcedureOverloading() throws IOException, ParsingException {
+        // Scratch allows procedure overloading (same name, different parameters)
+        // Goboscript does not, so we disambiguate by appending a counter suffix
+        String code = """
+                define block_name
+                say [no params]
+
+                define block_name (value)
+                say (value)
+
+                when green flag clicked
+                block_name
+                block_name [hello]
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        // Both procedures should get unique names with counter suffix
+        assertThat(result).contains("proc block_name_1 {");
+        assertThat(result).contains("proc block_name_2 value {");
+        // Calls should use the same unique names
+        assertThat(result).contains("block_name_1;");
+        assertThat(result).contains("block_name_2 \"hello\";");
+    }
+
+    @Test
+    public void testProcedureOverloadingThreeVariants() throws IOException, ParsingException {
+        // Test with 0, 1, and 2 parameters to verify suffix handles multiple overloads
+        String code = """
+                define greet
+                say [Hello]
+
+                define greet (name)
+                say (join [Hello ] (name))
+
+                define greet (name) (times)
+                repeat (times)
+                    say (join [Hello ] (name))
+                end
+
+                when green flag clicked
+                greet
+                greet [World]
+                greet [World] (3)
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        // All three variants should get unique counter-based names
+        assertThat(result).contains("proc greet_1 {");
+        assertThat(result).contains("proc greet_2 name {");
+        assertThat(result).contains("proc greet_3 name, times {");
+        // Calls should use the correct unique names
+        assertThat(result).contains("greet_1;");
+        assertThat(result).contains("greet_2 \"World\";");
+        assertThat(result).contains("greet_3 \"World\", 3;");
+    }
+
+    @Test
+    public void testProcedureOverloadingIdenticalSignatures() throws IOException, ParsingException {
+        // Scratch allows multiple procedures with identical names AND identical parameter counts
+        // Each should get a unique counter suffix
+        String code = """
+                define action (x)
+                say [first]
+
+                define action (y)
+                say [second]
+
+                define action (z)
+                say [third]
+
+                when green flag clicked
+                action [a]
+                action [b]
+                action [c]
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        // All three procedures have same name and 1 parameter, but get unique counter suffixes
+        assertThat(result).contains("proc action_1 x {");
+        assertThat(result).contains("proc action_2 y {");
+        assertThat(result).contains("proc action_3 z {");
+    }
+
+    @Test
+    public void testProcedureNoOverloadingNoSuffix() throws IOException, ParsingException {
+        // When there's no overloading, no suffix should be added
+        String code = """
+                define my_proc (x) (y)
+                say (join (x) (y))
+
+                when green flag clicked
+                my_proc [a] [b]
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        // No suffix needed when there's no overloading
+        assertThat(result).contains("proc my_proc x, y {");
+        assertThat(result).contains("my_proc \"a\", \"b\";");
+        // Verify no suffix was added
+        assertThat(result).doesNotContain("my_proc_");
+    }
+
     // ==================== Qualified Access ====================
 
     @Test

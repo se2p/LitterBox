@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
@@ -86,9 +87,8 @@ import de.uni_passau.fim.se2.litterbox.export.ScratchKeyCode;
 import de.uni_passau.fim.se2.litterbox.export.StringExprNameVisitor;
 
 import java.io.PrintStream;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Exports LitterBox AST to Goboscript format.
@@ -145,7 +145,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
      * Map of variable names to their initial values (from SetStmtList).
      * Used to emit variable declarations with initial values.
      */
-    private final java.util.Map<String, String> variableInitialValues = new java.util.HashMap<>();
+    private final Map<String, String> variableInitialValues = new HashMap<>();
 
     /**
      * Creates a new Goboscript visitor with internal buffering.
@@ -246,6 +246,15 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     private final Set<String> definedProcedures = new HashSet<>();
 
+    /**
+     * Maps procedure definitions to their unique Goboscript names.
+     * This handles Scratch's procedure overloading (same name, different parameters) which is not
+     * supported in Goboscript. When collisions occur, a counter suffix is appended to make names unique.
+     * Uses IdentityHashMap because we need to distinguish between different procedure definitions
+     * that may have identical names and parameter patterns.
+     */
+    private final Map<ProcedureDefinition, String> procedureNameMapping = new IdentityHashMap<>();
+
     @Override
     public void visit(ActorDefinition node) {
         prepareActorScope(node);
@@ -275,17 +284,76 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         validCostumes.clear();
         costumeCount = 0;
         definedProcedures.clear();
+        procedureNameMapping.clear();
         localVariables.clear();
         localLists.clear();
         variableInitialValues.clear();
 
-        // Collect defined procedures for validation
-        for (ProcedureDefinition proc : node.getProcedureDefinitionList().getList()) {
-            definedProcedures.add(getGoboscriptProcedureName(proc));
-        }
+        // Build procedure name mapping to handle overloading (same name, different parameters).
+        // Goboscript doesn't support overloading, so we append parameter count when there are collisions.
+        buildProcedureNameMapping(node.getProcedureDefinitionList().getList());
 
         // Pre-collect initial variable values from SetStmtList for use in declarations
         collectVariableInitialValues(node);
+    }
+
+    /**
+     * Builds a mapping from procedure identifiers to unique Goboscript names.
+     * When multiple procedures have the same normalized name (after removing %s, %n, %b placeholders),
+     * a numeric suffix is appended to disambiguate them. Scratch allows creating multiple procedures
+     * with identical names and parameter counts, so a simple counter is used rather than parameter count.
+     *
+     * @param procedures List of procedure definitions in the current actor
+     */
+    private void buildProcedureNameMapping(List<ProcedureDefinition> procedures) {
+        // First pass: group procedures by their normalized name
+        Map<String, List<ProcedureDefinition>> nameGroups = new LinkedHashMap<>();
+        for (ProcedureDefinition proc : procedures) {
+            String normalizedName = normalizeProcedureName(getRawProcedureName(proc));
+            nameGroups.computeIfAbsent(normalizedName, k -> new ArrayList<>()).add(proc);
+        }
+
+        // Second pass: assign unique names, appending counter suffix for collisions
+        for (Map.Entry<String, List<ProcedureDefinition>> entry : nameGroups.entrySet()) {
+            String baseName = entry.getKey();
+            List<ProcedureDefinition> procs = entry.getValue();
+
+            if (procs.size() == 1) {
+                // No collision - use the base name
+                ProcedureDefinition proc = procs.get(0);
+                procedureNameMapping.put(proc, baseName);
+                definedProcedures.add(baseName);
+            } else {
+                // Collision - append counter suffix to each (1, 2, 3, ...)
+                int counter = 1;
+                for (ProcedureDefinition proc : procs) {
+                    String uniqueName = baseName + "_" + counter;
+                    procedureNameMapping.put(proc, uniqueName);
+                    definedProcedures.add(uniqueName);
+                    counter++;
+                }
+            }
+        }
+    }
+
+    /**
+     * Gets the raw procedure name from the definition, using the procedure mapping if available.
+     *
+     * @param node The procedure definition
+     * @return The raw procedure name (with placeholders like %s, %n, %b)
+     */
+    private String getRawProcedureName(ProcedureDefinition node) {
+        if (program != null && currentActor != null) {
+            String actorName = currentActor.getIdent().getName();
+            var procMap = program.getProcedureMapping().getProcedures().get(actorName);
+            if (procMap != null) {
+                var procInfo = procMap.get(node.getIdent());
+                if (procInfo != null) {
+                    return procInfo.getName();
+                }
+            }
+        }
+        return node.getIdent().getName();
     }
 
     private void emitActorHeader(ActorDefinition node) {
@@ -1017,7 +1085,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     private boolean handleSpecialSwitchCases(String command, String commentName,
                                              de.uni_passau.fim.se2.litterbox.ast.model.ASTNode choice,
-                                             java.util.function.Predicate<String> validityCheck) {
+                                             Predicate<String> validityCheck) {
         String name = resolveStringElement(choice);
         if (name != null) {
             if (!validityCheck.test(name)) {
@@ -2284,6 +2352,12 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     }
 
     private String getGoboscriptProcedureName(ProcedureDefinition node) {
+        // Use the pre-computed mapping that handles overloading
+        String mappedName = procedureNameMapping.get(node);
+        if (mappedName != null) {
+            return mappedName;
+        }
+        // Fallback to default normalization if not in mapping
         return getProcedureName(node, AbstractExportVisitor::normalizeProcedureName);
     }
 
@@ -2306,7 +2380,39 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     }
 
     private String getGoboscriptProcedureCallName(CallStmt node) {
+        // Find the matching procedure definition for this call
+        ProcedureDefinition matchingProc = findMatchingProcedure(node);
+        if (matchingProc != null) {
+            String mappedName = procedureNameMapping.get(matchingProc);
+            if (mappedName != null) {
+                return mappedName;
+            }
+        }
+        // Fallback to default normalization if not in mapping
         return getProcedureCallName(node, AbstractExportVisitor::normalizeProcedureName);
+    }
+
+    /**
+     * Finds the procedure definition that matches a call statement.
+     * Matches by identifier name and parameter count within the current actor.
+     *
+     * @param callStmt The call statement
+     * @return The matching procedure definition, or null if not found
+     */
+    private ProcedureDefinition findMatchingProcedure(CallStmt callStmt) {
+        if (currentActor == null) {
+            return null;
+        }
+        String callName = callStmt.getIdent().getName();
+        int argCount = callStmt.getExpressions().getExpressions().size();
+
+        for (ProcedureDefinition proc : currentActor.getProcedureDefinitionList().getList()) {
+            if (proc.getIdent().getName().equals(callName)
+                    && proc.getParameterDefinitionList().getParameterDefinitions().size() == argCount) {
+                return proc;
+            }
+        }
+        return null;
     }
 
     private String resolveStringElement(ASTNode node) {
