@@ -113,6 +113,54 @@ public final class GoboscriptSanitizer {
     }
 
     /**
+     * Escapes a string for use as a Goboscript string literal.
+     * Escapes backslashes, double quotes, newlines, and other control characters.
+     *
+     * @param text The raw string text.
+     * @return The escaped string safe for inclusion in double quotes.
+     */
+    public static String escapeStringLiteral(String text) {
+        if (text == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            switch (c) {
+                case '\\':
+                    sb.append("\\\\");
+                    break;
+                case '"':
+                    sb.append("\\\"");
+                    break;
+                case '\n':
+                    sb.append("\\n");
+                    break;
+                case '\r':
+                    sb.append("\\r");
+                    break;
+                case '\t':
+                    sb.append("\\t");
+                    break;
+                case '\b':
+                    sb.append("\\b");
+                    break;
+                case '\f':
+                    sb.append("\\f");
+                    break;
+                default:
+                    if (c < 0x20) {
+                        // Other control characters: escape as unicode
+                        sb.append(String.format("\\u%04x", (int) c));
+                    } else {
+                        sb.append(c);
+                    }
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
      * Sanitizes a string to be a valid Goboscript identifier, but does NOT check for keywords.
      * This is used internally by escapeProcedureName to check reserved commands first.
      */

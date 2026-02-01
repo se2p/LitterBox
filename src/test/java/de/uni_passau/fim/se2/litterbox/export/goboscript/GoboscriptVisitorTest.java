@@ -964,6 +964,39 @@ public class GoboscriptVisitorTest implements JsonTest {
         assertThat(result).contains("sounds \"83c36d806dc92327b9e7049a565c6bff.wav\" as \"Meow\";");
     }
 
+    // ==================== String Escaping ====================
+
+    @Test
+    public void testSanitizerEscapesControlCharacters() {
+        // Test basic escapes
+        assertThat(GoboscriptSanitizer.escapeStringLiteral("Hello\nWorld")).isEqualTo("Hello\\nWorld");
+        assertThat(GoboscriptSanitizer.escapeStringLiteral("Tab\tChar")).isEqualTo("Tab\\tChar");
+        assertThat(GoboscriptSanitizer.escapeStringLiteral("Quote\"Here")).isEqualTo("Quote\\\"Here");
+        assertThat(GoboscriptSanitizer.escapeStringLiteral("Backslash\\Here")).isEqualTo("Backslash\\\\Here");
+
+        // Test control characters (0x00 - 0x1F)
+        assertThat(GoboscriptSanitizer.escapeStringLiteral("\u0000")).isEqualTo("\\u0000");
+        assertThat(GoboscriptSanitizer.escapeStringLiteral("\u0001")).isEqualTo("\\u0001");
+
+        // Hex formatting depends on implementation, asserting lower case as typical
+        String escaped1F = GoboscriptSanitizer.escapeStringLiteral("\u001F");
+        assertThat(escaped1F.equalsIgnoreCase("\\u001f")).isTrue();
+
+        // Test mixed
+        assertThat(GoboscriptSanitizer.escapeStringLiteral("Null\u0000Byte")).isEqualTo("Null\\u0000Byte");
+    }
+
+    @Test
+    public void testVisitorEscapesStringLiteral() {
+        GoboscriptVisitor visitor = new GoboscriptVisitor();
+        StringLiteral literal = new StringLiteral("Line1\nLine2\u0000End");
+
+        literal.accept(visitor);
+
+        // Visitor wraps in quotes
+        assertThat(visitor.getOutput()).isEqualTo("\"Line1\\nLine2\\u0000End\"");
+    }
+
     // ==================== Static of() Method ====================
 
     @Test

@@ -2395,7 +2395,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     protected String escapeString(String text) {
-        return escapeStringWithNewlines(text);
+        return GoboscriptSanitizer.escapeStringLiteral(text);
     }
 
     private String getKeyName(int keyCode) {
