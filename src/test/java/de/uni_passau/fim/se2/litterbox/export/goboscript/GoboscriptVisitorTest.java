@@ -44,7 +44,6 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
