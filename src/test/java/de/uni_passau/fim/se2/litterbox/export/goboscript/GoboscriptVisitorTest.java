@@ -771,10 +771,37 @@ public class GoboscriptVisitorTest implements JsonTest {
         assertThat(result).contains("Meine_Zuege += 1;");
     }
 
-    // ==================== Numeric Index Wrapping ====================
+    // ==================== Numeric Costume/Backdrop Handling ====================
 
     @Test
-    public void testSwitchCostumeNumericWrapping() throws IOException, ParsingException {
+    public void testSwitchCostumeNumericLiteral() throws IOException, ParsingException {
+        String code = """
+                when green flag clicked
+                switch costume to (1)
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        // Numeric literal 1 should look up costume at index 1 (costume1)
+        // emptyProject.json has 2 costumes: costume1, costume2
+        assertThat(result).contains("switch_costume \"costume1\";");
+    }
+
+    @Test
+    public void testSwitchCostumeNumericLiteralWrapping() throws IOException, ParsingException {
+        String code = """
+                when green flag clicked
+                switch costume to (3)
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        // Numeric literal 3 with 2 costumes: (3-1) % 2 = 0 -> costume1
+        assertThat(result).contains("switch_costume \"costume1\";");
+    }
+
+    @Test
+    public void testSwitchCostumeNumericExpression() throws IOException, ParsingException {
         String code = """
                 when green flag clicked
                 switch costume to ((0) - (1))
@@ -782,8 +809,23 @@ public class GoboscriptVisitorTest implements JsonTest {
         Program program = parseProgram(code);
         String result = GoboscriptVisitor.of(program);
 
-        // The emptyProject.json has 2 costumes for Sprite1
-        assertThat(result).contains("switch_costume (((0 - 1) - 1) % 2 + 1);");
+        // Non-literal numeric expressions (like subtraction) should be commented out
+        // since they always produce numbers, not costume names
+        assertThat(result).contains("# switch_costume (0 - 1);");
+    }
+
+    @Test
+    public void testSwitchCostumeVariable() throws IOException, ParsingException {
+        String code = """
+                when green flag clicked
+                switch costume to (my variable)
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        // Variables might contain costume names at runtime, so pass them through
+        // emptyProject.json has a global variable "my variable"
+        assertThat(result).contains("switch_costume my_variable;");
     }
 
     // ==================== Manual AST Construction Edge Cases ====================

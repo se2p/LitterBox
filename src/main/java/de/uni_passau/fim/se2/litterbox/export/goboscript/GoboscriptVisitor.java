@@ -117,7 +117,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     private String assetPrefix = "";
     private Set<String> availableAssets = null;
     private final Set<String> validCostumes = new HashSet<>();
-    private int costumeCount = 0;
+    private final List<String> costumeNames = new ArrayList<>();
 
     /**
      * Set of escaped variable names declared in the Stage (global scope).
@@ -282,7 +282,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     private void prepareActorScope(ActorDefinition node) {
         currentActor = node;
         validCostumes.clear();
-        costumeCount = 0;
+        costumeNames.clear();
         definedProcedures.clear();
         procedureNameMapping.clear();
         localVariables.clear();
@@ -369,7 +369,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
                 continue;
             }
             validCostumes.add(costume.getName());
-            costumeCount++;
+            costumeNames.add(costume.getName());
             emitAssetDeclaration("costumes", costume.getMd5ext(), costume.getName());
         }
 
@@ -381,7 +381,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
             newLine();
             emitAssetDeclaration("costumes", placeholderAsset, "placeholder");
             validCostumes.add("placeholder");
-            costumeCount++;
+            costumeNames.add("placeholder");
         }
         for (SoundMetadata sound : metadata.getSounds().getList()) {
             // Skip sounds that don't exist in the available assets
@@ -1023,7 +1023,8 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
                 "switch_costume",
                 "switch_costume",
                 node.getCostumeChoice(),
-                validCostumes::contains)) {
+                validCostumes::contains,
+                costumeNames)) {
             return;
         }
 
@@ -1057,7 +1058,8 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     private void visitSwitchBackdropCommon(de.uni_passau.fim.se2.litterbox.ast.model.ASTNode choice,
                                            String commentName) {
-        if (handleSpecialSwitchCases("switch_backdrop", commentName, choice, this::isBackdropAvailable)) {
+        if (handleSpecialSwitchCases("switch_backdrop", commentName, choice,
+                this::isBackdropAvailable, getBackdropNames())) {
             return;
         }
 
@@ -1085,7 +1087,8 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     private boolean handleSpecialSwitchCases(String command, String commentName,
                                              de.uni_passau.fim.se2.litterbox.ast.model.ASTNode choice,
-                                             Predicate<String> validityCheck) {
+                                             Predicate<String> validityCheck,
+                                             List<String> namesList) {
         String name = resolveStringElement(choice);
         if (name != null) {
             if (!validityCheck.test(name)) {
@@ -1093,19 +1096,41 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
                 newLine();
                 return true;
             }
+            // Valid name - let caller emit it
+            return false;
         }
 
+        // Check if it's a numeric literal - we can look up the costume/backdrop by index
         if (choice instanceof WithExpr withExpr) {
-            if (withExpr.getExpression() instanceof NumExpr) {
-                int count = costumeCount;
-                if (count > 0) {
-                    emitNoSpace(command + " ((");
-                    withExpr.accept(this);
-                    emitNoSpace(" - 1) % " + count + " + 1);");
-                    newLine();
-                    return true;
-                }
+            Expression expr = withExpr.getExpression();
+
+            if (expr instanceof NumberLiteral numLit && !namesList.isEmpty()) {
+                // Scratch uses 1-based indexing with wrapping
+                int index = (int) numLit.getValue();
+                int count = namesList.size();
+                // Apply Scratch's wrapping: ((index - 1) % count + count) % count
+                int wrappedIndex = ((index - 1) % count + count) % count;
+                String costumeName = namesList.get(wrappedIndex);
+                emitNoSpace(command + " \"" + escapeString(costumeName) + "\";");
+                newLine();
+                return true;
             }
+
+            // NumExpr (but not NumberLiteral) are definitely numeric calculations
+            // that can't be resolved to a costume name - comment them out
+            if (expr instanceof NumExpr) {
+                GoboscriptVisitor tempVisitor = new GoboscriptVisitor();
+                tempVisitor.setProgram(this.program);
+                tempVisitor.setCurrentActor(this.currentActor);
+                withExpr.accept(tempVisitor);
+                String exprStr = tempVisitor.getOutput().trim();
+                emitNoSpace("# " + commentName + " " + exprStr + ";");
+                newLine();
+                return true;
+            }
+
+            // Other expressions (variables, string expressions, etc.) might contain
+            // costume names at runtime - let them through
         }
         return false;
     }
@@ -2460,6 +2485,21 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         }
         // Backdrop name not found in Stage costumes
         return false;
+    }
+
+    private List<String> getBackdropNames() {
+        ActorDefinition stage = getStageActor();
+        if (stage == null || stage.getActorMetadata() == null) {
+            return Collections.emptyList();
+        }
+
+        List<String> names = new ArrayList<>();
+        for (ImageMetadata costume : stage.getActorMetadata().getCostumes().getList()) {
+            if (isAssetAvailable(costume.getMd5ext())) {
+                names.add(costume.getName());
+            }
+        }
+        return names;
     }
 
     private boolean isAssetAvailable(String md5ext) {
