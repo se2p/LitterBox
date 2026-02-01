@@ -62,6 +62,11 @@ public class GoboscriptProjectExporter extends ProjectExporter {
     private Set<String> globalLists = new HashSet<>();
 
     /**
+     * Tracks filenames used in the current export to prevent collisions.
+     */
+    private Set<String> usedFilenames = new HashSet<>();
+
+    /**
      * Exports a program to a full Goboscript project directory.
      *
      * @param sb3File   Path to the source .sb3 file (required for asset extraction)
@@ -79,9 +84,10 @@ public class GoboscriptProjectExporter extends ProjectExporter {
         // Extract assets from sb3 and collect available asset names
         availableAssets = extractAssets(sb3File, outputDir);
 
-        // Clear global variables/lists before processing
+        // Clear global variables/lists and used filenames before processing
         globalVariables.clear();
         globalLists.clear();
+        usedFilenames.clear();
 
         // Export Stage first to collect global variables/lists
         ActorDefinition stage = null;
@@ -135,6 +141,8 @@ public class GoboscriptProjectExporter extends ProjectExporter {
         } else {
             filename = sanitizeFilename(actor.getIdent().getName()) + ".gs";
         }
+        
+        filename = getUniqueFilename(filename);
         Path actorFile = outputDir.resolve(filename);
 
         GoboscriptVisitor visitor = new GoboscriptVisitor();
@@ -161,6 +169,19 @@ public class GoboscriptProjectExporter extends ProjectExporter {
         Files.writeString(actorFile, code, StandardCharsets.UTF_8);
 
         log.fine("Exported actor: " + actor.getIdent().getName() + " -> " + filename);
+    }
+
+    private String getUniqueFilename(String filename) {
+        String base = getBaseName(filename);
+        String ext = getExtension(filename);
+        String uniqueName = filename;
+        int counter = 2;
+        while (usedFilenames.contains(uniqueName)) {
+            uniqueName = base + "_" + counter + ext;
+            counter++;
+        }
+        usedFilenames.add(uniqueName);
+        return uniqueName;
     }
 
     private boolean hasValidCostumes(ActorDefinition actor) {

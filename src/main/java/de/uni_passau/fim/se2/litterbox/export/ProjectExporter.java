@@ -48,6 +48,11 @@ public abstract class ProjectExporter {
     private static final Logger log = Logger.getLogger(ProjectExporter.class.getName());
 
     /**
+     * Maximum length for a sanitized filename to prevent filesystem errors.
+     */
+    protected static final int MAX_FILENAME_LENGTH = 200;
+
+    /**
      * Collects non-fatal errors that occurred during export.
      */
     protected final List<String> exportErrors = new ArrayList<>();
@@ -128,12 +133,17 @@ public abstract class ProjectExporter {
     /**
      * Sanitizes a name for use as a filename.
      * Replaces characters that are invalid in filenames with underscores.
+     * Also truncates the name to 200 characters to prevent filesystem errors.
      *
      * @param name The name to sanitize
      * @return A filesystem-safe version of the name
      */
     protected String sanitizeFilename(String name) {
-        return name.replaceAll("[/\\\\:*?\"<>|]", "_");
+        String sanitized = name.replaceAll("[/\\\\:*?\"<>|]", "_");
+        if (sanitized.length() > MAX_FILENAME_LENGTH) {
+            return sanitized.substring(0, MAX_FILENAME_LENGTH);
+        }
+        return sanitized;
     }
 
     /**

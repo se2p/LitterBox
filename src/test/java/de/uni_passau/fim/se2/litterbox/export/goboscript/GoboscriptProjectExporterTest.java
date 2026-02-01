@@ -20,13 +20,21 @@ package de.uni_passau.fim.se2.litterbox.export.goboscript;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
+import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +43,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for the {@link GoboscriptProjectExporter} full project export functionality.
@@ -252,5 +262,69 @@ public class GoboscriptProjectExporterTest implements JsonTest {
 
         String stageContent = Files.readString(stageFile);
         assertThat(stageContent).contains("stage Stage");
+    }
+
+    @Test
+    public void testExportWithCollidingSpriteNames(@TempDir Path tempDir) throws IOException {
+        // Setup collision names (first 200 chars identical)
+        String prefix = String.join("", Collections.nCopies(200, "a"));
+        String name1 = prefix + "1";
+        String name2 = prefix + "2";
+
+        // Mock Program and Actors
+        Program program = mock(Program.class);
+        ActorDefinitionList actorList = mock(ActorDefinitionList.class);
+        when(program.getActorDefinitionList()).thenReturn(actorList);
+
+        // Mock Metadata for validation
+        ActorMetadata mockMetadata = mock(ActorMetadata.class);
+        ImageMetadataList mockCostumeList = mock(ImageMetadataList.class);
+        ImageMetadata mockCostume = mock(ImageMetadata.class);
+        when(mockCostume.getMd5ext()).thenReturn("dummy.png");
+        when(mockCostumeList.getList()).thenReturn(Collections.singletonList(mockCostume));
+        when(mockMetadata.getCostumes()).thenReturn(mockCostumeList);
+
+        ActorDefinition stage = mock(ActorDefinition.class);
+        when(stage.isStage()).thenReturn(true);
+        LocalIdentifier stageId = mock(LocalIdentifier.class);
+        when(stageId.getName()).thenReturn("Stage");
+        when(stage.getIdent()).thenReturn(stageId);
+        when(stage.getActorMetadata()).thenReturn(mockMetadata);
+
+        ActorDefinition sprite1 = mock(ActorDefinition.class);
+        when(sprite1.isStage()).thenReturn(false);
+        LocalIdentifier id1 = mock(LocalIdentifier.class);
+        when(id1.getName()).thenReturn(name1);
+        when(sprite1.getIdent()).thenReturn(id1);
+        when(sprite1.getActorMetadata()).thenReturn(mockMetadata);
+
+        ActorDefinition sprite2 = mock(ActorDefinition.class);
+        when(sprite2.isStage()).thenReturn(false);
+        LocalIdentifier id2 = mock(LocalIdentifier.class);
+        when(id2.getName()).thenReturn(name2);
+        when(sprite2.getIdent()).thenReturn(id2);
+        when(sprite2.getActorMetadata()).thenReturn(mockMetadata);
+
+        when(actorList.getDefinitions()).thenReturn(Arrays.asList(stage, sprite1, sprite2));
+
+        // Use exporter that returns null assets to bypass validation
+        GoboscriptProjectExporter exporter = new GoboscriptProjectExporter() {
+            @Override
+            protected Set<String> extractAssets(Path sb3File, Path outputDir) {
+                return null; // Bypass validation
+            }
+        };
+
+        Path outputDir = tempDir.resolve("collision_project");
+        // We can pass any path as sb3File since we override extractAssets
+        exporter.export(Path.of("dummy.sb3"), program, outputDir);
+
+        // Check files
+        // Should have stage.gs, and two sprite files.
+        long gsFileCount = Files.list(outputDir)
+                .filter(p -> p.toString().endsWith(".gs"))
+                .count();
+
+        assertThat(gsFileCount).isEqualTo(3);
     }
 }
