@@ -18,8 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.export.goboscript;
 
-import java.math.BigDecimal;
-
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
@@ -90,6 +88,7 @@ import de.uni_passau.fim.se2.litterbox.export.ScratchKeyCode;
 import de.uni_passau.fim.se2.litterbox.export.StringExprNameVisitor;
 
 import java.io.PrintStream;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -1499,8 +1498,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
                 emitNoSpace(");");
                 newLine();
             }
-            case null, default ->
-                    visitChildren(node); // Fallback
+            case null, default -> visitChildren(node); // Fallback
         }
     }
 
