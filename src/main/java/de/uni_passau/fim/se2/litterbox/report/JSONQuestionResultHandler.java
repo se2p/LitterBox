@@ -18,10 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.report;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.ProgramDimension;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.ScopeOfFocus;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -52,16 +50,17 @@ public class JSONQuestionResultHandler implements QuestionResultHandler {
 
     private final Path output;
     private final boolean showAnswers;
-    private final ObjectMapper mapper;
-    private final ArrayNode projectsArray;
+    private final JsonMapper mapper;
+    private final List<ProjectQuestions> projects;
     private final boolean directoryMode;
 
     public JSONQuestionResultHandler(Path output, boolean showAnswers) {
         this.output = output;
         this.showAnswers = showAnswers;
-        this.mapper = new ObjectMapper();
-        this.mapper.enable(SerializationFeature.INDENT_OUTPUT);
-        this.projectsArray = mapper.createArrayNode();
+        this.mapper = JsonMapper.builder()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .build();
+        this.projects = new java.util.ArrayList<>();
         this.directoryMode = isDirectoryMode(output);
     }
 
@@ -85,38 +84,49 @@ public class JSONQuestionResultHandler implements QuestionResultHandler {
 
     @Override
     public void handleResult(Path projectFile, Program program, List<QuestionDTO> questions) {
-        ObjectNode projectNode = mapper.createObjectNode();
-        projectNode.put("project", projectFile.getFileName().toString());
+        String projectName = projectFile.getFileName().toString();
+        Map<String, Map<String, Integer>> coverage = createCoverageMap(questions);
 
-        // Add block model coverage
-        projectNode.set("blockModelCoverage", createCoverageNode(questions));
+        // Transform questions if necessary (e.g. to handle null/empty logic for choices/answers)
+        // For now, we assume QuestionDTO's default serialization is acceptable or handled by
+        // annotations/mixins if needed.
+        // But to strictly match previous behavior (null for empty), we might need to recreate DTOs.
+        // Let's use the DTOs as is for now, but ensure we respect the showAnswers flag.
 
-        // Add questions array
-        ArrayNode questionsArray = mapper.createArrayNode();
-        for (QuestionDTO question : questions) {
-            questionsArray.add(createQuestionNode(question));
-        }
-        projectNode.set("questions", questionsArray);
+        List<QuestionDTO> processedQuestions = questions.stream()
+                .map(q -> new QuestionDTO(
+                        q.id(), q.finder(), q.name(), q.questionType(),
+                        q.programDimension(), q.scopeOfFocus(), q.sprite(),
+                        q.questionText(),
+                        (q.choices() == null || q.choices().isEmpty())
+                                ? null
+                                : q.choices(),
+                        (showAnswers && q.correctAnswers() != null && !q.correctAnswers().isEmpty())
+                                ? q.correctAnswers()
+                                : null,
+                        q.scratchBlocksCode(),
+                        q.hint()
+                ))
+                .toList();
+
+        ProjectQuestions projectQuestions = new ProjectQuestions(projectName, coverage, processedQuestions);
 
         if (directoryMode) {
             // Write immediately for this project
-            writeProjectToFile(projectFile, projectNode);
+            writeProjectToFile(projectFile, projectQuestions);
         } else {
             // Accumulate for single file output
-            projectsArray.add(projectNode);
+            projects.add(projectQuestions);
         }
     }
 
-    private void writeProjectToFile(Path projectFile, ObjectNode projectNode) {
+    private void writeProjectToFile(Path projectFile, ProjectQuestions projectQuestions) {
         try {
             Files.createDirectories(output);
             String projectName = getProjectBaseName(projectFile);
             Path outputPath = output.resolve(projectName + "_questions.json");
 
-            ObjectNode root = mapper.createObjectNode();
-            ArrayNode projects = mapper.createArrayNode();
-            projects.add(projectNode);
-            root.set("projects", projects);
+            QuestionExportRoot root = new QuestionExportRoot(List.of(projectQuestions));
 
             mapper.writeValue(outputPath.toFile(), root);
             log.info("Questions written to: " + outputPath);
@@ -134,9 +144,7 @@ public class JSONQuestionResultHandler implements QuestionResultHandler {
         return fileName;
     }
 
-    private ObjectNode createCoverageNode(List<QuestionDTO> questions) {
-        ObjectNode coverageNode = mapper.createObjectNode();
-
+    private Map<String, Map<String, Integer>> createCoverageMap(List<QuestionDTO> questions) {
         // Count questions per cell
         Map<String, Integer> cellCounts = new LinkedHashMap<>();
         for (QuestionDTO q : questions) {
@@ -145,54 +153,17 @@ public class JSONQuestionResultHandler implements QuestionResultHandler {
         }
 
         // Create matrix
+        Map<String, Map<String, Integer>> coverage = new LinkedHashMap<>();
         for (ProgramDimension dim : ProgramDimension.values()) {
-            ObjectNode dimNode = mapper.createObjectNode();
+            Map<String, Integer> dimMap = new LinkedHashMap<>();
             for (ScopeOfFocus scope : ScopeOfFocus.values()) {
                 String cell = dim.name() + "/" + scope.name();
-                dimNode.put(scope.name(), cellCounts.getOrDefault(cell, 0));
+                dimMap.put(scope.name(), cellCounts.getOrDefault(cell, 0));
             }
-            coverageNode.set(dim.name(), dimNode);
+            coverage.put(dim.name(), dimMap);
         }
 
-        return coverageNode;
-    }
-
-    private ObjectNode createQuestionNode(QuestionDTO question) {
-        ObjectNode node = mapper.createObjectNode();
-        node.put("id", question.id());
-        node.put("finder", question.finder());
-        node.put("name", question.name());
-        node.put("questionType", question.questionType().name());
-        node.put("programDimension", question.programDimension().name());
-        node.put("scopeOfFocus", question.scopeOfFocus().name());
-        node.put("sprite", question.sprite());
-        node.put("questionText", question.questionText());
-
-        if (question.choices() != null && !question.choices().isEmpty()) {
-            ArrayNode choicesArray = mapper.createArrayNode();
-            question.choices().forEach(choicesArray::add);
-            node.set("choices", choicesArray);
-        } else {
-            node.putNull("choices");
-        }
-
-        if (showAnswers && question.correctAnswers() != null && !question.correctAnswers().isEmpty()) {
-            ArrayNode answersArray = mapper.createArrayNode();
-            question.correctAnswers().forEach(answersArray::add);
-            node.set("correctAnswers", answersArray);
-        } else {
-            node.putNull("correctAnswers");
-        }
-
-        if (question.scratchBlocksCode() != null) {
-            node.put("scratchBlocksCode", question.scratchBlocksCode());
-        }
-
-        if (question.hint() != null) {
-            node.put("hint", question.hint());
-        }
-
-        return node;
+        return coverage;
     }
 
     @Override
@@ -202,8 +173,7 @@ public class JSONQuestionResultHandler implements QuestionResultHandler {
             return;
         }
 
-        ObjectNode root = mapper.createObjectNode();
-        root.set("projects", projectsArray);
+        QuestionExportRoot root = new QuestionExportRoot(projects);
 
         try {
             if (output.getParent() != null) {
@@ -215,5 +185,15 @@ public class JSONQuestionResultHandler implements QuestionResultHandler {
             log.severe("Failed to write JSON output: " + e.getMessage());
             throw e;
         }
+    }
+
+    private record QuestionExportRoot(List<ProjectQuestions> projects) {
+    }
+
+    private record ProjectQuestions(
+            String project,
+            Map<String, Map<String, Integer>> blockModelCoverage,
+            List<QuestionDTO> questions
+    ) {
     }
 }

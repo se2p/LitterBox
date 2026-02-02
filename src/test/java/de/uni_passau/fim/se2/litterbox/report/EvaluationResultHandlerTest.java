@@ -175,4 +175,46 @@ class EvaluationResultHandlerTest {
         // This is the check: should be null, not "null"
         assertNull(eq.providedAnswer(), "Provided answer should be null, not string 'null'");
     }
+
+    @Test
+    void testWriteJsonResults() throws Exception {
+        // Setup
+        Path answersFile = tempDir.resolve("answers_write.json");
+        Files.writeString(answersFile, """
+                {
+                  "projectFile": "testProject.sb3",
+                  "answers": [
+                    {
+                      "questionId": 1,
+                      "answer": "Correct Answer"
+                    }
+                  ]
+                }
+                """);
+
+        Path outputFile = tempDir.resolve("results.json");
+
+        IssueTranslator translator = Mockito.mock(IssueTranslator.class);
+        when(translator.getLocale()).thenReturn(Locale.ENGLISH);
+        when(translator.getInfo(anyString())).thenReturn("Feedback");
+        when(translator.getName(anyString())).thenReturn("FinderName");
+
+        EvaluationResultHandler handler = new EvaluationResultHandler(translator, outputFile, answersFile, false);
+        handler.begin();
+
+        QuestionDTO q1 = new QuestionDTO(1, "finder", "name", QuestionType.FREE_TEXT, ProgramDimension.PURPOSE, ScopeOfFocus.ATOM, null, "Q1", null, List.of("Correct Answer"), null, null);
+
+        handler.handleResult(Path.of("testProject.sb3"), null, List.of(q1));
+        handler.finish();
+
+        // Verify JSON content
+        assertTrue(Files.exists(outputFile));
+        String json = Files.readString(outputFile);
+
+        assertTrue(json.contains("\"projectFile\" : \"testProject.sb3\""));
+        assertTrue(json.contains("\"questionId\" : 1"));
+        assertTrue(json.contains("\"providedAnswer\" : \"Correct Answer\""));
+        assertTrue(json.contains("\"correct\" : true"));
+        assertTrue(json.contains("\"score\" : 1.0"));
+    }
 }

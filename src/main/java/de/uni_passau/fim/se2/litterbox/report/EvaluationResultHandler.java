@@ -18,8 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.report;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
@@ -54,7 +55,7 @@ public class EvaluationResultHandler implements QuestionResultHandler {
     private final Path output;
     private final Path answersFile;
     private final boolean llmEval;
-    private final ObjectMapper objectMapper;
+    private final JsonMapper objectMapper;
     private final AnswerChecker answerChecker;
 
     private Map<Integer, String> studentAnswers;
@@ -67,9 +68,11 @@ public class EvaluationResultHandler implements QuestionResultHandler {
         this.output = output;
         this.answersFile = answersFile;
         this.llmEval = llmEval;
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = JsonMapper.builder()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .build();
 
-        String language = translator.getLocale().getLanguage();
+        String language = translator.getLanguage();
         LLMAnswerEvaluator llmEvaluator = llmEval ? new LLMAnswerEvaluator(language) : null;
         this.answerChecker = new AnswerChecker(llmEvaluator, 0.0, translator);
     }
@@ -81,38 +84,26 @@ public class EvaluationResultHandler implements QuestionResultHandler {
     }
 
     private void loadAnswers() throws IOException {
-        JsonNode root = objectMapper.readTree(answersFile.toFile());
+        AnswersInput input = objectMapper.readValue(answersFile.toFile(), AnswersInput.class);
 
-        projectFileName = root.has("projectFile") ? root.get("projectFile").asText() : null;
+        projectFileName = input.projectFile();
 
         studentAnswers = new HashMap<>();
         exportedExpectedAnswers = new HashMap<>();
-        JsonNode answersNode = root.get("answers");
-        if (answersNode != null && answersNode.isArray()) {
-            for (JsonNode answer : answersNode) {
-                int questionId = answer.get("questionId").asInt();
-                JsonNode answerNode = answer.get("answer");
-                String answerText = (answerNode != null && !answerNode.isNull()) ? answerNode.asText() : null;
-                studentAnswers.put(questionId, answerText);
 
-                // Load expected answers if present (for consistent evaluation)
-                if (answer.has("expectedAnswers")) {
-                    List<String> expected = new ArrayList<>();
-                    for (JsonNode exp : answer.get("expectedAnswers")) {
-                        expected.add(exp.asText());
-                    }
-                    if (!expected.isEmpty()) {
-                        exportedExpectedAnswers.put(questionId, expected);
-                    }
+        if (input.answers() != null) {
+            for (AnswerInputEntry answer : input.answers()) {
+                studentAnswers.put(answer.questionId(), answer.answer());
+
+                if (answer.expectedAnswers() != null && !answer.expectedAnswers().isEmpty()) {
+                    exportedExpectedAnswers.put(answer.questionId(), answer.expectedAnswers());
                 }
             }
         }
-        if (root.has("language")) {
-            String lang = root.get("language").asText();
-            if (lang != null && !lang.isEmpty()) {
-                this.translator = IssueTranslatorFactory.getIssueTranslator(Locale.of(lang));
-                log.info("Using language from answer file: " + lang);
-            }
+
+        if (input.language() != null && !input.language().isEmpty()) {
+            this.translator = IssueTranslatorFactory.getIssueTranslator(Locale.of(input.language()));
+            log.info("Using language from answer file: " + input.language());
         }
 
         log.info("Loaded " + studentAnswers.size() + " answers from " + answersFile);
@@ -138,7 +129,8 @@ public class EvaluationResultHandler implements QuestionResultHandler {
                     List<String> exportedAnswers = exportedExpectedAnswers.get(q.id());
                     if (exportedAnswers != null && !exportedAnswers.isEmpty()) {
                         // Use the exported expected answers instead of regenerated ones
-                        log.fine("Question " + q.id() + " (" + q.finder() + "): using exported expected answers: " + exportedAnswers);
+                        log.fine("Question " + q.id() + " (" + q.finder()
+                                + "): using exported expected answers: " + exportedAnswers);
                         return new QuestionDTO(
                                 q.id(), q.finder(), q.name(), q.questionType(),
                                 q.programDimension(), q.scopeOfFocus(), q.sprite(),
@@ -146,7 +138,8 @@ public class EvaluationResultHandler implements QuestionResultHandler {
                                 q.scratchBlocksCode(), q.hint()
                         );
                     }
-                    log.fine("Question " + q.id() + " (" + q.finder() + "): using regenerated answers: " + q.correctAnswers());
+                    log.fine("Question " + q.id() + " (" + q.finder()
+                            + "): using regenerated answers: " + q.correctAnswers());
                     return q;
                 })
                 .toList();
@@ -364,60 +357,41 @@ public class EvaluationResultHandler implements QuestionResultHandler {
             Files.createDirectories(output.getParent());
         }
 
-        Map<String, Object> result = new LinkedHashMap<>();
-        result.put("evaluatedAt", Instant.now().toString());
-        result.put("llmEvaluation", llmEval);
-
-        List<Map<String, Object>> projectResults = new ArrayList<>();
+        List<ProjectEvaluation> projectResults = new ArrayList<>();
         for (EvaluatedProject project : evaluatedProjects) {
-            Map<String, Object> pr = new LinkedHashMap<>();
-            pr.put("projectFile", project.projectName());
-            pr.put("totalQuestions", project.checkResult().totalQuestions());
-            pr.put("correctAnswers", project.checkResult().correctAnswers());
-            pr.put("score", project.checkResult().score());
-
-            List<Map<String, Object>> questionResults = new ArrayList<>();
+            List<QuestionResult> questionResults = new ArrayList<>();
             for (EvaluatedQuestion q : project.questions()) {
-                Map<String, Object> qr = new LinkedHashMap<>();
-                qr.put("questionId", q.id());
-                qr.put("questionType", q.questionType().name());
-                qr.put("programDimension", q.programDimension().name());
-                qr.put("scopeOfFocus", q.scopeOfFocus().name());
-                qr.put("correct", q.correct());
-                qr.put("partialCredit", q.partialCredit());
-                qr.put("providedAnswer", q.providedAnswer());
-                qr.put("expectedAnswer", q.expectedAnswer());
-                if (q.feedback() != null) {
-                    qr.put("feedback", q.feedback());
-                }
-                questionResults.add(qr);
+                questionResults.add(new QuestionResult(
+                        q.id(),
+                        q.questionType(),
+                        q.programDimension(),
+                        q.scopeOfFocus(),
+                        q.correct(),
+                        q.partialCredit(),
+                        q.providedAnswer(),
+                        q.expectedAnswer(),
+                        q.feedback()
+                ));
             }
-            pr.put("results", questionResults);
 
-            // Add breakdown by dimension
-            Map<String, Object> byDimension = new LinkedHashMap<>();
-            for (var entry : project.checkResult().byProgramDimension().entrySet()) {
-                Map<String, Object> dimScore = new LinkedHashMap<>();
-                dimScore.put("total", entry.getValue().total());
-                dimScore.put("correct", entry.getValue().correct());
-                byDimension.put(entry.getKey().name(), dimScore);
-            }
-            pr.put("byProgramDimension", byDimension);
-
-            Map<String, Object> byScope = new LinkedHashMap<>();
-            for (var entry : project.checkResult().byScopeOfFocus().entrySet()) {
-                Map<String, Object> scopeScore = new LinkedHashMap<>();
-                scopeScore.put("total", entry.getValue().total());
-                scopeScore.put("correct", entry.getValue().correct());
-                byScope.put(entry.getKey().name(), scopeScore);
-            }
-            pr.put("byScopeOfFocus", byScope);
-
-            projectResults.add(pr);
+            projectResults.add(new ProjectEvaluation(
+                    project.projectName(),
+                    project.checkResult().totalQuestions(),
+                    project.checkResult().correctAnswers(),
+                    project.checkResult().score(),
+                    questionResults,
+                    project.checkResult().byProgramDimension(),
+                    project.checkResult().byScopeOfFocus()
+            ));
         }
-        result.put("projects", projectResults);
 
-        objectMapper.writerWithDefaultPrettyPrinter().writeValue(output.toFile(), result);
+        EvaluationReport report = new EvaluationReport(
+                Instant.now().toString(),
+                llmEval,
+                projectResults
+        );
+
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(output.toFile(), report);
         log.info("Evaluation results written to: " + output);
     }
 
@@ -519,6 +493,54 @@ public class EvaluationResultHandler implements QuestionResultHandler {
             double partialCredit,
             String feedback,
             LLMEvaluation llmEvaluation
+    ) {
+    }
+
+    // Records for JSON serialization/deserialization
+
+    private record AnswersInput(
+            String projectFile,
+            String language,
+            List<AnswerInputEntry> answers
+    ) {
+    }
+
+    private record AnswerInputEntry(
+            int questionId,
+            String answer,
+            List<String> expectedAnswers
+    ) {
+    }
+
+    private record EvaluationReport(
+            String evaluatedAt,
+            boolean llmEvaluation,
+            List<ProjectEvaluation> projects
+    ) {
+    }
+
+    private record ProjectEvaluation(
+            String projectFile,
+            int totalQuestions,
+            int correctAnswers,
+            double score,
+            List<QuestionResult> results,
+            Map<ProgramDimension, AnswerCheckResult.DimensionScore> byProgramDimension,
+            Map<ScopeOfFocus, AnswerCheckResult.DimensionScore> byScopeOfFocus
+    ) {
+    }
+
+    private record QuestionResult(
+            int questionId,
+            QuestionType questionType,
+            ProgramDimension programDimension,
+            ScopeOfFocus scopeOfFocus,
+            boolean correct,
+            double partialCredit,
+            String providedAnswer,
+            String expectedAnswer,
+            @JsonInclude(JsonInclude.Include.NON_NULL)
+            String feedback
     ) {
     }
 }
