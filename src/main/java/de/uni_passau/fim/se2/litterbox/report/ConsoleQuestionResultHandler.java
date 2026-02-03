@@ -72,12 +72,14 @@ public class ConsoleQuestionResultHandler implements QuestionResultHandler {
         System.out.println("  Sprite: " + question.sprite());
         System.out.println("  Q: " + question.questionText());
 
-        if (question.choices() != null && !question.choices().isEmpty()) {
-            System.out.println("  Choices: " + String.join(", ", question.choices()));
+        List<String> choices = question.getChoices(translator);
+        if (choices != null && !choices.isEmpty()) {
+            System.out.println("  Choices: " + String.join(", ", choices));
         }
 
-        if (showAnswers && question.correctAnswers() != null && !question.correctAnswers().isEmpty()) {
-            System.out.println("  Answer: " + String.join(", ", question.correctAnswers()));
+        List<String> answers = question.getCorrectAnswers(translator);
+        if (showAnswers && answers != null && !answers.isEmpty()) {
+            System.out.println("  Answer: " + String.join(", ", answers));
         }
 
         System.out.println();

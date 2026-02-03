@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.ProgramDimension;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.ScopeOfFocus;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -50,13 +51,15 @@ public class JSONQuestionResultHandler implements QuestionResultHandler {
 
     private final Path output;
     private final boolean showAnswers;
+    private final IssueTranslator translator;
     private final JsonMapper mapper;
     private final List<ProjectQuestions> projects;
     private final boolean directoryMode;
 
-    public JSONQuestionResultHandler(Path output, boolean showAnswers) {
+    public JSONQuestionResultHandler(IssueTranslator translator, Path output, boolean showAnswers) {
         this.output = output;
         this.showAnswers = showAnswers;
+        this.translator = translator;
         this.mapper = JsonMapper.builder()
                 .enable(SerializationFeature.INDENT_OUTPUT)
                 .build();
@@ -93,20 +96,20 @@ public class JSONQuestionResultHandler implements QuestionResultHandler {
         // But to strictly match previous behavior (null for empty), we might need to recreate DTOs.
         // Let's use the DTOs as is for now, but ensure we respect the showAnswers flag.
 
-        List<QuestionDTO> processedQuestions = questions.stream()
-                .map(q -> new QuestionDTO(
-                        q.id(), q.finder(), q.name(), q.questionType(),
-                        q.programDimension(), q.scopeOfFocus(), q.sprite(),
-                        q.questionText(),
-                        (q.choices() == null || q.choices().isEmpty())
-                                ? null
-                                : q.choices(),
-                        (showAnswers && q.correctAnswers() != null && !q.correctAnswers().isEmpty())
-                                ? q.correctAnswers()
-                                : null,
-                        q.scratchBlocksCode(),
-                        q.hint()
-                ))
+        List<JsonQuestionDTO> processedQuestions = questions.stream()
+                .map(q -> {
+                    List<String> choices = q.getChoices(translator);
+                    List<String> answers = q.getCorrectAnswers(translator);
+                    return new JsonQuestionDTO(
+                            q.id(), q.finder(), q.name(), q.questionType(),
+                            q.programDimension(), q.scopeOfFocus(), q.sprite(),
+                            q.questionText(),
+                            (choices == null || choices.isEmpty()) ? null : choices,
+                            (showAnswers && answers != null && !answers.isEmpty()) ? answers : null,
+                            q.scratchBlocksCode(),
+                            q.hint()
+                    );
+                })
                 .toList();
 
         ProjectQuestions projectQuestions = new ProjectQuestions(projectName, coverage, processedQuestions);
@@ -193,7 +196,26 @@ public class JSONQuestionResultHandler implements QuestionResultHandler {
     private record ProjectQuestions(
             String project,
             Map<String, Map<String, Integer>> blockModelCoverage,
-            List<QuestionDTO> questions
+            List<JsonQuestionDTO> questions
+    ) {
+    }
+
+    /**
+     * DTO for JSON output with resolved string fields (not TranslatableText).
+     */
+    private record JsonQuestionDTO(
+            int id,
+            String finder,
+            String name,
+            de.uni_passau.fim.se2.litterbox.analytics.questions.QuestionType questionType,
+            ProgramDimension programDimension,
+            ScopeOfFocus scopeOfFocus,
+            String sprite,
+            String questionText,
+            List<String> choices,
+            List<String> correctAnswers,
+            String scratchBlocksCode,
+            String hint
     ) {
     }
 }

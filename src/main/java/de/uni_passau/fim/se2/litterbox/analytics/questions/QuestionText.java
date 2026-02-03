@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
 import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
@@ -65,7 +67,10 @@ public class QuestionText extends TranslatableText {
     public static final String TRUE_VALUE = "true_value";
     public static final String FALSE_VALUE = "false_value";
 
-    private QuestionText(String key, String text) {
+    @JsonCreator
+    private QuestionText(
+            @JsonProperty("key") String key,
+            @JsonProperty("textContent") String text) {
         super(key, text);
     }
 

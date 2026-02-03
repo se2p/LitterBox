@@ -69,6 +69,13 @@ public class AnswerChecker {
     }
 
     /**
+     * Gets the correct answers for a question, resolved to strings.
+     */
+    private List<String> getCorrectAnswers(QuestionDTO question) {
+        return question.getCorrectAnswers(translator);
+    }
+
+    /**
      * Checks all answers against the questions.
      *
      * @param questions      The list of questions
@@ -101,7 +108,7 @@ public class AnswerChecker {
                             question.questionType(),
                             false,
                             null,
-                            formatExpectedAnswers(question.correctAnswers()),
+                            formatExpectedAnswers(getCorrectAnswers(question)),
                             feedback
                     ));
                 } else {
@@ -110,7 +117,7 @@ public class AnswerChecker {
                             question.questionType(),
                             false,
                             null,
-                            formatExpectedAnswers(question.correctAnswers())
+                            formatExpectedAnswers(getCorrectAnswers(question))
                     ));
                 }
                 continue;
@@ -136,7 +143,8 @@ public class AnswerChecker {
     }
 
     private AnswerResult checkMultipleChoice(QuestionDTO question, String studentAnswer) {
-        if (question.correctAnswers() == null || question.correctAnswers().isEmpty()) {
+        List<String> correctAnswers = getCorrectAnswers(question);
+        if (correctAnswers == null || correctAnswers.isEmpty()) {
             return AnswerResult.withFeedback(
                     question.id(),
                     question.questionType(),
@@ -147,34 +155,67 @@ public class AnswerChecker {
             );
         }
 
-        String normalizedStudent = normalizeAnswer(studentAnswer);
-        boolean correct = question.correctAnswers().stream()
-                .map(this::normalizeAnswer)
-                .anyMatch(expected -> expected.equals(normalizedStudent));
+        // Check if this is a multi-select question (multiple correct answers expected)
+        boolean isMultiSelect = correctAnswers.size() > 1;
 
-        String feedback = correct
-                ? getLocalizedText("evaluation_feedback_correct_choice")
-                : getLocalizedText("evaluation_feedback_wrong_choice");
+        // Normalize correct answers
+        List<String> normalizedCorrect = correctAnswers.stream()
+                .map(this::normalizeAnswer)
+                .toList();
+
+        boolean correct;
+        String feedback;
+
+        if (isMultiSelect && studentAnswer != null && studentAnswer.contains("|")) {
+            // Multi-select: student answer is pipe-separated
+            List<String> studentSelections = java.util.Arrays.stream(studentAnswer.split("\\|"))
+                    .map(this::normalizeAnswer)
+                    .filter(s -> !s.isEmpty())
+                    .toList();
+
+            // Check: all selected answers must be correct, and all correct answers must be selected
+            boolean allSelectedCorrect = normalizedCorrect.containsAll(studentSelections);
+            boolean allCorrectSelected = studentSelections.containsAll(normalizedCorrect);
+
+            correct = allSelectedCorrect && allCorrectSelected;
+
+            if (correct) {
+                feedback = getLocalizedText("evaluation_feedback_correct_choice");
+            } else if (!allSelectedCorrect) {
+                feedback = getLocalizedText("evaluation_feedback_wrong_choice");
+            } else {
+                // Some correct answers were missed
+                feedback = getLocalizedText("evaluation_feedback_incomplete_selection");
+            }
+        } else {
+            // Single-select: check if the single answer matches any correct answer
+            String normalizedStudent = normalizeAnswer(studentAnswer);
+            correct = normalizedCorrect.contains(normalizedStudent);
+
+            feedback = correct
+                    ? getLocalizedText("evaluation_feedback_correct_choice")
+                    : getLocalizedText("evaluation_feedback_wrong_choice");
+        }
 
         return AnswerResult.withFeedback(
                 question.id(),
                 question.questionType(),
                 correct,
                 studentAnswer,
-                formatExpectedAnswers(question.correctAnswers()),
+                formatExpectedAnswers(correctAnswers),
                 feedback
         );
     }
 
     private AnswerResult checkNumeric(QuestionDTO question, String studentAnswer) {
-        if (question.correctAnswers() == null || question.correctAnswers().isEmpty()) {
+        if (getCorrectAnswers(question) == null || getCorrectAnswers(question).isEmpty()) {
             return AnswerResult.withFeedback(question.id(), question.questionType(), false, studentAnswer, null,
                     getLocalizedText("evaluation_no_expected_answer"));
         }
 
         try {
             double studentValue = Double.parseDouble(studentAnswer.trim());
-            double expectedValue = Double.parseDouble(question.correctAnswers().getFirst().trim());
+            double expectedValue = Double.parseDouble(getCorrectAnswers(question).getFirst().trim());
 
             boolean correct;
             if (numericTolerance > 0) {
@@ -195,7 +236,7 @@ public class AnswerChecker {
                     question.questionType(),
                     correct,
                     studentAnswer,
-                    question.correctAnswers().getFirst(),
+                    getCorrectAnswers(question).getFirst(),
                     feedback
             );
         } catch (NumberFormatException e) {
@@ -204,14 +245,14 @@ public class AnswerChecker {
                     question.questionType(),
                     false,
                     studentAnswer,
-                    question.correctAnswers().getFirst(),
+                    getCorrectAnswers(question).getFirst(),
                     getLocalizedText("evaluation_feedback_invalid_number")
             );
         }
     }
 
     private AnswerResult checkYesNo(QuestionDTO question, String studentAnswer) {
-        if (question.correctAnswers() == null || question.correctAnswers().isEmpty()) {
+        if (getCorrectAnswers(question) == null || getCorrectAnswers(question).isEmpty()) {
             return AnswerResult.withFeedback(question.id(), question.questionType(), false, studentAnswer, null,
                     getLocalizedText("evaluation_no_expected_answer"));
         }
@@ -229,7 +270,7 @@ public class AnswerChecker {
         boolean studentSaysNo = normalized.equals("no") || normalized.equals("false") || normalized.equals("n")
                 || normalized.equals(noTerm) || normalized.equals(falseVal);
 
-        String expectedAnswer = question.correctAnswers().getFirst().toLowerCase();
+        String expectedAnswer = getCorrectAnswers(question).getFirst().toLowerCase();
         boolean expectedYes = expectedAnswer.contains("yes") || expectedAnswer.equals("true")
                 || expectedAnswer.equals(yesTerm) || expectedAnswer.equals(trueVal);
 
@@ -251,7 +292,7 @@ public class AnswerChecker {
                 question.questionType(),
                 correct,
                 studentAnswer,
-                question.correctAnswers().getFirst(),
+                getCorrectAnswers(question).getFirst(),
                 feedback
         );
     }
@@ -259,9 +300,9 @@ public class AnswerChecker {
     private AnswerResult checkFreeText(QuestionDTO question, String studentAnswer) {
         // First try simple string matching if there are expected answers
         // This handles cases like SetVariable where the answer is a simple value
-        if (question.correctAnswers() != null && !question.correctAnswers().isEmpty()) {
+        if (getCorrectAnswers(question) != null && !getCorrectAnswers(question).isEmpty()) {
             String normalizedStudent = normalizeAnswer(studentAnswer);
-            List<String> normalizedExpected = question.correctAnswers().stream()
+            List<String> normalizedExpected = getCorrectAnswers(question).stream()
                     .map(this::normalizeAnswer)
                     .toList();
 
@@ -291,7 +332,7 @@ public class AnswerChecker {
                         question.questionType(),
                         true,
                         studentAnswer,
-                        formatExpectedAnswers(question.correctAnswers()),
+                        formatExpectedAnswers(getCorrectAnswers(question)),
                         1.0,
                         getLocalizedText("evaluation_feedback_correct"),
                         null
@@ -310,13 +351,13 @@ public class AnswerChecker {
         }
 
         // No match found and no LLM available - mark as incorrect with review note
-        if (question.correctAnswers() != null && !question.correctAnswers().isEmpty()) {
+        if (getCorrectAnswers(question) != null && !getCorrectAnswers(question).isEmpty()) {
             return new AnswerResult(
                     question.id(),
                     question.questionType(),
                     false,
                     studentAnswer,
-                    formatExpectedAnswers(question.correctAnswers()),
+                    formatExpectedAnswers(getCorrectAnswers(question)),
                     0.0,
                     getLocalizedText("evaluation_feedback_freetext_review"),
                     null

@@ -18,6 +18,22 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type",
+        defaultImpl = HintPlaceholder.Value.class
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = HintPlaceholder.Value.class, name = "Value"),
+        @JsonSubTypes.Type(value = HintPlaceholder.Translatable.class, name = "Translatable"),
+        @JsonSubTypes.Type(value = HintPlaceholder.ValueWithTranslatableElements.class, name = "ValueWithTranslatableElements"),
+        @JsonSubTypes.Type(value = HintPlaceholder.NestedTranslatable.class, name = "NestedTranslatable"),
+        @JsonSubTypes.Type(value = HintPlaceholder.Defineable.class, name = "Defineable")
+})
 public sealed interface HintPlaceholder {
 
     record Value(String value) implements HintPlaceholder {

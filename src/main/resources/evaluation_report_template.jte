@@ -590,18 +590,40 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Render scratchblocks
-        scratchblocks.renderMatching('pre.blocks', {
-            style: 'scratch3',
-            scale: 0.7,
-            languages: ['${model.language()}', 'en']
-        });
-        scratchblocks.renderMatching('code.scratchblocks', {
-            style: 'scratch3',
-            inline: true,
-            scale: 0.7,
-            languages: ['${model.language()}', 'en']
-        });
+        // Helper functions to render scratchblocks with translation to target language
+        const targetLang = '${model.language()}';
+
+        function renderAndTranslate(selector) {
+            document.querySelectorAll(selector).forEach(el => {
+                const code = el.textContent;
+                if (!code.trim()) return;
+                const doc = scratchblocks.parse(code, {languages: ['en']});
+                if (targetLang !== 'en' && scratchblocks.allLanguages[targetLang]) {
+                    doc.translate(scratchblocks.allLanguages[targetLang]);
+                }
+                const view = scratchblocks.newView(doc, {style: 'scratch3', scale: 0.7});
+                el.innerHTML = '';
+                el.appendChild(view.render());
+            });
+        }
+
+        function renderInlineAndTranslate(selector) {
+            document.querySelectorAll(selector).forEach(el => {
+                const code = el.textContent;
+                if (!code.trim()) return;
+                const doc = scratchblocks.parse(code, {languages: ['en'], inline: true});
+                if (targetLang !== 'en' && scratchblocks.allLanguages[targetLang]) {
+                    doc.translate(scratchblocks.allLanguages[targetLang]);
+                }
+                const view = scratchblocks.newView(doc, {style: 'scratch3', scale: 0.7});
+                el.innerHTML = '';
+                el.appendChild(view.render());
+            });
+        }
+
+        // Render scratchblocks with translation
+        renderAndTranslate('pre.blocks');
+        renderInlineAndTranslate('code.scratchblocks');
 
         // Filtering logic
         const cards = document.querySelectorAll('.question-card');

@@ -18,6 +18,9 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import de.uni_passau.fim.se2.litterbox.analytics.questions.QuestionText;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
@@ -50,6 +53,16 @@ import static java.util.Objects.requireNonNull;
  * @see Hint
  * @see HintPlaceholder
  */
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type",
+        defaultImpl = QuestionText.class
+)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = QuestionText.class, name = "QuestionText"),
+        @JsonSubTypes.Type(value = Hint.class, name = "Hint")
+})
 public abstract class TranslatableText {
 
     private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{\\{(.*?)}}");
@@ -117,6 +130,18 @@ public abstract class TranslatableText {
     }
 
     /**
+     * Sets all parameters from a map. Used by Jackson for deserialization.
+     *
+     * @param params the parameters to add
+     */
+    @SuppressWarnings("unused") // Used by Jackson
+    private void setParameters(Map<String, HintPlaceholder> params) {
+        if (params != null) {
+            this.parameters.putAll(params);
+        }
+    }
+
+    /**
      * Sets a simple string parameter value.
      *
      * @param key   the parameter name (without % prefix)
@@ -165,6 +190,20 @@ public abstract class TranslatableText {
      */
     public String resolveText(final IssueTranslator translator,
                               Function<String, String> keyLookup) {
+        return resolveText(translator, keyLookup, false);
+    }
+
+    /**
+     * Resolves the text by looking up the key and substituting parameters.
+     *
+     * @param translator the translator for looking up keys and translating placeholders
+     * @param keyLookup  function to look up the key from the appropriate properties file
+     * @param forceTags  whether to force the use of formatting tags for defineables
+     * @return the resolved, translated text with parameters substituted
+     */
+    public String resolveText(final IssueTranslator translator,
+                              Function<String, String> keyLookup,
+                              boolean forceTags) {
         if (textContent != null) {
             return textContent;
         }
@@ -174,7 +213,7 @@ public abstract class TranslatableText {
         for (final var entry : parameters.entrySet()) {
             final String key = entry.getKey();
             final HintPlaceholder placeholder = entry.getValue();
-            final String value = translatePlaceholder(translator, placeholder, keyLookup);
+            final String value = translatePlaceholder(translator, placeholder, keyLookup, forceTags);
 
             text = text.replace(ESCAPE_CHARACTER + key, value);
         }
@@ -188,16 +227,18 @@ public abstract class TranslatableText {
      * @param translator  the translator for i18n lookups
      * @param placeholder the placeholder to translate
      * @param keyLookup   the function to look up keys for nested translations
+     * @param forceTags   whether to force the use of formatting tags
      * @return the translated string value
      */
     protected String translatePlaceholder(final IssueTranslator translator,
                                           final HintPlaceholder placeholder,
-                                          Function<String, String> keyLookup) {
+                                          Function<String, String> keyLookup,
+                                          boolean forceTags) {
         return switch (placeholder) {
             case HintPlaceholder.Value v -> v.value();
             case HintPlaceholder.Translatable key -> translator.getInfo(key.translationKey());
-            case HintPlaceholder.NestedTranslatable n -> n.text().resolveText(translator, keyLookup);
-            case HintPlaceholder.Defineable d -> getDefineableName(translator, d.defineable());
+            case HintPlaceholder.NestedTranslatable n -> n.text().resolveText(translator, keyLookup, forceTags);
+            case HintPlaceholder.Defineable d -> getDefineableName(translator, d.defineable(), forceTags);
             case HintPlaceholder.ValueWithTranslatableElements v -> {
                 final Matcher matcher = PLACEHOLDER_PATTERN.matcher(v.value());
                 yield matcher.replaceAll(matchResult -> {
@@ -208,22 +249,15 @@ public abstract class TranslatableText {
         };
     }
 
-    /**
-     * Converts a CFG Defineable to a displayable name.
-     * Provides a default implementation that handles common types.
-     *
-     * @param translator the translator for i18n lookups
-     * @param def        the defineable to convert
-     * @return the formatted name
-     */
     protected String getDefineableName(final IssueTranslator translator,
-                                       final Defineable def) {
+                                       final Defineable def,
+                                       boolean forceTags) {
         if (def instanceof Variable var) {
             return formatDefineableName(translator, IssueTranslator.GeneralTerm.VARIABLE,
-                    var.getIdentifier(), "var");
+                    var.getIdentifier(), "var", forceTags);
         } else if (def instanceof ListVariable list) {
             return formatDefineableName(translator, IssueTranslator.GeneralTerm.LIST,
-                    list.getIdentifier(), "list");
+                    list.getIdentifier(), "list", forceTags);
         } else if (def instanceof Parameter param) {
             return getIdentifierName(param.getIdentifier());
         } else if (def instanceof Attribute attr) {
@@ -242,9 +276,10 @@ public abstract class TranslatableText {
 
     private String formatDefineableName(IssueTranslator translator, IssueTranslator.GeneralTerm term,
                                         Identifier ident,
-                                        String tag) {
+                                        String tag,
+                                        boolean forceTags) {
         String name = getIdentifierName(ident);
-        if (useFormattingTags()) {
+        if (forceTags || useFormattingTags()) {
             return String.format("[%s]%s \"%s\"[/%s]", tag, translator.getInfo(term), name, tag);
         }
         return name;

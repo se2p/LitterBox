@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.report;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.ProgramDimension;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.QuestionType;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.ScopeOfFocus;
@@ -55,9 +57,10 @@ import java.util.stream.Collectors;
  *       named {@code <projectname>_questions.html}.</li>
  * </ul>
  */
-public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
+public class HtmlJteQuestionResultHandler implements QuestionResultHandler {
 
-    private static final Logger log = Logger.getLogger(HTMLJTEQuestionResultHandler.class.getName());
+    private static final Logger log = Logger.getLogger(HtmlJteQuestionResultHandler.class.getName());
+    private static final JsonMapper jsonMapper = JsonMapper.builder().build();
 
     private static final TemplateEngine templateEngine = TemplateEngine.createPrecompiled(ContentType.Html);
 
@@ -80,17 +83,17 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
     private String cachedLogo;
     private String cachedFaviconBase64;
 
-    public HTMLJTEQuestionResultHandler(IssueTranslator translator, Path output,
+    public HtmlJteQuestionResultHandler(IssueTranslator translator, Path output,
                                         boolean showAnswers) {
         this(translator, output, showAnswers, false, false);
     }
 
-    public HTMLJTEQuestionResultHandler(IssueTranslator translator, Path output,
+    public HtmlJteQuestionResultHandler(IssueTranslator translator, Path output,
                                         boolean showAnswers, boolean teacherMode) {
         this(translator, output, showAnswers, teacherMode, false);
     }
 
-    public HTMLJTEQuestionResultHandler(IssueTranslator translator, Path output,
+    public HtmlJteQuestionResultHandler(IssueTranslator translator, Path output,
                                         boolean showAnswers, boolean teacherMode, boolean exportMode) {
         this.translator = translator;
         this.output = output;
@@ -312,14 +315,18 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
         // Clean the question text (remove choice/solution markers)
         String questionText = cleanQuestionText(q.questionText());
 
+        // Resolve translatable text to strings
+        List<String> choices = q.getChoices(translator);
+        List<String> correctAnswers = q.getCorrectAnswers(translator);
+
         // Build complete choices list: combine distractors (choices) with correct answers
         // The question finders generate distractors, so we need to add the correct answer
         List<String> allChoices = new ArrayList<>();
-        if (q.choices() != null) {
-            allChoices.addAll(q.choices());
+        if (choices != null) {
+            allChoices.addAll(choices);
         }
-        if (q.correctAnswers() != null) {
-            for (String ans : q.correctAnswers()) {
+        if (correctAnswers != null) {
+            for (String ans : correctAnswers) {
                 if (!allChoices.contains(ans)) {
                     allChoices.add(ans);
                 }
@@ -343,22 +350,31 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
 
         // Build answer set for checking (normalized)
         Set<String> answerSet = new HashSet<>();
-        if (q.correctAnswers() != null) {
-            for (String ans : q.correctAnswers()) {
+        if (correctAnswers != null) {
+            for (String ans : correctAnswers) {
                 answerSet.add(cleanScratchBlocksNotation(ans).toLowerCase().trim());
             }
         }
 
         // Format correct answers for display (with scratchblocks rendering)
         String formattedAnswers = null;
-        if (q.correctAnswers() != null && !q.correctAnswers().isEmpty()) {
-            formattedAnswers = q.correctAnswers().stream()
+        if (correctAnswers != null && !correctAnswers.isEmpty()) {
+            formattedAnswers = correctAnswers.stream()
                     .map(this::formatScratchBlocksNotation)
                     .collect(Collectors.joining(", "));
         }
 
         // Determine if this question can be auto-checked
-        boolean canCheck = canCheckAnswer(q.questionType(), q.correctAnswers());
+        boolean canCheck = canCheckAnswer(q.questionType(), correctAnswers);
+
+        String translatableAnswersJson = "[]";
+        try {
+            if (q.translatableCorrectAnswers() != null) {
+                translatableAnswersJson = jsonMapper.writeValueAsString(q.translatableCorrectAnswers());
+            }
+        } catch (JsonProcessingException e) {
+            log.warning("Failed to serialize translatable correct answers for question " + q.id());
+        }
 
         return new RenderedQuestion(
                 q.id(),
@@ -373,11 +389,12 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
                 scratchBlocks,
                 normalizedChoices,
                 displayChoices,
-                q.correctAnswers(),
+                correctAnswers,
                 formattedAnswers,
                 answerSet,
                 q.hint(),
-                canCheck
+                canCheck,
+                translatableAnswersJson
         );
     }
 
@@ -564,7 +581,8 @@ public class HTMLJTEQuestionResultHandler implements QuestionResultHandler {
             String formattedCorrectAnswers,
             Set<String> normalizedAnswers,
             String hint,
-            boolean canCheck
+            boolean canCheck,
+            String translatableAnswersJson
     ) {
         /**
          * Returns true if this question expects multiple correct answers to be selected.

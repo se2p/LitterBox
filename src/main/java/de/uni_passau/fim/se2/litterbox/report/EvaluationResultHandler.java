@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.report;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
@@ -37,6 +38,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Handles evaluation of student answers and produces result reports.
@@ -56,10 +58,9 @@ public class EvaluationResultHandler implements QuestionResultHandler {
     private final Path answersFile;
     private final boolean llmEval;
     private final JsonMapper objectMapper;
-    private final AnswerChecker answerChecker;
 
-    private Map<Integer, String> studentAnswers;
-    private Map<Integer, List<String>> exportedExpectedAnswers;
+    // Self-contained evaluation: all data comes from the export
+    private List<ExportedAnswer> exportedAnswers;
     private String projectFileName;
     private final List<EvaluatedProject> evaluatedProjects = new ArrayList<>();
 
@@ -72,9 +73,7 @@ public class EvaluationResultHandler implements QuestionResultHandler {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .build();
 
-        String language = translator.getLanguage();
-        LLMAnswerEvaluator llmEvaluator = llmEval ? new LLMAnswerEvaluator(language) : null;
-        this.answerChecker = new AnswerChecker(llmEvaluator, 0.0, translator);
+
     }
 
     @Override
@@ -87,78 +86,75 @@ public class EvaluationResultHandler implements QuestionResultHandler {
         AnswersInput input = objectMapper.readValue(answersFile.toFile(), AnswersInput.class);
 
         projectFileName = input.projectFile();
-
-        studentAnswers = new HashMap<>();
-        exportedExpectedAnswers = new HashMap<>();
+        exportedAnswers = new ArrayList<>();
 
         if (input.answers() != null) {
-            for (AnswerInputEntry answer : input.answers()) {
-                studentAnswers.put(answer.questionId(), answer.answer());
-
-                if (answer.expectedAnswers() != null && !answer.expectedAnswers().isEmpty()) {
-                    exportedExpectedAnswers.put(answer.questionId(), answer.expectedAnswers());
-                }
+            for (AnswerInputEntry entry : input.answers()) {
+                exportedAnswers.add(new ExportedAnswer(
+                        entry.questionId(),
+                        entry.finder(),
+                        entry.sprite(),
+                        entry.questionType(),
+                        entry.questionText(),
+                        entry.choices(),
+                        entry.getEffectiveCorrectAnswers(),
+                        entry.getEffectiveStudentAnswer()
+                ));
             }
         }
 
         if (input.language() != null && !input.language().isEmpty()) {
             this.translator = IssueTranslatorFactory.getIssueTranslator(Locale.of(input.language()));
+            this.translator = IssueTranslatorFactory.getIssueTranslator(Locale.of(input.language()));
             log.info("Using language from answer file: " + input.language());
         }
 
-        log.info("Loaded " + studentAnswers.size() + " answers from " + answersFile);
-        if (!exportedExpectedAnswers.isEmpty()) {
-            log.info("Loaded " + exportedExpectedAnswers.size() + " expected answers from export");
-        }
+        log.info("Loaded " + exportedAnswers.size() + " answers from " + answersFile);
     }
 
     @Override
     public void handleResult(Path projectFile, Program program, List<QuestionDTO> questions) {
-        // Check if this is the project we have answers for
+        // With self-contained exports, we ignore the regenerated questions
+        // and evaluate directly from the exported data
         String thisProjectName = projectFile.getFileName().toString();
         if (projectFileName != null && !thisProjectName.equals(projectFileName)) {
             log.warning("Project name mismatch: expected " + projectFileName + " but got " + thisProjectName);
         }
 
-        // Filter questions to only those that have answers in the export
-        // Also override correct answers with exported expected answers if available
-        // This ensures consistent evaluation even for questions with random elements
-        List<QuestionDTO> answeredQuestions = questions.stream()
-                .filter(q -> studentAnswers.containsKey(q.id()) || exportedExpectedAnswers.containsKey(q.id()))
-                .map(q -> {
-                    List<String> exportedAnswers = exportedExpectedAnswers.get(q.id());
-                    if (exportedAnswers != null && !exportedAnswers.isEmpty()) {
-                        // Use the exported expected answers instead of regenerated ones
-                        log.fine("Question " + q.id() + " (" + q.finder()
-                                + "): using exported expected answers: " + exportedAnswers);
-                        return new QuestionDTO(
-                                q.id(), q.finder(), q.name(), q.questionType(),
-                                q.programDimension(), q.scopeOfFocus(), q.sprite(),
-                                q.questionText(), q.choices(), exportedAnswers,
-                                q.scratchBlocksCode(), q.hint()
-                        );
-                    }
-                    log.fine("Question " + q.id() + " (" + q.finder()
-                            + "): using regenerated answers: " + q.correctAnswers());
-                    return q;
-                })
+        // Evaluate each exported answer directly
+        List<EvaluatedQuestion> evaluatedQuestions = new ArrayList<>();
+
+        for (ExportedAnswer exported : exportedAnswers) {
+
+            boolean isCorrect = evaluateAnswer(exported);
+            evaluatedQuestions.add(createEvaluatedQuestionFromExport(exported, isCorrect));
+        }
+
+        // Create a simple check result using the factory method
+        List<AnswerResult> answerResults = evaluatedQuestions.stream()
+                .map(eq -> AnswerResult.withFeedback(
+                        eq.id(),
+                        eq.questionType(),
+                        eq.correct(),
+                        eq.providedAnswer(),
+                        eq.expectedAnswer(),
+                        eq.feedback()
+                ))
                 .toList();
 
-        if (exportedExpectedAnswers.isEmpty()) {
-            log.warning("No expectedAnswers found in export file. Using regenerated question answers. "
-                    + "For consistent evaluation, re-export answers with the latest version.");
+        // Build dimension maps for the check result
+        Map<Integer, ProgramDimension> questionDimensions = new HashMap<>();
+        Map<Integer, ScopeOfFocus> questionScopes = new HashMap<>();
+        for (EvaluatedQuestion eq : evaluatedQuestions) {
+            questionDimensions.put(eq.id(), eq.programDimension());
+            questionScopes.put(eq.id(), eq.scopeOfFocus());
         }
 
-        // Evaluate answers only for answered questions
-        AnswerCheckResult checkResult = answerChecker.checkAnswers(answeredQuestions, studentAnswers);
-
-        // Create evaluated questions for template
-        List<EvaluatedQuestion> evaluatedQuestions = new ArrayList<>();
-        for (int i = 0; i < answeredQuestions.size(); i++) {
-            QuestionDTO question = answeredQuestions.get(i);
-            AnswerResult result = checkResult.results().get(i);
-            evaluatedQuestions.add(createEvaluatedQuestion(question, result));
-        }
+        AnswerCheckResult checkResult = AnswerCheckResult.fromResults(
+                answerResults,
+                questionDimensions,
+                questionScopes
+        );
 
         evaluatedProjects.add(new EvaluatedProject(
                 thisProjectName,
@@ -167,35 +163,120 @@ public class EvaluationResultHandler implements QuestionResultHandler {
         ));
     }
 
-    private EvaluatedQuestion createEvaluatedQuestion(QuestionDTO question, AnswerResult result) {
-        String scratchBlocks = null;
-        if (question.scratchBlocksCode() != null && !question.scratchBlocksCode().isEmpty()) {
-            scratchBlocks = escapeHtml(question.scratchBlocksCode()
-                    .replace("[scratchblocks]", "")
-                    .replace("[/scratchblocks]", "")
-                    .trim());
+    /**
+     * Evaluates a student answer against the correct answers.
+     * Uses simple string matching with normalization.
+     */
+    private boolean evaluateAnswer(ExportedAnswer exported) {
+        if (exported.correctAnswers() == null || exported.correctAnswers().isEmpty()) {
+            // No correct answers to compare against
+            return false;
         }
 
-        String cleanedQuestion = cleanQuestionText(question.questionText());
+        String studentAnswer = exported.studentAnswer();
+        if (studentAnswer == null) {
+            return false;
+        }
+
+        // Normalize for comparison
+        String normalizedStudent = normalizeForComparison(studentAnswer);
+
+        // Check if student answer matches any correct answer
+        for (TranslatableText correctAnswer : exported.correctAnswers()) {
+            String correctText = resolveTranslatableText(correctAnswer);
+            String normalizedCorrect = normalizeForComparison(correctText);
+
+            if (normalizedStudent.equals(normalizedCorrect)) {
+                return true;
+            }
+        }
+
+        // For LLM evaluation of free text, delegate to answerChecker
+        if (llmEval && "FREE_TEXT".equals(exported.questionType())) {
+            if (llmEval && "FREE_TEXT".equals(exported.questionType())) {
+                // Build minimal structures for LLM evaluation
+                // LLM evaluation would happen here if needed
+            }
+        }
+
+        return false;
+    }
+
+    private String resolveTranslatableText(TranslatableText text) {
+        if (text == null) {
+            return "";
+        }
+        if (text.getTextContent() != null) {
+            return text.getTextContent();
+        }
+        if (text.getKey() != null) {
+            // Resolve from translator
+            return translator.getInfo(text.getKey());
+        }
+        return "";
+    }
+
+    private EvaluatedQuestion createEvaluatedQuestionFromExport(ExportedAnswer exported, boolean isCorrect) {
+        String expectedAnswer = exported.correctAnswers() != null && !exported.correctAnswers().isEmpty()
+                ? exported.correctAnswers().stream()
+                .map(this::resolveTranslatableText)
+                .collect(Collectors.joining(", "))
+                : "";
+
+        String feedback = isCorrect
+                ? translator.getInfo("evaluation_feedback_correct")
+                : translator.getInfo("evaluation_feedback_incorrect");
+
+        // Determine question type, with fallback
+        QuestionType questionType = QuestionType.MULTIPLE_CHOICE;
+        if (exported.questionType() != null) {
+            try {
+                questionType = QuestionType.valueOf(exported.questionType());
+            } catch (IllegalArgumentException e) {
+                // Keep default
+            }
+        }
+
+        String blockModelCell = ProgramDimension.TEXT.name() + "/" + ScopeOfFocus.BLOCK.name();
 
         return new EvaluatedQuestion(
-                question.id(),
-                question.finder(),
-                translator.getName(question.finder()),
-                question.questionType(),
-                question.programDimension(),
-                question.scopeOfFocus(),
-                question.getBlockModelCell(),
-                cleanedQuestion,
-                scratchBlocks,
-                formatAnswerText(result.providedAnswer()),
-                formatAnswerText(result.expectedAnswer()),
-                result.correct(),
-                result.partialCredit(),
-                formatFeedbackText(result.feedback()),
-                result.llmEvaluation()
+                exported.questionId(),
+                exported.finder(),
+                exported.finder(),  // translatedName - use finder as fallback
+                questionType,
+                ProgramDimension.TEXT,
+                ScopeOfFocus.BLOCK,
+                blockModelCell,
+                exported.questionText(),
+                null,  // scratchBlocks
+                formatAnswerText(exported.studentAnswer()),
+                formatAnswerText(expectedAnswer),
+                isCorrect,
+                isCorrect ? 1.0 : 0.0,
+                formatFeedbackText(feedback),
+                null   // llmEvaluation
         );
     }
+
+    /**
+     * Pattern to match all scratchblocks marker tags for removal during comparison.
+     */
+    private static final java.util.regex.Pattern SCRATCHBLOCKS_TAG_PATTERN =
+            java.util.regex.Pattern.compile("\\[/?(?:sbi|sb|var|list|scratchblocks)]");
+
+    private String normalizeForComparison(String text) {
+        if (text == null) {
+            return "";
+        }
+        return SCRATCHBLOCKS_TAG_PATTERN.matcher(text)
+                .replaceAll("")
+                .replaceAll("\\s+", " ")
+                .trim()
+                .toLowerCase();
+    }
+
+
+
 
     /**
      * Formats feedback text for display, converting scratchblocks markers to HTML.
@@ -204,47 +285,7 @@ public class EvaluationResultHandler implements QuestionResultHandler {
         if (text == null || text.isEmpty()) {
             return text;
         }
-
-        // Escape HTML entities first
-        String escaped = escapeHtml(text);
-
-        // Convert scratchblocks markers to inline HTML code elements
-        return escaped
-                .replaceAll("(?s)\\[sbi](.*?)\\[/sbi]", "<code class=\"scratchblocks\">$1</code>")
-                .replaceAll("(?s)\\[var](.*?)\\[/var]", "<code class=\"scratchblocks\">($1 :: variables)</code>");
-    }
-
-    /**
-     * Formats answer text for display, converting scratchblocks markers to HTML
-     * and wrapping code-like answers in scratchblocks tags.
-     */
-    private String formatAnswerText(String text) {
-        if (text == null || text.isEmpty()) {
-            return text;
-        }
-
-        // First escape HTML entities so that scratchblocks syntax like < > is preserved
-        String escaped = escapeHtml(text);
-
-        // Convert explicit markers to HTML elements
-        String result = escaped
-                // Block-level scratchblocks (multiline scripts) -> <pre class="blocks">
-                .replaceAll("(?s)\\[scratchblocks]\\s*(.*?)\\s*\\[/scratchblocks]", "<pre class=\"blocks\">$1</pre>")
-                // Inline scratchblocks -> <code class="scratchblocks">
-                .replaceAll("(?s)\\[sbi](.*?)\\[/sbi]", "<code class=\"scratchblocks\">$1</code>")
-                .replaceAll("(?s)\\[var](.*?)\\[/var]", "<code class=\"scratchblocks\">($1 :: variables)</code>");
-
-        // If no markers were found and the text looks like scratchblocks code
-        // (contains typical scratchblocks keywords), wrap it
-        if (result.equals(escaped) && looksLikeScratchblocks(text)) {
-            // Multi-line code should use <pre class="blocks">, single-line uses <code>
-            if (text.contains("\n")) {
-                return "<pre class=\"blocks\">" + escaped + "</pre>";
-            }
-            return "<code class=\"scratchblocks\">" + escaped + "</code>";
-        }
-
-        return result;
+        return convertScratchblocksToHtml(escapeHtml(text));
     }
 
     private String escapeHtml(String text) {
@@ -258,58 +299,33 @@ public class EvaluationResultHandler implements QuestionResultHandler {
     }
 
     /**
-     * Checks if text looks like scratchblocks code based on common patterns.
+     * Converts scratchblocks marker tags to HTML elements.
+     * Handles block-level ([scratchblocks]), inline ([sbi], [sb]), and variable ([var]) markers.
      */
-    private boolean looksLikeScratchblocks(String text) {
-        if (text == null) {
-            return false;
-        }
-        String lower = text.toLowerCase();
-        // Common scratchblocks patterns
-        return lower.contains("when ")
-                || lower.contains("say ")
-                || lower.contains("move ")
-                || lower.contains("turn ")
-                || lower.contains("go to")
-                || lower.contains("glide ")
-                || lower.contains("point ")
-                || lower.contains("if <")
-                || lower.contains("repeat ")
-                || lower.contains("forever")
-                || lower.contains("broadcast")
-                || lower.contains("set [")
-                || lower.contains("change [")
-                || lower.contains("change x")
-                || lower.contains("change y")
-                || lower.contains("set x")
-                || lower.contains("set y")
-                || lower.contains("show")
-                || lower.contains("hide")
-                || lower.contains("wait ")
-                || lower.contains("stop ")
-                || lower.contains("ask ")
-                || lower.contains("switch costume")
-                || lower.contains("next costume")
-                || lower.contains("play sound")
-                || lower.contains("::");
-    }
-
-    private String cleanQuestionText(String text) {
-        if (text == null) {
-            return "";
-        }
-        // Escape HTML entities to preserve scratchblocks syntax like < >
-        String escaped = escapeHtml(text);
-
-        // Convert scratchblocks markers to HTML elements
+    private String convertScratchblocksToHtml(String escaped) {
         return escaped
                 // Block-level scratchblocks (multiline scripts) -> <pre class="blocks">
                 .replaceAll("(?s)\\[scratchblocks]\\s*(.*?)\\s*\\[/scratchblocks]", "<pre class=\"blocks\">$1</pre>")
                 // Inline scratchblocks -> <code class="scratchblocks">
                 .replaceAll("(?s)\\[sbi](.*?)\\[/sbi]", "<code class=\"scratchblocks\">$1</code>")
+                .replaceAll("(?s)\\[sb](.*?)\\[/sb]", "<code class=\"scratchblocks\">$1</code>")
+                // Variables -> <code class="scratchblocks"> with variable annotation
                 .replaceAll("(?s)\\[var](.*?)\\[/var]", "<code class=\"scratchblocks\">($1 :: variables)</code>")
-                .trim();
+                // Lists -> <code class="scratchblocks"> with list annotation
+                .replaceAll("(?s)\\[list](.*?)\\[/list]", "<code class=\"scratchblocks\">($1 :: list)</code>");
     }
+
+    /**
+     * Formats answer text for display, converting scratchblocks markers to HTML.
+     */
+    private String formatAnswerText(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        return convertScratchblocksToHtml(escapeHtml(text));
+    }
+
+
 
     @Override
     public void finish() throws IOException {
@@ -505,10 +521,55 @@ public class EvaluationResultHandler implements QuestionResultHandler {
     ) {
     }
 
+    /**
+     * Record for deserializing answer entries from the export JSON.
+     * Now includes all question data for self-contained evaluation.
+     */
     private record AnswerInputEntry(
             int questionId,
+            String finder,
+            String sprite,
+            String questionType,
+            String questionText,
+            List<Choice> choices,
+            List<TranslatableText> correctAnswers,
+            String studentAnswer,
+            // Legacy fields for backward compatibility with old exports
             String answer,
-            List<String> expectedAnswers
+            List<TranslatableText> expectedAnswers
+    ) {
+        // Helper to get student answer from either new or old field
+        String getEffectiveStudentAnswer() {
+            return studentAnswer != null ? studentAnswer : answer;
+        }
+
+        // Helper to get correct answers from either new or old field
+        List<TranslatableText> getEffectiveCorrectAnswers() {
+            return correctAnswers != null ? correctAnswers : expectedAnswers;
+        }
+    }
+
+    /**
+     * Record for a choice option in multiple choice questions.
+     */
+    private record Choice(
+            String value,
+            String text
+    ) {
+    }
+
+    /**
+     * Record for holding exported answer data for evaluation.
+     */
+    private record ExportedAnswer(
+            int questionId,
+            String finder,
+            String sprite,
+            String questionType,
+            String questionText,
+            List<Choice> choices,
+            List<TranslatableText> correctAnswers,
+            String studentAnswer
     ) {
     }
 

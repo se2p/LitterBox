@@ -158,7 +158,7 @@ public class LLMAnswerEvaluator {
                 Provide a helpful hint or explanation that guides them toward the answer WITHOUT giving it
                 away directly.
 
-                IMPORTANT: Write the hint in %s, addressing the user directly using "You".
+                IMPORTANT: Write the hint in %s, addressing the user directly.
 
                 Guidelines:
                 - Tone: Warm, simple, and encouraging.

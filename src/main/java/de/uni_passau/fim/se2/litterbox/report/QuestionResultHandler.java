@@ -141,8 +141,8 @@ public interface QuestionResultHandler {
         }
 
         return switch (effectiveFormat) {
-            case JSON -> new JSONQuestionResultHandler(output, showAnswers);
-            case HTML -> new HTMLJTEQuestionResultHandler(translator, output, showAnswers, teacherMode, exportMode);
+            case JSON -> new JSONQuestionResultHandler(translator, output, showAnswers);
+            case HTML -> new HtmlJteQuestionResultHandler(translator, output, showAnswers, teacherMode, exportMode);
             case CONSOLE -> new ConsoleQuestionResultHandler(translator, showAnswers);
         };
     }

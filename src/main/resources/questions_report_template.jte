@@ -1,12 +1,9 @@
-@import de.uni_passau.fim.se2.litterbox.report.HTMLJTEQuestionResultHandler.QuestionsTemplateModel
-@import de.uni_passau.fim.se2.litterbox.report.HTMLJTEQuestionResultHandler.ProjectQuestions
-@import de.uni_passau.fim.se2.litterbox.report.HTMLJTEQuestionResultHandler.RenderedQuestion
-@import de.uni_passau.fim.se2.litterbox.report.HTMLJTEQuestionResultHandler.SpriteData
+@import de.uni_passau.fim.se2.litterbox.report.HtmlJteQuestionResultHandler.QuestionsTemplateModel
+@import de.uni_passau.fim.se2.litterbox.report.HtmlJteQuestionResultHandler.SpriteData
 @import de.uni_passau.fim.se2.litterbox.analytics.questions.ProgramDimension
 @import de.uni_passau.fim.se2.litterbox.analytics.questions.ScopeOfFocus
 @import de.uni_passau.fim.se2.litterbox.analytics.questions.QuestionType
 @import gg.jte.support.ForSupport
-@import java.util.Map
 
 @param QuestionsTemplateModel model
 
@@ -33,7 +30,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${model.translator().getInfo("questions_title")} ${model.projects().isEmpty() ? "LitterBox" : model.projects().get(0).name()}</title>
+    <title>${model.translator().getInfo("questions_title")} ${model.projects().isEmpty() ? "LitterBox" : model.projects().getFirst().name()}</title>
     <link rel="icon" href="${model.favicon()}">
     <script>$unsafe{model.scripts().scratchBlocks()}</script>
     <script>$unsafe{model.scripts().scratchBlocksTranslations()}</script>
@@ -1014,12 +1011,14 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                             <div class="question-card dim-${question.get().programDimension().name()}"
                                  id="question-${project.get().id()}-${question.get().id()}"
                                  data-question-id="${question.get().id()}"
+                                 data-finder="${question.get().finder()}"
                                  data-dimension="${question.get().programDimension().name()}"
                                  data-scope="${question.get().scopeOfFocus().name()}"
                                  data-cell="${question.get().blockModelCell()}"
                                  data-type="${question.get().questionType().name()}"
                                  data-sprite="${question.get().sprite()}"
                                  data-answers="${String.join("|", question.get().normalizedAnswers())}"
+                                 data-translatable-answers='${question.get().translatableAnswersJson()}'
                                  data-multiselect="${question.get().isMultiSelect()}"
                                  data-expected-count="${question.get().correctAnswers() != null ? question.get().correctAnswers().size() : 0}">
 
@@ -1781,38 +1780,82 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
     // Export answers as JSON (for export mode)
     function exportAnswers() {
         const answers = [];
-        const projectName = '$unsafe{model.projects().isEmpty() ? "" : model.projects().get(0).name()}';
+        const projectName = "$unsafe{model.projects().isEmpty() ? "" : model.projects().get(0).name().replace("\"", "\\\"")}";
 
         // Collect all answers from all question cards
         document.querySelectorAll('.question-card').forEach(card => {
             const questionId = parseInt(card.dataset.questionId);
             const questionType = card.dataset.type;
+            const finder = card.dataset.finder;
+            const sprite = card.dataset.sprite;
+
+            // Get question text from the rendered content
+            const questionTextEl = card.querySelector('.question-text');
+            const questionText = questionTextEl ? questionTextEl.textContent.trim() : '';
+
             // Get the correct answers from the data attribute (for evaluation)
-            const correctAnswers = card.dataset.answers ? card.dataset.answers.split('|').filter(a => a) : [];
-            let answer = null;
+            let correctAnswers = [];
+            try {
+                if (card.dataset.translatableAnswers) {
+                    correctAnswers = JSON.parse(card.dataset.translatableAnswers);
+                }
+            } catch (e) {
+                console.error('Failed to parse translatable answers for question', questionId, e);
+                // Fallback to plain strings if parsing fails
+                correctAnswers = card.dataset.answers ? card.dataset.answers.split('|').filter(a => a) : [];
+            }
+
+            // Get choices for multiple choice questions
+            let choices = [];
+            if (questionType === 'MULTIPLE_CHOICE' || questionType === 'YES_NO') {
+                const optionEls = card.querySelectorAll('.answer-option');
+                choices = Array.from(optionEls).map(opt => ({
+                    value: opt.dataset.value,
+                    text: opt.querySelector('.option-text')?.textContent?.trim() || opt.dataset.value
+                }));
+            }
+
+            let studentAnswer = null;
 
             if (questionType === 'MULTIPLE_CHOICE') {
-                const selected = card.querySelector('.answer-option.selected');
-                if (selected) {
-                    answer = selected.dataset.value || selected.querySelector('.option-text')?.textContent?.trim();
+                const isMultiSelect = card.dataset.multiselect === 'true';
+                if (isMultiSelect) {
+                    // Multi-select: collect all selected options
+                    const selectedOptions = card.querySelectorAll('.answer-option.selected');
+                    if (selectedOptions.length > 0) {
+                        const values = Array.from(selectedOptions).map(opt =>
+                                opt.dataset.value || opt.querySelector('.option-text')?.textContent?.trim()
+                        );
+                        studentAnswer = values.join('|');
+                    }
+                } else {
+                    // Single-select
+                    const selected = card.querySelector('.answer-option.selected');
+                    if (selected) {
+                        studentAnswer = selected.dataset.value || selected.querySelector('.option-text')?.textContent?.trim();
+                    }
                 }
             } else if (questionType === 'YES_NO') {
                 const selected = card.querySelector('.answer-option.selected');
                 if (selected) {
-                    answer = selected.dataset.value;
+                    studentAnswer = selected.dataset.value;
                 }
             } else if (questionType === 'NUMBER' || questionType === 'FREE_TEXT') {
                 const input = card.querySelector('input, textarea');
                 if (input && input.value.trim()) {
-                    answer = input.value.trim();
+                    studentAnswer = input.value.trim();
                 }
             }
 
             answers.push({
                 questionId: questionId,
+                finder: finder,
+                sprite: sprite,
                 questionType: questionType,
-                answer: answer,
-                expectedAnswers: correctAnswers
+                questionText: questionText,
+                choices: choices,
+                correctAnswers: correctAnswers,
+                studentAnswer: studentAnswer
             });
         });
 

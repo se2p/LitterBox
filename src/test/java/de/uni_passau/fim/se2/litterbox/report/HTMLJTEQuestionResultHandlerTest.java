@@ -19,12 +19,8 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
-import de.uni_passau.fim.se2.litterbox.analytics.bugs.FloatingPointComparison;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.ProgramDimension;
+import de.uni_passau.fim.se2.litterbox.analytics.questions.QuestionText;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.QuestionType;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.ScopeOfFocus;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
@@ -42,14 +38,14 @@ import java.util.Locale;
 
 import static com.google.common.truth.Truth.assertThat;
 
-public class HTMLJTEQuestionResultHandlerTest implements JsonTest {
+public class HtmlJteQuestionResultHandlerTest implements JsonTest {
 
     private final IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
 
     @Test
     public void testTeacherModeSuppressRedundantCorrectAnswer() throws IOException, ParsingException {
         Program program = getAST("src/test/fixtures/bugs/xPosEqual.json"); // Assuming this file exists from other tests
-        
+
         QuestionDTO question = new QuestionDTO(
                 1,
                 "TestFinder",
@@ -59,18 +55,19 @@ public class HTMLJTEQuestionResultHandlerTest implements JsonTest {
                 ScopeOfFocus.BLOCK,
                 "Sprite1",
                 "What is correct?",
-                List.of("A", "B"),
-                List.of("A"),
+                null,
+                List.of(QuestionText.fromText("A"), QuestionText.fromText("B")),
+                List.of(QuestionText.fromText("A")),
                 "",
                 "hint"
         );
 
         Path tempFile = Files.createTempFile("litterbox_test_report", ".html");
-        
+
         // teacherMode = true
-        HTMLJTEQuestionResultHandler handler = new HTMLJTEQuestionResultHandler(
-                translator, 
-                tempFile, 
+        HtmlJteQuestionResultHandler handler = new HtmlJteQuestionResultHandler(
+                translator,
+                tempFile,
                 true, // showAnswers
                 true, // teacherMode
                 false // exportMode
@@ -83,28 +80,28 @@ public class HTMLJTEQuestionResultHandlerTest implements JsonTest {
         Files.deleteIfExists(tempFile);
 
         // Verification
-        
+
         // 1. The teacher note in header should be present
         assertThat(html).contains("Teacher Mode");
-        
+
         // 2. The redundant toggle button should NOT be present
         // The button has class "show-answer-btn" and text "Correct answer:"
         assertThat(html).doesNotContain("class=\"show-answer-btn\"");
-        
+
         // 3. The redundant answer div should NOT be present
         // div class "correct-answer" with id starting with "answer-"
         assertThat(html).doesNotContain("class=\"correct-answer\" id=\"answer-");
-        
+
         // 4. The answer choices should still be there and highlighted
         // Ideally we check for "is-correct" class on the option
         assertThat(html).contains("class=\"answer-option is-correct\"");
         assertThat(html).contains("data-value=\"a\"");
     }
-    
+
     @Test
     public void testStudentModeShowsCorrectAnswerToggle() throws IOException, ParsingException {
          Program program = getAST("src/test/fixtures/bugs/xPosEqual.json");
-        
+
         QuestionDTO question = new QuestionDTO(
                 1,
                 "TestFinder",
@@ -114,18 +111,19 @@ public class HTMLJTEQuestionResultHandlerTest implements JsonTest {
                 ScopeOfFocus.BLOCK,
                 "Sprite1",
                 "What is correct?",
-                List.of("A", "B"),
-                List.of("A"),
+                null,
+                List.of(QuestionText.fromText("A"), QuestionText.fromText("B")),
+                List.of(QuestionText.fromText("A")),
                 "",
                 "hint"
         );
 
         Path tempFile = Files.createTempFile("litterbox_test_report_student", ".html");
-        
+
         // teacherMode = false, showAnswers = true
-        HTMLJTEQuestionResultHandler handler = new HTMLJTEQuestionResultHandler(
-                translator, 
-                tempFile, 
+        HtmlJteQuestionResultHandler handler = new HtmlJteQuestionResultHandler(
+                translator,
+                tempFile,
                 true, // showAnswers
                 false, // teacherMode
                 false // exportMode
@@ -138,10 +136,10 @@ public class HTMLJTEQuestionResultHandlerTest implements JsonTest {
         Files.deleteIfExists(tempFile);
 
         // Verification
-        
+
         // 1. The toggle button SHOULD be present
         assertThat(html).contains("class=\"show-answer-btn\"");
-        
+
         // 2. The answer div SHOULD be present
         assertThat(html).contains("class=\"correct-answer\" id=\"answer-");
     }
@@ -153,7 +151,7 @@ public class HTMLJTEQuestionResultHandlerTest implements JsonTest {
 
         Path tempFile = Files.createTempFile("litterbox_test_crash", ".html");
 
-        HTMLJTEQuestionResultHandler handler = new HTMLJTEQuestionResultHandler(
+        HtmlJteQuestionResultHandler handler = new HtmlJteQuestionResultHandler(
                 translator,
                 tempFile,
                 true
@@ -187,15 +185,16 @@ public class HTMLJTEQuestionResultHandlerTest implements JsonTest {
                 ScopeOfFocus.RELATION,
                 "Sprite1",
                 "Is this possible?",
+                null,
                 Collections.emptyList(),
-                List.of("no"),
+                List.of(QuestionText.fromText("no")),
                 "",
                 "hint"
         );
 
         Path tempFile = Files.createTempFile("litterbox_test_yesno", ".html");
 
-        HTMLJTEQuestionResultHandler handler = new HTMLJTEQuestionResultHandler(
+        HtmlJteQuestionResultHandler handler = new HtmlJteQuestionResultHandler(
                 translator,
                 tempFile,
                 true, // showAnswers

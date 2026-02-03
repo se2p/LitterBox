@@ -19,6 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.report;
 
 import de.uni_passau.fim.se2.litterbox.analytics.questions.ProgramDimension;
+import de.uni_passau.fim.se2.litterbox.analytics.questions.QuestionText;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.QuestionType;
 import de.uni_passau.fim.se2.litterbox.analytics.questions.ScopeOfFocus;
 import de.uni_passau.fim.se2.litterbox.report.EvaluationResultHandler.EvaluatedProject;
@@ -53,7 +54,10 @@ class EvaluationResultHandlerTest {
                   "answers": [
                     {
                       "questionId": 1,
-                      "answer": "My Answer"
+                      "answer": "My Answer",
+                      "finder": "finder",
+                      "questionText": "Q1",
+                      "correctAnswers": [{"textContent": "Expected"}]
                     }
                   ]
                 }
@@ -69,8 +73,8 @@ class EvaluationResultHandlerTest {
         handler.begin(); // Load answers
 
         // Create questions
-        QuestionDTO q1 = new QuestionDTO(1, "finder", "name", QuestionType.FREE_TEXT, ProgramDimension.PURPOSE, ScopeOfFocus.ATOM, null, "Q1", null, List.of("Expected"), null, null);
-        QuestionDTO q2 = new QuestionDTO(2, "finder", "name", QuestionType.FREE_TEXT, ProgramDimension.PURPOSE, ScopeOfFocus.ATOM, null, "Q2", null, List.of("Expected"), null, null);
+        QuestionDTO q1 = new QuestionDTO(1, "finder", "name", QuestionType.FREE_TEXT, ProgramDimension.PURPOSE, ScopeOfFocus.ATOM, null, "Q1", null, null, List.of(QuestionText.fromText("Expected")), null, null);
+        QuestionDTO q2 = new QuestionDTO(2, "finder", "name", QuestionType.FREE_TEXT, ProgramDimension.PURPOSE, ScopeOfFocus.ATOM, null, "Q2", null, null, List.of(QuestionText.fromText("Expected")), null, null);
 
         // Execute
         handler.handleResult(Path.of("testProject.sb3"), null, List.of(q1, q2));
@@ -105,7 +109,10 @@ class EvaluationResultHandlerTest {
                   "answers": [
                     {
                       "questionId": 1,
-                      "answer": "Correct Answer"
+                      "answer": "Correct Answer",
+                      "finder": "finder",
+                      "questionText": "Q1",
+                      "correctAnswers": [{"textContent": "Correct Answer"}]
                     }
                   ]
                 }
@@ -125,7 +132,7 @@ class EvaluationResultHandlerTest {
         EvaluationResultHandler handler = new EvaluationResultHandler(translator, null, answersFile, false);
         handler.begin();
 
-        QuestionDTO q1 = new QuestionDTO(1, "finder", "name", QuestionType.FREE_TEXT, ProgramDimension.PURPOSE, ScopeOfFocus.ATOM, null, "Q1", null, List.of("Correct Answer"), null, null);
+        QuestionDTO q1 = new QuestionDTO(1, "finder", "name", QuestionType.FREE_TEXT, ProgramDimension.PURPOSE, ScopeOfFocus.ATOM, null, "Q1", null, null, List.of(QuestionText.fromText("Correct Answer")), null, null);
 
         handler.handleResult(Path.of("testProject.sb3"), null, List.of(q1));
 
@@ -148,7 +155,10 @@ class EvaluationResultHandlerTest {
                   "answers": [
                     {
                       "questionId": 1,
-                      "answer": null
+                      "answer": null,
+                      "finder": "finder",
+                      "questionText": "Q1",
+                      "correctAnswers": [{"textContent": "Expected"}]
                     }
                   ]
                 }
@@ -162,7 +172,7 @@ class EvaluationResultHandlerTest {
         EvaluationResultHandler handler = new EvaluationResultHandler(translator, null, answersFile, false);
         handler.begin();
 
-        QuestionDTO q1 = new QuestionDTO(1, "finder", "name", QuestionType.FREE_TEXT, ProgramDimension.PURPOSE, ScopeOfFocus.ATOM, null, "Q1", null, List.of("Expected"), null, null);
+        QuestionDTO q1 = new QuestionDTO(1, "finder", "name", QuestionType.FREE_TEXT, ProgramDimension.PURPOSE, ScopeOfFocus.ATOM, null, "Q1", null, null, List.of(QuestionText.fromText("Expected")), null, null);
 
         handler.handleResult(Path.of("testProject.sb3"), null, List.of(q1));
 
@@ -186,7 +196,10 @@ class EvaluationResultHandlerTest {
                   "answers": [
                     {
                       "questionId": 1,
-                      "answer": "Correct Answer"
+                      "answer": "Correct Answer",
+                      "finder": "finder",
+                      "questionText": "Q1",
+                      "correctAnswers": [{"textContent": "Correct Answer"}]
                     }
                   ]
                 }
@@ -202,7 +215,7 @@ class EvaluationResultHandlerTest {
         EvaluationResultHandler handler = new EvaluationResultHandler(translator, outputFile, answersFile, false);
         handler.begin();
 
-        QuestionDTO q1 = new QuestionDTO(1, "finder", "name", QuestionType.FREE_TEXT, ProgramDimension.PURPOSE, ScopeOfFocus.ATOM, null, "Q1", null, List.of("Correct Answer"), null, null);
+        QuestionDTO q1 = new QuestionDTO(1, "finder", "name", QuestionType.FREE_TEXT, ProgramDimension.PURPOSE, ScopeOfFocus.ATOM, null, "Q1", null, null, List.of(QuestionText.fromText("Correct Answer")), null, null);
 
         handler.handleResult(Path.of("testProject.sb3"), null, List.of(q1));
         handler.finish();

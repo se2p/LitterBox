@@ -18,7 +18,10 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.analytics.questions.*;
+import de.uni_passau.fim.se2.litterbox.analytics.questions.ProgramDimension;
+import de.uni_passau.fim.se2.litterbox.analytics.questions.Question;
+import de.uni_passau.fim.se2.litterbox.analytics.questions.QuestionFinder;
+import de.uni_passau.fim.se2.litterbox.analytics.questions.ScopeOfFocus;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.report.QuestionDTO;
@@ -130,8 +133,9 @@ public class ProgramQuestionAnalyzer implements ProgramAnalyzer<List<QuestionDTO
                     q.scopeOfFocus(),
                     q.sprite(),
                     q.questionText(),
-                    q.choices(),
-                    q.correctAnswers(),
+                    q.translatableQuestionText(),
+                    q.translatableChoices(),
+                    q.translatableCorrectAnswers(),
                     q.scratchBlocksCode(),
                     q.hint()
             ));
@@ -158,10 +162,6 @@ public class ProgramQuestionAnalyzer implements ProgramAnalyzer<List<QuestionDTO
         // Get translated question text with parameters substituted
         String questionText = question.getQuestionText(issueTranslator);
 
-        // Get choices and answers directly from the Question object, translating if needed
-        List<String> choices = translateChoices(question.getChoices(), issueTranslator);
-        List<String> answers = translateChoices(question.getCorrectAnswers(), issueTranslator);
-
         String sprite = question.getActor() != null ? question.getActor().getIdent().getName() : "Stage";
 
         // Get code context as scratchblocks notation with the target block highlighted
@@ -176,8 +176,9 @@ public class ProgramQuestionAnalyzer implements ProgramAnalyzer<List<QuestionDTO
                 finder.getScopeOfFocus(),
                 sprite,
                 questionText,
-                choices,
-                answers,
+                question.getQuestionTextObject(),
+                question.getChoices(),
+                question.getCorrectAnswers(),
                 codeContext,
                 null
         );
@@ -192,7 +193,7 @@ public class ProgramQuestionAnalyzer implements ProgramAnalyzer<List<QuestionDTO
         }
 
         if (balanced || perCell > 0) {
-            questions = selectBalanced(questions, random);
+            questions = selectBalanced(questions);
         }
 
         if (maxQuestions > 0 && questions.size() > maxQuestions) {
@@ -202,7 +203,7 @@ public class ProgramQuestionAnalyzer implements ProgramAnalyzer<List<QuestionDTO
         return questions;
     }
 
-    private List<QuestionDTO> selectBalanced(List<QuestionDTO> questions, Random random) {
+    private List<QuestionDTO> selectBalanced(List<QuestionDTO> questions) {
         // Group questions by block model cell
         Map<String, List<QuestionDTO>> byCell = new LinkedHashMap<>();
         for (QuestionDTO q : questions) {
@@ -225,29 +226,6 @@ public class ProgramQuestionAnalyzer implements ProgramAnalyzer<List<QuestionDTO
         }
 
         return selected;
-    }
-
-    private List<String> translateChoices(List<TranslatableText> rawChoices, IssueTranslator translator) {
-        if (rawChoices == null || rawChoices.isEmpty()) {
-            return Collections.emptyList();
-        }
-        List<String> translated = new ArrayList<>();
-        for (TranslatableText choice : rawChoices) {
-            translated.add(translateChoice(choice, translator));
-        }
-        return translated;
-    }
-
-    private String translateChoice(TranslatableText choice, IssueTranslator translator) {
-        if (choice == null) {
-            return "";
-        }
-
-        if (choice instanceof QuestionText questionText) {
-            return questionText.getQuestionText(translator);
-        }
-
-        return choice.resolveText(translator, translator::getInfo);
     }
 }
 

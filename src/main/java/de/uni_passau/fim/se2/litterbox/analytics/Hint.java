@@ -18,6 +18,8 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 /**
@@ -55,7 +57,10 @@ public class Hint extends TranslatableText {
     public static final String CHOICES = "CHOICES";
     public static final String ANSWER = "ANSWER";
 
-    private Hint(String hintKey, String hintText) {
+    @JsonCreator
+    private Hint(
+            @JsonProperty("key") String hintKey,
+            @JsonProperty("textContent") String hintText) {
         super(hintKey, hintText);
     }
 
