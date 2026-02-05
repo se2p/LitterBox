@@ -112,7 +112,7 @@ public class EvaluationResultHandler implements QuestionResultHandler {
 
         // Initialize LLM evaluator if requested
         if (llmEval) {
-            String lang = input.language() != null ? input.language() : translator.getLocale().getLanguage();
+            String lang = input.language() != null ? input.language() : translator.getLanguage();
             try {
                 this.llmEvaluator = new LLMAnswerEvaluator(lang);
                 log.info("LLM answer evaluator initialized for language: " + lang);
@@ -455,7 +455,7 @@ public class EvaluationResultHandler implements QuestionResultHandler {
         String faviconBase64 = loadFaviconBase64();
 
         EvaluationTemplateModel model = new EvaluationTemplateModel(
-                translator.getLocale().getLanguage(),
+                translator.getLanguage(),
                 faviconBase64,
                 logo,
                 new Scripts(scratchblocksJs, translationsJs),
