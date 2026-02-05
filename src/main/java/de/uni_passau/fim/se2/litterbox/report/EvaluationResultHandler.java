@@ -63,6 +63,7 @@ public class EvaluationResultHandler implements QuestionResultHandler {
     private List<ExportedAnswer> exportedAnswers;
     private String projectFileName;
     private final List<EvaluatedProject> evaluatedProjects = new ArrayList<>();
+    private LLMAnswerEvaluator llmEvaluator;
 
     public EvaluationResultHandler(IssueTranslator translator, Path output, Path answersFile, boolean llmEval) {
         this.translator = translator;
@@ -72,8 +73,6 @@ public class EvaluationResultHandler implements QuestionResultHandler {
         this.objectMapper = JsonMapper.builder()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .build();
-
-
     }
 
     @Override
@@ -96,6 +95,9 @@ public class EvaluationResultHandler implements QuestionResultHandler {
                         entry.sprite(),
                         entry.questionType(),
                         entry.questionText(),
+                        entry.dimension(),
+                        entry.scope(),
+                        entry.scratchBlocks(),
                         entry.choices(),
                         entry.getEffectiveCorrectAnswers(),
                         entry.getEffectiveStudentAnswer()
@@ -105,8 +107,18 @@ public class EvaluationResultHandler implements QuestionResultHandler {
 
         if (input.language() != null && !input.language().isEmpty()) {
             this.translator = IssueTranslatorFactory.getIssueTranslator(Locale.of(input.language()));
-            this.translator = IssueTranslatorFactory.getIssueTranslator(Locale.of(input.language()));
             log.info("Using language from answer file: " + input.language());
+        }
+
+        // Initialize LLM evaluator if requested
+        if (llmEval) {
+            String lang = input.language() != null ? input.language() : translator.getLocale().getLanguage();
+            try {
+                this.llmEvaluator = new LLMAnswerEvaluator(lang);
+                log.info("LLM answer evaluator initialized for language: " + lang);
+            } catch (Exception e) {
+                log.warning("Failed to initialize LLM evaluator: " + e.getMessage());
+            }
         }
 
         log.info("Loaded " + exportedAnswers.size() + " answers from " + answersFile);
@@ -121,13 +133,14 @@ public class EvaluationResultHandler implements QuestionResultHandler {
             log.warning("Project name mismatch: expected " + projectFileName + " but got " + thisProjectName);
         }
 
+        // Create an AnswerChecker for type-specific evaluation and optional LLM support
+        AnswerChecker answerChecker = new AnswerChecker(llmEvaluator, 0.001, translator);
+
         // Evaluate each exported answer directly
         List<EvaluatedQuestion> evaluatedQuestions = new ArrayList<>();
 
         for (ExportedAnswer exported : exportedAnswers) {
-
-            boolean isCorrect = evaluateAnswer(exported);
-            evaluatedQuestions.add(createEvaluatedQuestionFromExport(exported, isCorrect));
+            evaluatedQuestions.add(evaluateAndCreateQuestion(exported, answerChecker));
         }
 
         // Create a simple check result using the factory method
@@ -164,69 +177,11 @@ public class EvaluationResultHandler implements QuestionResultHandler {
     }
 
     /**
-     * Evaluates a student answer against the correct answers.
-     * Uses simple string matching with normalization.
+     * Evaluates an exported answer and creates an EvaluatedQuestion.
+     * Constructs a QuestionDTO from the export data and delegates to AnswerChecker
+     * for type-specific evaluation with optional LLM support.
      */
-    private boolean evaluateAnswer(ExportedAnswer exported) {
-        if (exported.correctAnswers() == null || exported.correctAnswers().isEmpty()) {
-            // No correct answers to compare against
-            return false;
-        }
-
-        String studentAnswer = exported.studentAnswer();
-        if (studentAnswer == null) {
-            return false;
-        }
-
-        // Normalize for comparison
-        String normalizedStudent = normalizeForComparison(studentAnswer);
-
-        // Check if student answer matches any correct answer
-        for (TranslatableText correctAnswer : exported.correctAnswers()) {
-            String correctText = resolveTranslatableText(correctAnswer);
-            String normalizedCorrect = normalizeForComparison(correctText);
-
-            if (normalizedStudent.equals(normalizedCorrect)) {
-                return true;
-            }
-        }
-
-        // For LLM evaluation of free text, delegate to answerChecker
-        if (llmEval && "FREE_TEXT".equals(exported.questionType())) {
-            if (llmEval && "FREE_TEXT".equals(exported.questionType())) {
-                // Build minimal structures for LLM evaluation
-                // LLM evaluation would happen here if needed
-            }
-        }
-
-        return false;
-    }
-
-    private String resolveTranslatableText(TranslatableText text) {
-        if (text == null) {
-            return "";
-        }
-        if (text.getTextContent() != null) {
-            return text.getTextContent();
-        }
-        if (text.getKey() != null) {
-            // Resolve from translator
-            return translator.getInfo(text.getKey());
-        }
-        return "";
-    }
-
-    private EvaluatedQuestion createEvaluatedQuestionFromExport(ExportedAnswer exported, boolean isCorrect) {
-        String expectedAnswer = exported.correctAnswers() != null && !exported.correctAnswers().isEmpty()
-                ? exported.correctAnswers().stream()
-                .map(this::resolveTranslatableText)
-                .collect(Collectors.joining(", "))
-                : "";
-
-        String feedback = isCorrect
-                ? translator.getInfo("evaluation_feedback_correct")
-                : translator.getInfo("evaluation_feedback_incorrect");
-
+    private EvaluatedQuestion evaluateAndCreateQuestion(ExportedAnswer exported, AnswerChecker answerChecker) {
         // Determine question type, with fallback
         QuestionType questionType = QuestionType.MULTIPLE_CHOICE;
         if (exported.questionType() != null) {
@@ -237,45 +192,123 @@ public class EvaluationResultHandler implements QuestionResultHandler {
             }
         }
 
-        String blockModelCell = ProgramDimension.TEXT.name() + "/" + ScopeOfFocus.BLOCK.name();
+        // Determine dimension and scope from export data (with fallback)
+        ProgramDimension dimension = ProgramDimension.TEXT;
+        if (exported.dimension() != null) {
+            try {
+                dimension = ProgramDimension.valueOf(exported.dimension());
+            } catch (IllegalArgumentException e) {
+                // Keep default
+            }
+        }
+
+        ScopeOfFocus scope = ScopeOfFocus.BLOCK;
+        if (exported.scope() != null) {
+            try {
+                scope = ScopeOfFocus.valueOf(exported.scope());
+            } catch (IllegalArgumentException e) {
+                // Keep default
+            }
+        }
+
+        String blockModelCell = dimension.name() + "/" + scope.name();
+
+        // Construct a QuestionDTO from the exported data for the AnswerChecker
+        QuestionDTO questionDTO = new QuestionDTO(
+                exported.questionId(),
+                exported.finder(),
+                exported.finder(),
+                questionType,
+                dimension,
+                scope,
+                exported.sprite(),
+                exported.questionText(),
+                null,   // translatableQuestionText
+                null,   // translatableChoices
+                exported.correctAnswers(),
+                exported.scratchBlocks(),
+                null    // hint
+        );
+
+        // Check the answer using the AnswerChecker (handles all types + LLM for free text)
+        String studentAnswer = exported.studentAnswer();
+        AnswerResult result;
+        if (studentAnswer == null || studentAnswer.trim().isEmpty()) {
+            // Unanswered question — generate a hint via LLM if available
+            String expectedForUnanswered = exported.correctAnswers() != null && !exported.correctAnswers().isEmpty()
+                    ? exported.correctAnswers().stream()
+                    .map(this::resolveTranslatableText)
+                    .collect(Collectors.joining(", "))
+                    : null;
+            String hint = null;
+            if (llmEvaluator != null) {
+                hint = llmEvaluator.generateHint(questionDTO);
+            }
+
+            if (hint != null) {
+                result = AnswerResult.withLLM(
+                        exported.questionId(),
+                        questionType,
+                        null,
+                        expectedForUnanswered,
+                        LLMEvaluation.incorrect(0.5, hint)
+                );
+            } else {
+                result = AnswerResult.withFeedback(
+                        exported.questionId(), questionType, false, null, expectedForUnanswered, null);
+            }
+        } else {
+            result = answerChecker.checkSingleAnswer(questionDTO, studentAnswer);
+
+            // For non-free-text questions that are incorrect, generate LLM feedback if available.
+            // Free text questions already get LLM feedback via AnswerChecker.
+            if (!result.correct() && llmEvaluator != null && result.llmEvaluation() == null) {
+                LLMEvaluation llmResult = llmEvaluator.evaluate(questionDTO, studentAnswer);
+                // Keep the deterministic correctness from AnswerChecker, use LLM feedback
+                result = new AnswerResult(
+                        result.questionId(),
+                        result.questionType(),
+                        result.correct(),
+                        result.providedAnswer(),
+                        result.expectedAnswer(),
+                        result.partialCredit(),
+                        llmResult.feedback(),
+                        llmResult
+                );
+            }
+        }
+
+        String expectedAnswer = exported.correctAnswers() != null && !exported.correctAnswers().isEmpty()
+                ? exported.correctAnswers().stream()
+                .map(this::resolveTranslatableText)
+                .collect(Collectors.joining(", "))
+                : "";
 
         return new EvaluatedQuestion(
                 exported.questionId(),
                 exported.finder(),
-                exported.finder(),  // translatedName - use finder as fallback
+                exported.finder(),
                 questionType,
-                ProgramDimension.TEXT,
-                ScopeOfFocus.BLOCK,
+                dimension,
+                scope,
                 blockModelCell,
-                exported.questionText(),
-                null,  // scratchBlocks
+                formatAnswerText(exported.questionText()),
+                exported.scratchBlocks(),
                 formatAnswerText(exported.studentAnswer()),
-                formatAnswerText(expectedAnswer),
-                isCorrect,
-                isCorrect ? 1.0 : 0.0,
-                formatFeedbackText(feedback),
-                null   // llmEvaluation
+                formatAnswerText(result.expectedAnswer() != null ? result.expectedAnswer() : expectedAnswer),
+                result.correct(),
+                result.partialCredit(),
+                formatFeedbackText(result.feedback()),
+                result.llmEvaluation()
         );
     }
 
-    /**
-     * Pattern to match all scratchblocks marker tags for removal during comparison.
-     */
-    private static final java.util.regex.Pattern SCRATCHBLOCKS_TAG_PATTERN =
-            java.util.regex.Pattern.compile("\\[/?(?:sbi|sb|var|list|scratchblocks)]");
-
-    private String normalizeForComparison(String text) {
+    private String resolveTranslatableText(TranslatableText text) {
         if (text == null) {
             return "";
         }
-        return SCRATCHBLOCKS_TAG_PATTERN.matcher(text)
-                .replaceAll("")
-                .replaceAll("\\s+", " ")
-                .trim()
-                .toLowerCase();
+        return text.resolveText(translator, translator::getInfo);
     }
-
-
 
 
     /**
@@ -531,6 +564,9 @@ public class EvaluationResultHandler implements QuestionResultHandler {
             String sprite,
             String questionType,
             String questionText,
+            String dimension,
+            String scope,
+            String scratchBlocks,
             List<Choice> choices,
             List<TranslatableText> correctAnswers,
             String studentAnswer,
@@ -567,6 +603,9 @@ public class EvaluationResultHandler implements QuestionResultHandler {
             String sprite,
             String questionType,
             String questionText,
+            String dimension,
+            String scope,
+            String scratchBlocks,
             List<Choice> choices,
             List<TranslatableText> correctAnswers,
             String studentAnswer

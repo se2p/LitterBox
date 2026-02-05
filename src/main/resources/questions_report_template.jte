@@ -1020,7 +1020,8 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                                  data-answers="${String.join("|", question.get().normalizedAnswers())}"
                                  data-translatable-answers='${question.get().translatableAnswersJson()}'
                                  data-multiselect="${question.get().isMultiSelect()}"
-                                 data-expected-count="${question.get().correctAnswers() != null ? question.get().correctAnswers().size() : 0}">
+                                 data-expected-count="${question.get().correctAnswers() != null ? question.get().correctAnswers().size() : 0}"
+                                 data-scratchblocks="${question.get().scratchBlocks() != null ? question.get().scratchBlocks() : ""}">
 
                                 <div class="question-header">
                                     <span class="question-number">Q${qNum}</span>
@@ -1052,10 +1053,12 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                                         @for(var choice : ForSupport.of(question.get().displayChoices()))
                                             !{char letter = (char)('A' + choice.getIndex());}
                                             !{String normalizedChoice = question.get().normalizedChoices().get(choice.getIndex());}
+                                            !{String rawChoice = question.get().rawChoices() != null ? question.get().rawChoices().get(choice.getIndex()) : normalizedChoice;}
                                             !{boolean isCorrect = question.get().normalizedAnswers().contains(normalizedChoice);}
                                             @if(model.teacherMode())
                                             <div class="answer-option ${isCorrect ? "is-correct" : ""}"
-                                                 data-value="${normalizedChoice}">
+                                                 data-value="${normalizedChoice}"
+                                                 data-raw-value="${rawChoice}">
                                                 <span class="option-letter">${letter}</span>
                                                 <span class="option-text">$unsafe{choice.get()}</span>
                                                 <span class="result-icon"></span>
@@ -1063,6 +1066,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                                             @else
                                             <div class="answer-option"
                                                  data-value="${normalizedChoice}"
+                                                 data-raw-value="${rawChoice}"
                                                  onclick="selectOption(this, '${project.get().id()}', ${question.get().id()})">
                                                 <span class="option-letter">${letter}</span>
                                                 <span class="option-text">$unsafe{choice.get()}</span>
@@ -1788,6 +1792,9 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
             const questionType = card.dataset.type;
             const finder = card.dataset.finder;
             const sprite = card.dataset.sprite;
+            const dimension = card.dataset.dimension;
+            const scope = card.dataset.scope;
+            const scratchBlocks = card.dataset.scratchblocks || null;
 
             // Get question text from the rendered content
             const questionTextEl = card.querySelector('.question-text');
@@ -1824,7 +1831,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                     const selectedOptions = card.querySelectorAll('.answer-option.selected');
                     if (selectedOptions.length > 0) {
                         const values = Array.from(selectedOptions).map(opt =>
-                                opt.dataset.value || opt.querySelector('.option-text')?.textContent?.trim()
+                                opt.dataset.rawValue || opt.dataset.value || opt.querySelector('.option-text')?.textContent?.trim()
                         );
                         studentAnswer = values.join('|');
                     }
@@ -1832,7 +1839,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                     // Single-select
                     const selected = card.querySelector('.answer-option.selected');
                     if (selected) {
-                        studentAnswer = selected.dataset.value || selected.querySelector('.option-text')?.textContent?.trim();
+                        studentAnswer = selected.dataset.rawValue || selected.dataset.value || selected.querySelector('.option-text')?.textContent?.trim();
                     }
                 }
             } else if (questionType === 'YES_NO') {
@@ -1853,6 +1860,9 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
                 sprite: sprite,
                 questionType: questionType,
                 questionText: questionText,
+                dimension: dimension,
+                scope: scope,
+                scratchBlocks: scratchBlocks,
                 choices: choices,
                 correctAnswers: correctAnswers,
                 studentAnswer: studentAnswer

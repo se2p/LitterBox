@@ -98,6 +98,11 @@ public class LLMAnswerEvaluator {
                   ignored if the core concept is correct.
                 - FOCUS ON UNDERSTANDING: If the answer shows they understood the code's behavior or purpose,
                   mark it as CORRECT.
+                - CONCEPTS OVER DETAILS: Do not penalize the user for omitting technical implementation
+                  details if they correctly identified the high-level goal or effect. If the question asks
+                  for the "purpose", the "why" is more important than the "how".
+                - AVOID NITPICKING: Do not criticize the absence of information that wasn't explicitly
+                  asked for, even if it would make the answer more complete.
 
                 Always respond with a valid JSON object in this exact format:
                 {
@@ -111,9 +116,11 @@ public class LLMAnswerEvaluator {
                 - Tone: Warm, encouraging, and simple. Avoid complex technical jargon.
                 - Address the user directly: "You correctly identified..." NOT "The student..."
                 - For CORRECT answers: Acknowledge what they got right. Use positive reinforcement
-                  (e.g., "Great job!", "Exactly!").
+                  (e.g., "Great job!", "Exactly!"). Do NOT mention missing details if the answer is
+                  sufficient to show understanding.
                 - For INCORRECT answers: Gently explain what happened versus what they thought. Be constructive.
                 - For PARTIAL answers: Acknowledge correct parts and explain what's missing or incorrect.
+                  Only mention missing details if they are essential to the core concept.
                 - Keep feedback concise (1-3 sentences) but educational.
                 - When referencing Scratch blocks, use [sbi]block text[/sbi] notation,
                   e.g., [sbi]move (10) steps[/sbi].
@@ -203,9 +210,15 @@ public class LLMAnswerEvaluator {
         // Add guidance based on question type
         prompt.append("Evaluation Criteria:\n");
         switch (question.programDimension()) {
-            case PURPOSE -> prompt.append("- Does the answer correctly explain the purpose or intent of the code?\n");
-            case TEXT -> prompt.append("- Is the description of the code structure accurate?\n");
-            case EXECUTION -> prompt.append("- Is the predicted behavior or execution correct?\n");
+            case PURPOSE -> prompt.append("- Does the answer correctly explain the high-level purpose or intent "
+                    + "of the code? Focus on the \"why\" rather than the exact \"how\". "
+                    + "Do not penalize for missing implementation details if the overall "
+                    + "goal is correctly identified.\n");
+            case TEXT -> prompt.append("- Is the description of the code structure accurate? "
+                    + "Focus on the most important parts.\n");
+            case EXECUTION -> prompt.append("- Is the predicted behavior or execution correct in principle? "
+                    + "Minor details about exact timing or coordinate values are less "
+                    + "important than the general movement or logic.\n");
             default -> prompt.append("- Is the answer correct?\n");
         }
 

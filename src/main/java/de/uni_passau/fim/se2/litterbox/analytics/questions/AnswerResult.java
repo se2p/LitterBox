@@ -94,12 +94,25 @@ public record AnswerResult(
             String providedAnswer,
             LLMEvaluation evaluation
     ) {
+        return withLLM(questionId, questionType, providedAnswer, null, evaluation);
+    }
+
+    /**
+     * Creates a result with LLM evaluation and an expected answer.
+     */
+    public static AnswerResult withLLM(
+            int questionId,
+            QuestionType questionType,
+            String providedAnswer,
+            String expectedAnswer,
+            LLMEvaluation evaluation
+    ) {
         return new AnswerResult(
                 questionId,
                 questionType,
                 evaluation.correct(),
                 providedAnswer,
-                null,
+                expectedAnswer,
                 evaluation.partialCredit(),
                 evaluation.feedback(),
                 evaluation

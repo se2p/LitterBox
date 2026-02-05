@@ -103,13 +103,12 @@ public class AnswerChecker {
                 }
 
                 if (feedback != null && !feedback.isEmpty()) {
-                    results.add(AnswerResult.withFeedback(
+                    results.add(AnswerResult.withLLM(
                             question.id(),
                             question.questionType(),
-                            false,
                             null,
                             formatExpectedAnswers(getCorrectAnswers(question)),
-                            feedback
+                            LLMEvaluation.incorrect(0.5, feedback)
                     ));
                 } else {
                     results.add(AnswerResult.simple(

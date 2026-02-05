@@ -30,7 +30,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = HintPlaceholder.Value.class, name = "Value"),
         @JsonSubTypes.Type(value = HintPlaceholder.Translatable.class, name = "Translatable"),
-        @JsonSubTypes.Type(value = HintPlaceholder.ValueWithTranslatableElements.class, name = "ValueWithTranslatableElements"),
+        @JsonSubTypes.Type(value = HintPlaceholder.ValueWithTranslatableElements.class,
+                name = "ValueWithTranslatableElements"),
         @JsonSubTypes.Type(value = HintPlaceholder.NestedTranslatable.class, name = "NestedTranslatable"),
         @JsonSubTypes.Type(value = HintPlaceholder.Defineable.class, name = "Defineable")
 })

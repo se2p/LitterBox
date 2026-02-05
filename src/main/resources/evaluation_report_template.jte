@@ -548,7 +548,7 @@ along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
 
                         @if(question.get().scratchBlocks() != null && !question.get().scratchBlocks().isEmpty())
                             <div class="code-context">
-                                <pre class="blocks">$unsafe{question.get().scratchBlocks()}</pre>
+                                <pre class="blocks">${question.get().scratchBlocks()}</pre>
                             </div>
                         @endif
 

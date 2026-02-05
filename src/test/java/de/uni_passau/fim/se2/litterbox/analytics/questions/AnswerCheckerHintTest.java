@@ -57,6 +57,8 @@ class AnswerCheckerHintTest {
         AnswerResult answerResult = result.results().getFirst();
         assertFalse(answerResult.correct());
         assertEquals("This is a hint.", answerResult.feedback());
+        assertNotNull(answerResult.llmEvaluation());
+        assertEquals("This is a hint.", answerResult.llmEvaluation().feedback());
     }
 
     @Test
