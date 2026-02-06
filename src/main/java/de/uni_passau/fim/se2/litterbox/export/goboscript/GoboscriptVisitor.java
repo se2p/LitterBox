@@ -27,6 +27,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Random;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.UnspecifiedExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Timer;
@@ -52,6 +53,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NonDataBlockMeta
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.ProcedureMutationMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.SoundMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.position.FromExpression;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.MousePos;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.Position;
 import de.uni_passau.fim.se2.litterbox.ast.model.position.RandomPos;
@@ -72,6 +74,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
@@ -236,6 +239,11 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     // ---------------------------------------------------------------
     // Program Structure
     // ---------------------------------------------------------------
+
+    @Override
+    public void visit(ActorDefinitionList node) {
+        visitChildren(node);
+    }
 
     @Override
     public void visit(Program program) {
@@ -677,13 +685,17 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(KeyPressed keyPressed) {
         emitNoSpace("onkey ");
-        Key key = keyPressed.getKey();
+        emitKey(keyPressed.getKey());
+        emitNoSpace(" ");
+        emitBlock(keyPressed);
+    }
+
+    private void emitKey(Key key) {
         if (key.getKey() instanceof NumberLiteral num) {
-            emitNoSpace("\"" + getKeyName((int) num.getValue()) + "\" ");
+            emitNoSpace("\"" + getKeyName((int) num.getValue()) + "\"");
         } else {
             key.getKey().accept(this);
         }
-        emitBlock(keyPressed);
     }
 
     @Override
@@ -745,7 +757,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(IfThenStmt ifThenStmt) {
         emitNoSpace("if ");
-        ifThenStmt.getBoolExpr().accept(this);
+        emitConditionOrDefault(ifThenStmt.getBoolExpr());
         emitNoSpace(" {");
         newLine();
         beginIndentation();
@@ -759,7 +771,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(IfElseStmt ifElseStmt) {
         emitNoSpace("if ");
-        ifElseStmt.getBoolExpr().accept(this);
+        emitConditionOrDefault(ifElseStmt.getBoolExpr());
         emitNoSpace(" {");
         newLine();
         beginIndentation();
@@ -805,7 +817,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(UntilStmt untilStmt) {
         emitNoSpace("until ");
-        untilStmt.getBoolExpr().accept(this);
+        emitConditionOrDefault(untilStmt.getBoolExpr());
         emitNoSpace(" {");
         newLine();
         beginIndentation();
@@ -827,9 +839,37 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(WaitUntil node) {
         emitNoSpace("until ");
-        node.getUntil().accept(this);
+        emitConditionOrDefault(node.getUntil());
         emitNoSpace(" {}"); // Empty loop
         newLine();
+    }
+
+    /**
+     * Emits the given condition, or "false" if the condition is null or results in empty output.
+     *
+     * @param condition The boolean expression to emit
+     */
+    private void emitConditionOrDefault(de.uni_passau.fim.se2.litterbox.ast.model.ASTNode condition) {
+        if (condition == null) {
+            emitNoSpace("false");
+            return;
+        }
+
+        // Use a temporary visitor to check if the condition produces any output
+        GoboscriptVisitor temp = new GoboscriptVisitor();
+        temp.setProgram(program);
+        temp.setCurrentActor(currentActor);
+        condition.accept(temp);
+        String output = temp.getOutput().trim();
+
+        // If output is empty or contains comments (unhandled nodes), fall back to false.
+        // Comments in the middle of an expression would break the Goboscript syntax
+        // because they comment out the rest of the line (including the closing brace).
+        if (output.isEmpty() || output.contains("#")) {
+            emitNoSpace("false");
+        } else {
+            emitNoSpace(output);
+        }
     }
 
     // ---------------------------------------------------------------
@@ -1219,60 +1259,35 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(ShowVariable node) {
-        String escapedName = getEscapedVariableName(node.getIdentifier());
-        if (isVariableDeclared(escapedName)) {
-            emitNoSpace("show ");
-            node.getIdentifier().accept(this);
-            emitNoSpace(";");
-            newLine();
-        } else {
-            // Variable not declared - emit a comment to avoid compilation error
-            emitNoSpace("# Skipped: show undeclared variable");
-            newLine();
-        }
+        emitShowHide(node.getIdentifier(), "show", false);
     }
 
     @Override
     public void visit(HideVariable node) {
-        String escapedName = getEscapedVariableName(node.getIdentifier());
-        if (isVariableDeclared(escapedName)) {
-            emitNoSpace("hide ");
-            node.getIdentifier().accept(this);
-            emitNoSpace(";");
-            newLine();
-        } else {
-            // Variable not declared - emit a comment to avoid compilation error
-            emitNoSpace("# Skipped: hide undeclared variable");
-            newLine();
-        }
+        emitShowHide(node.getIdentifier(), "hide", false);
     }
 
     @Override
     public void visit(ShowList node) {
-        String escapedName = getEscapedListName(node.getIdentifier());
-        if (isListDeclared(escapedName)) {
-            emitNoSpace("show ");
-            node.getIdentifier().accept(this);
-            emitNoSpace(";");
-            newLine();
-        } else {
-            // List not declared - emit a comment to avoid compilation error
-            emitNoSpace("# Skipped: show undeclared list");
-            newLine();
-        }
+        emitShowHide(node.getIdentifier(), "show", true);
     }
 
     @Override
     public void visit(HideList node) {
-        String escapedName = getEscapedListName(node.getIdentifier());
-        if (isListDeclared(escapedName)) {
-            emitNoSpace("hide ");
-            node.getIdentifier().accept(this);
+        emitShowHide(node.getIdentifier(), "hide", true);
+    }
+
+    private void emitShowHide(Identifier id, String command, boolean isList) {
+        String escapedName = isList ? getEscapedListName(id) : getEscapedVariableName(id);
+        boolean declared = isList ? isListDeclared(escapedName) : isVariableDeclared(escapedName);
+        if (declared) {
+            emitNoSpace(command + " ");
+            id.accept(this);
             emitNoSpace(";");
             newLine();
         } else {
-            // List not declared - emit a comment to avoid compilation error
-            emitNoSpace("# Skipped: hide undeclared list");
+            // Identifier not declared - emit a comment to avoid compilation error
+            emitNoSpace("# Skipped: " + command + " undeclared " + (isList ? "list" : "variable"));
             newLine();
         }
     }
@@ -1379,18 +1394,18 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(ChangeSoundEffectBy node) {
-        String effect = node.getEffect().getType() == SoundEffect.SoundEffectType.PITCH ? "pitch" : "pan";
-        emitNoSpace("change_" + effect + "_effect ");
-        node.getValue().accept(this);
-        emitNoSpace(";");
-        newLine();
+        visitSoundEffectsCommon(node.getEffect(), node.getValue(), "change");
     }
 
     @Override
     public void visit(SetSoundEffectTo node) {
-        String effect = node.getEffect().getType() == SoundEffect.SoundEffectType.PITCH ? "pitch" : "pan";
-        emitNoSpace("set_" + effect + "_effect ");
-        node.getValue().accept(this);
+        visitSoundEffectsCommon(node.getEffect(), node.getValue(), "set");
+    }
+
+    private void visitSoundEffectsCommon(SoundEffect soundEffect, ASTNode value, String operation) {
+        String effect = soundEffect.getType() == SoundEffect.SoundEffectType.PITCH ? "pitch" : "pan";
+        emitNoSpace(operation + "_" + effect + "_effect ");
+        value.accept(this);
         emitNoSpace(";");
         newLine();
     }
@@ -1471,28 +1486,14 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
                 newLine();
             }
             case ChangePenColorParamBy stmt -> {
-                String param = "hue"; // Default
-
-                if (stmt.getParam() instanceof FixedColorParam fixed) {
-                    param = fixed.getTypeName();
-                    if ("color".equals(param)) {
-                        param = "hue";
-                    }
-                }
+                String param = getPenParamName(stmt.getParam());
                 emitNoSpace("change_pen_" + param + "(");
                 stmt.getValue().accept(this);
                 emitNoSpace(");");
                 newLine();
             }
             case SetPenColorParamTo stmt -> {
-                String param = "hue"; // Default
-
-                if (stmt.getParam() instanceof FixedColorParam fixed) {
-                    param = fixed.getTypeName();
-                    if ("color".equals(param)) {
-                        param = "hue";
-                    }
-                }
+                String param = getPenParamName(stmt.getParam());
                 emitNoSpace("set_pen_" + param + "(");
                 stmt.getValue().accept(this);
                 emitNoSpace(");");
@@ -1500,6 +1501,17 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
             }
             case null, default -> visitChildren(node); // Fallback
         }
+    }
+
+    private String getPenParamName(ColorParam param) {
+        if (param instanceof FixedColorParam fixed) {
+            String name = fixed.getTypeName();
+            if ("color".equals(name)) {
+                return "hue";
+            }
+            return name;
+        }
+        return "hue"; // Default
     }
 
     // ---------------------------------------------------------------
@@ -1546,8 +1558,8 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
             String qualifier = q.getFirst().getName();
             // If the qualifier is the current actor or explicitly "Stage",
             // we strip it and let visit(Variable) handle the correct qualification/scoping.
-            boolean isSelf = currentActor != null && qualifier.equals(currentActor.getIdent().getName());
-            boolean isStage = qualifier.equals("Stage");
+            boolean isSelf = isSelf(qualifier);
+            boolean isStage = isStageName(qualifier);
 
             if (isSelf || isStage) {
                 q.getSecond().accept(this);
@@ -1844,6 +1856,36 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     }
 
     @Override
+    public void visit(Message node) {
+        node.getMessage().accept(this);
+    }
+
+    @Override
+    public void visit(FromExpression node) {
+        node.getStringExpr().accept(this);
+    }
+
+    @Override
+    public void visit(RandomPos node) {
+        emitNoSpace("\"_random_\"");
+    }
+
+    @Override
+    public void visit(MousePos node) {
+        emitNoSpace("\"_mouse_\"");
+    }
+
+    @Override
+    public void visit(AsBool node) {
+        node.getOperand1().accept(this);
+    }
+
+    @Override
+    public void visit(AsTouchable node) {
+        node.getOperand1().accept(this);
+    }
+
+    @Override
     public void visit(NumFunctOf node) {
         NumFunct.NumFunctType type = node.getOperand1().getType();
         String func = switch (type) {
@@ -1937,27 +1979,17 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(AttributeOf node) {
         // Goboscript syntax: Object.Attribute
-        // Note: Cross-sprite attribute access (non-Stage) is not fully supported
-
-        // Check if this is accessing another sprite's attribute (not Stage)
-        String spriteName = resolveStringElement(node.getElementChoice());
-
-        // If accessing non-Stage sprite attributes, emit 0 (safe fallback) because
-        // Goboscript doesn't support "SpriteName".x
-        // Note: Scratch uses "_stage_" internally to refer to the Stage
-        if (spriteName != null && !spriteName.equals("Stage") && !spriteName.equals("_stage_")) {
-            // We cannot safely emit a comment here because we are inside an expression,
-            // and an inline comment # would ignore the rest of the line (potentially closing parens/braces).
-            // So we just emit 0.
-            emitNoSpace("0");
-            return;
-        }
+        // Object can be a sprite name (quoted string) or Stage.
 
         // 1. Object (ElementChoice)
         // Ensure we print the identifier, not a string literal if possible
         String resolvedName = resolveStringElement(node.getElementChoice());
         if (resolvedName != null) {
-            emitNoSpace("\"" + escapeString(resolvedName) + "\"");
+            if (isStageName(resolvedName)) {
+                emitNoSpace("Stage");
+            } else {
+                emitNoSpace("\"" + escapeString(resolvedName) + "\"");
+            }
         } else {
             node.getElementChoice().accept(this);
         }
@@ -2193,11 +2225,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(IsKeyPressed node) {
         emitNoSpace("key_pressed(");
-        if (node.getKey().getKey() instanceof NumberLiteral num) {
-            emitNoSpace("\"" + getKeyName((int) num.getValue()) + "\"");
-        } else {
-            node.getKey().getKey().accept(this);
-        }
+        emitKey(node.getKey());
         emitNoSpace(")");
     }
 
@@ -2250,9 +2278,9 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         boolean isList = node.getSecond() instanceof ScratchList;
 
         // Check if this is self-qualified access (sprite referring to its own variable)
-        boolean isSelf = currentActor != null && qualifier.equals(currentActor.getIdent().getName());
+        boolean isSelf = isSelf(qualifier);
         // Check if this is Stage-qualified access (global variables)
-        boolean isStage = "Stage".equals(qualifier);
+        boolean isStage = isStageName(qualifier);
 
         // For self-qualified or Stage-qualified data expressions, emit just the name without prefix.
         // In Goboscript:
@@ -2328,6 +2356,15 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     }
 
     /**
+     * Handles generic unspecified expressions.
+     * Emits '0' as a safe default value.
+     */
+    @Override
+    public void visit(UnspecifiedExpression node) {
+        emitNoSpace("0");
+    }
+
+    /**
      * Handles unspecified boolean expressions.
      * Emits 'false' as a safe default value.
      */
@@ -2352,6 +2389,12 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(UnspecifiedStringExpr node) {
         emitNoSpace("\"\"");
+    }
+
+    @Override
+    public void visit(ASTNode node) {
+        emitNoSpace("# Unhandled node: " + node.getClass().getSimpleName());
+        visitChildren(node);
     }
 
     // ---------------------------------------------------------------
@@ -2541,6 +2584,28 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         emitNoSpace("\";");
         newLine();
     }
+
+    /**
+     * Checks if the given name refers to the Stage.
+     * Scratch uses both "Stage" and the internal name "_stage_" to refer to the stage.
+     *
+     * @param name The name to check
+     * @return true if it refers to the stage
+     */
+    private boolean isStageName(String name) {
+        return "Stage".equals(name) || "_stage_".equals(name);
+    }
+
+    /**
+     * Checks if the given qualifier refers to the current actor.
+     *
+     * @param qualifier The name to check
+     * @return true if it refers to the current actor
+     */
+    private boolean isSelf(String qualifier) {
+        return currentActor != null && qualifier.equals(currentActor.getIdent().getName());
+    }
+
     // ---------------------------------------------------------------
     // Video Sensing Extension
     // ---------------------------------------------------------------

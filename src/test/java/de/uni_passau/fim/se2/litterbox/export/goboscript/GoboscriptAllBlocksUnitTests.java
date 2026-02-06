@@ -541,7 +541,7 @@ public class GoboscriptAllBlocksUnitTests implements JsonTest {
     @Test
     public void testReplaceItem() {
         // Lists use "_list" suffix to avoid name collisions with variables
-        assertBlock(ReplaceItem.class, "Test_list[\"_stage_\".backdrop_number] = username();");
+        assertBlock(ReplaceItem.class, "Test_list[Stage.backdrop_number] = username();");
     }
 
     @Test
