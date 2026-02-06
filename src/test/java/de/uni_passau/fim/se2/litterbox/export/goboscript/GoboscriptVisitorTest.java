@@ -562,8 +562,8 @@ public class GoboscriptVisitorTest implements JsonTest {
         Program program = parseProgram(code);
         String result = GoboscriptVisitor.of(program);
 
-        // Stage variables are global in Goboscript, but AttributeOf currently emits qualification
-        assertThat(result).contains("say Stage.Score;");
+        // Stage variables are global in Goboscript, so qualification is stripped
+        assertThat(result).contains("say Score;");
     }
 
     // ==================== Other Sensing Repoters ====================
@@ -709,7 +709,8 @@ public class GoboscriptVisitorTest implements JsonTest {
         Program program = parseProgram(code);
         String result = GoboscriptVisitor.of(program);
 
-        assertThat(result).contains("Stage.backdrop_number");
+        // Stage attributes are accessed directly without qualification
+        assertThat(result).contains("backdrop_number()");
     }
 
     @Test
@@ -730,8 +731,8 @@ public class GoboscriptVisitorTest implements JsonTest {
         say.accept(visitor);
         String result = visitor.getOutput();
 
-        // Goboscript supports cross-sprite attribute access
-        assertThat(result).contains("say OtherSprite.x;");
+        // Goboscript supports cross-sprite attribute access with function call syntax
+        assertThat(result).contains("say OtherSprite.x_position();");
     }
 
     @Test

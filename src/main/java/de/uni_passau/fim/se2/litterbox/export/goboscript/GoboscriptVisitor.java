@@ -249,6 +249,28 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     }
 
     /**
+     * Copies the context (program, actor, sprite names, variables, lists, procedures)
+     * from another visitor to this one. Used for temporary visitors.
+     *
+     * @param other The visitor to copy context from
+     */
+    private void copyContextFrom(GoboscriptVisitor other) {
+        this.program = other.program;
+        this.currentActor = other.currentActor;
+        this.assetPrefix = other.assetPrefix;
+        this.availableAssets = other.availableAssets;
+        this.spriteNames = other.spriteNames;
+        this.globalVariables = other.globalVariables;
+        this.globalLists = other.globalLists;
+        this.localVariables.addAll(other.localVariables);
+        this.localLists.addAll(other.localLists);
+        this.definedProcedures.addAll(other.definedProcedures);
+        this.procedureNameMapping.putAll(other.procedureNameMapping);
+        this.inProcedure = other.inProcedure;
+        this.currentProcedureParams.addAll(other.currentProcedureParams);
+    }
+
+    /**
      * Converts the given AST node to Goboscript format.
      *
      * @param node Some node of the AST
@@ -471,8 +493,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
                     String escapedName = escapeVariableIdentifier(varName);
                     // Get the initial value as a string
                     GoboscriptVisitor tempVisitor = new GoboscriptVisitor();
-                    tempVisitor.setProgram(this.program);
-                    tempVisitor.setCurrentActor(this.currentActor);
+                    tempVisitor.copyContextFrom(this);
                     setVar.getExpr().accept(tempVisitor);
                     String valueStr = tempVisitor.getOutput().trim();
                     variableInitialValues.put(escapedName, valueStr);
@@ -892,8 +913,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
         // Use a temporary visitor to check if the condition produces any output
         GoboscriptVisitor temp = new GoboscriptVisitor();
-        temp.setProgram(program);
-        temp.setCurrentActor(currentActor);
+        temp.copyContextFrom(this);
         condition.accept(temp);
         String output = temp.getOutput().trim();
 
@@ -1215,8 +1235,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
             // that can't be resolved to a costume name - comment them out
             if (expr instanceof NumExpr) {
                 GoboscriptVisitor tempVisitor = new GoboscriptVisitor();
-                tempVisitor.setProgram(this.program);
-                tempVisitor.setCurrentActor(this.currentActor);
+                tempVisitor.copyContextFrom(this);
                 withExpr.accept(tempVisitor);
                 String exprStr = tempVisitor.getOutput().trim();
                 emitNoSpace("# " + commentName + " " + exprStr + ";");
@@ -2019,38 +2038,69 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         // 1. Object (ElementChoice)
         // Ensure we print the identifier, not a string literal if possible
         String resolvedName = resolveStringElement(node.getElementChoice());
-        if (resolvedName != null) {
-            if (isStageName(resolvedName)) {
-                emitNoSpace("Stage");
-            } else {
-                emitNoSpace(escapeIdentifier(resolvedName));
-            }
-        } else {
-            node.getElementChoice().accept(this);
-        }
-
-        emitNoSpace(".");
 
         // 2. Attribute
         Attribute attr = node.getAttribute();
-        if (attr instanceof AttributeFromFixed af) {
-            emitNoSpace(mapFixedAttribute(af.getAttribute().getTypeName()));
-        } else if (attr instanceof AttributeFromVariable av) {
+        if (attr instanceof AttributeFromVariable av) {
             String name = av.getVariable().getName().getName();
             // Clean up potential scratchblocks syntax artifacts if present
             if (name.startsWith("[\"") && name.endsWith("\" v]")) {
                 name = name.substring(2, name.length() - 4);
             }
-            emitNoSpace(escapeVariableIdentifier(name));
-        } else {
-            attr.accept(this);
+            String escapedName = escapeVariableIdentifier(name);
+
+            // Strip qualifier if it's the current actor, the Stage, or a global variable
+            if (isSelf(resolvedName) || isStageName(resolvedName) || isGlobal(escapedName, false)) {
+                emitNoSpace(escapedName);
+            } else {
+                if (resolvedName != null) {
+                    emitNoSpace(escapeIdentifier(resolvedName));
+                } else {
+                    node.getElementChoice().accept(this);
+                }
+                emitNoSpace(".");
+                emitNoSpace(escapedName);
+            }
+            return;
         }
+
+        if (attr instanceof AttributeFromFixed af) {
+            String attrName = mapFixedAttribute(af.getAttribute().getTypeName());
+            // Strip qualifier if it's the current actor or the Stage
+            if (isSelf(resolvedName) || isStageName(resolvedName)) {
+                emitNoSpace(attrName);
+                emitNoSpace("()");
+            } else {
+                if (resolvedName != null) {
+                    if (isStageName(resolvedName)) {
+                        emitNoSpace("Stage");
+                    } else {
+                        emitNoSpace(escapeIdentifier(resolvedName));
+                    }
+                } else {
+                    node.getElementChoice().accept(this);
+                }
+                emitNoSpace(".");
+                emitNoSpace(attrName);
+                emitNoSpace("()");
+            }
+            return;
+        }
+
+        // Fallback for other attribute types (unlikely)
+        if (resolvedName != null) {
+            emitNoSpace(isStageName(resolvedName) ? "Stage" : escapeIdentifier(resolvedName));
+        } else {
+            node.getElementChoice().accept(this);
+        }
+        emitNoSpace(".");
+        attr.accept(this);
     }
 
     private String mapFixedAttribute(String attr) {
         return switch (attr) {
-            case "x position" -> "x";
-            case "y position" -> "y";
+            case "x position" -> "x_position";
+            case "y position" -> "y_position";
             case "direction" -> "direction";
             case "costume #" -> "costume_number";
             case "costume name" -> "costume_name";
@@ -2571,10 +2621,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     private String resolveStringElement(ASTNode node) {
         GoboscriptVisitor tempVisitor = new GoboscriptVisitor();
-        // Propagate context
-        tempVisitor.setProgram(this.program);
-        tempVisitor.setCurrentActor(this.currentActor);
-        // We generally want to resolve static values, so we don't need asset info for this check
+        tempVisitor.copyContextFrom(this);
 
         node.accept(tempVisitor);
         String output = tempVisitor.getOutput().trim();
@@ -2651,7 +2698,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
      * @return true if it refers to the current actor
      */
     private boolean isSelf(String qualifier) {
-        return currentActor != null && qualifier.equals(currentActor.getIdent().getName());
+        return currentActor != null && qualifier != null && qualifier.equals(currentActor.getIdent().getName());
     }
 
     // ---------------------------------------------------------------

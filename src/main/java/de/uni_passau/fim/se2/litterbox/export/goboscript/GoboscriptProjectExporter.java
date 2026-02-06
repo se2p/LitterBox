@@ -18,9 +18,14 @@
  */
 package de.uni_passau.fim.se2.litterbox.export.goboscript;
 
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.WithExpr;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.AttributeOf;
+import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationIdentAsTypeStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmt;
@@ -164,7 +169,7 @@ public class GoboscriptProjectExporter extends ProjectExporter {
         } else {
             filename = sanitizeFilename(actor.getIdent().getName()) + ".gs";
         }
-        
+
         filename = getUniqueFilename(filename);
         Path actorFile = outputDir.resolve(filename);
 
@@ -255,6 +260,29 @@ public class GoboscriptProjectExporter extends ProjectExporter {
                     }
                 }
                 visitChildren(node);
+            }
+
+            @Override
+            public void visit(AttributeOf node) {
+                // Check if the attribute is a user variable from another sprite
+                if (node.getAttribute() instanceof AttributeFromVariable av) {
+                    String spriteName = resolveSpriteName(node.getElementChoice());
+                    if (currentActor != null && spriteName != null
+                            && !spriteName.equals(currentActor.getIdent().getName())
+                            && !"Stage".equals(spriteName) && !"_stage_".equals(spriteName)) {
+                        sharedVarNames.add(av.getVariable().getName().getName());
+                    }
+                }
+                visitChildren(node);
+            }
+
+            private String resolveSpriteName(ASTNode choice) {
+                if (choice instanceof WithExpr withExpr) {
+                    if (withExpr.getExpression() instanceof StringLiteral lit) {
+                        return lit.getText();
+                    }
+                }
+                return null;
             }
         });
 
