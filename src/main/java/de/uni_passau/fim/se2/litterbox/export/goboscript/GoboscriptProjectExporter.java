@@ -168,7 +168,7 @@ public class GoboscriptProjectExporter extends ProjectExporter {
         if (actor.isStage()) {
             filename = "stage.gs";
         } else {
-            filename = sanitizeFilename(actor.getIdent().getName()) + ".gs";
+            filename = GoboscriptSanitizer.escapeIdentifier(actor.getIdent().getName()) + ".gs";
         }
 
         filename = getUniqueFilename(filename);
@@ -295,13 +295,15 @@ public class GoboscriptProjectExporter extends ProjectExporter {
             String actorName = actor.getIdent().getName();
             Set<String> vars = new HashSet<>();
             Set<String> lists = new HashSet<>();
-            for (DeclarationStmt stmt : actor.getDecls().getDeclarationStmts()) {
-                if (stmt instanceof DeclarationIdentAsTypeStmt identDecl) {
-                    String name = identDecl.getIdent().getName().getName();
-                    if (identDecl.getType() instanceof de.uni_passau.fim.se2.litterbox.ast.model.type.ListType) {
-                        lists.add(name);
-                    } else {
-                        vars.add(name);
+            if (actor.getDecls() != null) {
+                for (DeclarationStmt stmt : actor.getDecls().getDeclarationStmts()) {
+                    if (stmt instanceof DeclarationIdentAsTypeStmt identDecl) {
+                        String name = identDecl.getIdent().getName().getName();
+                        if (identDecl.getType() instanceof de.uni_passau.fim.se2.litterbox.ast.model.type.ListType) {
+                            lists.add(name);
+                        } else {
+                            vars.add(name);
+                        }
                     }
                 }
             }
@@ -311,16 +313,18 @@ public class GoboscriptProjectExporter extends ProjectExporter {
 
         // Promote ghost variables and lists to global by adding them to the shared sets.
         // A variable is a ghost if it exists in the SymbolTable for an actor but is missing from its declarations.
-        for (var varInfo : program.getSymbolTable().getVariables().values()) {
-            Set<String> declared = actorVars.get(varInfo.actor());
-            if (declared == null || !declared.contains(varInfo.variableName())) {
-                sharedVarNames.add(varInfo.variableName());
+        if (program.getSymbolTable() != null) {
+            for (var varInfo : program.getSymbolTable().getVariables().values()) {
+                Set<String> declared = actorVars.get(varInfo.actor());
+                if (declared == null || !declared.contains(varInfo.variableName())) {
+                    sharedVarNames.add(varInfo.variableName());
+                }
             }
-        }
-        for (var listInfo : program.getSymbolTable().getLists().values()) {
-            Set<String> declared = actorLists.get(listInfo.actor());
-            if (declared == null || !declared.contains(listInfo.variableName())) {
-                sharedListNames.add(listInfo.variableName());
+            for (var listInfo : program.getSymbolTable().getLists().values()) {
+                Set<String> declared = actorLists.get(listInfo.actor());
+                if (declared == null || !declared.contains(listInfo.variableName())) {
+                    sharedListNames.add(listInfo.variableName());
+                }
             }
         }
 

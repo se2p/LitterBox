@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * A specialized {@link CloneVisitor} that promotes shared variables and lists to the Stage.
@@ -45,6 +44,7 @@ public class GoboscriptPromotionVisitor extends CloneVisitor {
     private final Set<String> sharedVarNames;
     private final Set<String> sharedListNames;
     private final List<DeclarationIdentAsTypeStmt> promotedDecls = new ArrayList<>();
+    private ActorDefinition currentActor;
 
     public GoboscriptPromotionVisitor(Set<String> sharedVarNames, Set<String> sharedListNames) {
         super(false); // Preserve original block IDs
@@ -55,7 +55,6 @@ public class GoboscriptPromotionVisitor extends CloneVisitor {
     @Override
     public Program visit(Program node) {
         // First pass: collect all declarations that need to be promoted from Sprites
-        // We visit the actor definition list directly to avoid visiting Stage first if it's at the beginning
         for (ActorDefinition actor : node.getActorDefinitionList().getDefinitions()) {
             if (!actor.isStage()) {
                 collectPromotableDecls(actor);
@@ -64,24 +63,24 @@ public class GoboscriptPromotionVisitor extends CloneVisitor {
 
         // Add declarations for variables and lists that are shared but were never declared
         // in any actor (e.g. "ghost" variables used in blocks but missing from SB3 variables list).
-        for (var var : node.getSymbolTable().getVariables().values()) {
-            if (sharedVarNames.contains(var.variableName()) && !isAlreadyPromoted(var.variableName(), false)) {
+        for (var varInfo : node.getSymbolTable().getVariables().values()) {
+            if (sharedVarNames.contains(varInfo.variableName()) && !isAlreadyPromoted(varInfo.variableName(), false)) {
                 promotedDecls.add(new DeclarationIdentAsTypeStmt(
-                        new Variable(new StrId(var.variableName())),
-                        var.type()
+                        new Variable(new StrId(varInfo.variableName())),
+                        varInfo.type()
                 ));
             }
         }
-        for (var list : node.getSymbolTable().getLists().values()) {
-            if (sharedListNames.contains(list.variableName()) && !isAlreadyPromoted(list.variableName(), true)) {
+        for (var listInfo : node.getSymbolTable().getLists().values()) {
+            if (sharedListNames.contains(listInfo.variableName()) && !isAlreadyPromoted(listInfo.variableName(), true)) {
                 promotedDecls.add(new DeclarationIdentAsTypeStmt(
-                        new ScratchList(new StrId(list.variableName())),
+                        new ScratchList(new StrId(listInfo.variableName())),
                         new ListType()
                 ));
             }
         }
 
-        // Second pass: clone the program, which will use our overridden visit(ActorDefinition)
+        // Second pass: clone the program
         return (Program) super.visit(node);
     }
 
@@ -93,6 +92,9 @@ public class GoboscriptPromotionVisitor extends CloneVisitor {
     }
 
     private void collectPromotableDecls(ActorDefinition actor) {
+        if (actor.getDecls() == null) {
+            return;
+        }
         for (DeclarationStmt stmt : actor.getDecls().getDeclarationStmts()) {
             if (stmt instanceof DeclarationIdentAsTypeStmt identDecl) {
                 String name = identDecl.getIdent().getName().getName();
@@ -109,10 +111,11 @@ public class GoboscriptPromotionVisitor extends CloneVisitor {
 
     @Override
     public ActorDefinition visit(ActorDefinition node) {
-        if (node.isStage()) {
-            // Clone everything as usual
-            ActorDefinition cloned = (ActorDefinition) super.visit(node);
+        this.currentActor = node;
+        ActorDefinition cloned = (ActorDefinition) super.visit(node);
+        this.currentActor = null;
 
+        if (node.isStage()) {
             // Add promoted declarations to Stage
             List<DeclarationStmt> stageDecls = new ArrayList<>(cloned.getDecls().getDeclarationStmts());
 
@@ -137,30 +140,27 @@ public class GoboscriptPromotionVisitor extends CloneVisitor {
                     cloned.getScripts(),
                     cloned.getActorMetadata()
             );
-        } else {
-            // It's a Sprite. Clone and filter out promoted declarations.
-            ActorDefinition cloned = (ActorDefinition) super.visit(node);
-
-            List<DeclarationStmt> filteredDecls = cloned.getDecls().getDeclarationStmts().stream()
-                    .filter(stmt -> {
-                        if (stmt instanceof DeclarationIdentAsTypeStmt identDecl) {
-                            String name = identDecl.getIdent().getName().getName();
-                            boolean isList = identDecl.getType() instanceof ListType;
-                            return (!isList && !sharedVarNames.contains(name)) && (isList || !sharedListNames.contains(name));
-                        }
-                        return true;
-                    })
-                    .collect(Collectors.toList());
-
-            return new ActorDefinition(
-                    cloned.getActorType(),
-                    cloned.getIdent(),
-                    new DeclarationStmtList(Collections.unmodifiableList(filteredDecls)),
-                    cloned.getSetStmtList(),
-                    cloned.getProcedureDefinitionList(),
-                    cloned.getScripts(),
-                    cloned.getActorMetadata()
-            );
         }
+        return cloned;
+    }
+
+    @Override
+    public DeclarationStmtList visit(DeclarationStmtList node) {
+        List<DeclarationStmt> filtered = new ArrayList<>();
+        for (DeclarationStmt stmt : node.getDeclarationStmts()) {
+            if (stmt instanceof DeclarationIdentAsTypeStmt identDecl) {
+                String name = identDecl.getIdent().getName().getName();
+                boolean isList = identDecl.getType() instanceof ListType;
+                boolean promoted = isList ? sharedListNames.contains(name) : sharedVarNames.contains(name);
+
+                // If we're in a sprite and the declaration is promoted, skip it.
+                // If we're in the Stage, keep it (it will be supplemented in visit(ActorDefinition)).
+                if (currentActor != null && !currentActor.isStage() && promoted) {
+                    continue;
+                }
+            }
+            filtered.add((DeclarationStmt) apply(stmt));
+        }
+        return new DeclarationStmtList(Collections.unmodifiableList(filtered));
     }
 }

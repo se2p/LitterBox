@@ -27,6 +27,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.actor.ActorMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.ImageMetadataList;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
+import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
@@ -275,6 +277,11 @@ public class GoboscriptProjectExporterTest implements JsonTest {
         Program program = mock(Program.class);
         ActorDefinitionList actorList = mock(ActorDefinitionList.class);
         when(program.getActorDefinitionList()).thenReturn(actorList);
+        
+        SymbolTable symbolTable = mock(SymbolTable.class);
+        when(program.getSymbolTable()).thenReturn(symbolTable);
+        when(symbolTable.getVariables()).thenReturn(Collections.emptyMap());
+        when(symbolTable.getLists()).thenReturn(Collections.emptyMap());
 
         // Mock Metadata for validation
         ActorMetadata mockMetadata = mock(ActorMetadata.class);
@@ -283,6 +290,9 @@ public class GoboscriptProjectExporterTest implements JsonTest {
         when(mockCostume.getMd5ext()).thenReturn("dummy.png");
         when(mockCostumeList.getList()).thenReturn(Collections.singletonList(mockCostume));
         when(mockMetadata.getCostumes()).thenReturn(mockCostumeList);
+        
+        DeclarationStmtList emptyDecls = mock(DeclarationStmtList.class);
+        when(emptyDecls.getDeclarationStmts()).thenReturn(Collections.emptyList());
 
         ActorDefinition stage = mock(ActorDefinition.class);
         when(stage.isStage()).thenReturn(true);
@@ -290,6 +300,7 @@ public class GoboscriptProjectExporterTest implements JsonTest {
         when(stageId.getName()).thenReturn("Stage");
         when(stage.getIdent()).thenReturn(stageId);
         when(stage.getActorMetadata()).thenReturn(mockMetadata);
+        when(stage.getDecls()).thenReturn(emptyDecls);
 
         ActorDefinition sprite1 = mock(ActorDefinition.class);
         when(sprite1.isStage()).thenReturn(false);
@@ -297,6 +308,7 @@ public class GoboscriptProjectExporterTest implements JsonTest {
         when(id1.getName()).thenReturn(name1);
         when(sprite1.getIdent()).thenReturn(id1);
         when(sprite1.getActorMetadata()).thenReturn(mockMetadata);
+        when(sprite1.getDecls()).thenReturn(emptyDecls);
 
         ActorDefinition sprite2 = mock(ActorDefinition.class);
         when(sprite2.isStage()).thenReturn(false);
@@ -304,6 +316,7 @@ public class GoboscriptProjectExporterTest implements JsonTest {
         when(id2.getName()).thenReturn(name2);
         when(sprite2.getIdent()).thenReturn(id2);
         when(sprite2.getActorMetadata()).thenReturn(mockMetadata);
+        when(sprite2.getDecls()).thenReturn(emptyDecls);
 
         when(actorList.getDefinitions()).thenReturn(Arrays.asList(stage, sprite1, sprite2));
 
