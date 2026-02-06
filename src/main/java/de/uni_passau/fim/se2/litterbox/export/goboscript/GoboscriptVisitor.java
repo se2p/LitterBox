@@ -2082,7 +2082,6 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
                 }
                 emitNoSpace(".");
                 emitNoSpace(attrName);
-                emitNoSpace("()");
             }
             return;
         }

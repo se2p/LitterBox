@@ -731,8 +731,66 @@ public class GoboscriptVisitorTest implements JsonTest {
         say.accept(visitor);
         String result = visitor.getOutput();
 
-        // Goboscript supports cross-sprite attribute access with function call syntax
-        assertThat(result).contains("say OtherSprite.x_position();");
+        // Goboscript supports cross-sprite attribute access with dot syntax (no parentheses)
+        assertThat(result).contains("say OtherSprite.x_position;");
+    }
+
+    @Test
+    public void testCrossSpriteAttributeCostumeNumber() {
+        NoBlockMetadata meta = new NoBlockMetadata();
+
+        // say ([costume #] of [OtherSprite])
+        AttributeOf attrOf = new AttributeOf(
+                new AttributeFromFixed(
+                        new FixedAttribute(FixedAttribute.FixedAttributeType.COSTUME_NUMBER.getType())
+                ),
+                new WithExpr(new StringLiteral("OtherSprite"), meta),
+                meta
+        );
+        Say say = new Say(attrOf, meta);
+
+        GoboscriptVisitor visitor = new GoboscriptVisitor();
+        say.accept(visitor);
+        String result = visitor.getOutput();
+
+        assertThat(result).contains("say OtherSprite.costume_number;");
+    }
+
+    @Test
+    public void testLocalAttributeAccess() {
+        NoBlockMetadata meta = new NoBlockMetadata();
+
+        // say ([x position] of [myself])
+        AttributeOf attrOf = new AttributeOf(
+                new AttributeFromFixed(
+                        new FixedAttribute(FixedAttribute.FixedAttributeType.X_POSITION.getType())
+                ),
+                new WithExpr(new StringLiteral("Sprite1"), meta), // current sprite
+                meta
+        );
+        Say say = new Say(attrOf, meta);
+
+        GoboscriptVisitor visitor = new GoboscriptVisitor();
+        ActorMetadata actorMeta = new ActorMetadata(
+                new CommentMetadataList(new ArrayList<>()),
+                0,
+                new ImageMetadataList(new ArrayList<>()),
+                new SoundMetadataList(new ArrayList<>())
+        );
+        ActorDefinition actor = new ActorDefinition(
+                ActorType.getSprite(),
+                new StrId("Sprite1"),
+                new DeclarationStmtList(new ArrayList<>()),
+                new SetStmtList(new ArrayList<>()),
+                new ProcedureDefinitionList(new ArrayList<>()),
+                new ScriptList(new ArrayList<>()),
+                actorMeta);
+        visitor.setCurrentActor(actor);
+        say.accept(visitor);
+        String result = visitor.getOutput();
+
+        // Local access should still use parentheses
+        assertThat(result).contains("say x_position();");
     }
 
     @Test
