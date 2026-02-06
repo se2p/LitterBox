@@ -94,7 +94,8 @@ public class GoboscriptProjectExporter extends ProjectExporter {
         clearErrors();
 
         // Identify variables/lists accessed across sprites and promote them to global (Stage)
-        promoteSharedVariablesToGlobal(program);
+        // This returns a NEW program instance to preserve AST immutability.
+        Program exportedProgram = promoteSharedVariablesToGlobal(program);
 
         // Create output directory
         Files.createDirectories(outputDir);
@@ -111,7 +112,7 @@ public class GoboscriptProjectExporter extends ProjectExporter {
         // Collect escaped sprite names for collision detection
         // We also include "Stage" as it's a special global object in Goboscript
         spriteNames.add("Stage");
-        for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
+        for (ActorDefinition actor : exportedProgram.getActorDefinitionList().getDefinitions()) {
             if (!actor.isStage()) {
                 spriteNames.add(GoboscriptSanitizer.escapeIdentifier(actor.getIdent().getName()));
             }
@@ -119,18 +120,18 @@ public class GoboscriptProjectExporter extends ProjectExporter {
 
         // Export Stage first to collect global variables/lists
         ActorDefinition stage = null;
-        for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
+        for (ActorDefinition actor : exportedProgram.getActorDefinitionList().getDefinitions()) {
             if (actor.isStage()) {
                 stage = actor;
-                exportActor(actor, program, outputDir);
+                exportActor(actor, exportedProgram, outputDir);
                 break;
             }
         }
 
         // Export remaining actors (sprites), passing global variables/lists
-        for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
+        for (ActorDefinition actor : exportedProgram.getActorDefinitionList().getDefinitions()) {
             if (!actor.isStage()) {
-                exportActor(actor, program, outputDir);
+                exportActor(actor, exportedProgram, outputDir);
             }
         }
 
@@ -230,9 +231,10 @@ public class GoboscriptProjectExporter extends ProjectExporter {
      * and moves their declarations to the Stage actor, effectively making them global.
      * This is necessary because Goboscript does not support cross-sprite variable assignment.
      *
-     * @param program The program AST to modify
+     * @param program The program AST to analyze
+     * @return A new Program AST with promoted declarations
      */
-    private void promoteSharedVariablesToGlobal(Program program) {
+    private Program promoteSharedVariablesToGlobal(Program program) {
         Set<String> sharedVarNames = new HashSet<>();
         Set<String> sharedListNames = new HashSet<>();
 
@@ -287,65 +289,11 @@ public class GoboscriptProjectExporter extends ProjectExporter {
         });
 
         if (sharedVarNames.isEmpty() && sharedListNames.isEmpty()) {
-            return;
+            return program;
         }
 
-        // Find the Stage actor
-        ActorDefinition stage = program.getActorDefinitionList().getDefinitions().stream()
-                .filter(ActorDefinition::isStage)
-                .findFirst()
-                .orElse(null);
-
-        if (stage == null) {
-            return;
-        }
-
-        // For each shared name, find its declaration and move it to Stage
-        for (String name : sharedVarNames) {
-            moveDeclarationToStage(name, false, program, stage);
-        }
-        for (String name : sharedListNames) {
-            moveDeclarationToStage(name, true, program, stage);
-        }
-    }
-
-    private void moveDeclarationToStage(String name, boolean isList, Program program, ActorDefinition stage) {
-        // Check if already declared in Stage
-        if (isDeclaredIn(name, isList, stage)) {
-            return;
-        }
-
-        // Find the declaration in other actors
-        for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
-            if (actor.isStage()) {
-                continue;
-            }
-
-            List<DeclarationStmt> decls = actor.getDecls().getDeclarationStmts();
-            for (int i = 0; i < decls.size(); i++) {
-                DeclarationStmt stmt = decls.get(i);
-                if (stmt instanceof DeclarationIdentAsTypeStmt identDecl) {
-                    if (identDecl.getIdent().getName().getName().equals(name)) {
-                        // Found it! Remove from current actor and add to Stage
-                        decls.remove(i);
-                        stage.getDecls().getDeclarationStmts().add(identDecl);
-                        log.info("Promoted " + (isList ? "list" : "variable") + " '" + name
-                                + "' from sprite '" + actor.getIdent().getName() + "' to Stage");
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
-    private boolean isDeclaredIn(String name, boolean isList, ActorDefinition actor) {
-        for (DeclarationStmt stmt : actor.getDecls().getDeclarationStmts()) {
-            if (stmt instanceof DeclarationIdentAsTypeStmt identDecl) {
-                if (identDecl.getIdent().getName().getName().equals(name)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        // Use the visitor to create a new program with promoted declarations
+        GoboscriptPromotionVisitor promotionVisitor = new GoboscriptPromotionVisitor(sharedVarNames, sharedListNames);
+        return promotionVisitor.visit(program);
     }
 }
