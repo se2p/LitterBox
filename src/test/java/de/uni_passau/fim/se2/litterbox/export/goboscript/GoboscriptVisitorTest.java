@@ -278,8 +278,8 @@ public class GoboscriptVisitorTest implements JsonTest {
         assertThat(result).contains("atan(1)");
         assertThat(result).contains("ln(1)");
         assertThat(result).contains("log(10)");
-        assertThat(result).contains("exp(1)");
-        assertThat(result).contains("pow10(1)");
+        assertThat(result).contains("antiln(1)");
+        assertThat(result).contains("antilog(1)");
     }
 
     @Test

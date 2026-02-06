@@ -1971,8 +1971,8 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
             case ATAN -> "atan";
             case LN -> "ln";
             case LOG -> "log";
-            case POWE -> "exp";
-            case POW10 -> "pow10";
+            case POWE -> "antiln";
+            case POW10 -> "antilog";
             default -> type.getFunction();
         };
         emitNoSpace(func + "(");
