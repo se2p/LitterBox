@@ -29,6 +29,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Fi
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.Tempo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
@@ -39,14 +40,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.astlists.SoundMetadata
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -727,7 +731,22 @@ public class GoboscriptVisitorTest implements JsonTest {
         String result = visitor.getOutput();
 
         // Goboscript supports cross-sprite attribute access
-        assertThat(result).contains("say \"OtherSprite\".x;");
+        assertThat(result).contains("say OtherSprite.x;");
+    }
+
+    @Test
+    public void testGlobalVariableQualificationStripping() {
+        NoBlockMetadata meta = new NoBlockMetadata();
+        Variable var = new Variable(new StrId("global_var"), meta);
+        Qualified qualified = new Qualified(new StrId("OtherSprite"), var);
+        SetVariableTo setVar = new SetVariableTo(qualified, new NumberLiteral(42), meta);
+
+        GoboscriptVisitor visitor = new GoboscriptVisitor();
+        visitor.setGlobalVariables(Set.of("global_var"));
+        setVar.accept(visitor);
+
+        // Qualification should be stripped for global variables
+        assertThat(visitor.getOutput()).isEqualTo("global_var = 42;\n");
     }
 
     // ==================== Special Number Values ====================
@@ -818,6 +837,44 @@ public class GoboscriptVisitorTest implements JsonTest {
 
         // Goboscript should escape non-ASCII characters
         assertThat(result).contains("Meine_Zuege += 1;");
+    }
+
+    @Test
+    public void testVariableNameCollisionWithSprite() throws ParsingException {
+        String code = """
+                when green flag clicked
+                change [fighter v] by (1)
+                """;
+        Program program = parseProgram(code);
+
+        // Test WITHOUT collision
+        String resultNoCollision = GoboscriptVisitor.of(program);
+        assertThat(resultNoCollision).contains("fighter += 1;");
+
+        // Test WITH collision
+        GoboscriptVisitor visitor = new GoboscriptVisitor();
+        visitor.setSpriteNames(Set.of("fighter"));
+        program.accept(visitor);
+        String resultCollision = visitor.getOutput();
+        assertThat(resultCollision).contains("fighter_v += 1;");
+    }
+
+    @Test
+    public void testVariableNameCollisionWithStage() throws ParsingException {
+        String code = """
+                when green flag clicked
+                change [Stage v] by (1)
+                """;
+        Program program = parseProgram(code);
+
+        // GoboscriptVisitor automatically includes "Stage" in its internal spriteNames set
+        // if passed from Exporter, but here we test manual setting.
+        GoboscriptVisitor visitor = new GoboscriptVisitor();
+        visitor.setSpriteNames(Set.of("Stage"));
+        program.accept(visitor);
+        String result = visitor.getOutput();
+
+        assertThat(result).contains("Stage_v += 1;");
     }
 
     // ==================== Numeric Costume/Backdrop Handling ====================
@@ -994,6 +1051,38 @@ public class GoboscriptVisitorTest implements JsonTest {
 
         // Visitor wraps in quotes
         assertThat(visitor.getOutput()).isEqualTo("\"Line1\\nLine2\\u0000End\"");
+    }
+
+    @Test
+    public void testProcedureNameCollisionWithGeneratedSuffix() throws ParsingException {
+        // Scratch allows multiple procedures with same name.
+        // Goboscript appends _1, _2 to disambiguate.
+        // If there is ALREADY a procedure named proc1_2, we get a collision if we are not careful.
+        String code = """
+                define proc1
+                say [first proc]
+
+                define proc1
+                say [second proc]
+
+                define proc1_2
+                say [original proc1_2]
+
+                when green flag clicked
+                proc1
+                proc1_2
+                """;
+        Program program = parseProgram(code);
+        String result = GoboscriptVisitor.of(program);
+
+        // Check that all procedures have UNIQUE names
+        // proc1 (1) -> proc1_1
+        // proc1 (2) -> proc1_3 (because proc1_2 is taken by the third procedure)
+        // proc1_2 -> proc1_2
+
+        assertThat(result).contains("nowarp proc proc1_1");
+        assertThat(result).contains("nowarp proc proc1_2");
+        assertThat(result).contains("nowarp proc proc1_3");
     }
 
     // ==================== Static of() Method ====================

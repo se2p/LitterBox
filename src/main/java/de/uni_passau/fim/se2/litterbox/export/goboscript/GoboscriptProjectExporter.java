@@ -20,15 +20,20 @@ package de.uni_passau.fim.se2.litterbox.export.goboscript;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationIdentAsTypeStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.export.ProjectExporter;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.zip.ZipFile;
 
@@ -62,6 +67,11 @@ public class GoboscriptProjectExporter extends ProjectExporter {
     private Set<String> globalLists = new HashSet<>();
 
     /**
+     * Escaped sprite names in the current project.
+     */
+    private Set<String> spriteNames = new HashSet<>();
+
+    /**
      * Tracks filenames used in the current export to prevent collisions.
      */
     private Set<String> usedFilenames = new HashSet<>();
@@ -78,6 +88,9 @@ public class GoboscriptProjectExporter extends ProjectExporter {
     public void export(Path sb3File, Program program, Path outputDir) throws IOException {
         clearErrors();
 
+        // Identify variables/lists accessed across sprites and promote them to global (Stage)
+        promoteSharedVariablesToGlobal(program);
+
         // Create output directory
         Files.createDirectories(outputDir);
 
@@ -88,6 +101,16 @@ public class GoboscriptProjectExporter extends ProjectExporter {
         globalVariables.clear();
         globalLists.clear();
         usedFilenames.clear();
+        spriteNames.clear();
+
+        // Collect escaped sprite names for collision detection
+        // We also include "Stage" as it's a special global object in Goboscript
+        spriteNames.add("Stage");
+        for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
+            if (!actor.isStage()) {
+                spriteNames.add(GoboscriptSanitizer.escapeIdentifier(actor.getIdent().getName()));
+            }
+        }
 
         // Export Stage first to collect global variables/lists
         ActorDefinition stage = null;
@@ -150,6 +173,7 @@ public class GoboscriptProjectExporter extends ProjectExporter {
         visitor.setCurrentActor(actor);
         visitor.setAssetPrefix(ASSETS_DIR + "/");
         visitor.setAvailableAssets(availableAssets);
+        visitor.setSpriteNames(spriteNames);
 
         // For sprites, pass global variables/lists from Stage
         if (!actor.isStage()) {
@@ -191,6 +215,107 @@ public class GoboscriptProjectExporter extends ProjectExporter {
         for (ImageMetadata costume : actor.getActorMetadata().getCostumes().getList()) {
             if (availableAssets == null || availableAssets.contains(costume.getMd5ext())) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Identifies variables and lists that are accessed across different sprites
+     * and moves their declarations to the Stage actor, effectively making them global.
+     * This is necessary because Goboscript does not support cross-sprite variable assignment.
+     *
+     * @param program The program AST to modify
+     */
+    private void promoteSharedVariablesToGlobal(Program program) {
+        Set<String> sharedVarNames = new HashSet<>();
+        Set<String> sharedListNames = new HashSet<>();
+
+        // Find all cross-sprite references
+        program.accept(new ScratchVisitor() {
+            private ActorDefinition currentActor;
+
+            @Override
+            public void visit(ActorDefinition node) {
+                currentActor = node;
+                visitChildren(node);
+                currentActor = null;
+            }
+
+            @Override
+            public void visit(Qualified node) {
+                String qualifier = node.getFirst().getName();
+                if (currentActor != null && !qualifier.equals(currentActor.getIdent().getName())
+                        && !"Stage".equals(qualifier) && !"_stage_".equals(qualifier)) {
+                    // This is a cross-sprite reference!
+                    if (node.getSecond() instanceof Variable var) {
+                        sharedVarNames.add(var.getName().getName());
+                    } else if (node.getSecond() instanceof ScratchList list) {
+                        sharedListNames.add(list.getName().getName());
+                    }
+                }
+                visitChildren(node);
+            }
+        });
+
+        if (sharedVarNames.isEmpty() && sharedListNames.isEmpty()) {
+            return;
+        }
+
+        // Find the Stage actor
+        ActorDefinition stage = program.getActorDefinitionList().getDefinitions().stream()
+                .filter(ActorDefinition::isStage)
+                .findFirst()
+                .orElse(null);
+
+        if (stage == null) {
+            return;
+        }
+
+        // For each shared name, find its declaration and move it to Stage
+        for (String name : sharedVarNames) {
+            moveDeclarationToStage(name, false, program, stage);
+        }
+        for (String name : sharedListNames) {
+            moveDeclarationToStage(name, true, program, stage);
+        }
+    }
+
+    private void moveDeclarationToStage(String name, boolean isList, Program program, ActorDefinition stage) {
+        // Check if already declared in Stage
+        if (isDeclaredIn(name, isList, stage)) {
+            return;
+        }
+
+        // Find the declaration in other actors
+        for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
+            if (actor.isStage()) {
+                continue;
+            }
+
+            List<DeclarationStmt> decls = actor.getDecls().getDeclarationStmts();
+            for (int i = 0; i < decls.size(); i++) {
+                DeclarationStmt stmt = decls.get(i);
+                if (stmt instanceof DeclarationIdentAsTypeStmt identDecl) {
+                    if (identDecl.getIdent().getName().getName().equals(name)) {
+                        // Found it! Remove from current actor and add to Stage
+                        decls.remove(i);
+                        stage.getDecls().getDeclarationStmts().add(identDecl);
+                        log.info("Promoted " + (isList ? "list" : "variable") + " '" + name
+                                + "' from sprite '" + actor.getIdent().getName() + "' to Stage");
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean isDeclaredIn(String name, boolean isList, ActorDefinition actor) {
+        for (DeclarationStmt stmt : actor.getDecls().getDeclarationStmts()) {
+            if (stmt instanceof DeclarationIdentAsTypeStmt identDecl) {
+                if (identDecl.getIdent().getName().getName().equals(name)) {
+                    return true;
+                }
             }
         }
         return false;

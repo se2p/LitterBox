@@ -125,6 +125,12 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     private final List<String> costumeNames = new ArrayList<>();
 
     /**
+     * Set of escaped sprite names in the project.
+     * Used to detect collisions with variable names and append a suffix when needed.
+     */
+    private Set<String> spriteNames = new HashSet<>();
+
+    /**
      * Set of escaped variable names declared in the Stage (global scope).
      * These are accessible from all sprites.
      */
@@ -173,6 +179,15 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     }
 
     /**
+     * Sets the escaped sprite names in the project for collision detection.
+     *
+     * @param spriteNames Set of escaped sprite names
+     */
+    public void setSpriteNames(Set<String> spriteNames) {
+        this.spriteNames = new HashSet<>(spriteNames);
+    }
+
+    /**
      * Sets the set of available asset filenames.
      * When set, only costumes and sounds whose md5ext matches an available asset will be emitted.
      *
@@ -200,6 +215,17 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
      */
     public void setGlobalLists(Set<String> lists) {
         this.globalLists = new HashSet<>(lists);
+    }
+
+    /**
+     * Checks if the given escaped variable or list name is global.
+     *
+     * @param escapedName The escaped name to check
+     * @param isList      true if checking for a list, false for a variable
+     * @return true if it is global
+     */
+    private boolean isGlobal(String escapedName, boolean isList) {
+        return isList ? globalLists.contains(escapedName) : globalVariables.contains(escapedName);
     }
 
     /**
@@ -326,35 +352,44 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     /**
      * Builds a mapping from procedure identifiers to unique Goboscript names.
-     * When multiple procedures have the same normalized name (after removing %s, %n, %b placeholders),
-     * a numeric suffix is appended to disambiguate them. Scratch allows creating multiple procedures
-     * with identical names and parameter counts, so a simple counter is used rather than parameter count.
+     * When multiple procedures have the same normalized and escaped name (after removing %s, %n, %b
+     * placeholders and sanitizing), a numeric suffix is appended to disambiguate them.
+     * Scratch allows creating multiple procedures with identical names and parameter counts,
+     * so a simple counter is used to ensure uniqueness.
      *
      * @param procedures List of procedure definitions in the current actor
      */
     private void buildProcedureNameMapping(List<ProcedureDefinition> procedures) {
-        // First pass: group procedures by their normalized name
+        // First pass: group procedures by their escaped normalized name
         Map<String, List<ProcedureDefinition>> nameGroups = new LinkedHashMap<>();
         for (ProcedureDefinition proc : procedures) {
-            String normalizedName = normalizeProcedureName(getRawProcedureName(proc));
-            nameGroups.computeIfAbsent(normalizedName, k -> new ArrayList<>()).add(proc);
+            String raw = getRawProcedureName(proc);
+            String normalized = normalizeProcedureName(raw);
+            String escaped = escapeProcedureName(normalized);
+            nameGroups.computeIfAbsent(escaped, k -> new ArrayList<>()).add(proc);
         }
+
+        Set<String> allBaseNames = nameGroups.keySet();
 
         // Second pass: assign unique names, appending counter suffix for collisions
         for (Map.Entry<String, List<ProcedureDefinition>> entry : nameGroups.entrySet()) {
             String baseName = entry.getKey();
             List<ProcedureDefinition> procs = entry.getValue();
 
-            if (procs.size() == 1) {
-                // No collision - use the base name
+            if (procs.size() == 1 && !definedProcedures.contains(baseName)) {
+                // No collision in this group, and baseName not taken by a previous group's disambiguation
                 ProcedureDefinition proc = procs.getFirst();
                 procedureNameMapping.put(proc, baseName);
                 definedProcedures.add(baseName);
             } else {
-                // Collision - append counter suffix to each (1, 2, 3, ...)
+                // Collision within group OR baseName taken by previous group
                 int counter = 1;
                 for (ProcedureDefinition proc : procs) {
                     String uniqueName = baseName + "_" + counter;
+                    while (definedProcedures.contains(uniqueName) || allBaseNames.contains(uniqueName)) {
+                        counter++;
+                        uniqueName = baseName + "_" + counter;
+                    }
                     procedureNameMapping.put(proc, uniqueName);
                     definedProcedures.add(uniqueName);
                     counter++;
@@ -433,7 +468,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
                     varName = var.getName().getName();
                 }
                 if (varName != null) {
-                    String escapedName = escapeIdentifier(varName);
+                    String escapedName = escapeVariableIdentifier(varName);
                     // Get the initial value as a string
                     GoboscriptVisitor tempVisitor = new GoboscriptVisitor();
                     tempVisitor.setProgram(this.program);
@@ -576,7 +611,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
             }
         } else {
             // Variable declarations
-            String escapedName = escapeIdentifier(rawName);
+            String escapedName = escapeVariableIdentifier(rawName);
             emitNoSpace("var ");
             emitNoSpace(escapedName);
             // Track declared variables for later validation
@@ -1297,11 +1332,11 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
      */
     private String getEscapedVariableName(Identifier identifier) {
         if (identifier instanceof Variable var) {
-            return escapeIdentifier(var.getName().getName());
+            return escapeVariableIdentifier(var.getName().getName());
         } else if (identifier instanceof Qualified qual) {
             // For qualified identifiers, get the variable part
             if (qual.getSecond() instanceof Variable var) {
-                return escapeIdentifier(var.getName().getName());
+                return escapeVariableIdentifier(var.getName().getName());
             }
         }
         return null;
@@ -1712,9 +1747,9 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         //                "nowarp proc" = no warp (normal execution with screen refresh)
         boolean isWarp = isProcedureWarp(node);
         if (isWarp) {
-            emitNoSpace("proc " + escapeProcedureName(procName));
+            emitNoSpace("proc " + procName);
         } else {
-            emitNoSpace("nowarp proc " + escapeProcedureName(procName));
+            emitNoSpace("nowarp proc " + procName);
         }
 
         List<ParameterDefinition> params = node.getParameterDefinitionList().getParameterDefinitions();
@@ -1754,12 +1789,12 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         // Check if procedure is defined in this actor
         if (!definedProcedures.contains(procName)) {
             emitNoSpace("# Unsupported procedure call (cross-sprite or undefined): "
-                    + escapeProcedureName(procName) + ";");
+                    + procName + ";");
             newLine();
             return;
         }
 
-        emitNoSpace(escapeProcedureName(procName));
+        emitNoSpace(procName);
         if (!node.getExpressions().getExpressions().isEmpty()) {
             emitNoSpace(" ");
             List<Expression> args = node.getExpressions().getExpressions();
@@ -1988,7 +2023,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
             if (isStageName(resolvedName)) {
                 emitNoSpace("Stage");
             } else {
-                emitNoSpace("\"" + escapeString(resolvedName) + "\"");
+                emitNoSpace(escapeIdentifier(resolvedName));
             }
         } else {
             node.getElementChoice().accept(this);
@@ -2006,7 +2041,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
             if (name.startsWith("[\"") && name.endsWith("\" v]")) {
                 name = name.substring(2, name.length() - 4);
             }
-            emitNoSpace(escapeIdentifier(name));
+            emitNoSpace(escapeVariableIdentifier(name));
         } else {
             attr.accept(this);
         }
@@ -2237,7 +2272,7 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     public void visit(Variable node) {
         // In Goboscript, variables are accessed by name directly.
         // Global variables (defined in stage.gs) don't need a Stage. prefix.
-        emitNoSpace(escapeIdentifier(node.getName().getName()));
+        emitNoSpace(escapeVariableIdentifier(node.getName().getName()));
     }
 
     @Override
@@ -2287,19 +2322,20 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         // - A sprite's own variables are accessed directly by name
         // - Stage variables are global and accessed directly by name
         // The "Sprite.varName" and "Stage.varName" syntax doesn't exist in goboscript.
-        if (isSelf || isStage) {
+        String name = node.getSecond().getName().getName();
+        String escapedName = isList ? escapeListIdentifier(name) : escapeVariableIdentifier(name);
+
+        if (isSelf || isStage || isGlobal(escapedName, isList)) {
             // Simply emit the second part without qualification
             // Use escapeListIdentifier for lists to add "_list" suffix and avoid name collisions
-            String name = node.getSecond().getName().getName();
-            emitNoSpace(isList ? escapeListIdentifier(name) : escapeIdentifier(name));
+            emitNoSpace(escapedName);
             return;
         }
 
         // For cross-sprite qualified access (accessing another sprite's variable), use the dot notation
-        String name = node.getSecond().getName().getName();
         emitNoSpace(escapeIdentifier(qualifier));
         emitNoSpace(".");
-        emitNoSpace(isList ? escapeListIdentifier(name) : escapeIdentifier(name));
+        emitNoSpace(escapedName);
     }
 
     // ---------------------------------------------------------------
@@ -2419,6 +2455,18 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     }
 
     /**
+     * Escapes a variable identifier name with a "_v" suffix only if it collides
+     * with a sprite name in the project.
+     */
+    private String escapeVariableIdentifier(String name) {
+        String escaped = escapeIdentifier(name);
+        if (spriteNames.contains(escaped)) {
+            return escaped + "_v";
+        }
+        return escaped;
+    }
+
+    /**
      * Escapes a list identifier name with a "_list" suffix to avoid name collisions
      * with variables of the same name in Scratch.
      */
@@ -2463,8 +2511,8 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         if (mappedName != null) {
             return mappedName;
         }
-        // Fallback to default normalization if not in mapping
-        return getProcedureName(node, AbstractExportVisitor::normalizeProcedureName);
+        // Fallback to default normalization and escaping if not in mapping
+        return escapeProcedureName(getProcedureName(node, AbstractExportVisitor::normalizeProcedureName));
     }
 
     /**
@@ -2494,8 +2542,8 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
                 return mappedName;
             }
         }
-        // Fallback to default normalization if not in mapping
-        return getProcedureCallName(node, AbstractExportVisitor::normalizeProcedureName);
+        // Fallback to default normalization and escaping if not in mapping
+        return escapeProcedureName(getProcedureCallName(node, AbstractExportVisitor::normalizeProcedureName));
     }
 
     /**
