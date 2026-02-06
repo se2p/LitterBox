@@ -636,20 +636,20 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         } else {
             // Variable declarations
             String escapedName = escapeVariableIdentifier(rawName);
-            
+
             // Only emit "var" if we are NOT inside a script or procedure
             // In Goboscript, local variables inside scripts are not explicitly declared with 'var'; they are just used.
             if (!inScript && !inProcedure) {
                 emitNoSpace("var ");
                 emitNoSpace(escapedName);
-                
+
                 // Track declared variables for later validation
                 if (currentActor != null && currentActor.isStage()) {
                     globalVariables.add(escapedName);
                 } else {
                     localVariables.add(escapedName);
                 }
-                
+
                 // Emit initial value if available
                 String initialValue = variableInitialValues.get(escapedName);
                 if (initialValue != null && !initialValue.isEmpty()) {
@@ -2495,12 +2495,12 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(ASTNode node) {
         if (node instanceof Expression) {
-           // Safe default for unhandled expressions to avoid breaking syntax
-           emitNoSpace("0");
+            // Safe default for unhandled expressions to avoid breaking syntax
+            emitNoSpace("0");
         } else {
-           // For statements, emit a comment on its own line
-           emitNoSpace("# Unhandled node: " + node.getClass().getSimpleName());
-           newLine();
+            // For statements, emit a comment on its own line
+            emitNoSpace("# Unhandled node: " + node.getClass().getSimpleName());
+            newLine();
         }
     }
 

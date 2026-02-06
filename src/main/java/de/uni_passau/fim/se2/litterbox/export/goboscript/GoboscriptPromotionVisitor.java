@@ -159,7 +159,7 @@ public class GoboscriptPromotionVisitor extends CloneVisitor {
                     continue;
                 }
             }
-            filtered.add((DeclarationStmt) apply(stmt));
+            filtered.add(apply(stmt));
         }
         return new DeclarationStmtList(Collections.unmodifiableList(filtered));
     }

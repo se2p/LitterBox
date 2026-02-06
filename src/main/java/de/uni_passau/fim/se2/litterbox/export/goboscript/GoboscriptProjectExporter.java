@@ -38,7 +38,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.zip.ZipFile;
 
@@ -74,12 +77,12 @@ public class GoboscriptProjectExporter extends ProjectExporter {
     /**
      * Escaped sprite names in the current project.
      */
-    private Set<String> spriteNames = new HashSet<>();
+    private final Set<String> spriteNames = new HashSet<>();
 
     /**
      * Tracks filenames used in the current export to prevent collisions.
      */
-    private Set<String> usedFilenames = new HashSet<>();
+    private final Set<String> usedFilenames = new HashSet<>();
 
     /**
      * Exports a program to a full Goboscript project directory.
