@@ -288,6 +288,42 @@ public class GoboscriptProjectExporter extends ProjectExporter {
             }
         });
 
+        // Identify all declared variables and lists per actor to find "ghost" variables.
+        Map<String, Set<String>> actorVars = new HashMap<>();
+        Map<String, Set<String>> actorLists = new HashMap<>();
+        for (ActorDefinition actor : program.getActorDefinitionList().getDefinitions()) {
+            String actorName = actor.getIdent().getName();
+            Set<String> vars = new HashSet<>();
+            Set<String> lists = new HashSet<>();
+            for (DeclarationStmt stmt : actor.getDecls().getDeclarationStmts()) {
+                if (stmt instanceof DeclarationIdentAsTypeStmt identDecl) {
+                    String name = identDecl.getIdent().getName().getName();
+                    if (identDecl.getType() instanceof de.uni_passau.fim.se2.litterbox.ast.model.type.ListType) {
+                        lists.add(name);
+                    } else {
+                        vars.add(name);
+                    }
+                }
+            }
+            actorVars.put(actorName, vars);
+            actorLists.put(actorName, lists);
+        }
+
+        // Promote ghost variables and lists to global by adding them to the shared sets.
+        // A variable is a ghost if it exists in the SymbolTable for an actor but is missing from its declarations.
+        for (var varInfo : program.getSymbolTable().getVariables().values()) {
+            Set<String> declared = actorVars.get(varInfo.actor());
+            if (declared == null || !declared.contains(varInfo.variableName())) {
+                sharedVarNames.add(varInfo.variableName());
+            }
+        }
+        for (var listInfo : program.getSymbolTable().getLists().values()) {
+            Set<String> declared = actorLists.get(listInfo.actor());
+            if (declared == null || !declared.contains(listInfo.variableName())) {
+                sharedListNames.add(listInfo.variableName());
+            }
+        }
+
         if (sharedVarNames.isEmpty() && sharedListNames.isEmpty()) {
             return program;
         }
