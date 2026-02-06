@@ -118,6 +118,7 @@ import java.util.function.Predicate;
 public class GoboscriptVisitor extends AbstractExportVisitor {
 
     private boolean inProcedure = false;
+    private boolean inScript = false;
     private final Set<String> currentProcedureParams = new HashSet<>();
     private String assetPrefix = "";
     private Set<String> availableAssets = null;
@@ -633,23 +634,30 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         } else {
             // Variable declarations
             String escapedName = escapeVariableIdentifier(rawName);
-            emitNoSpace("var ");
-            emitNoSpace(escapedName);
-            // Track declared variables for later validation
-            if (currentActor != null && currentActor.isStage()) {
-                globalVariables.add(escapedName);
-            } else {
-                localVariables.add(escapedName);
-            }
-            // Emit initial value if available
-            String initialValue = variableInitialValues.get(escapedName);
-            if (initialValue != null && !initialValue.isEmpty()) {
-                emitNoSpace(" = ");
-                emitNoSpace(initialValue);
+            
+            // Only emit "var" if we are NOT inside a script or procedure
+            // In Goboscript, local variables inside scripts are not explicitly declared with 'var'; they are just used.
+            if (!inScript && !inProcedure) {
+                emitNoSpace("var ");
+                emitNoSpace(escapedName);
+                
+                // Track declared variables for later validation
+                if (currentActor != null && currentActor.isStage()) {
+                    globalVariables.add(escapedName);
+                } else {
+                    localVariables.add(escapedName);
+                }
+                
+                // Emit initial value if available
+                String initialValue = variableInitialValues.get(escapedName);
+                if (initialValue != null && !initialValue.isEmpty()) {
+                    emitNoSpace(" = ");
+                    emitNoSpace(initialValue);
+                }
+                emitNoSpace(";");
+                newLine();
             }
         }
-        emitNoSpace(";");
-        newLine();
     }
 
     @Override
@@ -683,7 +691,13 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
         if (script.getEvent() instanceof Never) {
             return; // Skip loose blocks
         }
-        script.getEvent().accept(this);
+        boolean wasInScript = inScript;
+        inScript = true;
+        try {
+            script.getEvent().accept(this);
+        } finally {
+            inScript = wasInScript;
+        }
     }
 
     @Override
@@ -2478,8 +2492,14 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(ASTNode node) {
-        emitNoSpace("# Unhandled node: " + node.getClass().getSimpleName());
-        visitChildren(node);
+        if (node instanceof Expression) {
+           // Safe default for unhandled expressions to avoid breaking syntax
+           emitNoSpace("0");
+        } else {
+           // For statements, emit a comment on its own line
+           emitNoSpace("# Unhandled node: " + node.getClass().getSimpleName());
+           newLine();
+        }
     }
 
     // ---------------------------------------------------------------
