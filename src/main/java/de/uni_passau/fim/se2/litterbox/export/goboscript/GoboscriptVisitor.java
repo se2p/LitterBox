@@ -625,6 +625,8 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
             String escapedName = escapeListIdentifier(rawName);
             emitNoSpace("list ");
             emitNoSpace(escapedName);
+            emitNoSpace(";");
+            newLine();
             // Track declared lists for later validation
             if (currentActor != null && currentActor.isStage()) {
                 globalLists.add(escapedName);

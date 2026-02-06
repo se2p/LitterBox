@@ -41,8 +41,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.resources.ImageMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationIdentAsTypeStmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.declaration.DeclarationStmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.Say;
+import de.uni_passau.fim.se2.litterbox.ast.model.type.ListType;
+import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.scratchblocks.ScratchBlocksParser;
 import org.junit.jupiter.api.Test;
@@ -197,6 +201,31 @@ public class GoboscriptVisitorTest implements JsonTest {
 
         // In Goboscript, global variables are accessed by name directly
         assertThat(result).contains("Score += 1;");
+    }
+
+    @Test
+    public void testListDeclaration() {
+        NoBlockMetadata meta = new NoBlockMetadata();
+        DeclarationIdentAsTypeStmt list1 = new DeclarationIdentAsTypeStmt(
+                new ScratchList(new StrId("Warrior names"), meta),
+                new ListType()
+        );
+        DeclarationIdentAsTypeStmt list2 = new DeclarationIdentAsTypeStmt(
+                new ScratchList(new StrId("Mentors"), meta),
+                new ListType()
+        );
+
+        List<DeclarationStmt> decls = new ArrayList<>();
+        decls.add(list1);
+        decls.add(list2);
+
+        DeclarationStmtList declList = new DeclarationStmtList(decls);
+
+        String result = GoboscriptVisitor.of(declList);
+
+        // Expected output should have distinct lines for lists with semicolons
+        assertThat(result).contains("list Warrior_names_list;");
+        assertThat(result).contains("list Mentors_list;");
     }
 
     // ==================== Arithmetic Expressions ====================
