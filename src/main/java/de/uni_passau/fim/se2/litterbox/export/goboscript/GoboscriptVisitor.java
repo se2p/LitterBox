@@ -75,6 +75,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClo
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
@@ -1571,6 +1572,11 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
             }
             case null, default -> visitChildren(node); // Fallback
         }
+    }
+
+    @Override
+    public void visit(FromNumber node) {
+        node.getValue().accept(this);
     }
 
     private String getPenParamName(ColorParam param) {
