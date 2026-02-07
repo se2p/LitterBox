@@ -73,7 +73,10 @@ public class InterruptedLoopSensingTest implements FinderTest, JsonTest {
 
     @Test
     public void testInterruptedLoopSensingWaitUntil() throws IOException, ParsingException {
-        assertThatFinderReports(1, new InterruptedLoopSensing(), "./src/test/fixtures/bugs/interruptedWaitUntil.json");
+        // This test has: forever { glide; wait until <touching> }
+        // The glide does NOT interrupt the sensing inside wait-until because wait-until
+        // continuously checks its condition until true - blocking statements before it don't matter.
+        assertThatFinderReports(0, new InterruptedLoopSensing(), "./src/test/fixtures/bugs/interruptedWaitUntil.json");
     }
 
     @Test
@@ -93,12 +96,14 @@ public class InterruptedLoopSensingTest implements FinderTest, JsonTest {
 
     @Test
     public void testWaitSecondsWithTouching() throws IOException, ParsingException {
-        String blocks = "when green flag clicked\n" +
-                "forever\n" +
-                "if <touching (mouse-pointer v) ?> then\n" +
-                "wait (1) seconds\n" +
-                "end\n" +
-                "end\n";
+        String blocks = """
+                when green flag clicked
+                forever
+                  if <touching (mouse-pointer v) ?> then
+                    wait (1) seconds
+                  end
+                end
+                """;
         Program program = parseScratchBlocks(blocks);
         InterruptedLoopSensing finder = new InterruptedLoopSensing();
         Set<Issue> reports = finder.check(program);
@@ -107,18 +112,50 @@ public class InterruptedLoopSensingTest implements FinderTest, JsonTest {
 
     @Test
     public void testWaitSecondsWithTouchingIfElse() throws IOException, ParsingException {
-        String blocks = "when green flag clicked\n" +
-                "forever\n" +
-                "if <touching (mouse-pointer v) ?> then\n" +
-                "wait (1) seconds\n" +
-                "else\n" +
-                "wait (1) seconds\n" +
-                "end\n" +
-                "end\n";
+        String blocks = """
+                when green flag clicked
+                forever
+                  if <touching (mouse-pointer v) ?> then
+                    wait (1) seconds
+                  else
+                    wait (1) seconds
+                  end
+                end
+                """;
         Program program = parseScratchBlocks(blocks);
         InterruptedLoopSensing finder = new InterruptedLoopSensing();
         Set<Issue> reports = finder.check(program);
         // It should report 2 issues, one for each branch.
         Assertions.assertEquals(2, reports.size());
+    }
+
+    @Test
+    public void testSayForSecsAndWaitUntilBothInterruptIfSensing() throws IOException, ParsingException {
+        // User scenario: forever { if <touching> { say for secs; wait until <true> } }
+        // Both say for secs AND wait until should be reported as interrupting the if-statement
+        String blocks = """
+                when green flag clicked
+                forever
+                  if <touching (mouse-pointer v) ?> then
+                    say [Hello!] for (2) seconds
+                    wait until <not <touching (mouse-pointer v) ?>>
+                  end
+                end
+                """;
+        Program program = parseScratchBlocks(blocks);
+        InterruptedLoopSensing finder = new InterruptedLoopSensing();
+        Set<Issue> reports = finder.check(program);
+        // Both say for secs and wait until should interrupt the if-statement's sensing
+        Assertions.assertEquals(2, reports.size());
+        List<Issue> issueList = new ArrayList<>(reports);
+        // Verify one issue is for say_seconds and one is for wait_until
+        long sayCount = issueList.stream()
+                .filter(i -> i.getHintText(translator).contains(translator.getInfo("say_seconds")))
+                .count();
+        long waitUntilCount = issueList.stream()
+                .filter(i -> i.getHintText(translator).contains(translator.getInfo("wait_until")))
+                .count();
+        Assertions.assertEquals(1, sayCount, "Expected one issue for say_seconds");
+        Assertions.assertEquals(1, waitUntilCount, "Expected one issue for wait_until");
     }
 }
