@@ -63,6 +63,7 @@ public class IssueTool {
             registerBugFinder(new ImmediateStopAfterSayThink(), bugFinders);
             registerBugFinder(new InappropriateHandlerDeleteClone(), bugFinders);
             registerBugFinder(new InterruptedLoopSensing(), bugFinders);
+            registerBugFinder(new InvalidActorBlocks(), bugFinders);
             registerBugFinder(new InvalidNumberString(), bugFinders);
             registerBugFinder(new KeySetPosition(), bugFinders);
             registerBugFinder(new MessageAsLiteral(), bugFinders);
@@ -222,7 +223,7 @@ public class IssueTool {
             registerSmellFinder(new UnusedCustomBlock(), smellFinders);
             registerSmellFinder(new UnusedParameter(), smellFinders);
             registerSmellFinder(new UnusedVariable(), smellFinders);
-            registerSmellFinder(new UselessBlocks(), smellFinders);
+
             registerSmellFinder(new UselessWait(), smellFinders);
             registerSmellFinder(new VariableInitializationRace(), smellFinders);
         }
