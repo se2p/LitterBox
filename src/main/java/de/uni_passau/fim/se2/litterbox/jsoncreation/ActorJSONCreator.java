@@ -23,6 +23,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.list.ExpressionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.BoolLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.CommentMetadata;
@@ -216,8 +217,12 @@ public class ActorJSONCreator {
         JSONStringCreator.createFieldValue(jsonString, NAME_KEY, soundMetadata.getName()).append(",");
         JSONStringCreator.createFieldValue(jsonString, DATA_FORMAT_KEY, soundMetadata.getDataFormat()).append(",");
         JSONStringCreator.createFieldValue(jsonString, RATE_KEY, soundMetadata.getRate()).append(",");
-        JSONStringCreator.createFieldValue(jsonString, SAMPLE_COUNT_KEY, soundMetadata.getSampleCount()).append(",");
-        JSONStringCreator.createFieldValue(jsonString, MD5EXT_KEY, soundMetadata.getMd5ext());
+        // this indicates we received a broken JSON originally that was already missing this key
+        // the Scratch VM happily loads a broken JSON if the key is missing, but fails if the value is set to `null`
+        if (soundMetadata.getMd5ext() != null) {
+            JSONStringCreator.createFieldValue(jsonString, MD5EXT_KEY, soundMetadata.getMd5ext()).append(",");
+        }
+        JSONStringCreator.createFieldValue(jsonString, SAMPLE_COUNT_KEY, soundMetadata.getSampleCount());
         jsonString.append("}");
         return jsonString;
     }
@@ -229,7 +234,11 @@ public class ActorJSONCreator {
         if (imageMetadata.getBitmapResolution() != null) {
             JSONStringCreator.createFieldValue(jsonString, BITMAP_KEY, imageMetadata.getBitmapResolution()).append(",");
         }
-        JSONStringCreator.createFieldValue(jsonString, MD5EXT_KEY, imageMetadata.getMd5ext()).append(",");
+        // this indicates we received a broken JSON originally that was already missing this key
+        // the Scratch VM happily loads a broken JSON if the key is missing, but fails if the value is set to `null`
+        if (imageMetadata.getMd5ext() != null) {
+            JSONStringCreator.createFieldValue(jsonString, MD5EXT_KEY, imageMetadata.getMd5ext()).append(",");
+        }
         JSONStringCreator.createFieldValue(jsonString, DATA_FORMAT_KEY, imageMetadata.getDataFormat()).append(",");
         JSONStringCreator.createFieldValue(jsonString, ROTATIONX_KEY, imageMetadata.getRotationCenterX()).append(",");
         JSONStringCreator.createFieldValue(jsonString, ROTATIONY_KEY, imageMetadata.getRotationCenterY());
@@ -256,6 +265,12 @@ public class ActorJSONCreator {
                     .append(BlockJsonCreatorHelper.escape(variableName))
                     .append("\", ")
                     .append(numberLiteral.getValue())
+                    .append("]");
+        } else if (expr instanceof BoolLiteral boolLiteral) {
+            jsonString.append("\"")
+                    .append(BlockJsonCreatorHelper.escape(variableName))
+                    .append("\", ")
+                    .append(boolLiteral.getValue())
                     .append("]");
         }
         return jsonString;

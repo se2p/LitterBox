@@ -26,7 +26,9 @@ import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorMetadat
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorParamMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.monitor.MonitorSliderMetadata;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 
@@ -55,7 +57,10 @@ public class JSONStringCreator {
 
     private static StringBuilder createExtensionJSONString(StringBuilder jsonString, Program program) {
         createField(jsonString, EXTENSIONS_KEY).append("[");
-        List<String> ext = program.getProgramMetadata().getExtension().getExtensionNames();
+        List<String> ext = Objects.requireNonNullElse(
+                program.getProgramMetadata().getExtension().getExtensionNames(),
+                Collections.emptyList()
+        );
         for (int i = 0; i < ext.size() - 1; i++) {
             jsonString.append("\"").append(ext.get(i)).append("\"").append(",");
         }
