@@ -87,6 +87,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.export.AbstractExportVisitor;
 import de.uni_passau.fim.se2.litterbox.export.ScratchKeyCode;
@@ -117,7 +118,7 @@ import java.util.function.Predicate;
  *
  * @see <a href="https://aspizu.github.io/goboscript/">Goboscript Documentation</a>
  */
-public class GoboscriptVisitor extends AbstractExportVisitor {
+public class GoboscriptVisitor extends AbstractExportVisitor implements PenExtensionVisitor {
 
     private boolean inProcedure = false;
     private boolean inScript = false;
@@ -1521,58 +1522,69 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     // ---------------------------------------------------------------
 
     @Override
-    public void visit(PenBlock node) {
-        switch (node) {
-            case PenClearStmt penClearStmt -> {
-                emitNoSpace("erase_all;");
-                newLine();
-            }
-            case PenStampStmt penStampStmt -> {
-                emitNoSpace("stamp;");
-                newLine();
-            }
-            case PenDownStmt penDownStmt -> {
-                emitNoSpace("pen_down;");
-                newLine();
-            }
-            case PenUpStmt penUpStmt -> {
-                emitNoSpace("pen_up;");
-                newLine();
-            }
-            case SetPenColorToColorStmt stmt -> {
-                emitNoSpace("set_pen_color(");
-                stmt.getColorExpr().accept(this);
-                emitNoSpace(");");
-                newLine();
-            }
-            case ChangePenSizeBy stmt -> {
-                emitNoSpace("change_pen_size(");
-                stmt.getValue().accept(this);
-                emitNoSpace(");");
-                newLine();
-            }
-            case SetPenSizeTo stmt -> {
-                emitNoSpace("set_pen_size(");
-                stmt.getValue().accept(this);
-                emitNoSpace(");");
-                newLine();
-            }
-            case ChangePenColorParamBy stmt -> {
-                String param = getPenParamName(stmt.getParam());
-                emitNoSpace("change_pen_" + param + "(");
-                stmt.getValue().accept(this);
-                emitNoSpace(");");
-                newLine();
-            }
-            case SetPenColorParamTo stmt -> {
-                String param = getPenParamName(stmt.getParam());
-                emitNoSpace("set_pen_" + param + "(");
-                stmt.getValue().accept(this);
-                emitNoSpace(");");
-                newLine();
-            }
-            case null, default -> visitChildren(node); // Fallback
-        }
+    public void visit(PenDownStmt node) {
+        emitNoSpace("pen_down;");
+        newLine();
+    }
+
+    @Override
+    public void visit(PenUpStmt node) {
+        emitNoSpace("pen_up;");
+        newLine();
+    }
+
+    @Override
+    public void visit(PenClearStmt node) {
+        emitNoSpace("erase_all;");
+        newLine();
+    }
+
+    @Override
+    public void visit(SetPenColorToColorStmt node) {
+        emitNoSpace("set_pen_color(");
+        node.getColorExpr().accept(this);
+        emitNoSpace(");");
+        newLine();
+    }
+
+    @Override
+    public void visit(PenStampStmt node) {
+        emitNoSpace("stamp;");
+        newLine();
+    }
+
+    @Override
+    public void visit(ChangePenColorParamBy node) {
+        String param = getPenParamName(node.getParam());
+        emitNoSpace("change_pen_" + param + "(");
+        node.getValue().accept(this);
+        emitNoSpace(");");
+        newLine();
+    }
+
+    @Override
+    public void visit(SetPenColorParamTo node) {
+        String param = getPenParamName(node.getParam());
+        emitNoSpace("set_pen_" + param + "(");
+        node.getValue().accept(this);
+        emitNoSpace(");");
+        newLine();
+    }
+
+    @Override
+    public void visit(SetPenSizeTo node) {
+        emitNoSpace("set_pen_size(");
+        node.getValue().accept(this);
+        emitNoSpace(");");
+        newLine();
+    }
+
+    @Override
+    public void visit(ChangePenSizeBy node) {
+        emitNoSpace("change_pen_size(");
+        node.getValue().accept(this);
+        emitNoSpace(");");
+        newLine();
     }
 
     @Override
