@@ -74,6 +74,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.ast.model.timecomp.TimeComp;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
@@ -2141,7 +2142,11 @@ public class GoboscriptVisitor extends AbstractExportVisitor {
     @Override
     public void visit(Current node) {
         emitNoSpace("current_");
-        emitNoSpace(node.getTimeComp().getTypeName());
+        if (TimeComp.TimeCompType.DAY_OF_WEEK.equals(node.getTimeComp().getType())) {
+            emitNoSpace("day_of_week");
+        } else {
+            emitNoSpace(node.getTimeComp().getTypeName());
+        }
         emitNoSpace("()");
     }
 
