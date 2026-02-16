@@ -36,8 +36,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.At
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.FixedAttribute;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.MusicBlock;
-import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.Tempo;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.pen.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.texttospeech.TextToSpeechBlock;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.*;
@@ -87,6 +86,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.MusicExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.PenExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.export.AbstractExportVisitor;
@@ -118,7 +118,7 @@ import java.util.function.Predicate;
  *
  * @see <a href="https://aspizu.github.io/goboscript/">Goboscript Documentation</a>
  */
-public class GoboscriptVisitor extends AbstractExportVisitor implements PenExtensionVisitor {
+public class GoboscriptVisitor extends AbstractExportVisitor implements MusicExtensionVisitor, PenExtensionVisitor {
 
     private boolean inProcedure = false;
     private boolean inScript = false;
@@ -724,20 +724,6 @@ public class GoboscriptVisitor extends AbstractExportVisitor implements PenExten
     }
 
     /**
-     * Handles music extension blocks (play note, set tempo, etc.).
-     * Goboscript does not support the music extension, so we skip these blocks entirely.
-     * This prevents invalid output from the block's children being visited.
-     */
-
-    @Override
-    public void visit(MusicBlock node) {
-        if (node instanceof Tempo) {
-            emitNoSpace("60");
-        }
-        // Other Music blocks are not supported in goboscript - skip them
-    }
-
-    /**
      * Handles text-to-speech extension blocks (speak, set voice, set language).
      * Goboscript does not support the text-to-speech extension, so we skip these blocks entirely.
      * This prevents invalid output from the block's children being visited.
@@ -746,6 +732,42 @@ public class GoboscriptVisitor extends AbstractExportVisitor implements PenExten
     public void visit(TextToSpeechBlock node) {
         // Text-to-speech extension blocks are not supported in goboscript - skip them
     }
+
+    // ---------------------------------------------------------------
+    // Music Extension
+    // ---------------------------------------------------------------
+
+    @Override
+    public void visit(RestForBeats node) {
+        emitNoSpace("rest (");
+        node.getBeats().accept(this);
+        emitNoSpace(");");
+        newLine();
+    }
+
+    @Override
+    public void visit(SetTempoTo node) {
+        emitNoSpace("set_tempo (");
+        node.getTempo().accept(this);
+        emitNoSpace(");");
+        newLine();
+    }
+
+    @Override
+    public void visit(ChangeTempoBy node) {
+        emitNoSpace("change_tempo (");
+        node.getTempo().accept(this);
+        emitNoSpace(");");
+        newLine();
+    }
+
+    @Override
+    public void visit(Tempo node) {
+        // default value in Scratch, fallback
+        emitNoSpace("60");
+    }
+
+    // other music blocks not supported by goboscript
 
     // ---------------------------------------------------------------
     // Event Handlers (Hat Blocks)
