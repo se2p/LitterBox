@@ -19,8 +19,12 @@
 package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
+import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect.GraphicEffectType;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
@@ -29,12 +33,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ResetTimer;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.ControlStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritelook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.*;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.QuantumExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.VideoSensingExtensionVisitor;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>, VideoSensingExtensionVisitor {
+public class AttributeDefinitionVisitor
+        implements DefinableCollector<Attribute>, VideoSensingExtensionVisitor, QuantumExtensionVisitor {
 
     private final Set<Attribute> definitions = new LinkedHashSet<>();
 
@@ -326,5 +332,65 @@ public class AttributeDefinitionVisitor implements DefinableCollector<Attribute>
     @Override
     public void visit(SetVideoTransparency node) {
         definitions.add(Attribute.videoTransparencyOf(getActorSprite(currentActor).getIdent()));
+    }
+
+    //---------------------------------------------------------------
+    // Quantum extension
+
+    @Override
+    public void visit(QuantumSuperpositionPossibilities node) {
+        quantumDefinition(node.getAttribute());
+    }
+
+    @Override
+    public void visit(QuantumSuperpositionList node) {
+        quantumDefinition(node.getAttribute());
+    }
+
+    @Override
+    public void visit(QuantumSuperpositionPossibilitiesList node) {
+        quantumDefinition(node.getAttribute());
+    }
+
+    @Override
+    public void visit(QuantumEntanglementPossibilities node) {
+        quantumDefinition(node.getAttribute());
+        if (node.getTarget() instanceof StringLiteral target) {
+            quantumDefinition(node.getAttribute(), new StrId(target));
+        }
+    }
+
+    @Override
+    public void visit(QuantumEntanglementList node) {
+        quantumDefinition(node.getAttribute());
+        if (node.getTarget() instanceof StringLiteral target) {
+            quantumDefinition(node.getAttribute(), new StrId(target));
+        }
+    }
+
+    @Override
+    public void visit(QuantumEntanglementPossibilitiesList node) {
+        quantumDefinition(node.getAttribute());
+        if (node.getTarget() instanceof StringLiteral target) {
+            quantumDefinition(node.getAttribute(), new StrId(target));
+        }
+    }
+
+    private void quantumDefinition(final FixedQuantumAttribute attribute) {
+        final LocalIdentifier actor = currentActor.getIdent();
+        quantumDefinition(attribute, actor);
+    }
+
+    private void quantumDefinition(final FixedQuantumAttribute attribute, final LocalIdentifier actor) {
+        switch (attribute.getType()) {
+            case POSITION -> {
+                definitions.add(Attribute.positionXOf(actor));
+                definitions.add(Attribute.positionYOf(actor));
+            }
+            case SIZE -> definitions.add(Attribute.sizeOf(actor));
+            case DIRECTION -> definitions.add(Attribute.rotationOf(actor));
+            case COLOR -> definitions.add(Attribute.graphicEffectOf(actor, GraphicEffectType.COLOR.getToken()));
+            case COSTUME -> definitions.add(Attribute.costumeOf(actor));
+        }
     }
 }

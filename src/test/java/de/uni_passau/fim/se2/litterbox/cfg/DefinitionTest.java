@@ -20,7 +20,10 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.identifier.StrId;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.GraphicEffect;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.ShowVariable;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.ChangeVariableBy;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
@@ -31,9 +34,12 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.MoveStep
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 public class DefinitionTest implements JsonTest {
 
@@ -145,6 +151,58 @@ public class DefinitionTest implements JsonTest {
         Defineable def = definitions.iterator().next().getDefinable();
         assertThat(def).isInstanceOf(Parameter.class);
         assertThat(((Parameter) def).getIdentifier().getName()).isEqualTo("height");
+    }
+
+    @Test
+    void testQuantumDefinitions() throws ParsingException {
+        final ControlFlowGraph cfg = getCFG("src/test/fixtures/dataflow/quantumdef.json");
+        List<CFGNode> nodes = cfg.getNodes().stream()
+                .filter(n -> n.getASTNode() instanceof QuantumExtensionStmt)
+                .toList();
+
+        assertAll(nodes.stream().map(n -> () -> checkQuantumDefinitions(n)));
+    }
+
+    private void checkQuantumDefinitions(final CFGNode node) {
+        final Set<Definition> definitions = node.getDefinitions();
+        assertAll(definitions.stream().map(def -> () -> assertThat(def.getDefinable()).isInstanceOf(Attribute.class)));
+
+        final Set<Attribute> defineables = node.getDefinitions().stream()
+                .map(Definition::getDefinable)
+                .map(def -> (Attribute) def)
+                .collect(Collectors.toSet());
+
+        final StrId self = new StrId("Cat");
+        final StrId other = new StrId("Sprite2");
+
+        // in the fixture each block type uses a different kind of attribute
+        switch (node.getASTNode()) {
+            case QuantumSuperpositionPossibilities q -> assertThat(defineables).containsExactly(
+                    Attribute.positionXOf(self),
+                    Attribute.positionYOf(self)
+            );
+            case QuantumSuperpositionList q -> assertThat(defineables).containsExactly(
+                    Attribute.sizeOf(self)
+            );
+            case QuantumSuperpositionPossibilitiesList q -> assertThat(defineables).containsExactly(
+                    Attribute.rotationOf(self)
+            );
+            case QuantumEntanglementPossibilities q -> assertThat(defineables).containsExactly(
+                    Attribute.graphicEffectOf(self, GraphicEffect.GraphicEffectType.COLOR.getToken()),
+                    Attribute.graphicEffectOf(other, GraphicEffect.GraphicEffectType.COLOR.getToken())
+            );
+            case QuantumEntanglementList q -> assertThat(defineables).containsExactly(
+                    Attribute.costumeOf(self),
+                    Attribute.costumeOf(other)
+            );
+            case QuantumEntanglementPossibilitiesList q -> assertThat(defineables).containsExactly(
+                    Attribute.positionXOf(self),
+                    Attribute.positionYOf(self),
+                    Attribute.positionXOf(other),
+                    Attribute.positionYOf(other)
+            );
+            default -> throw new IllegalStateException("Unexpected value: " + node.getASTNode());
+        }
     }
 
     private Set<Variable> getDefinitions(CFGNode node) {
