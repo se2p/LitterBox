@@ -27,7 +27,7 @@ produce an executable jar-file, run the following command:
 mvn package
 ```
 
-This will produce `target/Litterbox-1.11.full.jar`
+This will produce `target/Litterbox-1.12.full.jar`
 
 
 ## Using LitterBox
@@ -35,7 +35,7 @@ This will produce `target/Litterbox-1.11.full.jar`
 To see an overview of the command line options available in LitterBox type:
 
 ```bash
-java -jar Litterbox-1.11.full.jar --help
+java -jar Litterbox-1.12.full.jar --help
 ```
 
 ### Basic usage
@@ -44,7 +44,7 @@ LitterBox parses the JSON file of a Scratch project, which contains
 its source code. Given such a JSON file, LitterBox is invoked as follows:
 
 ```bash
-java -jar Litterbox-1.11.full.jar check --path <path/to/project.json>
+java -jar Litterbox-1.12.full.jar check --path <path/to/project.json>
 ```
 
 As a result, LitterBox will report any occurrences of bug patterns or
@@ -57,7 +57,7 @@ If you want to check a specific project given its ID (which you can
 find in the URL of the project), you can use the following command:
 
 ```bash
-java -jar Litterbox-1.11.full.jar check --project-id <project-id> --path <path/to/store/downloaded/project>
+java -jar Litterbox-1.12.full.jar check --project-id <project-id> --path <path/to/store/downloaded/project>
 ```
 
 When invoked this way, LitterBox will retrieve the JSON file
@@ -73,7 +73,7 @@ project IDs to check in a text file (one project ID per line) and
 invoke LitterBox as follows:
 
 ```bash
-java -jar Litterbox-1.11.full.jar check --project-list <path/to/projectidlist.txt> --path <path/to/projects>
+java -jar Litterbox-1.12.full.jar check --project-list <path/to/projectidlist.txt> --path <path/to/projects>
 ```
 
 LitterBox will check the given path for the projects.
@@ -90,7 +90,7 @@ filename specified in order to decide whether to produce CSV or JSON
 output:
 
 ```bash
-java -jar Litterbox-1.11.full.jar check --path <path/to/project.json> --output <result.csv>
+java -jar Litterbox-1.12.full.jar check --path <path/to/project.json> --output <result.csv>
 ```
 
 The CSV file will contain a high-level summary of the number of
@@ -102,7 +102,7 @@ analyzed Scratch-project, where all occurrences of bug patterns are
 highlighted with comments.
 
 ```bash
-java -jar Litterbox-1.11.full.jar check --path <path/to/project.json> --annotate <results/>
+java -jar Litterbox-1.12.full.jar check --path <path/to/project.json> --annotate <results/>
 ```
 
 
@@ -118,7 +118,7 @@ comma-separated list of bug patterns, e.g.:
 
 
 ```bash
-java -jar Litterbox-1.11.full.jar \
+java -jar Litterbox-1.12.full.jar \
     check \
     --path <path/to/project.json> \
     --detectors endless_recursion,call_without_definition
@@ -127,7 +127,7 @@ java -jar Litterbox-1.11.full.jar \
 A full list of available bug checkers can be retrieved using:
 
 ```bash
-java -jar Litterbox-1.11.full.jar --help
+java -jar Litterbox-1.12.full.jar --help
 ```
 
 To select all bug patterns, you can also use the term `bugs` in the
@@ -139,7 +139,7 @@ list; to select all code smell checks use `smells`.
 The bug patterns can be reported per scripts and procedures instead of for the whole program. In this case, only the bug patterns that can be detected through intra-scripts and intra-procedures analysis are considered.
 
 ```bash
-java -jar Litterbox-1.11.full.jar check \
+java -jar Litterbox-1.12.full.jar check \
     --path <path/to/project.json> \
     --output <result.csv> \
     --detectors script-bugs \
@@ -164,7 +164,7 @@ LitterBox can produce statistics on code metrics of a project (e.g.,
 number of blocks, number of sprites, weighted method count):
 
 ```bash
-java -jar Litterbox-1.11.full.jar \
+java -jar Litterbox-1.12.full.jar \
     stats \
     --path <path/to/project.json> \
     --output <statsfile.csv>
@@ -176,7 +176,7 @@ java -jar Litterbox-1.11.full.jar \
 LitterBox can generate a Graphviz `.dot` file representing various graphs of the project, such as the Abstract Syntax Tree (AST) or Control Flow Graph (CFG).
 
 ```bash
-java -jar Litterbox-1.11.full.jar dot --path <path/to/project.json> --output <output.dot> [--graph <GraphType>]
+java -jar Litterbox-1.12.full.jar dot --path <path/to/project.json> --output <output.dot> [--graph <GraphType>]
 ```
 
 Available graph types:
@@ -195,7 +195,7 @@ Available graph types:
 LitterBox provides a dedicated `mine` command for bulk downloading of Scratch projects. This is useful for creating datasets.
 
 ```bash
-java -jar Litterbox-1.11.full.jar mine --output <path/to/output/dir> [options]
+java -jar Litterbox-1.12.full.jar mine --output <path/to/output/dir> [options]
 ```
 
 Available options:
@@ -220,7 +220,7 @@ Scratch user CodeClubRik.
 Since version 1.7 Litterbox can automatically refactor a given Scratch project to improve its readability:
 
 ```bash
-java -jar Litterbox-1.11.full.jar \
+java -jar Litterbox-1.12.full.jar \
     refactoring \
     --path <path/to/project.json> \
     --output <path/to/output-dir>
@@ -236,7 +236,7 @@ LitterBox can automatically inject known bug patterns into Scratch projects. Thi
 creating test datasets or for studying bug fixes:
 
 ```bash
-java -jar Litterbox-1.11.full.jar inject \
+java -jar Litterbox-1.12.full.jar inject \
     --path <path/to/project.sb3> \
     --output <path/to/output-dir>
 ```
@@ -255,7 +255,7 @@ For each bug pattern that can be injected, LitterBox creates a separate output f
 LitterBox can compare two versions of a project to identify which bugs were fixed, which are new, and which persist:
 
 ```bash
-java -jar Litterbox-1.11.full.jar diff \
+java -jar Litterbox-1.12.full.jar diff \
     --before <old_version> \
     --after <new_version>
 ```
@@ -277,7 +277,7 @@ Options:
 Example comparing with a prior analysis report:
 
 ```bash
-java -jar Litterbox-1.11.full.jar diff \
+java -jar Litterbox-1.12.full.jar diff \
     --before prior_report.json \
     --after fixed_project.sb3 \
     --output diff_report.json
@@ -285,16 +285,16 @@ java -jar Litterbox-1.11.full.jar diff \
 
 ### LLM Interaction
 
-Since version 1.11 LitterBox allows you to ask an LLM about a Scratch program and makes it possible to automatically integrate LLM-provided issue fixes into the program.
+Since version 1.12 LitterBox allows you to ask an LLM about a Scratch program and makes it possible to automatically integrate LLM-provided issue fixes into the program.
 You can find all features under the `llm` subcommand:
 ```bash
-java -jar Litterbox-1.11.full.jar llm --help
+java -jar Litterbox-1.12.full.jar llm --help
 ```
 
 It supports either the OpenAI API, or a self-hosted Ollama instance.
 To provide an OpenAI API key, start LitterBox like
 ```bash
-java -Dlitterbox.llm.openai.api-key=KEY Litterbox-1.11.full.jar llm …
+java -Dlitterbox.llm.openai.api-key=KEY Litterbox-1.12.full.jar llm …
 ```
 You can find other configuration options that can be passed via `-D` flags (e.g., model choice, Ollama API endpoint) in `src/main/resources/scratchllm.properties`.
 
@@ -312,7 +312,7 @@ For our integration of some of the LLM-features into the Scratch browser interfa
 To see an overview of the available command line options, type:
 
 ```bash
-java -jar Litterbox-1.11.full.jar embedded-kittens --help
+java -jar Litterbox-1.12.full.jar embedded-kittens --help
 ```
 
 All the subcommands also accept the `--help` flag to show information about the specific parameters.
