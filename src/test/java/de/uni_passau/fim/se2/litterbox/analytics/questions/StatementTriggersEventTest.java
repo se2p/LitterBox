@@ -20,14 +20,12 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -61,12 +59,10 @@ class StatementTriggersEventTest implements FinderTest, JsonTest {
     @Test
     public void testHintLimitedChoices() throws ParsingException, IOException {
         Program prog = getAST("src/test/fixtures/questions/eventsTriggeredByStatements.json");
-        Set<Issue> issues = runFinder(prog, new StatementTriggersEvent(), false);
+        Set<Question> questions = runFinder(prog, new StatementTriggersEvent(), false);
 
-        for (Issue issue : issues) {
-            String hint = issue.getHint().getHintText(translator);
-            String pattern = "\\[choices](\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\|){3}\\[sbi](?:(?!\\[sbi]).)*\\[/sbi]\\[/choices]";
-            assertThat(hint).containsMatch(Pattern.compile(pattern, Pattern.DOTALL));
+        for (Question question : questions) {
+            assertThat(question.getChoices().size()).isAtMost(4);
         }
     }
 }

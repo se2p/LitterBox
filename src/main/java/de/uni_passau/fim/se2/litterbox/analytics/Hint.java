@@ -18,25 +18,21 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics;
 
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.LocalIdentifier;
-import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Qualified;
-import de.uni_passau.fim.se2.litterbox.cfg.*;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+/**
+ * Represents translatable hint text for issues.
+ *
+ * <p>Hints are loaded from {@code IssueHints_*.properties} files and can contain
+ * parameterized placeholders that are substituted at render time.
+ *
+ * @see TranslatableText
+ */
+public class Hint extends TranslatableText {
 
-import static java.util.Objects.requireNonNull;
-
-public class Hint {
-
-    private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{\\{(.*?)}}");
-
-    public static final String ESCAPE_CHARACTER = "%";
-
+    // Common placeholder constants for hint text
     public static final String HINT_SPRITE = "SPRITE";
     public static final String HINT_SPRITES = "SPRITES";
     public static final String HINT_VARIABLE = "VARIABLE";
@@ -61,155 +57,46 @@ public class Hint {
     public static final String CHOICES = "CHOICES";
     public static final String ANSWER = "ANSWER";
 
-    protected final String hintKey;
-
-    /**
-     * Pre-translated hint text. Using the {@link #hintKey} is preferred.
-     */
-    protected final String hintText;
-
-    protected final Map<String, HintPlaceholder> parameters = new HashMap<>();
-
-    public String getKey() {
-        return hintKey;
+    @JsonCreator
+    private Hint(
+            @JsonProperty("key") String hintKey,
+            @JsonProperty("textContent") String hintText) {
+        super(hintKey, hintText);
     }
 
     /**
-     * Returns the parameters map for direct access.
+     * Creates a Hint from a key for lookup in IssueHints properties.
      *
-     * @return unmodifiable view of the parameters map
+     * @param hintKey the key to look up
+     * @return a new Hint instance
      */
-    public Map<String, HintPlaceholder> getParameters() {
-        return Collections.unmodifiableMap(parameters);
-    }
-
-    private Hint(String hintKey, String hintText) {
-        this.hintKey = hintKey;
-        this.hintText = hintText;
-    }
-
     public static Hint fromKey(final String hintKey) {
         return new Hint(hintKey, null);
     }
 
+    /**
+     * Creates a Hint from pre-translated text.
+     *
+     * @param hintText the pre-translated text
+     * @return a new Hint instance
+     */
     public static Hint fromText(final String hintText) {
         return new Hint(null, hintText);
     }
 
-    public void setParameter(final String key, final String value) {
-        requireNonNull(key, "Parameter key must not be null");
-        requireNonNull(value, "Parameter value must not be null");
-        parameters.put(key, new HintPlaceholder.Value(value));
-    }
-
-    public void setParameter(final String key, final HintPlaceholder value) {
-        requireNonNull(key, "Parameter key must not be null");
-        requireNonNull(value, "Parameter value must not be null");
-        parameters.put(key, value);
-    }
-
+    /**
+     * Returns the hint text with parameters substituted.
+     * This is the legacy API name, equivalent to getText().
+     *
+     * @param translator the translator for lookups
+     * @return the resolved hint text
+     */
     public String getHintText(final IssueTranslator translator) {
-        if (hintText != null) {
-            return hintText;
-        }
-
-        String hintText = translator.getHint(hintKey);
-
-        for (final var entry : parameters.entrySet()) {
-            final String key = entry.getKey();
-            final HintPlaceholder placeholder = entry.getValue();
-            final String value = translatePlaceholder(translator, placeholder);
-
-            hintText = hintText.replace(ESCAPE_CHARACTER + key, value);
-        }
-
-        return hintText;
+        return resolveText(translator, translator::getHint);
     }
 
-    private String translatePlaceholder(final IssueTranslator translator, final HintPlaceholder placeholder) {
-        return switch (placeholder) {
-            case HintPlaceholder.Value v -> v.value();
-            case HintPlaceholder.Translatable key -> translator.getInfo(key.translationKey());
-            case HintPlaceholder.Defineable d -> getDefineableName(translator, d.defineable());
-            case HintPlaceholder.ValueWithTranslatableElements v -> {
-                final Matcher matcher = PLACEHOLDER_PATTERN.matcher(v.value());
-                yield matcher.replaceAll(matchResult -> {
-                    final String translationKey = matchResult.group().replace("{{", "").replace("}}", "");
-                    return translator.getInfo(translationKey);
-                });
-            }
-        };
-    }
-
-    private String getDefineableName(final IssueTranslator translator, final Defineable def) {
-        final StringBuilder builder = new StringBuilder();
-
-        if (def instanceof Variable variable) {
-            builder.append("[var]");
-            builder.append(translator.getInfo(IssueTranslator.GeneralTerm.VARIABLE));
-            builder.append(" \"");
-            if (variable.getIdentifier() instanceof LocalIdentifier localIdentifier) {
-                builder.append(localIdentifier.getName());
-            } else {
-                builder.append(((Qualified) variable.getIdentifier()).getSecond().getName().getName());
-            }
-            builder.append("\"");
-            builder.append("[/var]");
-        } else if (def instanceof ListVariable variable) {
-            builder.append("[list]");
-            builder.append(translator.getInfo(IssueTranslator.GeneralTerm.LIST));
-            builder.append(" \"");
-            if (variable.getIdentifier() instanceof LocalIdentifier localIdentifier) {
-                builder.append(localIdentifier.getName());
-            } else {
-                builder.append(((Qualified) variable.getIdentifier()).getSecond().getName().getName());
-            }
-            builder.append("\"");
-            builder.append("[/list]");
-        } else if (def instanceof Attribute attr) {
-            builder.append(translator.getInfo(IssueTranslator.GeneralTerm.ATTRIBUTE));
-            builder.append(" \"");
-            IssueTranslator.GeneralTerm attributeType = getTermFromAttributeType(attr.getAttributeType());
-            builder.append(translator.getInfo(attributeType));
-            builder.append("\"");
-        } else if (def instanceof RobotAttribute attr) {
-            builder.append(translator.getInfo(IssueTranslator.GeneralTerm.ATTRIBUTE));
-            builder.append(" \"");
-            IssueTranslator.GeneralTerm attributeType = getTermFromAttributeType(attr.getAttributeType());
-            builder.append(translator.getInfo(attributeType));
-            builder.append("\"");
-        }
-
-        return builder.toString();
-    }
-
-    private IssueTranslator.GeneralTerm getTermFromAttributeType(final Attribute.AttributeType attributeType) {
-        return switch (attributeType) {
-            case POSITION_X, POSITION_Y -> IssueTranslator.GeneralTerm.POSITION;
-            case ROTATION -> IssueTranslator.GeneralTerm.ROTATION;
-            case SIZE -> IssueTranslator.GeneralTerm.SIZE;
-            case VISIBILITY -> IssueTranslator.GeneralTerm.VISIBILITY;
-            case GRAPHIC_EFFECT -> IssueTranslator.GeneralTerm.GRAPHIC_EFFECT;
-            case SOUND_EFFECT -> IssueTranslator.GeneralTerm.SOUND_EFFECT;
-            case VOLUME -> IssueTranslator.GeneralTerm.VOLUME;
-            case LAYER -> IssueTranslator.GeneralTerm.LAYER;
-            case COSTUME -> IssueTranslator.GeneralTerm.COSTUME;
-            case BACKDROP -> IssueTranslator.GeneralTerm.BACKDROP;
-            case TIMER -> IssueTranslator.GeneralTerm.TIMER;
-            case ROTATION_STYLE -> IssueTranslator.GeneralTerm.ROTATION_STYLE;
-            case SOUND_STATE -> IssueTranslator.GeneralTerm.SOUND_STATE;
-            case DRAG_MODE -> IssueTranslator.GeneralTerm.DRAG_MODE;
-            case VIDEO_STATE -> IssueTranslator.GeneralTerm.VIDEO_STATE;
-            case VIDEO_TRANSPARENCY -> IssueTranslator.GeneralTerm.TRANSPARENCY;
-        };
-    }
-
-    private IssueTranslator.GeneralTerm getTermFromAttributeType(final RobotAttribute.AttributeType attributeType) {
-        return switch (attributeType) {
-            case LED -> IssueTranslator.GeneralTerm.LED;
-            case ROCKY_LIGHT -> IssueTranslator.GeneralTerm.ROCKY_LIGHT;
-            case MOTOR_POWER -> IssueTranslator.GeneralTerm.MOTOR_POWER;
-            case MATRIX -> IssueTranslator.GeneralTerm.MATRIX;
-        };
+    @Override
+    protected boolean useFormattingTags() {
+        return true;
     }
 }

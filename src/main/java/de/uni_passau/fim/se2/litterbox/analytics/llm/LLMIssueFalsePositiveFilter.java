@@ -85,7 +85,6 @@ public class LLMIssueFalsePositiveFilter implements LLMIssueProcessor {
         return
                 // We only want to filter false warnings
                 IssueType.PERFUME.equals(issue.getIssueType())
-                        || IssueType.QUESTION.equals(issue.getIssueType())
                         // TODO: Currently only looking at issues related to specific scripts
                         || issue.getScript() == null
                         || issue.getActor() == null;

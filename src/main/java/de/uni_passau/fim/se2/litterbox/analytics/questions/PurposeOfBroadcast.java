@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
@@ -30,11 +27,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * @QuestionType Free Text
- * @Highlighted Statement
- * @Context Whole program
+ * Generates a question asking for the purpose of a broadcast message.
+ *
  */
 public class PurposeOfBroadcast extends AbstractQuestionFinder {
+
+    public static final String FINDER_NAME = "purpose_of_broadcast";
 
     private Set<String> broadcastMessages;
 
@@ -48,9 +46,8 @@ public class PurposeOfBroadcast extends AbstractQuestionFinder {
     public void visit(Broadcast node) {
         String message = ScratchBlocksVisitor.of(node.getMessage());
         if (!broadcastMessages.contains(message)) {
-            IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
-            Hint hint = Hint.fromKey(getName());
-            addIssue(builder.withHint(hint));
+            QuestionBuilder builder = prepareQuestionBuilder(node);
+            addQuestion(builder);
 
             broadcastMessages.add(message);
         }
@@ -60,9 +57,8 @@ public class PurposeOfBroadcast extends AbstractQuestionFinder {
     public void visit(BroadcastAndWait node) {
         String message = ScratchBlocksVisitor.of(node.getMessage());
         if (!broadcastMessages.contains(message)) {
-            IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
-            Hint hint = Hint.fromKey(getName());
-            addIssue(builder.withHint(hint));
+            QuestionBuilder builder = prepareQuestionBuilder(node);
+            addQuestion(builder);
 
             broadcastMessages.add(message);
         }
@@ -70,6 +66,21 @@ public class PurposeOfBroadcast extends AbstractQuestionFinder {
 
     @Override
     public String getName() {
-        return "purpose_of_broadcast";
+        return FINDER_NAME;
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.PURPOSE;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.RELATION;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.FREE_TEXT;
     }
 }

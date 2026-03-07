@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
@@ -30,16 +27,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfThenStmt;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers 1
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted If Statement
- * @Context Single script
+ * Generates a multiple choice question asking for the condition of an if-statement.
+ *
  */
 public class IfBlockCondition extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "if_block_condition";
+
     private boolean ifStmtFound;
-    private IssueBuilder builder;
+    private QuestionBuilder builder;
 
     @Override
     public void visit(Script node) {
@@ -50,10 +46,9 @@ public class IfBlockCondition extends AbstractQuestionFinder {
         super.visit(node);
 
         if (ifStmtFound && !choices.isEmpty()) {
-            Hint hint = Hint.fromKey(getName());
-            hint.setParameter(Hint.CHOICES, getChoices());
-            hint.setParameter(Hint.ANSWER, getAnswers());
-            addIssue(builder.withHint(hint));
+            builder.withChoices(generateMultipleChoiceOptions(answers, choices))
+                    .withCorrectAnswers(getAnswersList());
+            addQuestion(builder);
         }
     }
 
@@ -62,7 +57,7 @@ public class IfBlockCondition extends AbstractQuestionFinder {
         if (!ifStmtFound) {
             ifStmtFound = true;
             answers.add(wrappedScratchBlocks(node.getBoolExpr()));
-            builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
+            builder = prepareQuestionBuilder(node);
         } else {
             visit(node.getBoolExpr());
         }
@@ -75,7 +70,7 @@ public class IfBlockCondition extends AbstractQuestionFinder {
         if (!ifStmtFound) {
             ifStmtFound = true;
             answers.add(wrappedScratchBlocks(node.getBoolExpr()));
-            builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
+            builder = prepareQuestionBuilder(node);
         } else {
             visit(node.getBoolExpr());
         }
@@ -109,6 +104,21 @@ public class IfBlockCondition extends AbstractQuestionFinder {
 
     @Override
     public String getName() {
-        return "if_block_condition";
+        return FINDER_NAME;
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.TEXT;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.BLOCK;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

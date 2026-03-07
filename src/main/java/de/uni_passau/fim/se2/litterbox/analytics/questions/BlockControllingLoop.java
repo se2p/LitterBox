@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
@@ -33,16 +30,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.UntilStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.TerminationStmt;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers 1
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Loop
- * @Context Single script
+ * Generates a question asking which block controls the loop (e.g. the repeat count or condition).
+ *
  */
 public class BlockControllingLoop extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "block_controlling_loop";
+
     private boolean loopFound;
-    private IssueBuilder builder;
+    private QuestionBuilder builder;
 
     @Override
     public void visit(Script node) {
@@ -53,10 +49,9 @@ public class BlockControllingLoop extends AbstractQuestionFinder {
         super.visit(node);
 
         if (loopFound && !choices.isEmpty()) {
-            Hint hint = Hint.fromKey(getName());
-            hint.setParameter(Hint.CHOICES, getChoices());
-            hint.setParameter(Hint.ANSWER, getAnswers());
-            addIssue(builder.withHint(hint));
+            builder.withChoices(generateMultipleChoiceOptions(answers, choices))
+                    .withCorrectAnswers(getAnswersList());
+            addQuestion(builder);
         }
     }
 
@@ -68,7 +63,7 @@ public class BlockControllingLoop extends AbstractQuestionFinder {
             loopFound = true;
             answers.add((times instanceof NumberLiteral numberLiteral)
                     ? wrappedScratchBlocks(numberLiteral) : wrappedScratchBlocks(times));
-            builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
+            builder = prepareQuestionBuilder(node);
         } else {
             visit(times);
         }
@@ -80,7 +75,7 @@ public class BlockControllingLoop extends AbstractQuestionFinder {
         if (!loopFound) {
             loopFound = true;
             answers.add(wrappedScratchBlocks(node.getBoolExpr()));
-            builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
+            builder = prepareQuestionBuilder(node);
         } else {
             choices.add(wrappedScratchBlocks(node.getBoolExpr()));
         }
@@ -128,6 +123,21 @@ public class BlockControllingLoop extends AbstractQuestionFinder {
 
     @Override
     public String getName() {
-        return "block_controlling_loop";
+        return FINDER_NAME;
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.TEXT;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.BLOCK;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

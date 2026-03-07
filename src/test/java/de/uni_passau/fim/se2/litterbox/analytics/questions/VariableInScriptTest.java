@@ -20,12 +20,14 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -71,12 +73,12 @@ public class VariableInScriptTest implements FinderTest, JsonTest {
     @Test
     public void testHint() throws IOException, ParsingException {
         Program prog = getAST("src/test/fixtures/questions/twoVariablesInIfElseStatement.json");
-        Set<Issue> issues = runFinder(prog, new VariableInScript(), false);
+        Set<Question> questions = runFinder(prog, new VariableInScript(), false);
 
-        for (Issue issue : issues) {
-            String hint = issue.getHint().getHintText(translator);
-            assertThat(hint).contains("my variable");
-            assertThat(hint).contains("new variable");
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
+        for (Question question : questions) {
+            assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("my variable");
+            assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("new variable");
         }
     }
 }

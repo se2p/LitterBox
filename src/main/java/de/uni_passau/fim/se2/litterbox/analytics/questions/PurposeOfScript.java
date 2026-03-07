@@ -18,19 +18,17 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
 
 /**
- * @QuestionType Free Text
- * @Highlighted Script
- * @Context Single script
+ * Generates a question asking for the purpose of a script.
+ *
  */
 public class PurposeOfScript extends AbstractQuestionFinder {
+
+    public static final String FINDER_NAME = "purpose_of_script";
 
     @Override
     public void visit(Script node) {
@@ -40,13 +38,28 @@ public class PurposeOfScript extends AbstractQuestionFinder {
         } else {
             topBlockCurrent = node.getStmtList().getStmts().getFirst();
         }
-        IssueBuilder builder = prepareIssueBuilder(topBlockCurrent).withSeverity(IssueSeverity.LOW);
-        Hint hint = Hint.fromKey(getName());
-        addIssue(builder.withScript(node).withHint(hint));
+        QuestionBuilder builder = prepareQuestionBuilder(topBlockCurrent)
+                .withScript(node);
+        addQuestion(builder);
     }
 
     @Override
     public String getName() {
-        return "purpose_of_script";
+        return FINDER_NAME;
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.PURPOSE;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.BLOCK;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.FREE_TEXT;
     }
 }

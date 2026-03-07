@@ -18,17 +18,15 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 
 /**
- * @QuestionType Free Text
- * @Highlighted Nothing
- * @Context Whole program
+ * Generates a question asking for the overall purpose of the program.
+ *
  */
 public class PurposeOfProgram extends AbstractQuestionFinder {
+
+    public static final String FINDER_NAME = "purpose_of_program";
 
     @Override
     public void visit(Program node) {
@@ -36,13 +34,27 @@ public class PurposeOfProgram extends AbstractQuestionFinder {
         currentScript = null;
         currentProcedure = null;
 
-        IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
-        Hint hint = Hint.fromKey(getName());
-        addIssue(builder.withHint(hint));
+        QuestionBuilder builder = prepareQuestionBuilder();
+        addQuestion(builder);
     }
 
     @Override
     public String getName() {
-        return "purpose_of_program";
+        return FINDER_NAME;
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.PURPOSE;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.MACRO;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.FREE_TEXT;
     }
 }

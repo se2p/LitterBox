@@ -23,6 +23,7 @@ import java.util.*;
 public final class IssueTranslatorFactory {
 
     private static final Map<Locale, IssueTranslator> ISSUE_TRANSLATORS = new HashMap<>();
+    private static final Map<Locale, QuestionTranslator> QUESTION_TRANSLATORS = new HashMap<>();
 
     private static final Set<Locale> VALID_LOCALES = Set.of(Locale.ENGLISH, Locale.GERMAN, Locale.forLanguageTag("es"), Locale.forLanguageTag("nl"));
 
@@ -50,5 +51,38 @@ public final class IssueTranslatorFactory {
         final IssueTranslator issueTranslator = new IssueTranslator(translatorLocale);
         ISSUE_TRANSLATORS.put(translatorLocale, issueTranslator);
         return issueTranslator;
+    }
+
+    /**
+     * Returns a QuestionTranslator for the default locale.
+     *
+     * @return the question translator
+     */
+    public static QuestionTranslator getQuestionTranslator() {
+        return getQuestionTranslator(Locale.getDefault());
+    }
+
+    /**
+     * Returns a QuestionTranslator for the given locale.
+     *
+     * @param locale the locale
+     * @return the question translator
+     */
+    public static QuestionTranslator getQuestionTranslator(final Locale locale) {
+        final QuestionTranslator translator = QUESTION_TRANSLATORS.get(locale);
+        return Objects.requireNonNullElseGet(translator, () -> createQuestionTranslator(locale));
+    }
+
+    private static QuestionTranslator createQuestionTranslator(final Locale locale) {
+        final Locale translatorLocale;
+        if (VALID_LOCALES.contains(locale)) {
+            translatorLocale = locale;
+        } else {
+            translatorLocale = Locale.ENGLISH;
+        }
+
+        final QuestionTranslator questionTranslator = new QuestionTranslator(translatorLocale);
+        QUESTION_TRANSLATORS.put(translatorLocale, questionTranslator);
+        return questionTranslator;
     }
 }

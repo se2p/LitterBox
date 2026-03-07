@@ -18,29 +18,41 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatForeverStmt;
 
 /**
- * @QuestionType Free Text
- * @Highlighted Loop
- * @Context Single script
+ * Generates a question asking for the purpose of a forever loop.
+ *
  */
 public class PurposeOfForeverLoop extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "purpose_of_forever_loop";
+
     @Override
     public void visit(RepeatForeverStmt node) {
-        IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
-        Hint hint = Hint.fromKey(getName());
-        addIssue(builder.withHint(hint));
+        QuestionBuilder builder = prepareQuestionBuilder(node);
+        addQuestion(builder);
 
         super.visit(node);
     }
 
     @Override
     public String getName() {
-        return "purpose_of_forever_loop";
+        return FINDER_NAME;
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.PURPOSE;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.BLOCK;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.FREE_TEXT;
     }
 }

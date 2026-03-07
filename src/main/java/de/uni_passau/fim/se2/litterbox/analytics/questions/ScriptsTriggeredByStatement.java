@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
@@ -36,21 +33,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers {@link AbstractQuestionFinder#maxChoices}
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Statement
- * @Context Whole program
+ * Generates a question asking which scripts are triggered by a specific statement (broadcast or backdrop switch).
+ *
  */
 public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
+
+    public static final String FINDER_NAME = "scripts_triggered_by_statement";
 
     private Map<String, Set<String>> scriptsForEvent;
     private Map<String, Stmt> eventStatements;
@@ -59,8 +52,8 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
 
     @Override
     public void visit(Program node) {
-        scriptsForEvent = new HashMap<>();
-        eventStatements = new HashMap<>();
+        scriptsForEvent = new LinkedHashMap<>();
+        eventStatements = new LinkedHashMap<>();
         scriptForStmt = new HashMap<>();
         actorForStmt = new HashMap<>();
 
@@ -76,11 +69,10 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
                 currentScript = scriptForStmt.get(stmt);
                 currentActor = actorForStmt.get(stmt);
 
-                IssueBuilder builder = prepareIssueBuilder(stmt).withSeverity(IssueSeverity.LOW);
-                Hint hint = Hint.fromKey(getName());
-                hint.setParameter(Hint.CHOICES, getChoices());
-                hint.setParameter(Hint.ANSWER, getAnswers());
-                addIssue(builder.withHint(hint));
+                QuestionBuilder builder = prepareQuestionBuilder(stmt)
+                        .withChoices(generateMultipleChoiceOptions(answers, choices))
+                        .withCorrectAnswers(getAnswersList());
+                addQuestion(builder);
             }
         });
     }
@@ -96,7 +88,7 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
             event = ScratchBlocksVisitor.of(node);
         }
         if (!(node instanceof Never)) {
-            scriptsForEvent.computeIfAbsent(event, k -> new HashSet<>()).add(wrappedScratchBlocks(currentScript));
+            scriptsForEvent.computeIfAbsent(event, k -> new LinkedHashSet<>()).add(wrappedScratchBlocks(currentScript));
         }
     }
 
@@ -142,6 +134,21 @@ public class ScriptsTriggeredByStatement extends AbstractQuestionFinder {
 
     @Override
     public String getName() {
-        return "scripts_triggered_by_statement";
+        return FINDER_NAME;
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.EXECUTION;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.RELATION;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

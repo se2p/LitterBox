@@ -33,6 +33,7 @@ import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
@@ -78,10 +79,20 @@ public class ResourceBundleTest {
     @ParameterizedTest(name = "Testing existence of question names for language {0}")
     @ValueSource(strings = {"de", "en", "es", "nl"})
     public void checkQuestionResourceNames(String locale) {
-        ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
+        ResourceBundle names = ResourceBundle.getBundle("QuestionNames", Locale.forLanguageTag(locale));
         for (String questionFinder : IssueTool.getQuestionFinderNames()) {
             assertWithMessage("Language " + locale + ", question finder " + questionFinder + " not found in name resources").that(names.keySet()).contains(questionFinder);
             checkEncodingProblems(names.getString(questionFinder));
+        }
+    }
+
+    @ParameterizedTest(name = "Testing existence of question texts for language {0}")
+    @ValueSource(strings = {"de", "en", "es", "nl"})
+    public void checkQuestionResourceTexts(String locale) {
+        ResourceBundle texts = ResourceBundle.getBundle("QuestionTexts", Locale.forLanguageTag(locale));
+        for (String questionFinder : IssueTool.getQuestionFinderNames()) {
+            assertWithMessage("Language " + locale + ", question finder " + questionFinder + " not found in text resources").that(texts.keySet()).contains(questionFinder);
+            checkEncodingProblems(texts.getString(questionFinder));
         }
     }
 
@@ -185,6 +196,7 @@ public class ResourceBundleTest {
     public void checkSpuriousNames(String locale) {
         ResourceBundle names = ResourceBundle.getBundle("IssueNames", Locale.forLanguageTag(locale));
         Collection<String> finders = new HashSet<>(IssueTool.getAllFinderNames());
+        finders.addAll(IssueTool.getQuestionFinderNames()); // Questions are separate from ALL
         finders.addAll(new ProgramMetricAnalyzer().getMetricNames()); // TODO: Maybe metrics should go in a different resource file?
         finders.addAll(new ProgramExtractionAnalyzer().getExtractorNames());
         finders.add(new LLMIssueFinder(IssueType.BUG).getName());
@@ -200,7 +212,10 @@ public class ResourceBundleTest {
     public void checkSpuriousHints(String locale) {
         ResourceBundle names = ResourceBundle.getBundle("IssueHints", Locale.forLanguageTag(locale));
         List<IssueFinder> allFinders = IssueTool.getFinders(FinderGroup.ALL);
-        Set<String> hintKeys = allFinders.stream().flatMap(f -> f.getHintKeys().stream()).collect(Collectors.toSet());
+        // Question finders are now separate and use QuestionTexts, not IssueHints
+        Set<String> hintKeys = allFinders.stream()
+                .flatMap(f -> f.getHintKeys().stream())
+                .collect(Collectors.toSet());
         for (String key : Collections.list(names.getKeys())) {
             if (!key.contains("fix")) {
                 assertWithMessage("Language " + locale + ", key " + key + " is not used").that(hintKeys).contains(key);

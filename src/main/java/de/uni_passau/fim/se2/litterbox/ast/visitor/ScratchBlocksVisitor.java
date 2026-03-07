@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.ast.visitor;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.analytics.MultiBlockIssue;
+import de.uni_passau.fim.se2.litterbox.analytics.questions.Question;
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.WithCloneExpr;
@@ -144,7 +145,7 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     public static final String SCRATCHBLOCKS_END = "[/scratchblocks]";
     public static final String BUG_NOTE = "⇦  \uD83D\uDC1B   ";
     public static final String PERFUME_NOTE = "⇦  \uD83D\uDC4D   ";
-    public static final String QUESTION_NOTE = "⇦   \u2753   ";
+    public static final String QUESTION_NOTE = "⇦  \u2753   ";
     public static final String SPRITE_MARKER = "//Sprite:";
     public static final String SCRIPT_ID_MARKER = "//Script:";
 
@@ -161,6 +162,8 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
     private boolean lineWrapped = true;
 
     private final Set<Issue> issues = new LinkedHashSet<>();
+
+    private final Set<Question> questions = new LinkedHashSet<>();
 
     private final Set<String> issueNote = new LinkedHashSet<>();
 
@@ -199,6 +202,18 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
             //       issues, as this is an implicit assumption here. Otherwise
             //       variables such as currentActor may not be initialised
         }
+    }
+
+    /**
+     * Creates a visitor that highlights the given question's code location.
+     *
+     * @param question the question to highlight
+     */
+    public ScratchBlocksVisitor(Question question) {
+        this();
+        this.questions.add(question);
+        this.program = question.getProgram();
+        this.currentActor = question.getActor();
     }
 
     /**
@@ -244,6 +259,34 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
         visitor.setAddActorNames(true);
 
         node.accept(visitor);
+
+        return visitor.getScratchBlocks();
+    }
+
+    /**
+     * Converts the given question's script/procedure into the ScratchBlocks format,
+     * with the question's code location highlighted.
+     *
+     * @param question the question to render
+     * @return the ScratchBlocks representation with highlighting
+     */
+    public static String of(Question question) {
+        final ScratchBlocksVisitor visitor = new ScratchBlocksVisitor(question);
+        visitor.setAddActorNames(false);
+
+        // Render the script or procedure containing the question
+        if (question.getScriptOrProcedureDefinition() != null) {
+            question.getScriptOrProcedureDefinition().accept(visitor);
+        } else if (question.getCodeLocation() != null) {
+            question.getCodeLocation().accept(visitor);
+        }
+
+        // Render additional scripts (e.g., for questions comparing multiple scripts)
+        for (var additionalScript : question.getAdditionalScripts()) {
+            visitor.newLine();
+            visitor.newLine();
+            additionalScript.accept(visitor);
+        }
 
         return visitor.getScratchBlocks();
     }
@@ -2120,8 +2163,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                 if (!issue.hasMultipleBlocks()) {
                     if (issue.getIssueType() == IssueType.PERFUME || issue.getIssueType() == IssueType.FIX) {
                         issueNote.add(PERFUME_NOTE);
-                    } else if (issue.getIssueType() == IssueType.QUESTION) {
-                        issueNote.add(QUESTION_NOTE);
                     } else {
                         issueNote.add(BUG_NOTE);
                     }
@@ -2130,8 +2171,6 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                     if (node == (nodes.getFirst())) {
                         if (issue.getIssueType() == IssueType.PERFUME || issue.getIssueType() == IssueType.FIX) {
                             issueNote.add(PERFUME_NOTE);
-                        } else if (issue.getIssueType() == IssueType.QUESTION) {
-                            issueNote.add(QUESTION_NOTE);
                         } else {
                             issueNote.add(BUG_NOTE);
                         }
@@ -2139,6 +2178,18 @@ public class ScratchBlocksVisitor extends PrintVisitor implements
                 }
                 // TODO: In theory there could be multiple messages here...
                 // issueNote.add(issue.getTranslatedFinderName());
+            }
+        }
+
+        // Check for question highlights
+        for (Question question : questions) {
+            if (question.isCodeLocation(node)) {
+                if (!hasIssue) {
+                    // Use a distinct color for questions (blue)
+                    emitNoSpace(" :: #0066cc");
+                    hasIssue = true;
+                }
+                issueNote.add(QUESTION_NOTE);
             }
         }
     }
