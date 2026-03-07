@@ -114,9 +114,7 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 import de.uni_passau.fim.se2.litterbox.export.AbstractExportVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
-import de.uni_passau.fim.se2.litterbox.export.AbstractExportVisitor;
 
-import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.*;
 

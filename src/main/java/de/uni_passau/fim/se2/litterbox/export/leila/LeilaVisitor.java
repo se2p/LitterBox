@@ -84,12 +84,11 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
+import de.uni_passau.fim.se2.litterbox.export.AbstractExportVisitor;
 
 import java.io.PrintStream;
 import java.util.*;
 import java.util.regex.Pattern;
-
-import de.uni_passau.fim.se2.litterbox.export.AbstractExportVisitor;
 
 import static de.uni_passau.fim.se2.litterbox.export.leila.LeilaVisitor.TYPE.*;
 

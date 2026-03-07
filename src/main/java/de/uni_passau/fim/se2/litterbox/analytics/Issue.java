@@ -20,7 +20,6 @@ package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.Metadata;
-import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
@@ -60,8 +59,10 @@ public class Issue extends Finding {
     }
 
     public Issue(IssueBuilder builder) {
-        super(builder.getProgram(), builder.getActor(), builder.getScript(),
-              builder.getCurrentNode(), builder.getMetadata(), builder.getId());
+        super(
+                builder.getProgram(), builder.getActor(), builder.getScript(), builder.getCurrentNode(),
+                builder.getMetadata(), builder.getId()
+        );
         this.finder = builder.getFinder();
         this.severity = builder.getSeverity();
         this.refactoredScript = builder.getRefactoring();
