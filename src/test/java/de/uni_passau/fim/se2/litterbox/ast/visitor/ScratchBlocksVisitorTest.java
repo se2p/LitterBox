@@ -54,6 +54,8 @@ import java.util.Set;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import de.uni_passau.fim.se2.litterbox.export.scratchblocks.ScratchBlocksVisitor;
+
 public class ScratchBlocksVisitorTest implements JsonTest {
 
     @Test

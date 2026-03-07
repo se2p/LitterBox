@@ -147,6 +147,14 @@ public class SymbolTable {
             }
         }
 
+        // Fallback: search by ID only (to handle stale variable names in blocks)
+        // This is needed when a variable was renamed but blocks contain the old name.
+        for (VariableInfo info : variables.values()) {
+            if (info.ident().equals(ident)) {
+                return Optional.of(info);
+            }
+        }
+
         return Optional.empty();
     }
 
@@ -224,6 +232,13 @@ public class SymbolTable {
             stageKey = identFromMap + listName + "Stage";
             if (lists.containsKey(stageKey)) {
                 return Optional.of(lists.get(stageKey));
+            }
+        }
+
+        // Fallback: search by ID only (to handle stale list names in blocks)
+        for (ExpressionListInfo info : lists.values()) {
+            if (info.ident().equals(ident)) {
+                return Optional.of(info);
             }
         }
 

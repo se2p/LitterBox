@@ -21,6 +21,7 @@ package de.uni_passau.fim.se2.litterbox.llm.prompts;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ class DefaultPromptsTest implements JsonTest {
     @Test
     void askQuestionAllBlocks() throws IOException, ParsingException {
         final Program program = getAST("src/test/fixtures/looseScript.json");
-        final QueryTarget target = new QueryTarget.ProgramTarget();
+        final CodeTarget target = new CodeTarget.ProgramTarget();
         final LlmQuery query = new LlmQuery.PredefinedQuery(CommonQuery.EXPLAIN);
 
         final String prompt = prompts.askQuestion(program, target, query);
@@ -51,7 +52,7 @@ class DefaultPromptsTest implements JsonTest {
     @Test
     void askQuestionIgnoringLooseBlocks() throws IOException, ParsingException {
         final Program program = getAST("src/test/fixtures/looseScript.json");
-        final QueryTarget target = new QueryTarget.ProgramTarget();
+        final CodeTarget target = new CodeTarget.ProgramTarget();
         final LlmQuery query = new LlmQuery.PredefinedQuery(CommonQuery.EXPLAIN);
 
         final String prompt = prompts.askQuestion(program, target, query, true);

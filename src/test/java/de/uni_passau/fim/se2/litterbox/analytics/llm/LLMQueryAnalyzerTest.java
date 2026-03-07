@@ -23,7 +23,7 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.llm.DummyLlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
@@ -50,7 +50,7 @@ class LLMQueryAnalyzerTest implements FinderTest, JsonTest {
                     outputFile,
                     false,
                     new LlmQuery.CustomQuery("custom user question"),
-                    new QueryTarget.ProgramTarget(),
+                    new CodeTarget.ProgramTarget(),
                     false
             );
 

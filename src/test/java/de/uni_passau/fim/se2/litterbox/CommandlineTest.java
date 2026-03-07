@@ -49,10 +49,11 @@ public class CommandlineTest extends CliTest<Main> {
     }
 
     @Test
-    public void testLeilaWithInvalidDownloadOption(@TempDir File tempFile) {
+    public void testExportLeilaWithInvalidDownloadOption(@TempDir File tempFile) {
         Path inputPath = tempFile.toPath().toAbsolutePath();
         commandLine.execute(
-                "leila", "--path", inputPath.toString(), "-o", "barfoo", "--projectid", "I am not a number"
+                "export", "--format", "leila", "--path", inputPath.toString(),
+                "-o", "barfoo", "--projectid", "I am not a number"
         );
         Path path = inputPath.resolve("I am not a number" + ".json");
         File file = new File(path.toString());
@@ -60,23 +61,17 @@ public class CommandlineTest extends CliTest<Main> {
     }
 
     @Test
-    public void testLeilaWithoutOutput() {
-        commandLine.execute("leila", "--path", "foobar");
-        assertStdErrContains("Output path option '--output' required");
-    }
-
-    @Test
-    public void testLeilaWithoutPath() {
-        commandLine.execute("leila", "--output", "foobar");
+    public void testExportWithoutPath() {
+        commandLine.execute("export", "--format", "leila", "--output", "foobar");
         assertStdErrContains("Input path option '--path' required");
     }
 
     @Test
-    public void testLeilaValidOptions(@TempDir File tempFile) throws Exception {
+    public void testExportLeilaValidOptions(@TempDir File tempFile) throws Exception {
         File file = new File("./src/test/fixtures/emptyProject.json");
         Path path = file.toPath().toAbsolutePath();
         Path outFile = tempFile.toPath().toAbsolutePath();
-        commandLine.execute("leila", "--path", path.toString(), "-o", outFile.toString());
+        commandLine.execute("export", "--format", "leila", "--path", path.toString(), "-o", outFile.toString());
         String output = Files.readString(outFile.resolve("emptyProject.sc"));
         assertThat(output).contains("program emptyProject");
     }

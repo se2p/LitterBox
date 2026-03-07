@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.llm.prompts;
 
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.Collection;
@@ -42,17 +43,17 @@ public abstract class PromptBuilder {
         return null;
     }
 
-    public String askQuestion(final Program program, final QueryTarget target, final LlmQuery question) {
+    public String askQuestion(final Program program, final CodeTarget target, final LlmQuery question) {
         return askQuestion(program, target, question, false);
     }
 
-    public abstract String askQuestion(Program program, QueryTarget target, LlmQuery query, boolean ignoreLooseBlocks);
+    public abstract String askQuestion(Program program, CodeTarget target, LlmQuery query, boolean ignoreLooseBlocks);
 
-    public abstract String improveCode(Program program, QueryTarget target, Collection<Issue> issues);
+    public abstract String improveCode(Program program, CodeTarget target, Collection<Issue> issues);
 
-    public abstract String improveReadability(Program program, QueryTarget target);
+    public abstract String improveReadability(Program program, CodeTarget target);
 
-    public abstract String completeCode(Program program, QueryTarget target);
+    public abstract String completeCode(Program program, CodeTarget target);
 
     public abstract String createPromptForCommonQuery(CommonQuery query);
 
@@ -74,11 +75,11 @@ public abstract class PromptBuilder {
      */
     public abstract String fixSyntax(String scratchBlocksScripts);
 
-    protected String describeTarget(final Program program, QueryTarget target) {
+    protected String describeTarget(final Program program, CodeTarget target) {
         return describeTarget(program, target, false);
     }
 
-    protected abstract String describeTarget(final Program program, QueryTarget target, boolean ignoreLooseBlocks);
+    protected abstract String describeTarget(final Program program, CodeTarget target, boolean ignoreLooseBlocks);
 
     protected List<String> issueTypes(final Collection<Issue> issues) {
         return issues.stream().map(Issue::getFinderName).sorted().toList();

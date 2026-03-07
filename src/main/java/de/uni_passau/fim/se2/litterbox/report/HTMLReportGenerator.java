@@ -33,7 +33,7 @@ import de.uni_passau.fim.se2.litterbox.analytics.metrics.ScriptCount;
 import de.uni_passau.fim.se2.litterbox.analytics.metrics.SpriteCount;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.ScriptEntity;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.export.scratchblocks.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.FinderGroup;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 import gg.jte.ContentType;

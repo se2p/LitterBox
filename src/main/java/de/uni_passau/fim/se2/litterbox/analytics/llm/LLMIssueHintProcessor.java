@@ -22,13 +22,13 @@ import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import de.uni_passau.fim.se2.litterbox.llm.ScratchLlm;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApiProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.LinkedHashSet;
@@ -45,18 +45,18 @@ public class LLMIssueHintProcessor implements LLMIssueProcessor {
 
     protected PromptBuilder promptBuilder;
 
-    protected QueryTarget target;
+    protected CodeTarget target;
 
     public LLMIssueHintProcessor(LlmApi llmApi,
                                  PromptBuilder promptBuilder,
-                                 QueryTarget target) {
+                                 CodeTarget target) {
         this.llmApi = llmApi;
         this.promptBuilder = promptBuilder;
         this.scratchLlm = new ScratchLlm(llmApi, promptBuilder);
         this.target = target;
     }
 
-    public LLMIssueHintProcessor(IssueTranslator translator, QueryTarget target) {
+    public LLMIssueHintProcessor(IssueTranslator translator, CodeTarget target) {
         this(LlmApiProvider.get(), LlmPromptProvider.get(translator), target);
     }
 

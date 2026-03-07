@@ -21,10 +21,10 @@ package de.uni_passau.fim.se2.litterbox.analytics.llm;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.IssueType;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.util.List;
@@ -33,12 +33,12 @@ import java.util.Set;
 public class LLMIssueBugExtender extends LLMIssueExtender {
 
     public LLMIssueBugExtender(
-            IssueTranslator translator, LlmApi llmApi, PromptBuilder promptBuilder, QueryTarget target
+            IssueTranslator translator, LlmApi llmApi, PromptBuilder promptBuilder, CodeTarget target
     ) {
         super(translator, llmApi, promptBuilder, target);
     }
 
-    public LLMIssueBugExtender(IssueTranslator translator, QueryTarget target) {
+    public LLMIssueBugExtender(IssueTranslator translator, CodeTarget target) {
         super(translator, target);
     }
 

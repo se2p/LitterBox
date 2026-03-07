@@ -29,7 +29,7 @@ import de.uni_passau.fim.se2.litterbox.llm.DummyLlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.DefaultPrompts;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.PromptBuilder;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -52,7 +52,7 @@ class LLMIssueFixProcessorTest implements FinderTest, JsonTest {
 
         final LlmApi api = new DummyLlmApi();
         final LLMIssueFixProcessor processor = new LLMIssueFixProcessor(
-                api, promptBuilder, new QueryTarget.ProgramTarget()
+                api, promptBuilder, new CodeTarget.ProgramTarget()
         );
         final Set<Issue> processedIssues = processor.apply(program, issues);
 
@@ -70,7 +70,7 @@ class LLMIssueFixProcessorTest implements FinderTest, JsonTest {
 
         final LlmApi api = new DummyLlmApi();
         final LLMIssueFixProcessor processor = new LLMIssueFixProcessor(
-                api, promptBuilder, new QueryTarget.ProgramTarget()
+                api, promptBuilder, new CodeTarget.ProgramTarget()
         );
         final Set<Issue> processedIssues = processor.apply(program, issues);
 
@@ -94,7 +94,7 @@ class LLMIssueFixProcessorTest implements FinderTest, JsonTest {
                 create clone of (myself v)
                 """);
         final LLMIssueFixProcessor processor = new LLMIssueFixProcessor(
-                api, promptBuilder, new QueryTarget.ProgramTarget()
+                api, promptBuilder, new CodeTarget.ProgramTarget()
         );
         final Set<Issue> processedIssues = processor.apply(program, issues);
 
@@ -121,7 +121,7 @@ class LLMIssueFixProcessorTest implements FinderTest, JsonTest {
                 wait (1) seconds
                 """);
         final LLMIssueFixProcessor processor = new LLMIssueFixProcessor(
-                api, promptBuilder, new QueryTarget.ProgramTarget()
+                api, promptBuilder, new CodeTarget.ProgramTarget()
         );
         final Set<Issue> processedIssues = processor.apply(program, issues);
 

@@ -16,20 +16,39 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.llm.prompts;
+package de.uni_passau.fim.se2.litterbox.ast.util;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.util.AstNodeUtil;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-public sealed interface QueryTarget {
+/**
+ * Represents a target for code operations such as export or LLM queries.
+ *
+ * <p>Can target the entire program, a specific sprite, or a specific script.
+ */
+public sealed interface CodeTarget {
 
+    /**
+     * Returns a human-readable description of the target type.
+     *
+     * @return Target description (e.g., "program", "sprite", "script")
+     */
     String getTargetDescription();
 
+    /**
+     * Resolves the target AST node from the given program.
+     *
+     * @param program The program to search within
+     * @return The resolved AST node
+     * @throws IllegalArgumentException if the target cannot be found
+     */
     ASTNode getTargetNode(Program program);
 
-    record ProgramTarget() implements QueryTarget {
+    /**
+     * Targets the entire program.
+     */
+    record ProgramTarget() implements CodeTarget {
         @Override
         public String getTargetDescription() {
             return "program";
@@ -41,7 +60,12 @@ public sealed interface QueryTarget {
         }
     }
 
-    record SpriteTarget(String spriteName) implements QueryTarget {
+    /**
+     * Targets a specific sprite by name.
+     *
+     * @param spriteName The name of the sprite to target
+     */
+    record SpriteTarget(String spriteName) implements CodeTarget {
 
         public SpriteTarget {
             Preconditions.checkNotNull(spriteName);
@@ -65,7 +89,12 @@ public sealed interface QueryTarget {
         }
     }
 
-    record ScriptTarget(String headBlockId) implements QueryTarget {
+    /**
+     * Targets a specific script by its head block ID.
+     *
+     * @param headBlockId The ID of the script's head block
+     */
+    record ScriptTarget(String headBlockId) implements CodeTarget {
 
         public ScriptTarget {
             Preconditions.checkNotNull(headBlockId);

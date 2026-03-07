@@ -60,7 +60,7 @@ public abstract class CliTest<T> {
         System.setOut(new PrintStream(mockOut, true, StandardCharsets.UTF_8));
         System.setErr(new PrintStream(mockErr, true, StandardCharsets.UTF_8));
 
-        commandLine = new CommandLine(mainClass);
+        commandLine = new CommandLine(mainClass).setCaseInsensitiveEnumValuesAllowed(true);
     }
 
     protected void assertStdOutContains(final String expected) {

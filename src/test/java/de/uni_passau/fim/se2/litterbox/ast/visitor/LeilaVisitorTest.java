@@ -34,6 +34,8 @@ import java.nio.file.Path;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import de.uni_passau.fim.se2.litterbox.export.leila.LeilaVisitor;
+
 public class LeilaVisitorTest implements JsonTest {
 
     @Test

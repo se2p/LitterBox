@@ -25,11 +25,11 @@ import de.uni_passau.fim.se2.litterbox.analytics.bugs.ComparingLiterals;
 import de.uni_passau.fim.se2.litterbox.analytics.perfumes.BoolExpression;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchBlocksVisitor;
+import de.uni_passau.fim.se2.litterbox.export.scratchblocks.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.llm.DummyLlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.api.LlmApi;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmPromptProvider;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -49,7 +49,7 @@ class LLMIssuePerfumeExtenderTest implements FinderTest, JsonTest {
         final DummyLlmApi api = new DummyLlmApi("no new issues");
 
         final LLMIssuePerfumeExtender extender = new LLMIssuePerfumeExtender(
-                translator, api, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget()
+                translator, api, LlmPromptProvider.get(translator), new CodeTarget.ProgramTarget()
         );
 
         final Set<Issue> newIssueSet = extender.apply(program, issues);
@@ -115,7 +115,7 @@ class LLMIssuePerfumeExtenderTest implements FinderTest, JsonTest {
         final LlmApi api = new DummyLlmApi(llmResponse);
 
         final LLMIssuePerfumeExtender extender = new LLMIssuePerfumeExtender(
-                translator, api, LlmPromptProvider.get(translator), new QueryTarget.ProgramTarget()
+                translator, api, LlmPromptProvider.get(translator), new CodeTarget.ProgramTarget()
         );
 
         final Set<Issue> newIssueSet = extender.apply(program, issues);

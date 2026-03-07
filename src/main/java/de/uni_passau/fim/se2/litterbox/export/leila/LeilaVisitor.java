@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with LitterBox. If not, see <http://www.gnu.org/licenses/>.
  */
-package de.uni_passau.fim.se2.litterbox.ast.visitor;
+package de.uni_passau.fim.se2.litterbox.export.leila;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.elementchoice.Next;
@@ -84,14 +84,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureDefinitionNameMapping;
 import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.ProcedureInfo;
+import de.uni_passau.fim.se2.litterbox.export.AbstractExportVisitor;
 
 import java.io.PrintStream;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static de.uni_passau.fim.se2.litterbox.ast.visitor.LeilaVisitor.TYPE.*;
+import static de.uni_passau.fim.se2.litterbox.export.leila.LeilaVisitor.TYPE.*;
 
-public class LeilaVisitor extends PrintVisitor {
+public class LeilaVisitor extends AbstractExportVisitor {
 
     private final boolean nonDet; // indicates whether attributes should be initialized or not
     private final boolean onNever;
@@ -100,8 +101,6 @@ public class LeilaVisitor extends PrintVisitor {
     private final boolean noCast = false;
     private boolean showHideVar = false;
     private boolean methodCall = false;
-    private String currentActor = null;
-    private Program program = null;
     private final Stack<TYPE> expectedTypes = new Stack<>();
 
     enum TYPE {
@@ -180,7 +179,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(ActorDefinition def) {
-        currentActor = def.getIdent().getName();
+        currentActor = def;
         skippedDeclarations = 0;
         newLine();
         emitToken("actor");
@@ -243,6 +242,18 @@ public class LeilaVisitor extends PrintVisitor {
         newLine();
         end();
         currentActor = null;
+    }
+
+    @Override
+    protected void begin() {
+        emitToken(" begin");
+    }
+
+    @Override
+    protected void end() {
+        newLine();
+        appendIndentation();
+        emitToken("end");
     }
 
     private void emitResourceListsOf(ActorDefinition def) {
@@ -1071,7 +1082,7 @@ public class LeilaVisitor extends PrintVisitor {
     private Map<LocalIdentifier, ProcedureInfo> getProceduresOfCurrentSprite() {
         ProcedureDefinitionNameMapping procedureMapping = program.getProcedureMapping();
         Map<String, Map<LocalIdentifier, ProcedureInfo>> procedures = procedureMapping.getProcedures();
-        return procedures.get(currentActor);
+        return procedures.get(currentActor.getIdent().getName());
     }
 
     private boolean isUniqueProcedureName(String procedureName, Map<LocalIdentifier, ProcedureInfo> procedures) {
@@ -1806,7 +1817,7 @@ public class LeilaVisitor extends PrintVisitor {
 
     @Override
     public void visit(Qualified qualified) {
-        if (!qualified.getFirst().getName().equals(currentActor)) {
+        if (!qualified.getFirst().getName().equals(currentActor.getIdent().getName())) {
             qualified.getFirst().accept(this);
             emitNoSpace(".");
         }

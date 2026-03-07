@@ -20,8 +20,8 @@ package de.uni_passau.fim.se2.litterbox.analytics.llm;
 
 import de.uni_passau.fim.se2.litterbox.analytics.FileAnalyzer;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.ast.util.CodeTarget;
 import de.uni_passau.fim.se2.litterbox.llm.prompts.LlmQuery;
-import de.uni_passau.fim.se2.litterbox.llm.prompts.QueryTarget;
 import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
 
 import java.io.BufferedWriter;
@@ -37,7 +37,7 @@ public class LLMQueryAnalyzer extends FileAnalyzer<String> {
             Path output,
             boolean delete,
             LlmQuery query,
-            QueryTarget target,
+            CodeTarget target,
             boolean ignoreLooseBlocks
     ) {
         super(new LLMProgramQueryAnalyzer(translator, query, target, ignoreLooseBlocks), output, delete);

@@ -19,7 +19,7 @@
 package de.uni_passau.fim.se2.litterbox.analytics;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
-import de.uni_passau.fim.se2.litterbox.ast.visitor.LeilaVisitor;
+import de.uni_passau.fim.se2.litterbox.export.leila.LeilaVisitor;
 
 import java.io.IOException;
 import java.io.PrintStream;
