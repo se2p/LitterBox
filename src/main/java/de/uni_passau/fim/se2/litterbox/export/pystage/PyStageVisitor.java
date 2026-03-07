@@ -61,6 +61,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
+import de.uni_passau.fim.se2.litterbox.ast.model.statement.UnspecifiedStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorlook.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.actorsound.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.*;
@@ -76,6 +77,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.touchable.AsTouchable;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.Edge;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.MousePointer;
 import de.uni_passau.fim.se2.litterbox.ast.model.touchable.SpriteTouchable;
+import de.uni_passau.fim.se2.litterbox.ast.model.touchable.color.FromNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.DataExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Parameter;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.ScratchList;
@@ -289,7 +291,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
     @Override
     public void visit(ASTNode node) {
         // Handle unhandled expression nodes by emitting neutral values.
-        // Comments cannot appear in the middle of Python expressions.
+        // Comments and newlines cannot appear in the middle of Python expressions.
         if (node instanceof NumExpr || node instanceof ComparableExpr) {
             emitNoSpace("0");  // Neutral numeric value
         } else if (node instanceof BoolExpr) {
@@ -304,10 +306,26 @@ public class PyStageVisitor extends AbstractExportVisitor {
             emitNoSpace("pass");
             newLine();
         } else {
-            // For other nodes (events, metadata, etc.), emit a comment
-            emitNoSpace("# Unhandled node: " + node.getClass().getSimpleName());
+            // For other nodes (events, metadata, etc.), emit a comment if it's safe (not in handler)
+            if (inHandler) {
+                emitNoSpace("pass # Unhandled node: " + node.getClass().getSimpleName());
+            } else {
+                emitNoSpace("# Unhandled node: " + node.getClass().getSimpleName());
+            }
             newLine();
         }
+    }
+
+    @Override
+    public void visit(FromNumber node) {
+        // Color sensing often uses FromNumber for the target color
+        node.getValue().accept(this);
+    }
+
+    @Override
+    public void visit(UnspecifiedStmt node) {
+        emitNoSpace("pass # UnspecifiedStmt");
+        newLine();
     }
 
     // ---------------------------------------------------------------
@@ -817,7 +835,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     private void emitVariableCreation(boolean isStage, String varName) {
         if (isStage) {
-            emitNoSpace(currentSpritePyName + ".create_variable(\"" + escapeString(varName) + "\")");
+            emitNoSpace(STAGE_VAR_NAME + ".create_variable(\"" + escapeString(varName) + "\")");
         } else {
             // Use internal method directly because PyStage's facade ignores all_sprites parameter
             emitNoSpace(currentSpritePyName + "._core.pystage_makevariable(\""
@@ -1285,7 +1303,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
     @Override
     public void visit(IfThenStmt ifThenStmt) {
         emitNoSpace("if ");
-        ifThenStmt.getBoolExpr().accept(this);
+        emitAsBool(ifThenStmt.getBoolExpr());
         emitNoSpace(":");
         newLine();
         beginIndentation();
@@ -1296,7 +1314,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
     @Override
     public void visit(IfElseStmt ifElseStmt) {
         emitNoSpace("if ");
-        ifElseStmt.getBoolExpr().accept(this);
+        emitAsBool(ifElseStmt.getBoolExpr());
         emitNoSpace(":");
         newLine();
         beginIndentation();
@@ -1334,7 +1352,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
     @Override
     public void visit(UntilStmt untilStmt) {
         emitNoSpace("while not (");
-        untilStmt.getBoolExpr().accept(this);
+        emitAsBool(untilStmt.getBoolExpr());
         emitNoSpace("):");
         newLine();
         beginIndentation();
@@ -1354,7 +1372,7 @@ public class PyStageVisitor extends AbstractExportVisitor {
     @Override
     public void visit(WaitUntil node) {
         emitNoSpace("while not (");
-        node.getUntil().accept(this);
+        emitAsBool(node.getUntil());
         emitNoSpace("):");
         newLine();
         beginIndentation();
@@ -1965,15 +1983,13 @@ public class PyStageVisitor extends AbstractExportVisitor {
     public void visit(SetVariableTo node) {
         String varName = getIdentifierName(node.getIdentifier());
         if (knownLists.contains(varName)) {
-            emitNoSpace("# Skipped SetVariableTo for list: " + escapeString(varName));
+            emitNoSpace("pass # Skipped SetVariableTo for list: " + escapeString(varName));
             newLine();
             return;
         }
 
         String obj = inHandler ? "self" : currentSpritePyName;
-        emitNoSpace(obj + ".set_variable(\"");
-        emitVariableName(node.getIdentifier());
-        emitNoSpace("\", ");
+        emitNoSpace(obj + ".set_variable(\"" + emitVariableNameString(node.getIdentifier()) + "\", ");
         node.getExpr().accept(this);
         emitNoSpace(")");
         newLine();
@@ -1991,8 +2007,12 @@ public class PyStageVisitor extends AbstractExportVisitor {
         newLine();
     }
 
+    private String emitVariableNameString(Identifier id) {
+        return escapeString(getVariableName(getIdentifierName(id)));
+    }
+
     private void emitVariableName(Identifier id) {
-        emitNoSpace(escapeString(getVariableName(getIdentifierName(id))));
+        emitNoSpace(emitVariableNameString(id));
     }
 
     // ---------------------------------------------------------------
@@ -2308,12 +2328,12 @@ public class PyStageVisitor extends AbstractExportVisitor {
 
     @Override
     public void visit(AsString node) {
-        node.getOperand1().accept(this);
+        emitAsString(node.getOperand1());
     }
 
     @Override
     public void visit(AsBool node) {
-        node.getOperand1().accept(this);
+        emitAsBool(node.getOperand1());
     }
 
     @Override
@@ -2586,9 +2606,9 @@ public class PyStageVisitor extends AbstractExportVisitor {
     @Override
     public void visit(Join node) {
         emitNoSpace("str(");
-        node.getOperand1().accept(this);
+        emitAsString(node.getOperand1());
         emitNoSpace(") + str(");
-        node.getOperand2().accept(this);
+        emitAsString(node.getOperand2());
         emitNoSpace(")");
     }
 
@@ -2637,25 +2657,26 @@ public class PyStageVisitor extends AbstractExportVisitor {
     @Override
     public void visit(And node) {
         emitNoSpace("(");
-        node.getOperand1().accept(this);
+        emitAsBool(node.getOperand1());
         emitNoSpace(" and ");
-        node.getOperand2().accept(this);
+        emitAsBool(node.getOperand2());
         emitNoSpace(")");
     }
 
     @Override
     public void visit(Or node) {
         emitNoSpace("(");
-        node.getOperand1().accept(this);
+        emitAsBool(node.getOperand1());
         emitNoSpace(" or ");
-        node.getOperand2().accept(this);
+        emitAsBool(node.getOperand2());
         emitNoSpace(")");
     }
 
     @Override
     public void visit(Not node) {
-        emitNoSpace("not ");
-        node.getOperand1().accept(this);
+        emitNoSpace("not (");
+        emitAsBool(node.getOperand1());
+        emitNoSpace(")");
     }
 
     @Override
@@ -2726,9 +2747,9 @@ public class PyStageVisitor extends AbstractExportVisitor {
     @Override
     public void visit(StringContains node) {
         emitNoSpace("(str(");
-        node.getContained().accept(this);
+        emitAsString(node.getContained());
         emitNoSpace(").lower() in str(");
-        node.getContaining().accept(this);
+        emitAsString(node.getContaining());
         emitNoSpace(").lower())");
     }
 
@@ -2771,6 +2792,16 @@ public class PyStageVisitor extends AbstractExportVisitor {
     @Override
     public void visit(UnspecifiedBoolExpr node) {
         emitNoSpace("False");
+    }
+
+    @Override
+    public void visit(UnspecifiedNumExpr node) {
+        emitNoSpace("0");
+    }
+
+    @Override
+    public void visit(UnspecifiedStringExpr node) {
+        emitNoSpace("\"\"");
     }
 
     @Override
@@ -2900,8 +2931,36 @@ public class PyStageVisitor extends AbstractExportVisitor {
     }
 
     /**
+     * Helper to emit a boolean expression, handling unspecified/empty ones with a default False.
+     */
+    private void emitAsBool(Expression expr) {
+        if (expr == null || expr instanceof UnspecifiedBoolExpr || expr instanceof UnspecifiedExpression) {
+            emitNoSpace("False");
+        } else {
+            // Some expressions might not be boolean in Python context but are used as conditions
+            if (!(expr instanceof BoolExpr)) {
+                emitNoSpace("bool(");
+                expr.accept(this);
+                emitNoSpace(")");
+            } else {
+                expr.accept(this);
+            }
+        }
+    }
+
+    /**
+     * Helper to emit a string expression, handling unspecified/empty ones with a default empty string.
+     */
+    private void emitAsString(Expression expr) {
+        if (expr == null || expr instanceof UnspecifiedStringExpr || expr instanceof UnspecifiedExpression) {
+            emitNoSpace("\"\"");
+        } else {
+            expr.accept(this);
+        }
+    }
+
+    /**
      * Helper to cast an expression to a number (float), mimicking Scratch's behavior.
-     * Strings that can be parsed as numbers are converted; others become 0.
      */
     private void emitAsNumber(Expression expr) {
         if (expr instanceof NumExpr) {
@@ -2909,7 +2968,11 @@ public class PyStageVisitor extends AbstractExportVisitor {
             expr.accept(this);
         } else {
             emitNoSpace("_to_num(");
-            expr.accept(this);
+            if (expr == null || expr instanceof UnspecifiedNumExpr || expr instanceof UnspecifiedExpression) {
+                emitNoSpace("0");
+            } else {
+                expr.accept(this);
+            }
             emitNoSpace(")");
         }
     }
