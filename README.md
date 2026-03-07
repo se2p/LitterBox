@@ -400,7 +400,7 @@ Science Education (ITiCSE), pages 89-95, ACM,
 
 F. Obermüller, L. Bloch, L. Greifenstein, U. Heuer, and G. Fraser, "Code Perfumes: Reporting Good Code to Encourage
 Learners", in Proceedings of the 16th Workshop in Primary and Secondary Computing Education (WiPSCE ’21). ACM,
-2021. [https://arxiv.org/abs/2108.06289](https://arxiv.org/abs/2108.06289)
+2021. [https://doi.org/10.1145/3481312.3481346](https://doi.org/10.1145/3481312.3481346)
 
 ### Code Patterns in mBlock Programs
 
@@ -424,7 +424,7 @@ in Proceedings of the ACM Global Computing Education Conference 2025 Vol 1 (Comp
 
 B. Fein, F. Obermüller and G. Fraser, "LitterBox+: An Extensible Framework for LLM-enhanced Scratch Static Code Analysis",
 in Proceedings of the 40th IEEE/ACM International Conference on Automated Software Engineering (ASE ’25). IEEE,
-2025. https://doi.org/TBD ([arXiv:2509.12021](https://arxiv.org/abs/2509.12021))
+2025. [doi:10.1109/ASE63991.2025.00357](https://doi.org/10.1109/ASE63991.2025.00357) ([arXiv:2509.12021](https://arxiv.org/abs/2509.12021))
 
 The accompanying poster is available at https://doi.org/10.5281/zenodo.17532057.
 

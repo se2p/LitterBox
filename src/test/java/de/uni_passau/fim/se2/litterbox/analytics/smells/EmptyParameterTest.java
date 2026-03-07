@@ -25,17 +25,15 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
-import org.junit.jupiter.api.Test;
-
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.Add;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.num.AsNumber;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.metadata.block.NoBlockMetadata;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.spritemotion.SetXTo;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -59,7 +57,7 @@ public class EmptyParameterTest implements JsonTest {
         EmptyParameter finder = new EmptyParameter();
         Set<Issue> issues = finder.check(program);
         assertThat(issues).hasSize(1);
-        assertThat(getHintKey(issues.iterator().next())).isEqualTo("empty_parameter_direction");
+        assertThat(issues.iterator().next().getHint().getKey()).isEqualTo("empty_parameter_direction");
     }
 
     @Test
@@ -69,7 +67,7 @@ public class EmptyParameterTest implements JsonTest {
         EmptyParameter finder = new EmptyParameter();
         Set<Issue> issues = finder.check(program);
         assertThat(issues).hasSize(1);
-        assertThat(getHintKey(issues.iterator().next())).isEqualTo("empty_parameter_color");
+        assertThat(issues.iterator().next().getHint().getKey()).isEqualTo("empty_parameter_color");
     }
 
     @Test
@@ -79,7 +77,7 @@ public class EmptyParameterTest implements JsonTest {
         EmptyParameter finder = new EmptyParameter();
         Set<Issue> issues = finder.check(program);
         assertThat(issues).hasSize(1);
-        assertThat(getHintKey(issues.iterator().next())).isEqualTo("empty_parameter_position");
+        assertThat(issues.iterator().next().getHint().getKey()).isEqualTo("empty_parameter_position");
     }
 
     @Test
@@ -89,7 +87,7 @@ public class EmptyParameterTest implements JsonTest {
         EmptyParameter finder = new EmptyParameter();
         Set<Issue> issues = finder.check(program);
         assertThat(issues).hasSize(1);
-        assertThat(getHintKey(issues.iterator().next())).isEqualTo("empty_parameter");
+        assertThat(issues.iterator().next().getHint().getKey()).isEqualTo("empty_parameter");
     }
 
     @Test
@@ -99,7 +97,7 @@ public class EmptyParameterTest implements JsonTest {
         EmptyParameter finder = new EmptyParameter();
         Set<Issue> issues = finder.check(program);
         assertThat(issues).hasSize(1);
-        assertThat(getHintKey(issues.iterator().next())).isEqualTo("empty_parameter");
+        assertThat(issues.iterator().next().getHint().getKey()).isEqualTo("empty_parameter");
     }
 
     @Test
@@ -109,7 +107,7 @@ public class EmptyParameterTest implements JsonTest {
         EmptyParameter finder = new EmptyParameter();
         Set<Issue> issues = finder.check(program);
         assertThat(issues).hasSize(1);
-        assertThat(getHintKey(issues.iterator().next())).isEqualTo("empty_parameter_color");
+        assertThat(issues.iterator().next().getHint().getKey()).isEqualTo("empty_parameter_color");
     }
 
     @Test
@@ -171,7 +169,7 @@ public class EmptyParameterTest implements JsonTest {
         EmptyParameter finder = new EmptyParameter();
         Set<Issue> issues = finder.check(program);
         assertThat(issues).hasSize(1);
-        assertThat(getHintKey(issues.iterator().next())).isEqualTo("empty_parameter");
+        assertThat(issues.iterator().next().getHint().getKey()).isEqualTo("empty_parameter");
     }
 
     @Test
@@ -190,19 +188,5 @@ public class EmptyParameterTest implements JsonTest {
         EmptyParameter finder = new EmptyParameter();
         Set<Issue> issues = finder.check(program);
         assertThat(issues).isEmpty();
-    }
-
-    private String getHintKey(Issue issue) {
-        try {
-            Field hintField = Issue.class.getDeclaredField("hint");
-            hintField.setAccessible(true);
-            Hint hint = (Hint) hintField.get(issue);
-
-            Field keyField = Hint.class.getDeclaredField("hintKey");
-            keyField.setAccessible(true);
-            return (String) keyField.get(hint);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }

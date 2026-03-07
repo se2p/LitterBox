@@ -57,14 +57,12 @@ public class ConsoleReportGenerator implements ReportGenerator {
         printSummaryLine("BUGS", issuesByType.get(IssueType.BUG));
         printSummaryLine("SMELLS", issuesByType.get(IssueType.SMELL));
         printSummaryLine("PERFUMES", issuesByType.get(IssueType.PERFUME));
-        printSummaryLine("QUESTIONS", issuesByType.get(IssueType.QUESTION));
         System.out.println();
 
         // Print detailed lists by category
         printCategoryDetails("BUGS", IssueType.BUG, issuesByType);
         printCategoryDetails("SMELLS", IssueType.SMELL, issuesByType);
         printCategoryDetails("PERFUMES", IssueType.PERFUME, issuesByType);
-        printCategoryDetails("QUESTIONS", IssueType.QUESTION, issuesByType);
     }
 
     private void printSummaryLine(String label, List<Issue> issues) {

@@ -63,7 +63,7 @@ class LLMIssueFixProcessorTest implements FinderTest, JsonTest {
     void ignoreNonScriptIssues() throws Exception {
         final Program program = getAST("./src/test/fixtures/perfumes/usedVariable.json");
         final Set<Issue> issues = getIssues(program).stream()
-                .filter(issue -> !Set.of(IssueType.PERFUME, IssueType.QUESTION).contains(issue.getIssueType()))
+                .filter(issue -> issue.getIssueType() != IssueType.PERFUME)
                 .collect(Collectors.toSet());
         assertThat(issues).isNotEmpty();
         assertAll(issues.stream().map(issue -> () -> assertThat(issue.getScript()).isNull()));

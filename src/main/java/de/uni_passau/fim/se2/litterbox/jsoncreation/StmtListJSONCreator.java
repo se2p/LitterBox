@@ -85,11 +85,9 @@ import de.uni_passau.fim.se2.litterbox.ast.parser.symboltable.SymbolTable;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.*;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
@@ -139,19 +137,10 @@ public class StmtListJSONCreator
             counter++;
         }
 
-        StringBuilder jsonString = new StringBuilder();
         // Filter out empty/null strings to prevent double-comma JSON corruption
-        List<String> validJsonStrings = finishedJSONStrings.stream()
-                .filter(s -> s != null && !s.isEmpty())
-                .toList();
-
-        for (int i = 0; i < validJsonStrings.size() - 1; i++) {
-            jsonString.append(validJsonStrings.get(i)).append(",");
-        }
-        if (!validJsonStrings.isEmpty()) {
-            jsonString.append(validJsonStrings.getLast());
-        }
-        return jsonString.toString();
+        return finishedJSONStrings.stream()
+                .filter(s -> s != null && !s.isBlank())
+                .collect(Collectors.joining(","));
     }
 
     private String getNextId() {
@@ -925,11 +914,8 @@ public class StmtListJSONCreator
     ) {
         List<String> inputs = new ArrayList<>();
         if (expr instanceof NumberLiteral numberLiteral) {
-            NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
-            format.setGroupingUsed(false);
-            format.setMinimumFractionDigits(0);
-            inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
-                    format.format(numberLiteral.getValue())));
+            final String number = BlockJsonCreatorHelper.formatNumberLiteral(numberLiteral);
+            inputs.add(createTypeInputWithName(VALUE_KEY, INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE, number));
         } else {
             inputs.add(createExpr(metadata, VALUE_KEY, expr));
         }
@@ -1090,11 +1076,8 @@ public class StmtListJSONCreator
 
     private String createNumExpr(NonDataBlockMetadata metadata, String inputKey, NumExpr numExpr, int primitive) {
         if (numExpr instanceof NumberLiteral numberLiteral) {
-            NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
-            format.setGroupingUsed(false);
-            format.setMinimumFractionDigits(0);
-            return createTypeInputWithName(inputKey, INPUT_SAME_BLOCK_SHADOW, primitive,
-                    format.format(numberLiteral.getValue()));
+            final String number = BlockJsonCreatorHelper.formatNumberLiteral(numberLiteral);
+            return createTypeInputWithName(inputKey, INPUT_SAME_BLOCK_SHADOW, primitive, number);
         } else {
             return createExpr(metadata, inputKey, numExpr);
         }

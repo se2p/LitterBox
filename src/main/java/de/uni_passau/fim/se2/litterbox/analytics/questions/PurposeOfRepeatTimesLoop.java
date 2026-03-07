@@ -18,27 +18,39 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.RepeatTimesStmt;
 
 /**
- * @QuestionType Free Text
- * @Highlighted Loop
- * @Context Single script
+ * Generates a question asking for the purpose of a repeat-times loop (e.g., repeat 10).
+ *
  */
 public class PurposeOfRepeatTimesLoop extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "purpose_of_repeat_times_loop";
+
     @Override
     public void visit(RepeatTimesStmt node) {
-        IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
-        Hint hint = Hint.fromKey(getName());
-        addIssue(builder.withHint(hint));
+        QuestionBuilder builder = prepareQuestionBuilder(node);
+        addQuestion(builder);
     }
 
     @Override
     public String getName() {
-        return "purpose_of_repeat_times_loop";
+        return FINDER_NAME;
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.PURPOSE;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.BLOCK;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.FREE_TEXT;
     }
 }

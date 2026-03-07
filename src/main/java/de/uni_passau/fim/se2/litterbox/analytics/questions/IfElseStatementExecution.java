@@ -18,22 +18,20 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.IfElseStmt;
 import de.uni_passau.fim.se2.litterbox.export.scratchblocks.ScratchBlocksVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
+import java.util.Collections;
+
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers 1
- * @NumChoices 1
- * @Highlighted IfElse Statement
- * @Context Single script
+ * Generates a question asking for the execution path of an if-else statement given a condition value.
+ *
  */
 public class IfElseStatementExecution extends AbstractQuestionFinder {
+
+    public static final String FINDER_NAME = "if_else_statement_execution";
 
     @Override
     public void visit(IfElseStmt node) {
@@ -44,18 +42,38 @@ public class IfElseStatementExecution extends AbstractQuestionFinder {
             String thenStmts = wrappedScratchBlocks(node.getThenStmts());
             String elseStmts = wrappedScratchBlocks(node.getElseStmts());
 
-            IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
-            Hint hint = Hint.fromKey(getName());
-            hint.setParameter(Hint.CONDITION, ScratchBlocksVisitor.of(condition));
-            hint.setParameter(Hint.HINT_VARIABLE, String.valueOf(conditionValue).toUpperCase());
-            hint.setParameter(Hint.ANSWER, conditionValue ? thenStmts : elseStmts);
-            hint.setParameter(Hint.CHOICES, conditionValue ? elseStmts : thenStmts);
-            addIssue(builder.withHint(hint));
+            String correct = conditionValue ? thenStmts : elseStmts;
+            String wrong = conditionValue ? elseStmts : thenStmts;
+
+            QuestionBuilder builder = prepareQuestionBuilder(node)
+                    .withQuestionParameter(QuestionText.CONDITION, ScratchBlocksVisitor.of(condition))
+                    .withQuestionParameter(QuestionText.VALUE, QuestionText.fromKey(
+                            conditionValue ? QuestionText.TRUE_VALUE : QuestionText.FALSE_VALUE))
+                    .withCorrectAnswers(correct)
+                    .withChoices(generateMultipleChoiceOptions(
+                            Collections.singletonList(correct),
+                            Collections.singletonList(wrong)));
+            addQuestion(builder);
         }
     }
 
     @Override
     public String getName() {
-        return "if_else_statement_execution";
+        return FINDER_NAME;
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.EXECUTION;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.BLOCK;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

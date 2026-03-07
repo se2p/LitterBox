@@ -20,12 +20,14 @@ package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
 import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
-import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Set;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -39,17 +41,25 @@ class ScriptsTriggeredByEventTest implements FinderTest, JsonTest {
 
     @Test
     public void testOneScript() throws IOException, ParsingException {
-        assertThatFinderReports(1, new ScriptsTriggeredByEvent(), "./src/test/fixtures/questions/noVariables.json");
+        Program prog = getAST("./src/test/fixtures/questions/noVariables.json");
+        Set<Question> questions = runFinder(prog, new ScriptsTriggeredByEvent(), false);
+        assertThat(questions.size()).isEqualTo(1);
+
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
+        for (Question question : questions) {
+            assertThat(question.getQuestionText(translator)).contains("How many scripts");
+        }
     }
 
     @Test
     public void testTwoScriptsWithSameEvent() throws IOException, ParsingException {
         Program prog = getAST("src/test/fixtures/questions/oneScriptWithForeverLoopOneWithOtherElement.json");
-        Set<Issue> issues = runFinder(prog, new ScriptsTriggeredByEvent(), false);
-        assertThat(issues.size()).isEqualTo(1);
+        Set<Question> questions = runFinder(prog, new ScriptsTriggeredByEvent(), false);
+        assertThat(questions.size()).isEqualTo(1);
 
-        for (Issue issue : issues) {
-            assertThat(issue.getHint().getHintText(translator)).containsMatch("\\[a-n]2\\[/a-n]");
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
+        for (Question question : questions) {
+            assertThat(question.getCorrectAnswers().stream().map(a -> a.resolveText(translator, translator::getInfo))).contains("2");
         }
     }
 

@@ -18,18 +18,16 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinitionList;
 
 /**
- * @QuestionType Number
- * @Highlighted Nothing
- * @Context Whole program
+ * Generates a question asking for the total number of scripts in the program.
+ *
  */
 public class ScriptsInProgram extends AbstractQuestionFinder {
+
+    public static final String FINDER_NAME = "scripts_in_program";
 
     private int scriptsInProgram;
 
@@ -38,10 +36,9 @@ public class ScriptsInProgram extends AbstractQuestionFinder {
         scriptsInProgram = 0;
         super.visit(node);
 
-        IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
-        Hint hint = Hint.fromKey(getName());
-        hint.setParameter(Hint.ANSWER, Integer.toString(scriptsInProgram));
-        addIssue(builder.withHint(hint));
+        QuestionBuilder builder = prepareQuestionBuilder()
+                .withCorrectAnswers(Integer.toString(scriptsInProgram));
+        addQuestion(builder);
     }
 
     @Override
@@ -52,6 +49,21 @@ public class ScriptsInProgram extends AbstractQuestionFinder {
 
     @Override
     public String getName() {
-        return "scripts_in_program";
+        return FINDER_NAME;
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.TEXT;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.MACRO;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.NUMBER;
     }
 }

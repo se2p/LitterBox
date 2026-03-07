@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Never;
@@ -32,13 +29,10 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
 /**
  * If stmts are contained in if stmts.
  *
- * @QuestionType Multiple Choice
- * @NumAnswers {@link AbstractQuestionFinder#maxChoices}
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Script
- * @Context Single script
  */
 public class StatementsInIfStatement extends AbstractQuestionFinder {
+
+    public static final String FINDER_NAME = "statements_in_if_statement";
 
     private int inIfStmt;
     private boolean visitingScript;
@@ -61,11 +55,11 @@ public class StatementsInIfStatement extends AbstractQuestionFinder {
             } else {
                 topBlockCurrent = node.getStmtList().getStmts().getFirst();
             }
-            IssueBuilder builder = prepareIssueBuilder(topBlockCurrent).withSeverity(IssueSeverity.LOW);
-            Hint hint = Hint.fromKey(getName());
-            hint.setParameter(Hint.CHOICES, getChoices());
-            hint.setParameter(Hint.ANSWER, getAnswers());
-            addIssue(builder.withHint(hint));
+            QuestionBuilder builder = prepareQuestionBuilder(topBlockCurrent)
+                    .withScript(node)
+                    .withChoices(generateMultipleChoiceOptions(answers, choices))
+                    .withCorrectAnswers(getAnswersList());
+            addQuestion(builder);
         }
     }
 
@@ -102,6 +96,21 @@ public class StatementsInIfStatement extends AbstractQuestionFinder {
 
     @Override
     public String getName() {
-        return "statements_in_if_statement";
+        return FINDER_NAME;
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.TEXT;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.BLOCK;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

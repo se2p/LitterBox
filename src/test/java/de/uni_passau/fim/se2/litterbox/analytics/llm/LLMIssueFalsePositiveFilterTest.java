@@ -23,7 +23,6 @@ import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.analytics.Issue;
 import de.uni_passau.fim.se2.litterbox.analytics.bugs.ComparingLiterals;
 import de.uni_passau.fim.se2.litterbox.analytics.perfumes.InitialisationOfPosition;
-import de.uni_passau.fim.se2.litterbox.analytics.questions.IfThenStatementExecution;
 import de.uni_passau.fim.se2.litterbox.analytics.smells.EmptyProject;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
@@ -40,9 +39,11 @@ import java.util.Set;
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class LLMIssueFalsePositiveFilterTest implements FinderTest, JsonTest {
 
@@ -50,13 +51,6 @@ class LLMIssueFalsePositiveFilterTest implements FinderTest, JsonTest {
     void shouldIgnorePerfumes() throws ParsingException, IOException {
         final Program program = getAST("src/test/fixtures/perfumes/initLocInBlock.json");
         final Set<Issue> issues = new InitialisationOfPosition().check(program);
-        shouldIgnoreIssues(program, issues);
-    }
-
-    @Test
-    void shouldIgnoreQuestions() throws ParsingException, IOException {
-        final Program program = getAST("src/test/fixtures/questions/twoScriptsWithBothIfStmts.json");
-        final Set<Issue> issues = new IfThenStatementExecution().check(program);
         shouldIgnoreIssues(program, issues);
     }
 

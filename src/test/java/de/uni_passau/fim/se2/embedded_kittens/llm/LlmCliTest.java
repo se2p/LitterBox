@@ -18,17 +18,17 @@
  */
 package de.uni_passau.fim.se2.embedded_kittens.llm;
 
-import static com.google.common.truth.Truth.assertThat;
-
-import java.nio.file.Path;
-import java.util.List;
-
 import de.uni_passau.fim.se2.CliTest;
 import de.uni_passau.fim.se2.embedded_kittens.EmbeddedKittensMain;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.nio.file.Path;
+import java.util.List;
+
+import static com.google.common.truth.Truth.assertThat;
 
 class LlmCliTest extends CliTest<EmbeddedKittensMain> {
 
@@ -53,21 +53,21 @@ class LlmCliTest extends CliTest<EmbeddedKittensMain> {
         commandLine.execute("llm", "-p", "src/test/fixtures/multipleSprites.json");
         assertEmptyStdErr();
 
-        final List<String> outputLines = getOutput().lines().toList();
+        final List<String> outputLines = getOutput().replace("\\r", "").lines().toList();
         assertThat(outputLines).hasSize(3);
         assertThat(outputLines).containsExactly(
             """
                 {"originalLabel":"Stage","label":"stage","program":"//Sprite: Stage\\n\\n//Script: }r3UNB}^zo[CMz4[fg-.\\nwhen green flag clicked\\nrepeat (10)\\nend\\n"}
                 """
-                .strip(),
+                    .strip(),
             """
                 {"originalLabel":"cat","label":"cat","program":"//Sprite: cat\\n\\n//Script: b^1`lb!!1@{vyh9hiru-\\nwhen [right arrow v] key pressed\\nsay [Hi!]\\nshow\\n"}
                 """
-                .strip(),
+                    .strip(),
             """
                 {"originalLabel":"abby","label":"abby","program":"//Sprite: abby\\n\\n//Script: iYhbPcaHZfN*73Kq-F.-\\nwhen green flag clicked\\nsay [Hello!]\\n"}
                 """
-                .strip()
+                    .strip()
         );
     }
 

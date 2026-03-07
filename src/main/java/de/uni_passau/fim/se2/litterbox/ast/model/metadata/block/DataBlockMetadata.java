@@ -23,15 +23,21 @@ import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.AbstractNode;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.CloneVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
+import org.jspecify.annotations.Nullable;
 
 public class DataBlockMetadata extends AbstractNode implements BlockMetadata, ASTLeaf {
-    private String blockId;
+    /**
+     * Only in case this is a top-level variable (i.e., a free-floating single block).
+     */
+    private final String scriptId;
+    private final String blockId;
     private String commentId;
-    private double x;
-    private double y;
+    private final double x;
+    private final double y;
 
-    public DataBlockMetadata(String blockId, String commentId, double x, double y) {
+    public DataBlockMetadata(@Nullable String scriptId, String blockId, String commentId, double x, double y) {
         super();
+        this.scriptId = scriptId;
         this.blockId = blockId;
         this.commentId = commentId;
         this.x = x;
@@ -44,6 +50,10 @@ public class DataBlockMetadata extends AbstractNode implements BlockMetadata, AS
 
     public double getY() {
         return y;
+    }
+
+    public String getScriptId() {
+        return scriptId;
     }
 
     public String getBlockId() {

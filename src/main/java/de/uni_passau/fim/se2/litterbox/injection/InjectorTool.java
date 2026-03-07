@@ -111,6 +111,7 @@ public class InjectorTool {
         // Redundancy/structure bugs
         registerInjector(new RedundantAssignmentInjector(), injectors);
         registerInjector(new NoWorkingScriptsInjector(), injectors);
+        registerInjector(new InvalidActorBlocksInjector(), injectors);
 
         return injectors;
     }

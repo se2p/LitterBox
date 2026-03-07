@@ -430,11 +430,20 @@ public class InterruptedLoopSensing extends AbstractIssueFinder {
 
     @Override
     public void visit(WaitUntil node) {
-        if (!visitOuter && insideForever) {
-            blockName = new HintPlaceholder.Translatable("wait_until");
-            inCondition = true;
-            visitChildren(node);
-            inCondition = false;
+        // WaitUntil is a blocking statement that can interrupt loop-sensing of enclosing control structures.
+        // Note: We do NOT check for sensing conditions INSIDE WaitUntil because WaitUntil continuously
+        // checks its condition until true - blocking statements before it don't interrupt this behavior.
+        if (!checkingVariable && !checkingStop && (insideControl && (sensingCollision || sensingOther))) {
+            Hint hint = Hint.fromKey(getName());
+            hint.setParameter(Hint.THEN_ELSE, blockName);
+            hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("wait_until"));
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
+        }
+        if (visitOuter && blockName != null) {
+            Hint hint = Hint.fromKey(getName());
+            hint.setParameter(Hint.THEN_ELSE, blockName);
+            hint.setParameter(Hint.BLOCK_NAME, new HintPlaceholder.Translatable("wait_until"));
+            addIssue(node, node.getMetadata(), IssueSeverity.LOW, hint);
         }
     }
 

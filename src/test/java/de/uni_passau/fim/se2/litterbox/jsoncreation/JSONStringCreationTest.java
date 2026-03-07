@@ -24,17 +24,26 @@ import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.parser.Scratch3Parser;
 import de.uni_passau.fim.se2.litterbox.ast.util.StructuralEquality;
+import de.uni_passau.fim.se2.litterbox.export.scratchblocks.ScratchBlocksVisitor;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import picocli.CommandLine;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class JSONStringCreationTest implements JsonTest {
 
@@ -107,5 +116,70 @@ class JSONStringCreationTest implements JsonTest {
         final Program parsedProgram = parser.parseString("quantum", json);
 
         Assertions.assertTrue(StructuralEquality.areStructurallyEqual(program, parsedProgram));
+    }
+
+    @ParameterizedTest
+    @MethodSource("jsonFixtures")
+    void testJsonIdempotent(final Path fixture) throws ParsingException {
+        final Program program;
+        try {
+            program = getAST(fixture);
+        } catch (Exception e) {
+            // original program cannot be parsed, ignore for this test
+            return;
+        }
+
+        final String json = JSONStringCreator.createProgramJSONString(program);
+        final Program parsedProgram = new Scratch3Parser().parseString("program", json);
+
+        assertAll(
+                () -> assertWithMessage(json)
+                        .that(StructuralEquality.areStructurallyEqual(program, parsedProgram))
+                        .isTrue(),
+                // just to make it easier to debug
+                () -> assertThat(ScratchBlocksVisitor.of(parsedProgram)).isEqualTo(ScratchBlocksVisitor.of(program))
+        );
+    }
+
+    static Stream<Arguments> jsonFixtures() throws IOException {
+        final Set<String> ignoredProjects = Set.of(
+                "undefinedBlocks.json",
+                "undefinedBlocksEvent.json",
+                // contains invalid opcodes for multiple blocks, adding more letters
+                // e.g. sound_sounds_menuuu, event_whenflagclickeeeed, control_waiiiit
+                "invalidOPCodes.json",
+                "manipulatedFixedNoteBlock.json",
+                // contains invalid opcode motion_move100steps
+                // -> block skipped when parsing for the first time
+                // -> broken next pointer when writing JSON
+                // -> missing two blocks afterwards in the stmtlist
+                "eraseOtherSprite.json",
+                // same issue as eraseOtherSprite.json
+                "missingEraseAll.json",
+                // invalid JSON (multiple expressions in a single stmt-list)
+                "inappropriateIntimacy.json",
+                // no support for the wedo2 extension
+                "testExtension.json",
+                // contains PlayNoteForBeats blocks that do not have an input for the note
+                // the reference value in the json is null, while the shadow input says that
+                // a FixedNote should be created, which of course then has no metadata as it
+                // does not exist in the original JSON
+                // there even is not a single note opcode in the JSON
+                // tl;dr the original JSON is broken
+                "broadcastCostumeFix.json",
+                // contains `data_setvariableto (var) (3)` with 3 stored with type String in the original JSON
+                // LitterBox eagerly converts the 3 into a NumberLiteral when parsing
+                // Since the type is then different in the resulting JSON, they are no longer structurally equal.
+                // Due to the loose JavaScript typing (and type coercion) when performing equality checks or applying
+                // mathematical operators, this change of type should not change program behaviour.
+                "missingBackdropSwitchAndWaitAsString.json"
+        );
+        return Files.walk(Path.of("src/test/fixtures/"))
+                .filter(p -> p.toFile().isFile())
+                .filter(p -> p.getFileName().toString().endsWith(".json"))
+                // ignore mblock projects since they currently cannot be written to JSON
+                .filter(p -> !p.toString().contains("mblock"))
+                .filter(p -> !ignoredProjects.contains(p.getFileName().toString()))
+                .map(p -> Arguments.of(Named.of(p.toString(), p)));
     }
 }

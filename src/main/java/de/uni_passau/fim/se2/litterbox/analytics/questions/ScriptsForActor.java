@@ -18,39 +18,53 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.HintPlaceholder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.export.scratchblocks.ScratchBlocksVisitor;
 
 /**
- * @QuestionType Number
- * @Highlighted Nothing
- * @Context Single actor
+ * Generates a question asking for the number of scripts belonging to a specific actor.
+ *
  */
 public class ScriptsForActor extends AbstractQuestionFinder {
+
+    public static final String FINDER_NAME = "scripts_for_actor";
+    private static final String STAGE_NAME = "Stage";
+    private static final String ACTOR_PARAM = "ACTOR";
 
     @Override
     public void visit(ActorDefinition node) {
         currentActor = node;
-        IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
-        Hint hint = Hint.fromKey(getName());
         String actor = ScratchBlocksVisitor.of(node.getIdent());
-        final HintPlaceholder placeholder;
-        if ("Stage".equals(actor)) {
-            placeholder = new HintPlaceholder.Translatable("stage");
+        TranslatableText actorText;
+        if (STAGE_NAME.equals(actor)) {
+            actorText = QuestionText.fromKey(QuestionText.STAGE);
         } else {
-            placeholder = new HintPlaceholder.Value(actor);
+            actorText = QuestionText.fromText(actor);
         }
-        hint.setParameter(Hint.ACTOR, placeholder);
-        hint.setParameter(Hint.ANSWER, Integer.toString(node.getScripts().getSize()));
-        addIssue(builder.withHint(hint));
+        QuestionBuilder builder = prepareQuestionBuilder()
+                .withQuestionParameter(ACTOR_PARAM, actorText)
+                .withCorrectAnswers(Integer.toString(node.getScripts().getSize()));
+        addQuestion(builder);
     }
 
     @Override
     public String getName() {
-        return "scripts_for_actor";
+        return FINDER_NAME;
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.TEXT;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.MACRO;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.NUMBER;
     }
 }

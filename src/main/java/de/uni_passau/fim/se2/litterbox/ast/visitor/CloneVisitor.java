@@ -3294,14 +3294,20 @@ public class CloneVisitor {
      * Helper to generate a new block ID or keep the old one based on configuration.
      */
     private String processBlockId(String oldId) {
-        if (freshBlockIds) {
+        if (freshBlockIds && oldId != null) {
             return generateUID();
         }
         return oldId;
     }
 
     public ASTNode visit(DataBlockMetadata node) {
-        return new DataBlockMetadata(processBlockId(node.getBlockId()), node.getCommentId(), node.getX(), node.getY());
+        return new DataBlockMetadata(
+                processBlockId(node.getScriptId()),
+                processBlockId(node.getBlockId()),
+                node.getCommentId(),
+                node.getX(),
+                node.getY()
+        );
     }
 
     /**

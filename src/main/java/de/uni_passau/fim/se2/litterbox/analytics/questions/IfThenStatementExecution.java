@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.StmtList;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.bool.BoolExpr;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.Stmt;
@@ -29,11 +26,15 @@ import de.uni_passau.fim.se2.litterbox.export.scratchblocks.ScratchBlocksVisitor
 import de.uni_passau.fim.se2.litterbox.utils.Randomness;
 
 /**
- * @QuestionType Yes or No
- * @Highlighted IfThen Statement
- * @Context Single script
+ * Generates yes/no questions about whether an if-then statement's body will execute
+ * given a specific condition value.
+ *
+ * <p>Example question: "If the condition [x &gt; 5] is TRUE, will the statement
+ * [move 10 steps] be executed?"
  */
 public class IfThenStatementExecution extends AbstractQuestionFinder {
+
+    public static final String FINDER_NAME = "if_then_statement_execution";
 
     @Override
     public void visit(IfThenStmt node) {
@@ -45,18 +46,35 @@ public class IfThenStatementExecution extends AbstractQuestionFinder {
                     thenStmts.getStatement(Randomness.nextInt(thenStmts.getNumberOfStatements()))
             );
 
-            IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
-            Hint hint = Hint.fromKey(getName());
-            hint.setParameter(Hint.STATEMENT, ScratchBlocksVisitor.of(statement));
-            hint.setParameter(Hint.CONDITION, ScratchBlocksVisitor.of(condition));
-            hint.setParameter(Hint.HINT_VARIABLE, String.valueOf(conditionValue).toUpperCase());
-            hint.setParameter(Hint.ANSWER, conditionValue ? YES : NO);
-            addIssue(builder.withHint(hint));
+            QuestionBuilder builder = prepareQuestionBuilder(node)
+                    .withQuestionParameter(QuestionText.STATEMENT, ScratchBlocksVisitor.of(statement))
+                    .withQuestionParameter(QuestionText.CONDITION, ScratchBlocksVisitor.of(condition))
+                    .withQuestionParameter(QuestionText.VALUE,
+                            QuestionText.fromKey(conditionValue ? QuestionText.TRUE_VALUE : QuestionText.FALSE_VALUE))
+                    .withTranslatableCorrectAnswers(java.util.List.of(
+                            QuestionText.fromKey(conditionValue ? QuestionText.YES_TERM : QuestionText.NO_TERM)
+                    ));
+            addQuestion(builder);
         }
     }
 
     @Override
     public String getName() {
-        return "if_then_statement_execution";
+        return FINDER_NAME;
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.EXECUTION;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.BLOCK;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.YES_NO;
     }
 }

@@ -30,6 +30,7 @@ import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.Attribute;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromFixed;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.string.attributes.AttributeFromVariable;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.Tempo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.ExprDrum;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.drums.FixedDrum;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.music.instruments.ExprInstrument;
@@ -69,11 +70,9 @@ import de.uni_passau.fim.se2.litterbox.ast.visitor.TranslateExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.VideoSensingExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.utils.Preconditions;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static de.uni_passau.fim.se2.litterbox.ast.Constants.*;
 import static de.uni_passau.fim.se2.litterbox.jsoncreation.BlockJsonCreatorHelper.*;
@@ -100,19 +99,12 @@ public class ExpressionJSONCreator
         fixedExprCreator = new FixedExpressionJSONCreator();
         expression.accept(this);
 
-        StringBuilder jsonString = new StringBuilder();
         // Filter out empty/null strings to prevent double-comma JSON corruption
-        List<String> validJsonStrings = finishedJSONStrings.stream()
-                .filter(s -> s != null && !s.isEmpty())
-                .toList();
+        String jsonString = finishedJSONStrings.stream()
+                .filter(s -> s != null && !s.isBlank())
+                .collect(Collectors.joining(","));
 
-        for (int i = 0; i < validJsonStrings.size() - 1; i++) {
-            jsonString.append(validJsonStrings.get(i)).append(",");
-        }
-        if (!validJsonStrings.isEmpty()) {
-            jsonString.append(validJsonStrings.getLast());
-        }
-        return new IdJsonStringTuple(topExpressionId, jsonString.toString());
+        return new IdJsonStringTuple(topExpressionId, jsonString);
     }
 
     @Override
@@ -170,11 +162,8 @@ public class ExpressionJSONCreator
 
     @Override
     public void visit(NumberLiteral node) {
-        NumberFormat format = DecimalFormat.getInstance(Locale.ROOT);
-        format.setGroupingUsed(false);
-        format.setMinimumFractionDigits(0);
-        finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE,
-                format.format(node.getValue())));
+        final String number = BlockJsonCreatorHelper.formatNumberLiteral(node);
+        finishedJSONStrings.add(createTypeInput(INPUT_SAME_BLOCK_SHADOW, MATH_NUM_PRIMITIVE, number));
     }
 
     @Override
@@ -649,7 +638,7 @@ public class ExpressionJSONCreator
             String listId = symbolTable.getListIdentifierFromActorAndName(actor, listName);
             BlockMetadata metadata = list.getMetadata();
             if (metadata instanceof DataBlockMetadata dataBlockMetadata) {
-                createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(LIST_PRIMITIVE);
+                createField(jsonString, dataBlockMetadata.getScriptId()).append("[").append(LIST_PRIMITIVE);
                 jsonString.append(",\"").append(BlockJsonCreatorHelper.escape(listName)).append("\",\"");
                 jsonString.append(BlockJsonCreatorHelper.escape(listId));
                 if (dataBlockMetadata.getCommentId() != null) {
@@ -679,7 +668,7 @@ public class ExpressionJSONCreator
             String variableId = symbolTable.getVariableIdentifierFromActorAndName(actor, variableName);
             BlockMetadata metadata = variable.getMetadata();
             if (metadata instanceof DataBlockMetadata dataBlockMetadata) {
-                createField(jsonString, dataBlockMetadata.getBlockId()).append("[").append(VAR_PRIMITIVE);
+                createField(jsonString, dataBlockMetadata.getScriptId()).append("[").append(VAR_PRIMITIVE);
                 jsonString.append(",\"").append(BlockJsonCreatorHelper.escape(variableName)).append("\",\"");
                 jsonString.append(BlockJsonCreatorHelper.escape(variableId));
                 if (dataBlockMetadata.getCommentId() != null) {
@@ -843,6 +832,11 @@ public class ExpressionJSONCreator
     @Override
     public void visit(ExprInstrument node) {
         node.getExpr().accept(this);
+    }
+
+    @Override
+    public void visit(Tempo node) {
+        createSimpleExpression(node.getMetadata(), node.getOpcode());
     }
 
     // Translate Extension

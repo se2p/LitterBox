@@ -81,7 +81,7 @@ abstract class ExprConverter {
                         "Program contains unknown variable '" + variable.name() + "' in actor '"
                                 + state.getCurrentActor().getName() + "'."
                 ));
-                final Qualified varId = ConverterUtilities.topLevelVariableInfoToIdentifier(varInfo, variable);
+                final Qualified varId = ConverterUtilities.topLevelVariableInfoToIdentifier(blockId, varInfo, variable);
 
                 return new ExpressionStmt(varId);
             }
@@ -92,7 +92,7 @@ abstract class ExprConverter {
                         "Program contains unknown list '" + list.name() + "' in actor '"
                                 + state.getCurrentActor().getName() + "'."
                 ));
-                final Qualified listId = ConverterUtilities.topLevelListInfoToIdentifier(listInfo, list);
+                final Qualified listId = ConverterUtilities.topLevelListInfoToIdentifier(blockId, listInfo, list);
 
                 return new ExpressionStmt(listId);
             }

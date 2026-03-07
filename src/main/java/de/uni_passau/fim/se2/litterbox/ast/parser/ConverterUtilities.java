@@ -58,9 +58,11 @@ final class ConverterUtilities {
     }
 
     static Qualified topLevelVariableInfoToIdentifier(
-            final VariableInfo variableInfo, final RawBlock.RawVariable variable
+            final RawBlockId scriptId, final VariableInfo variableInfo, final RawBlock.RawVariable variable
     ) {
-        final BlockMetadata metadata = RawBlockMetadataConverter.convertTopLevelBlockMetadata(variable.id(), variable);
+        final BlockMetadata metadata = RawBlockMetadataConverter.convertTopLevelBlockMetadata(
+                scriptId, variable.id(), variable
+        );
         final Variable v = new Variable(new StrId(variableInfo.variableName()), metadata);
 
         return new Qualified(new StrId(variableInfo.actor()), v);
@@ -72,8 +74,12 @@ final class ConverterUtilities {
         return new Qualified(new StrId(listInfo.actor()), list);
     }
 
-    static Qualified topLevelListInfoToIdentifier(final ExpressionListInfo listInfo, final RawBlock.RawList list) {
-        final BlockMetadata metadata = RawBlockMetadataConverter.convertTopLevelBlockMetadata(list.id(), list);
+    static Qualified topLevelListInfoToIdentifier(
+            final RawBlockId scriptId, final ExpressionListInfo listInfo, final RawBlock.RawList list
+    ) {
+        final BlockMetadata metadata = RawBlockMetadataConverter.convertTopLevelBlockMetadata(
+                scriptId, list.id(), list
+        );
         final ScratchList l = new ScratchList(new StrId(listInfo.variableName()), metadata);
 
         return new Qualified(new StrId(listInfo.actor()), l);

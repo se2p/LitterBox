@@ -45,6 +45,7 @@ import java.util.concurrent.Callable;
         subcommands = {
                 // general commands
                 Main.CheckProgramsSubcommand.class,
+                QuestionsSubcommand.class,
                 Main.InjectSubcommand.class,
                 LlmSubcommand.class,
                 DiffSubcommand.class,

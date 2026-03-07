@@ -18,13 +18,21 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
+import de.uni_passau.fim.se2.litterbox.FinderTest;
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.Program;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslator;
+import de.uni_passau.fim.se2.litterbox.utils.IssueTranslatorFactory;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Locale;
+import java.util.Set;
 
-public class RepeatTimesLiteralExecutionTest implements JsonTest {
+import static com.google.common.truth.Truth.assertThat;
+
+public class RepeatTimesLiteralExecutionTest implements FinderTest, JsonTest {
     @Test
     public void testEmptyProgram() throws IOException, ParsingException {
         assertThatFinderReports(0, new RepeatTimesLiteralExecution(), "./src/test/fixtures/emptyProject.json");
@@ -42,7 +50,14 @@ public class RepeatTimesLiteralExecutionTest implements JsonTest {
 
     @Test
     public void testScriptWithOnlyTimesLoop() throws IOException, ParsingException {
-        assertThatFinderReports(1, new RepeatTimesLiteralExecution(), "src/test/fixtures/questions/scriptWithOnlyTimesLoop.json");
+        Program prog = getAST("src/test/fixtures/questions/scriptWithOnlyTimesLoop.json");
+        Set<Question> questions = runFinder(prog, new RepeatTimesLiteralExecution(), false);
+        assertThat(questions.size()).isEqualTo(1);
+
+        IssueTranslator translator = IssueTranslatorFactory.getIssueTranslator(Locale.ENGLISH);
+        for (Question question : questions) {
+            assertThat(question.getQuestionText(translator)).contains("How many times");
+        }
     }
 
     @Test

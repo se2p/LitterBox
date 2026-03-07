@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.NumberLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.LoopStmt;
@@ -29,14 +26,24 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.Terminati
 import de.uni_passau.fim.se2.litterbox.export.scratchblocks.ScratchBlocksVisitor;
 
 /**
- * @QuestionType Number
- * @Highlighted Statement
- * @Context Single script
+ * Generates questions asking how many times a statement inside a repeat loop will execute.
+ * Only applies to repeat loops with literal (numeric) iteration counts.
+ *
+ * <p>Example question: "How many times will [move 10 steps] be executed?"
  */
 public class RepeatTimesLiteralExecution extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "repeat_times_literal_execution";
+
     private boolean hasStop;
     private int inLoop;
+
+    @Override
+    protected void resetState() {
+        super.resetState();
+        this.hasStop = false;
+        this.inLoop = 0;
+    }
 
     @Override
     public void visit(LoopStmt node) {
@@ -57,11 +64,10 @@ public class RepeatTimesLiteralExecution extends AbstractQuestionFinder {
                 if (node.getStmtList().hasStatements() && !hasStop) {
                     ASTNode stmt = getSingleStmt(node.getStmtList().getStmts().getFirst());
 
-                    IssueBuilder builder = prepareIssueBuilder(stmt).withSeverity(IssueSeverity.LOW);
-                    Hint hint = Hint.fromKey(getName());
-                    hint.setParameter(Hint.STATEMENT, ScratchBlocksVisitor.of(stmt));
-                    hint.setParameter(Hint.ANSWER, String.valueOf(num.getValue()));
-                    addIssue(builder.withHint(hint));
+                    QuestionBuilder builder = prepareQuestionBuilder(stmt)
+                            .withQuestionParameter(QuestionText.STATEMENT, ScratchBlocksVisitor.of(stmt))
+                            .withCorrectAnswers(String.valueOf(num.getValue()));
+                    addQuestion(builder);
                 }
             }
             inLoop--;
@@ -79,6 +85,21 @@ public class RepeatTimesLiteralExecution extends AbstractQuestionFinder {
 
     @Override
     public String getName() {
-        return "repeat_times_literal_execution";
+        return FINDER_NAME;
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.EXECUTION;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.BLOCK;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.NUMBER;
     }
 }

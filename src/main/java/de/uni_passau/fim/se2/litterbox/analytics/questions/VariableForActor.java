@@ -18,9 +18,7 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
+import de.uni_passau.fim.se2.litterbox.analytics.TranslatableText;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Program;
 import de.uni_passau.fim.se2.litterbox.ast.model.variable.Variable;
@@ -29,17 +27,17 @@ import de.uni_passau.fim.se2.litterbox.export.scratchblocks.ScratchBlocksVisitor
 import java.util.*;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers 1
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Nothing
- * @Context Whole program
+ * Generates a question asking which actor a variable belongs to.
+ *
  */
 public class VariableForActor extends AbstractQuestionFinder {
 
+    public static final String FINDER_NAME = "variable_for_actor";
+    private static final String VARIABLE_PARAM = "VARIABLE";
+
     private Set<String> variables;
-    private Set<String> actors;
-    private Map<String, List<String>> variablesForActor;
+    private Set<TranslatableText> actors;
+    private Map<TranslatableText, List<String>> variablesForActor;
 
     @Override
     public void visit(Program node) {
@@ -49,23 +47,27 @@ public class VariableForActor extends AbstractQuestionFinder {
         super.visit(node);
 
         variablesForActor.forEach((actor, variables) -> {
-            choices.addAll(actors);
-            choices.remove(actor);
+            Set<TranslatableText> distractors = new LinkedHashSet<>(actors);
+            distractors.remove(actor);
 
             for (String variable : variables) {
-                IssueBuilder builder = prepareIssueBuilder().withSeverity(IssueSeverity.LOW);
-                Hint hint = Hint.fromKey(getName());
-                hint.setParameter(Hint.HINT_VARIABLE, variable);
-                hint.setParameter(Hint.ANSWER, actor);
-                hint.setParameter(Hint.CHOICES, getChoices());
-                addIssue(builder.withHint(hint));
+                QuestionBuilder builder = prepareQuestionBuilder()
+                        .withQuestionParameter(VARIABLE_PARAM, variable)
+                        .addCorrectAnswer(actor)
+                        .withTranslatableChoices(generateTranslatableMultipleChoiceOptions(Set.of(actor), distractors));
+                addQuestion(builder);
             }
         });
     }
 
     @Override
     public void visit(ActorDefinition node) {
-        String actor = node.isSprite() ? node.getIdent().getName() : "All sprites";
+        TranslatableText actor;
+        if (node.isSprite()) {
+            actor = QuestionText.fromText(node.getIdent().getName());
+        } else {
+            actor = QuestionText.fromKey(QuestionText.ALL_SPRITES);
+        }
         actors.add(actor);
 
         variables.clear();
@@ -81,6 +83,21 @@ public class VariableForActor extends AbstractQuestionFinder {
 
     @Override
     public String getName() {
-        return "variable_for_actor";
+        return FINDER_NAME;
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.TEXT;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.MACRO;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }

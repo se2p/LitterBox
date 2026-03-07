@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.expression.Expression;
 import de.uni_passau.fim.se2.litterbox.ast.model.identifier.Identifier;
@@ -30,12 +27,17 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.SetVariableTo;
 import de.uni_passau.fim.se2.litterbox.export.scratchblocks.ScratchBlocksVisitor;
 
 /**
- * @QuestionType Strings
- * @NumAnswers 1
- * @Highlighted Statement
- * @Context Single script
+ * Generates a question asking for the value a variable is set to.
+ *
  */
 public class SetVariable extends AbstractQuestionFinder {
+
+    public static final String FINDER_NAME = "set_variable";
+    private static final String VARIABLE_PARAM = "VARIABLE";
+    private static final String OPEN_PAREN = "(";
+    private static final String CLOSE_PAREN = ")";
+    private static final String OPEN_BRACKET = "[";
+    private static final String CLOSE_BRACKET = "]";
 
     private boolean inScript;
 
@@ -53,28 +55,47 @@ public class SetVariable extends AbstractQuestionFinder {
             Expression expression = node.getExpr();
 
             if (expression instanceof NumberLiteral || expression instanceof StringLiteral) {
-                IssueBuilder builder = prepareIssueBuilder(node).withSeverity(IssueSeverity.LOW);
-                Hint hint = Hint.fromKey(getName());
-                hint.setParameter(Hint.HINT_VARIABLE, ScratchBlocksVisitor.of(identifier));
-                hint.setParameter(Hint.ANSWER, getExpressionValue(expression));
-                addIssue(builder.withHint(hint));
+                QuestionBuilder builder = prepareQuestionBuilder(node)
+                        .withQuestionParameter(VARIABLE_PARAM, ScratchBlocksVisitor.of(identifier))
+                        .withCorrectAnswers(getExpressionValue(expression));
+                addQuestion(builder);
             }
         }
     }
 
     /**
-     * Returns expression value without open- and close-parentheses.
+     * Returns expression value without open- and close-parentheses/brackets.
      *
      * @param node Expression node
-     * @return expression value without parentheses
+     * @return expression value without wrapper characters
      */
     private String getExpressionValue(Expression node) {
-        String value = ScratchBlocksVisitor.of(node);
-        return value.substring(1, value.length() - 1);
+        String value = ScratchBlocksVisitor.of(node).trim();
+        // Strip outer parentheses (for numbers) or brackets (for strings)
+        if ((value.startsWith(OPEN_PAREN) && value.endsWith(CLOSE_PAREN))
+                || (value.startsWith(OPEN_BRACKET) && value.endsWith(CLOSE_BRACKET))) {
+            return value.substring(1, value.length() - 1);
+        }
+        return value;
     }
 
     @Override
     public String getName() {
-        return "set_variable";
+        return FINDER_NAME;
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.TEXT;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.ATOM;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.FREE_TEXT;
     }
 }

@@ -18,9 +18,6 @@
  */
 package de.uni_passau.fim.se2.litterbox.analytics.questions;
 
-import de.uni_passau.fim.se2.litterbox.analytics.Hint;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueBuilder;
-import de.uni_passau.fim.se2.litterbox.analytics.IssueSeverity;
 import de.uni_passau.fim.se2.litterbox.ast.model.ActorDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.Script;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
@@ -32,13 +29,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @QuestionType Multiple Choice
- * @NumAnswers 1
- * @NumChoices {@link AbstractQuestionFinder#maxChoices}
- * @Highlighted Statement
- * @Context Single actor
+ * Generates a question asking for the definition (body) of a called procedure.
+ *
  */
 public class DefinitionOfProcedure extends AbstractQuestionFinder {
+
+    public static final String FINDER_NAME = "definition_of_procedure";
 
     private Map<String, ProcedureDefinition> procedures;
     private Map<String, CallStmt> procedureCalls;
@@ -74,11 +70,11 @@ public class DefinitionOfProcedure extends AbstractQuestionFinder {
                 currentScript = scriptForCall.get(stmt);
                 currentActor = actorForCall.get(stmt);
 
-                IssueBuilder builder = prepareIssueBuilder(stmt).withSeverity(IssueSeverity.LOW);
-                Hint hint = Hint.fromKey(getName());
-                hint.setParameter(Hint.CHOICES, getChoices());
-                hint.setParameter(Hint.ANSWER, wrappedScratchBlocks(procedures.get(ident)));
-                addIssue(builder.withHint(hint));
+                QuestionBuilder builder = prepareQuestionBuilder(stmt)
+                        .withChoices(generateMultipleChoiceOptions(
+                                Set.of(wrappedScratchBlocks(procedures.get(ident))), choices))
+                        .withCorrectAnswers(wrappedScratchBlocks(procedures.get(ident)));
+                addQuestion(builder);
             }
         });
     }
@@ -105,6 +101,21 @@ public class DefinitionOfProcedure extends AbstractQuestionFinder {
 
     @Override
     public String getName() {
-        return "definition_of_procedure";
+        return FINDER_NAME;
+    }
+
+    @Override
+    public ProgramDimension getProgramDimension() {
+        return ProgramDimension.TEXT;
+    }
+
+    @Override
+    public ScopeOfFocus getScopeOfFocus() {
+        return ScopeOfFocus.RELATION;
+    }
+
+    @Override
+    public QuestionType getQuestionType() {
+        return QuestionType.MULTIPLE_CHOICE;
     }
 }
