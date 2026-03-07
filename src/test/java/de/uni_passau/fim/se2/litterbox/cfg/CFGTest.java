@@ -20,6 +20,10 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.JsonTest;
 import de.uni_passau.fim.se2.litterbox.ast.ParsingException;
+import de.uni_passau.fim.se2.litterbox.ast.model.ASTNode;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.WhenEntanglementStarted;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.WhenMeasured;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.WhenSuperpositionStarted;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.Broadcast;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.BroadcastAndWait;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.common.CreateCloneOf;
@@ -376,5 +380,27 @@ public class CFGTest implements JsonTest {
         // If the message is an expression (e.g. a variable) we need to overapproximate
         assertThat(successors).hasSize(3);
         assertThat(successors).contains(cfg.getExitNode());
+    }
+
+    @Test
+    void testQuantumBlocks() throws ParsingException {
+        final ControlFlowGraph cfg = getCFG("src/test/fixtures/quantum/quantum-events.json");
+
+        final CFGNode superpositionStartedEvent = findNodeOfType(cfg, WhenSuperpositionStarted.class);
+        assertThat(cfg.getPredecessors(superpositionStartedEvent)).hasSize(3);
+
+        final CFGNode entanglementStartedEvent = findNodeOfType(cfg, WhenEntanglementStarted.class);
+        assertThat(cfg.getPredecessors(entanglementStartedEvent)).hasSize(3);
+
+        final CFGNode whenMeasuredEvent = findNodeOfType(cfg, WhenMeasured.class);
+        assertThat(cfg.getPredecessors(whenMeasuredEvent)).hasSize(2);
+    }
+
+    private <T extends ASTNode> CFGNode findNodeOfType(final ControlFlowGraph cfg, final Class<T> nodeType) {
+        return cfg.getNodes()
+                .stream()
+                .filter(n -> nodeType.isInstance(n.getASTNode()))
+                .findFirst()
+                .orElseThrow();
     }
 }

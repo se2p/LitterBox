@@ -26,6 +26,8 @@ import de.uni_passau.fim.se2.litterbox.ast.model.clonechoice.Myself;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.AttributeAboveValue;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.Event;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.StartedAsClone;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.QuantumExtensionEvent;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.QuantumExtensionStmt;
 import de.uni_passau.fim.se2.litterbox.ast.model.literals.StringLiteral;
 import de.uni_passau.fim.se2.litterbox.ast.model.procedure.ProcedureDefinition;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.CallStmt;
@@ -59,6 +61,10 @@ public class ControlFlowGraphBuilder {
 
     private Map<ProcedureNode, ProcedureNode> canonicalProcedureNodes = new HashMap<>();
 
+    private final Map<QuantumEventKind, List<CFGNode>> quantumEventEmitters = new EnumMap<>(QuantumEventKind.class);
+
+    private final Map<QuantumEventKind, List<CFGNode>> quantumEventHandlers = new EnumMap<>(QuantumEventKind.class);
+
     private ProcedureNode getCanonicalProcedureNode(String name, String actorName, ProcedureDefinition def) {
         ProcedureNode key = new ProcedureNode(name, actorName);
         if (!canonicalProcedureNodes.containsKey(key)) {
@@ -75,6 +81,7 @@ public class ControlFlowGraphBuilder {
         addMissingEdgesToExit();
         connectCustomBlockCalls();
         connectBroadcastExpressions();
+        connectQuantumEvents();
         cfg.fixDetachedEntryExit();
         return cfg;
     }
@@ -113,6 +120,20 @@ public class ControlFlowGraphBuilder {
             for (CFGNode handlerNode : receivedMessages) {
                 cfg.addEdgeToExit(handlerNode);
                 cfg.addEdge(broadcastNode, handlerNode);
+            }
+        }
+    }
+
+    private void connectQuantumEvents() {
+        for (final var entry : quantumEventEmitters.entrySet()) {
+            final QuantumEventKind event = entry.getKey();
+            final List<CFGNode> emitters = entry.getValue();
+            final List<CFGNode> receivers = quantumEventHandlers.getOrDefault(event, Collections.emptyList());
+
+            for (final CFGNode emitter : emitters) {
+                for (final CFGNode receiver : receivers) {
+                    cfg.addEdge(emitter, receiver);
+                }
             }
         }
     }
@@ -189,11 +210,41 @@ public class ControlFlowGraphBuilder {
     }
 
     public void addEventHandler(Event event) {
+        addEventHandlerInternal(event);
+    }
+
+    public void addQuantumEventHandler(final QuantumExtensionEvent event, final QuantumEventKind eventKind) {
+        final CFGNode handler = addEventHandlerInternal(event);
+        quantumEventHandlers.compute(eventKind, (e, nodes) -> {
+            if (nodes == null) {
+                nodes = new ArrayList<>();
+            }
+            nodes.add(handler);
+
+            return nodes;
+        });
+    }
+
+    public void addQuantumStatement(final QuantumExtensionStmt stmt, final QuantumEventKind eventKind) {
+        final CFGNode emitter = addStatement(stmt);
+        quantumEventEmitters.compute(eventKind, (e, nodes) -> {
+            if (nodes == null) {
+                nodes = new ArrayList<>();
+            }
+            nodes.add(emitter);
+
+            return nodes;
+        });
+    }
+
+    private CFGNode addEventHandlerInternal(final Event event) {
         CFGNode eventNode = cfg.addNode(event, currentActor, currentScriptOrProcedure);
         cfg.addEdgeToExit(eventNode);
 
         // Update current node to event node (so that it branches)
         setCurrentNode(eventNode);
+
+        return eventNode;
     }
 
     public void addVariableEventHandler(AttributeAboveValue node) {

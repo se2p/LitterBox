@@ -20,6 +20,7 @@ package de.uni_passau.fim.se2.litterbox.cfg;
 
 import de.uni_passau.fim.se2.litterbox.ast.model.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.event.*;
+import de.uni_passau.fim.se2.litterbox.ast.model.extensions.quantum.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.SetVideoTransparency;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.TurnVideo;
 import de.uni_passau.fim.se2.litterbox.ast.model.extensions.video_sensing.WhenVideoMotionGreaterThan;
@@ -34,13 +35,14 @@ import de.uni_passau.fim.se2.litterbox.ast.model.statement.control.*;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.DeleteClone;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopAll;
 import de.uni_passau.fim.se2.litterbox.ast.model.statement.termination.StopThisScript;
+import de.uni_passau.fim.se2.litterbox.ast.visitor.QuantumExtensionVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.ScratchVisitor;
 import de.uni_passau.fim.se2.litterbox.ast.visitor.VideoSensingExtensionVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ControlFlowGraphVisitor implements ScratchVisitor, VideoSensingExtensionVisitor {
+public class ControlFlowGraphVisitor implements ScratchVisitor, VideoSensingExtensionVisitor, QuantumExtensionVisitor {
 
     private final ControlFlowGraphBuilder builder = new ControlFlowGraphBuilder();
 
@@ -297,5 +299,58 @@ public class ControlFlowGraphVisitor implements ScratchVisitor, VideoSensingExte
 
     private boolean isInScript() {
         return inScript;
+    }
+
+    //---------------------------------------------------------------
+    // Quantum extension
+
+    @Override
+    public void visit(WhenMeasured node) {
+        builder.addQuantumEventHandler(node, QuantumEventKind.MEASUREMENT);
+    }
+
+    @Override
+    public void visit(WhenEntanglementStarted node) {
+        builder.addQuantumEventHandler(node, QuantumEventKind.ENTANGLEMENT);
+    }
+
+    @Override
+    public void visit(WhenSuperpositionStarted node) {
+        builder.addQuantumEventHandler(node, QuantumEventKind.SUPERPOSITION);
+    }
+
+    @Override
+    public void visit(Measure node) {
+        builder.addQuantumStatement(node, QuantumEventKind.MEASUREMENT);
+    }
+
+    @Override
+    public void visit(QuantumSuperpositionPossibilities node) {
+        builder.addQuantumStatement(node, QuantumEventKind.SUPERPOSITION);
+    }
+
+    @Override
+    public void visit(QuantumSuperpositionList node) {
+        builder.addQuantumStatement(node, QuantumEventKind.SUPERPOSITION);
+    }
+
+    @Override
+    public void visit(QuantumSuperpositionPossibilitiesList node) {
+        builder.addQuantumStatement(node, QuantumEventKind.SUPERPOSITION);
+    }
+
+    @Override
+    public void visit(QuantumEntanglementPossibilities node) {
+        builder.addQuantumStatement(node, QuantumEventKind.ENTANGLEMENT);
+    }
+
+    @Override
+    public void visit(QuantumEntanglementList node) {
+        builder.addQuantumStatement(node, QuantumEventKind.ENTANGLEMENT);
+    }
+
+    @Override
+    public void visit(QuantumEntanglementPossibilitiesList node) {
+        builder.addQuantumStatement(node, QuantumEventKind.ENTANGLEMENT);
     }
 }
